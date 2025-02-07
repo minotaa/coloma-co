@@ -2,14 +2,21 @@ extends CharacterBody2D
 
 const SPEED = 75.0
 
+@onready var tilemap: TileMapLayer = $"../Tiles"
+@onready var progress_bar: ProgressBar = $UI/Main/ProgressBar
+
 var directions = {
 	"left": Vector2.LEFT,
 	"right": Vector2.RIGHT,
 	"up": Vector2.UP,
 	"down": Vector2.DOWN
 }
-
 var last_direction = "down"
+
+var target_tile: Vector2i
+var mining_progress = 0.0
+var mining_time = 0.0
+var is_mining = false
 
 func play_animation(name: String, backwards: bool = false, speed: float = 1) -> void:
 	if backwards == false:
@@ -47,7 +54,76 @@ func _process_input(delta) -> void:
 		if $AnimatedSprite2D.animation == "walk_left" or $AnimatedSprite2D.animation == "walk_up" or $AnimatedSprite2D.animation == "walk_down" or $AnimatedSprite2D.animation == "walk_right":
 			play_idle_animation()
 	
+	if Input.is_action_pressed("mine") and target_tile and !is_mining:
+		start_mining(target_tile)
+	elif is_mining and (!target_tile or !Input.is_action_pressed("mine")):
+		reset_mining()
+
 	move_and_slide()
 
 func _physics_process(delta: float) -> void:
 	_process_input(delta)
+
+	progress_bar.position = get_viewport().get_mouse_position() + Vector2(5, 25)
+
+	var mouse_pos = tilemap.local_to_map(tilemap.get_local_mouse_position())
+	var tile_data = tilemap.get_cell_tile_data(mouse_pos)
+
+	if !is_mining:
+		if tile_data and nearby_tiles.has(mouse_pos):
+			target_tile = mouse_pos
+		else:
+			target_tile = Vector2i.ZERO
+
+	if is_mining and target_tile != Vector2i.ZERO:
+		mining_progress += delta
+		progress_bar.visible = true
+		progress_bar.value = (mining_progress / mining_time) * 100
+
+		if mining_progress >= mining_time:
+			mine_tile(target_tile)
+			reset_mining()
+	else:
+		reset_mining()
+
+func start_mining(tile_coords: Vector2i):
+	var tile_data = tilemap.get_cell_tile_data(tile_coords)
+	if tile_data and tile_data.get_custom_data("mineable"):
+		is_mining = true
+		mining_progress = 0.0
+		mining_time = tile_data.get_custom_data("hardness")
+		progress_bar.visible = true
+		print("Started mining: ", tile_coords)
+
+func reset_mining():
+	is_mining = false
+	mining_progress = 0.0
+	progress_bar.visible = false
+	progress_bar.value = 0
+
+func mine_tile(tile_coords: Vector2i):
+	var tile_data = tilemap.get_cell_tile_data(tile_coords)
+	if tile_data:
+		var tile_id = tile_data.get_custom_data("tile_id")
+		handle_tile_logic(tile_id, tile_coords)
+		tilemap.set_cell(tile_coords)  # Remove tile
+		print("Mined tile: ", tile_id)
+
+func handle_tile_logic(tile_id, tile_coords):
+	# Send an event or call specific logic based on the tile_id
+	print("Mined tile with ID: ", tile_id)
+
+var nearby_tiles: Array[Vector2i] = []
+
+func _on_body_shape_entered(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
+	if body is TileMapLayer:
+		var tile_coords: Vector2i = tilemap.get_coords_for_body_rid(body_rid)
+		var tile_data = tilemap.get_cell_tile_data(tile_coords)
+		if tile_data and tile_data.get_custom_data("mineable"):
+			nearby_tiles.append(tile_coords)
+
+func _on_body_shape_exited(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
+	if body is TileMapLayer:
+		var tile_coords = tilemap.get_coords_for_body_rid(body_rid)
+		if tile_coords in nearby_tiles:
+			nearby_tiles.erase(tile_coords)
