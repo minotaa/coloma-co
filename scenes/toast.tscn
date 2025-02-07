@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://bx3tkakqhrm2f"]
+
+[ext_resource type="Script" path="res://scripts/toast_resource.gd" id="1_wdpxc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ssdqt"]
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.709804)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_pnte4"]
+line_spacing = 3.5
+font_size = 24
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Toast" type="Control"]
+layout_mode = 3
+anchor_right = 0.3
+anchor_bottom = 0.167
+offset_bottom = 599.76
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wdpxc")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+offset_right = 384.0
+offset_bottom = 39.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_ssdqt")
+text = "Blood red darkness"
+label_settings = SubResource("LabelSettings_pnte4")
+vertical_alignment = 1
+autowrap_mode = 2

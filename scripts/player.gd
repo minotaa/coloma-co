@@ -53,6 +53,15 @@ func _process_input(delta) -> void:
 	if velocity.x == 0 and velocity.y == 0:
 		if $AnimatedSprite2D.animation == "walk_left" or $AnimatedSprite2D.animation == "walk_up" or $AnimatedSprite2D.animation == "walk_down" or $AnimatedSprite2D.animation == "walk_right":
 			play_idle_animation()
+			
+	var texts = [
+		"Short",
+		"Medium length toast",
+		"This one is a bit longer to test alignment",
+		"A really long toast message that should still stack properly",
+		"Small"
+	]
+	Toast.add(texts.pick_random())
 	
 	if Input.is_action_pressed("mine") and target_tile and !is_mining:
 		start_mining(target_tile)
@@ -63,9 +72,7 @@ func _process_input(delta) -> void:
 
 func _physics_process(delta: float) -> void:
 	_process_input(delta)
-
 	progress_bar.position = get_viewport().get_mouse_position() + Vector2(5, 25)
-
 	var mouse_pos = tilemap.local_to_map(tilemap.get_local_mouse_position())
 	var tile_data = tilemap.get_cell_tile_data(mouse_pos)
 
@@ -75,7 +82,10 @@ func _physics_process(delta: float) -> void:
 		else:
 			target_tile = Vector2i.ZERO
 
-	if is_mining and target_tile != Vector2i.ZERO:
+	if is_mining and target_tile not in nearby_tiles:
+		reset_mining()
+
+	if is_mining and target_tile:
 		mining_progress += delta
 		progress_bar.visible = true
 		progress_bar.value = (mining_progress / mining_time) * 100
@@ -84,7 +94,9 @@ func _physics_process(delta: float) -> void:
 			mine_tile(target_tile)
 			reset_mining()
 	else:
-		reset_mining()
+		mining_progress = 0.0
+		progress_bar.value = 0
+		progress_bar.visible = false
 
 func start_mining(tile_coords: Vector2i):
 	var tile_data = tilemap.get_cell_tile_data(tile_coords)
@@ -108,6 +120,7 @@ func mine_tile(tile_coords: Vector2i):
 		handle_tile_logic(tile_id, tile_coords)
 		tilemap.set_cell(tile_coords)  # Remove tile
 		print("Mined tile: ", tile_id)
+		Toast.add("Mined tile: " + str(tile_id))
 
 func handle_tile_logic(tile_id, tile_coords):
 	# Send an event or call specific logic based on the tile_id
