@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=4 uid="uid://dfydxhpofisbq"]
+[gd_scene load_steps=9 format=4 uid="uid://dfydxhpofisbq"]
 
 [ext_resource type="Texture2D" uid="uid://b602snonljd6m" path="res://assets/sprites/tiles.png" id="1_wya76"]
 [ext_resource type="PackedScene" uid="uid://bma6r3uqptx6d" path="res://scenes/player.tscn" id="2_swvo3"]
+[ext_resource type="PackedScene" uid="uid://dfxk8jp42y30" path="res://scenes/item.tscn" id="3_baihu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_caxrt"]
 texture = ExtResource("1_wya76")
@@ -10,15 +11,20 @@ texture = ExtResource("1_wya76")
 [sub_resource type="TileSet" id="TileSet_1uax0"]
 sources/0 = SubResource("TileSetAtlasSource_caxrt")
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_xmomj"]
+polygon = PackedVector2Array(-4.375, -4.375, -3.88909, -4.86136, -2.91682, -4.94975, -3.18198, -6.01041, 1.94454, -6.18719, 2.03293, -5.03814, 3.95538, -5.01604, 3.97748, -4.15425, 4.86136, -3.88909, 5.21491, -2.91682, 6.01041, -2.91682, 5.92202, -0.441942, 6.0546, 0, 6.96058, 0.0441942, 7.04897, 4.02167, 6.01041, 4.06586, 5.92202, 5.03814, 5.03814, 5.12652, 4.99394, 6.03251, 4.04377, 6.01041, 4.02167, 7.00478, -5.01604, 6.98268, -5.01604, 6.03251, -6.01041, 5.96621, -6.0546, 4.13216, -6.16509, 4.04377, -7.02687, 3.95538, -7.00478, 0, -6.01041, -0.0883884, -5.96621, -3.0273, -5.08233, -3.0273, -5.12652, -3.88909)
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q3y61"]
 texture = ExtResource("1_wya76")
 0:0/0 = 0
 1:0/0 = 0
+1:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_xmomj")
 1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4.875, -3.625, -3.09359, -5.21491, -2.03293, -5.92202, 1.76777, -5.92202, 2.47487, -4.59619, 3.71231, -4.77297, 4.75, -4.125, 5.39169, -2.74004, 6.36396, 0.353553, 6.45235, 3.44715, 5.5, 5.125, 4.50781, 5.56847, 3.71231, 6.8059, -4.68458, 6.62913, -6.01041, 5.39169, -6.36396, 3.62392, -6.45235, 0.0883884, -5.65685, -1.5026)
 1:0/0/custom_data_0 = true
 1:0/0/custom_data_2 = 1.5
 
 [sub_resource type="TileSet" id="TileSet_vt6tk"]
+occlusion_layer_0/light_mask = 1
 physics_layer_0/collision_layer = 1
 custom_data_layer_0/name = "mineable"
 custom_data_layer_0/type = 1
@@ -40,3 +46,9 @@ tile_map_data = PackedByteArray("AAD8////AAABAAAAAAA=")
 tile_set = SubResource("TileSet_vt6tk")
 
 [node name="Player" parent="." instance=ExtResource("2_swvo3")]
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.138306, 0.101374, 0.384855, 0.752941)
+
+[node name="Item" parent="." instance=ExtResource("3_baihu")]
+position = Vector2(-57, 24)

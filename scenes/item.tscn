@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://dfxk8jp42y30"]
+
+[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_blohd"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ngdh1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s8tg5"]
+atlas = ExtResource("1_blohd")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_c522h"]
+radius = 5.0
+
+[node name="Item" type="RigidBody2D"]
+texture_filter = 1
+physics_material_override = SubResource("PhysicsMaterial_ngdh1")
+can_sleep = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_s8tg5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_c522h")

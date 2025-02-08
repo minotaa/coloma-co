@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=53 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://cf2hknae6eb3u" path="res://assets/sprites/spaceman-down.png" id="2_py00a"]
@@ -8,6 +8,10 @@
 [ext_resource type="Texture2D" uid="uid://cugxlk646lqq8" path="res://assets/sprites/pickaxe-cursor.png" id="6_ont5f"]
 [ext_resource type="FontFile" uid="uid://o8avftrd323r" path="res://assets/fonts/HomeVideo-Regular.ttf" id="7_43mu3"]
 [ext_resource type="Theme" uid="uid://c11leby2o82ok" path="res://assets/theme.tres" id="8_jtt8e"]
+[ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="9_6440i"]
+[ext_resource type="Texture2D" uid="uid://bs4bxx026a2bg" path="res://assets/sprites/light.png" id="9_fnujr"]
+[ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="10_8swnt"]
+[ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="11_vurot"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_getcb"]
 atlas = ExtResource("2_py00a")
@@ -331,7 +335,7 @@ position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_6w26g")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(5.5, 5.5)
+zoom = Vector2(5, 5)
 position_smoothing_enabled = true
 position_smoothing_speed = 12.0
 
@@ -386,12 +390,22 @@ offset_bottom = 80.0
 grow_horizontal = 0
 theme = ExtResource("8_jtt8e")
 
-[node name="ProgressBar" type="ProgressBar" parent="UI/Main"]
+[node name="ProgressBar" type="TextureProgressBar" parent="UI/Main"]
 visible = false
 layout_mode = 0
 offset_right = 152.0
 offset_bottom = 24.0
+scale = Vector2(3, 3)
 theme = ExtResource("8_jtt8e")
+fill_mode = 4
+texture_under = ExtResource("9_6440i")
+texture_over = ExtResource("10_8swnt")
+texture_progress = ExtResource("11_vurot")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+energy = 0.25
+shadow_color = Color(0, 0, 0, 0.192157)
+texture = ExtResource("9_fnujr")
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_body_exited"]

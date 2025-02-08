@@ -3,7 +3,7 @@ extends CharacterBody2D
 const SPEED = 75.0
 
 @onready var tilemap: TileMapLayer = $"../Tiles"
-@onready var progress_bar: ProgressBar = $UI/Main/ProgressBar
+@onready var progress_bar: TextureProgressBar = $UI/Main/ProgressBar
 
 var directions = {
 	"left": Vector2.LEFT,
@@ -54,14 +54,14 @@ func _process_input(delta) -> void:
 		if $AnimatedSprite2D.animation == "walk_left" or $AnimatedSprite2D.animation == "walk_up" or $AnimatedSprite2D.animation == "walk_down" or $AnimatedSprite2D.animation == "walk_right":
 			play_idle_animation()
 			
-	var texts = [
-		"Short",
-		"Medium length toast",
-		"This one is a bit longer to test alignment",
-		"A really long toast message that should still stack properly",
-		"Small"
-	]
-	Toast.add(texts.pick_random())
+	#var texts = [
+		#"Short",
+		#"Medium length toast",
+		#"This one is a bit longer to test alignment",
+		#"A really long toast message that should still stack properly",
+		#"Small"
+	#]
+	#Toast.add(texts.pick_random())
 	
 	if Input.is_action_pressed("mine") and target_tile and !is_mining:
 		start_mining(target_tile)
@@ -72,15 +72,14 @@ func _process_input(delta) -> void:
 
 func _physics_process(delta: float) -> void:
 	_process_input(delta)
-	progress_bar.position = get_viewport().get_mouse_position() + Vector2(5, 25)
+	progress_bar.position = get_viewport().get_mouse_position() + Vector2(10, 10)
 	var mouse_pos = tilemap.local_to_map(tilemap.get_local_mouse_position())
 	var tile_data = tilemap.get_cell_tile_data(mouse_pos)
 
-	if !is_mining:
-		if tile_data and nearby_tiles.has(mouse_pos):
-			target_tile = mouse_pos
-		else:
-			target_tile = Vector2i.ZERO
+	if tile_data and nearby_tiles.has(mouse_pos):
+		target_tile = mouse_pos
+	else:
+		target_tile = Vector2i.ZERO
 
 	if is_mining and target_tile not in nearby_tiles:
 		reset_mining()
@@ -123,7 +122,7 @@ func mine_tile(tile_coords: Vector2i):
 		Toast.add("Mined tile: " + str(tile_id))
 
 func handle_tile_logic(tile_id, tile_coords):
-	# Send an event or call specific logic based on the tile_id
+	Tiles.get_by_id(tile_id).on_break.call(tile_coords)
 	print("Mined tile with ID: ", tile_id)
 
 var nearby_tiles: Array[Vector2i] = []
