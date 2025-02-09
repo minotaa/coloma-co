@@ -23,14 +23,15 @@ Tiles="*res://scripts/tiles.gd"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
-window/stretch/mode="canvas_items"
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=3
+window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 
 [gui]
 
-theme/custom_font="res://assets/fonts/HomeVideo-Regular.ttf"
+theme/custom_font="res://assets/fonts/Bitty.ttf"
 
 [input]
 
@@ -75,4 +76,5 @@ mine={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"

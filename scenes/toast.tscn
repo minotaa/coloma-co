@@ -4,7 +4,7 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ssdqt"]
 content_margin_left = 10.0
-content_margin_top = 8.0
+content_margin_top = 0.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
 bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.709804)
@@ -14,8 +14,8 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [sub_resource type="LabelSettings" id="LabelSettings_pnte4"]
-line_spacing = 3.5
-font_size = 24
+line_spacing = 0.0
+font_size = 48
 outline_color = Color(0, 0, 0, 1)
 
 [node name="Toast" type="Control"]
@@ -30,7 +30,7 @@ script = ExtResource("1_wdpxc")
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
 offset_right = 384.0
-offset_bottom = 39.0
+offset_bottom = 54.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_ssdqt")
 text = "Blood red darkness"
 label_settings = SubResource("LabelSettings_pnte4")

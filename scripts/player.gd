@@ -76,6 +76,9 @@ func _physics_process(delta: float) -> void:
 	var mouse_pos = tilemap.local_to_map(tilemap.get_local_mouse_position())
 	var tile_data = tilemap.get_cell_tile_data(mouse_pos)
 
+	if tile_data and not nearby_tiles.has(mouse_pos) and Input.is_action_just_pressed("mine"):
+		Toast.add("Too far away.")
+
 	if tile_data and nearby_tiles.has(mouse_pos):
 		target_tile = mouse_pos
 	else:

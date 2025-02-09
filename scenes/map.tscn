@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=4 uid="uid://dfydxhpofisbq"]
+[gd_scene load_steps=8 format=4 uid="uid://dfydxhpofisbq"]
 
 [ext_resource type="Texture2D" uid="uid://b602snonljd6m" path="res://assets/sprites/tiles.png" id="1_wya76"]
 [ext_resource type="PackedScene" uid="uid://bma6r3uqptx6d" path="res://scenes/player.tscn" id="2_swvo3"]
-[ext_resource type="PackedScene" uid="uid://dfxk8jp42y30" path="res://scenes/item.tscn" id="3_baihu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_caxrt"]
 texture = ExtResource("1_wya76")
@@ -49,6 +48,3 @@ tile_set = SubResource("TileSet_vt6tk")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.138306, 0.101374, 0.384855, 0.752941)
-
-[node name="Item" parent="." instance=ExtResource("3_baihu")]
-position = Vector2(-57, 24)

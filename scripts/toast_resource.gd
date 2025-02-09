@@ -2,10 +2,14 @@ extends Control
 
 signal toast_faded
 
+var is_counter := false
+
 func _ready():
 	await get_tree().process_frame
-	await get_tree().create_timer(Toast.TOAST_LIFETIME).timeout
-	fade_out()
+
+	if not is_counter:
+		await get_tree().create_timer(Toast.TOAST_LIFETIME).timeout
+		fade_out()
 
 func update_text(text: String) -> void:
 	$Label.text = text
@@ -15,6 +19,9 @@ func update_text(text: String) -> void:
 func init(config: Dictionary) -> void:
 	update_text(config.text)
 
+	if config.text.begins_with("+") and config.text.ends_with("more"):
+		is_counter = true
+
 func move_to(target_y: float) -> void:
 	await get_tree().process_frame  
 	var tween = get_tree().create_tween()
@@ -23,6 +30,10 @@ func move_to(target_y: float) -> void:
 		.set_ease(Tween.EASE_OUT)
 
 func fade_out():
+	if is_counter:
+		await get_tree().create_timer(Toast.TOAST_LIFETIME * 1.5).timeout
+		# Let counter toasts fade out after a longer duration
+
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "modulate:a", 0, Toast.FADE_DURATION).set_trans(Tween.TRANS_LINEAR)
 	await tween.finished
