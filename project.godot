@@ -14,12 +14,15 @@ config/name="Coloma Co."
 run/main_scene="res://scenes/map.tscn"
 config/features=PackedStringArray("4.3", "Mobile")
 run/max_fps=60
-config/icon="res://icon.svg"
+config/icon="res://assets/sprites/logo.png"
 
 [autoload]
 
 Toast="*res://scripts/toastmanager.gd"
-Tiles="*res://scripts/tiles.gd"
+Tiles="*res://scripts/types/tiles.gd"
+Entities="*res://scripts/types/entities.gd"
+Items="*res://scripts/types/items.gd"
+Inventories="*res://scripts/types/inventories.gd"
 
 [display]
 
@@ -29,9 +32,14 @@ window/size/mode=3
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 
+[global_group]
+
+players=""
+items=""
+
 [gui]
 
-theme/custom_font="res://assets/fonts/Bitty.ttf"
+theme/custom_font="res://assets/fonts/DepartureMono-Regular.otf"
 
 [input]
 
@@ -69,6 +77,13 @@ mine={
 , Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":5,"axis_value":1.0,"script":null)
 ]
 }
+
+[layer_names]
+
+2d_physics/layer_1="players"
+2d_physics/layer_2="mobs"
+2d_physics/layer_3="ephemeral"
+2d_physics/layer_4="tiles"
 
 [physics]
 

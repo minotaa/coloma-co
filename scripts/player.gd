@@ -18,6 +18,16 @@ var mining_progress = 0.0
 var mining_time = 0.0
 var is_mining = false
 
+var bag = Bag.new()
+
+func _ready() -> void:
+	Items.connect("collect_item", collect_item)
+	bag.list = [ItemStack.new(Items.get_by_id(0), 24)]
+	
+func collect_item(item: ItemStack) -> void:
+	Toast.add("Collected x" + str(item.amount) + " " + str(item.type.name))
+	print(bag.add_fragile_item(item))
+
 func play_animation(name: String, backwards: bool = false, speed: float = 1) -> void:
 	if backwards == false:
 		$AnimatedSprite2D.play(name, speed)
@@ -122,10 +132,10 @@ func mine_tile(tile_coords: Vector2i):
 		handle_tile_logic(tile_id, tile_coords)
 		tilemap.set_cell(tile_coords)  # Remove tile
 		print("Mined tile: ", tile_id)
-		Toast.add("Mined tile: " + str(tile_id))
+		#Toast.add("Mined tile: " + str(tile_id))
 
 func handle_tile_logic(tile_id, tile_coords):
-	Tiles.get_by_id(tile_id).on_break.call(tile_coords)
+	Tiles.get_by_id(tile_id).on_break.call(tilemap.map_to_local(tile_coords))
 	print("Mined tile with ID: ", tile_id)
 
 var nearby_tiles: Array[Vector2i] = []

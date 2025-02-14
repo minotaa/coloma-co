@@ -1,8 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dfxk8jp42y30"]
+[gd_scene load_steps=10 format=3 uid="uid://dfxk8jp42y30"]
 
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_blohd"]
+[ext_resource type="Script" path="res://scripts/item_entity.gd" id="1_yhnqa"]
+[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="3_mwo5q"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ngdh1"]
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jv2r6"]
+absorbent = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s8tg5"]
 atlas = ExtResource("1_blohd")
@@ -11,13 +14,65 @@ region = Rect2(0, 0, 16, 16)
 [sub_resource type="CircleShape2D" id="CircleShape2D_c522h"]
 radius = 5.0
 
-[node name="Item" type="RigidBody2D"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_ll7kl"]
+radius = 7.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hve8i"]
+bg_color = Color(0.678431, 0.619608, 0.607843, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_e0ac7"]
+font = ExtResource("3_mwo5q")
+font_size = 9
+font_color = Color(0.212305, 0.212305, 0.212305, 1)
+
+[node name="Item" type="RigidBody2D" groups=["items"]]
 texture_filter = 1
-physics_material_override = SubResource("PhysicsMaterial_ngdh1")
+collision_layer = 4
+collision_mask = 8
+mass = 5.0
+physics_material_override = SubResource("PhysicsMaterial_jv2r6")
+gravity_scale = 3.0
 can_sleep = false
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_yhnqa")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = SubResource("AtlasTexture_s8tg5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_c522h")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_ll7kl")
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.5
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -41.0
+offset_top = -27.0
+offset_right = 41.0
+offset_bottom = -13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hve8i")
+text = "x2 Stone"
+label_settings = SubResource("LabelSettings_e0ac7")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]
+[connection signal="timeout" from="Timer" to="." method="check_for_merge"]

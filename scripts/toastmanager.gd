@@ -43,8 +43,8 @@ func _show_toast(config):
 
 	await get_tree().process_frame  
 	_reposition_toasts()
-
-	toast.connect("toast_faded", Callable(self, "_on_toast_removed").bind(toast))
+	if toast != null:
+		toast.connect("toast_faded", Callable(self, "_on_toast_removed").bind(toast))
 
 func _replace_last_toast_with_counter(excess_count):
 	var last_toast = toasts.pop_back()

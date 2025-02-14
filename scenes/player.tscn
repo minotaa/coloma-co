@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=51 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://cf2hknae6eb3u" path="res://assets/sprites/spaceman-down.png" id="2_py00a"]
@@ -7,12 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://skhr0go65u1a" path="res://assets/sprites/spaceman-up.png" id="5_bglcd"]
 [ext_resource type="Texture2D" uid="uid://cugxlk646lqq8" path="res://assets/sprites/pickaxe-cursor.png" id="6_ont5f"]
 [ext_resource type="Theme" uid="uid://c11leby2o82ok" path="res://assets/theme.tres" id="8_jtt8e"]
-[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="8_mv7np"]
 [ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="9_6440i"]
 [ext_resource type="Texture2D" uid="uid://bs4bxx026a2bg" path="res://assets/sprites/light.png" id="9_fnujr"]
 [ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="10_8swnt"]
 [ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="11_vurot"]
-[ext_resource type="Texture2D" uid="uid://df0dhmvdb587q" path="res://assets/sprites/colomaco.png" id="12_l61h5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_getcb"]
 atlas = ExtResource("2_py00a")
@@ -315,29 +313,10 @@ size = Vector2(6, 13)
 [sub_resource type="CircleShape2D" id="CircleShape2D_esh0l"]
 radius = 48.0
 
-[sub_resource type="LabelSettings" id="LabelSettings_7e5cv"]
-line_spacing = 6.0
-font = ExtResource("8_mv7np")
-font_size = 22
-font_color = Color(0.107825, 0.108751, 0.0971625, 1)
-outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_lqxsb"]
-line_spacing = 6.0
-font = ExtResource("8_mv7np")
-font_size = 22
-font_color = Color(0.105882, 0.109804, 0.0980392, 1)
-outline_color = Color(0.852257, 0.853815, 0.835954, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_vvt5m"]
-line_spacing = 6.0
-font = ExtResource("8_mv7np")
-font_size = 11
-font_color = Color(0.201527, 0.201527, 0.201527, 1)
-outline_color = Color(0.852257, 0.853815, 0.835954, 1)
-
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["players"]]
 texture_filter = 1
+collision_mask = 14
+motion_mode = 1
 script = ExtResource("1_oxdyo")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -376,78 +355,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MoneyPanel" type="Panel" parent="UI/Main"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -192.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = 80.0
-grow_horizontal = 0
-theme = ExtResource("8_jtt8e")
-
-[node name="DayPanel" type="Panel" parent="UI/Main"]
-visible = false
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -176.0
-offset_top = 56.0
-offset_right = -8.0
-offset_bottom = 96.0
-grow_horizontal = 0
-theme = ExtResource("8_jtt8e")
-
-[node name="MoneyLabel" type="Label" parent="UI/Main"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -159.0
-offset_top = 12.0
-offset_right = -16.0
-offset_bottom = 43.0
-grow_horizontal = 0
-text = "$000/$000
-"
-label_settings = SubResource("LabelSettings_7e5cv")
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="DayLabel" type="Label" parent="UI/Main"]
-texture_filter = 1
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -184.0
-offset_top = 28.0
-offset_right = -16.0
-offset_bottom = 66.0
-grow_horizontal = 0
-text = "0 days left"
-label_settings = SubResource("LabelSettings_lqxsb")
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="C" type="Label" parent="UI/Main"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -80.0
-offset_top = 64.0
-offset_right = -10.0
-offset_bottom = 78.0
-grow_horizontal = 0
-text = "Coloma Co."
-label_settings = SubResource("LabelSettings_vvt5m")
-horizontal_alignment = 2
-vertical_alignment = 2
-
 [node name="ProgressBar" type="TextureProgressBar" parent="UI/Main"]
 visible = false
 layout_mode = 0
@@ -459,18 +366,6 @@ fill_mode = 4
 texture_under = ExtResource("9_6440i")
 texture_over = ExtResource("10_8swnt")
 texture_progress = ExtResource("11_vurot")
-
-[node name="TextureRect" type="TextureRect" parent="UI/Main"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -98.0
-offset_top = 63.0
-offset_right = -82.0
-offset_bottom = 79.0
-grow_horizontal = 0
-texture = ExtResource("12_l61h5")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 energy = 0.25
