@@ -25,6 +25,14 @@ var inventory_open: bool = false
 var bag = Bag.new()
 
 func _ready() -> void:
+	var half_width = get_parent().map_size.x / 2 * 16.0
+	var half_height = get_parent().map_size.y / 2 * 16.0
+
+	$Camera2D.limit_left = -half_width
+	$Camera2D.limit_right = half_width
+	$Camera2D.limit_top = -half_height
+	$Camera2D.limit_bottom = half_height
+	
 	Items.connect("collect_item", collect_item)
 	original_inventory_position = $UI/Main/Inventory.position
 	$UI/Main/Inventory.position -= Vector2(1000, 0)
@@ -114,7 +122,17 @@ func _process_input(delta) -> void:
 
 	move_and_slide()
 
+func clamp_player_position(player_pos: Vector2) -> Vector2:
+	var half_width = get_parent().map_size.x / 2 * 16.0
+	var half_height = get_parent().map_size.y / 2 * 16.0
+	
+	player_pos.x = clamp(player_pos.x, -half_width, half_width)
+	player_pos.y = clamp(player_pos.y, -half_height, half_height)
+	return player_pos
+
 func _physics_process(delta: float) -> void:
+	position = clamp_player_position(position)
+	
 	_process_input(delta)
 	progress_bar.position = get_viewport().get_mouse_position() + Vector2(10, 10)
 
