@@ -18,11 +18,16 @@ var target_tile: Vector2i
 var mining_progress = 0.0
 var mining_time = 0.0
 var is_mining = false
+var original_inventory_position: Vector2
+var tween: Tween
+var inventory_open: bool = false
 
 var bag = Bag.new()
 
 func _ready() -> void:
 	Items.connect("collect_item", collect_item)
+	original_inventory_position = $UI/Main/Inventory.position
+	$UI/Main/Inventory.position -= Vector2(1000, 0)
 	
 func collect_item(item: ItemStack) -> void:
 	Toast.add("Collected x" + str(item.amount) + " " + str(item.type.name))
@@ -39,8 +44,46 @@ func play_animation(name: String, backwards: bool = false, speed: float = 1) -> 
 func play_idle_animation() -> void:
 	play_animation("idle_" + last_direction)
 	
+func update_inventory() -> void:
+	$UI/Main/Inventory/Label.text = "Inventory (" + str(bag.total_size()) + "/" + str(bag.get_max_capacity()) + ")"
+	for children in $UI/Main/Inventory/ScrollContainer/VBoxContainer.get_children():
+		children.queue_free()
+	for item_stack in bag.list:
+		var entry = load("res://scenes/inventory_entry.tscn").instantiate()
+		entry.get_node("HBoxContainer").get_node("Label").text = str(item_stack)
+		entry.get_node("HBoxContainer").get_node("TextureRect").texture = item_stack.type.texture
+		$UI/Main/Inventory/ScrollContainer/VBoxContainer.add_child(entry)
+	
+func toggle_inventory() -> void:
+	var inventory = $UI/Main/Inventory
+	update_inventory()
+	
+
+	if tween and tween.is_running():
+		tween.kill()
+
+	tween = get_tree().create_tween()
+	inventory_open = !inventory_open
+	
+	var target_position: Vector2
+	if inventory_open:
+		target_position = original_inventory_position
+		$AudioStreamPlayer2D.stream = load("res://assets/sounds/click.wav")
+		$AudioStreamPlayer2D.play()
+	else:
+		target_position = original_inventory_position - Vector2(1000, 0)
+		$AudioStreamPlayer2D.stream = load("res://assets/sounds/click1.wav")
+		$AudioStreamPlayer2D.play()
+		
+	tween.tween_property(inventory, "position", target_position, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
 func _process_input(delta) -> void:
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
+
+	if Input.is_action_just_pressed("open_inventory"):
+		toggle_inventory()
+	if inventory_open:
+		update_inventory()
 
 	var velocity_length = velocity.length_squared()
 	if velocity_length > 0:

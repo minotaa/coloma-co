@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://blud2wgmaud15"]
+
+[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_53sba"]
+[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_qu4uu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5r6wv"]
+atlas = ExtResource("1_53sba")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="LabelSettings" id="LabelSettings_7y1c0"]
+font = ExtResource("2_qu4uu")
+font_size = 22
+
+[node name="Inventory Entry" type="Control"]
+custom_minimum_size = Vector2(208, 28)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 28.0
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_5r6wv")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "2x Stone"
+label_settings = SubResource("LabelSettings_7y1c0")
