@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://bojcm7ig3qwff"]
+
+[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_m4l8u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k0gt4"]
+atlas = ExtResource("1_m4l8u")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_iuwxt"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 1.0
+angle_min = -45.0
+angle_max = 45.0
+radial_velocity_min = -2.23517e-05
+radial_velocity_max = 25.0
+gravity = Vector3(0, 98, 0)
+scale_min = 0.25
+scale_max = 0.75
+collision_mode = 1
+collision_friction = 0.0
+collision_bounce = 1.0
+
+[node name="Breaking Particles" type="GPUParticles2D"]
+texture = SubResource("AtlasTexture_k0gt4")
+lifetime = 0.45
+explosiveness = 1.0
+randomness = 0.16
+process_material = SubResource("ParticleProcessMaterial_iuwxt")

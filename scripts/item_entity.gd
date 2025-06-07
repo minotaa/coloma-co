@@ -57,11 +57,14 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) -> void:
 	if body.is_in_group("players"):
+		print(body.bag.list)
 		if not body.bag.is_full():
 			print("Collided with player, emitting collect event.")
 			Items.emit_signal("collect_item", item)
 			queue_free()
 		else:
+			body.get_node("AudioStreamPlayer2D").stream = load("res://assets/sounds/error.wav")
+			body.get_node("AudioStreamPlayer2D").play()
 			Toast.add("Your inventory is full.")
 			var direction = (global_position - body.global_position).normalized()
 			apply_impulse(direction * PUSHBACK_FORCE)
@@ -79,6 +82,6 @@ func check_for_merge():
 
 func merge_with(other: Node):
 	if other is RigidBody2D and other.has_method("set_item"):
-		print("Merging items:", item.type.id)
+		print("Merging items: ", item.type.id)
 		item.amount += other.item.amount
 		other.queue_free()

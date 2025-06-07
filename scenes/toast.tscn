@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bx3tkakqhrm2f"]
 
-[ext_resource type="Script" path="res://scripts/toast_resource.gd" id="1_wdpxc"]
+[ext_resource type="Script" uid="uid://gvvdel06g6he" path="res://scripts/toast_resource.gd" id="1_wdpxc"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_nfg8w"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ssdqt"]

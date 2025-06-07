@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://dfxk8jp42y30"]
 
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_blohd"]
-[ext_resource type="Script" path="res://scripts/item_entity.gd" id="1_yhnqa"]
+[ext_resource type="Script" uid="uid://dg1fyti00uh7n" path="res://scripts/item_entity.gd" id="1_yhnqa"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="3_mwo5q"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jv2r6"]
