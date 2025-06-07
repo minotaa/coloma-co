@@ -5,6 +5,7 @@ signal toast_faded
 var is_counter := false
 
 func _ready():
+	position = Vector2(get_viewport_rect().size.x - $Label.get_rect().size.x - 10, 0)
 	await get_tree().process_frame
 
 	if not is_counter:
@@ -19,13 +20,13 @@ func update_text(text: String) -> void:
 func init(config: Dictionary) -> void:
 	update_text(config.text)
 
-	if config.text.begins_with("+") and config.text.ends_with("more"):
+	if config.text.ends_with("more..."):
 		is_counter = true
 
 func move_to(target_y: float) -> void:
 	await get_tree().process_frame  
 	var tween = get_tree().create_tween()
-	tween.tween_property(self, "position", Vector2(20, target_y), 0.3) \
+	tween.tween_property(self, "position", Vector2(get_viewport_rect().size.x - $Label.get_rect().size.x - 10, target_y), 0.3) \
 		.set_trans(Tween.TRANS_QUINT) \
 		.set_ease(Tween.EASE_OUT)
 

@@ -29,7 +29,7 @@ func add(text: String):
 
 		if excess_count > 0:
 			if counter_toast:
-				counter_toast.update_text("+%d more" % excess_count)
+				counter_toast.update_text("%d more..." % excess_count)
 			else:
 				_replace_last_toast_with_counter(excess_count)
 
@@ -53,7 +53,7 @@ func _replace_last_toast_with_counter(excess_count):
 	var counter_toast = toast_resource.instantiate()
 	canvas_layer.add_child(counter_toast)
 	toasts.append(counter_toast)
-	counter_toast.init({ "text": "+%d more" % excess_count })
+	counter_toast.init({ "text": "%d more..." % excess_count })
 	counter_toast.set_meta("is_counter", true)
 
 	counter_toast.disconnect("toast_faded", Callable(self, "_on_toast_removed"))
@@ -81,7 +81,7 @@ func _on_toast_removed(toast):
 	var counter_toast = _get_counter_toast()
 	if counter_toast:
 		if toast_queue.size() > 0:
-			counter_toast.update_text("+%d more" % toast_queue.size())
+			counter_toast.update_text("%d more..." % toast_queue.size())
 		else:
 			toasts.erase(counter_toast)
 			counter_toast.queue_free()
