@@ -63,6 +63,7 @@ func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, lo
 			Items.emit_signal("collect_item", item)
 			queue_free()
 		else:
+			body.get_node("AudioStreamPlayer2D").volume_db = 5.0
 			body.get_node("AudioStreamPlayer2D").stream = load("res://assets/sounds/error.wav")
 			body.get_node("AudioStreamPlayer2D").play()
 			Toast.add("Your inventory is full.")

@@ -32,6 +32,7 @@ func _ready() -> void:
 func collect_item(item: ItemStack) -> void:
 	Toast.add("Collected x" + str(item.amount) + " " + str(item.type.name))
 	bag.add_fragile_item(item)
+	$AudioStreamPlayer2D.volume_db = -12.5
 	$AudioStreamPlayer2D.stream = load("res://assets/sounds/pickup.wav")
 	$AudioStreamPlayer2D.play()
 
@@ -68,10 +69,12 @@ func toggle_inventory() -> void:
 	var target_position: Vector2
 	if inventory_open:
 		target_position = original_inventory_position
+		$AudioStreamPlayer2D.volume_db = 0.0
 		$AudioStreamPlayer2D.stream = load("res://assets/sounds/click.wav")
 		$AudioStreamPlayer2D.play()
 	else:
 		target_position = original_inventory_position - Vector2(1000, 0)
+		$AudioStreamPlayer2D.volume_db = 0.0
 		$AudioStreamPlayer2D.stream = load("res://assets/sounds/click1.wav")
 		$AudioStreamPlayer2D.play()
 		
