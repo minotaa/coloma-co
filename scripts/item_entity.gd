@@ -64,7 +64,7 @@ func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, lo
 			queue_free()
 		else:
 			body.get_node("AudioStreamPlayer2D").volume_db = 5.0
-			body.get_node("AudioStreamPlayer2D").stream = load("res://assets/sounds/error.wav")
+			body.get_node("AudioStreamPlayer2D").stream = load("res://assets/sounds/deny.wav")
 			body.get_node("AudioStreamPlayer2D").play()
 			Toast.add("Your inventory is full.")
 			var direction = (global_position - body.global_position).normalized()

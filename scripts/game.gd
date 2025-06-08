@@ -101,3 +101,4 @@ func _generate_world() -> void:
 				if pos.distance_to(Vector2i.ZERO) > safe_radius:
 					var tile_index := tiles[rng.randi() % tiles.size()]
 					place_tile(pos, tile_index)
+	tile_layer.set_cell(Vector2(0, 0), 1, Vector2(0, 0))

@@ -54,7 +54,7 @@ func play_idle_animation() -> void:
 	play_animation("idle_" + last_direction)
 	
 func update_inventory() -> void:
-	$UI/Main/Inventory/Label.text = "Inventory (" + str(bag.total_size()) + "/" + str(bag.get_max_capacity()) + ")"
+	$UI/Main/Inventory/Label.text = "Bag (" + str(bag.total_size()) + "/" + str(bag.get_max_capacity()) + ")"
 	for children in $UI/Main/Inventory/ScrollContainer/VBoxContainer.get_children():
 		children.queue_free()
 	for item_stack in bag.list:
@@ -140,7 +140,7 @@ func _physics_process(delta: float) -> void:
 	var mouse_pos = tilemap.local_to_map(tilemap.get_local_mouse_position())
 	var tile_data = tilemap.get_cell_tile_data(mouse_pos)
 
-	if tile_data and not nearby_tiles.has(mouse_pos) and Input.is_action_just_pressed("mine"):
+	if tile_data and tile_data.get_custom_data("mineable") == true and not nearby_tiles.has(mouse_pos) and Input.is_action_just_pressed("mine"):
 		Toast.add("Too far away.")
 
 	# ✅ Restart mining if still holding button and over a new valid tile
@@ -207,6 +207,9 @@ func reset_mining():
 		breaking_particles = null
 
 func mine_tile(tile_coords: Vector2i):
+	$AudioStreamPlayer2D.volume_db = 0.0
+	$AudioStreamPlayer2D.stream = load("res://assets/sounds/break.wav")
+	$AudioStreamPlayer2D.play()
 	var tile_data = tilemap.get_cell_tile_data(tile_coords)
 	if tile_data:
 		var tile_id = tile_data.get_custom_data("tile_id")

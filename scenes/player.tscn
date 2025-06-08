@@ -439,10 +439,10 @@ layout_mode = 2
 
 [node name="Time" type="Control" parent="UI/Main"]
 anchors_preset = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 144.0
-offset_bottom = 40.0
+offset_left = 16.0
+offset_top = 15.0
+offset_right = 152.0
+offset_bottom = 47.0
 
 [node name="Panel" type="Panel" parent="UI/Main/Time"]
 layout_mode = 1
