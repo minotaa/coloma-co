@@ -3,7 +3,7 @@ extends RigidBody2D
 @export var attraction_radius: float = 20.0
 @export var attraction_force: float = 90.0 
 
-@export var merge_radius: float = 10.0
+@export var merge_radius: float = 32.0
 @export var merge_check_interval: float = 0.5
 
 @export var PUSHBACK_DURATION: float = 0.5

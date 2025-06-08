@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var map_size: Vector2i = Vector2i(25, 25)
+@export var map_size: Vector2i = Vector2i(100, 100)
 @export var tiles: Array[int] = [1, 2]
 @export var scatter_chance: float = 0.1
 var rng = RandomNumberGenerator.new()

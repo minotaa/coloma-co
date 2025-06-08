@@ -38,7 +38,7 @@ func _ready() -> void:
 	$UI/Main/Inventory.position -= Vector2(1000, 0)
 	
 func collect_item(item: ItemStack) -> void:
-	Toast.add("Collected x" + str(item.amount) + " " + str(item.type.name))
+	Toast.add("Collected " + str(item.amount) + "x " + str(item.type.name))
 	bag.add_fragile_item(item)
 	$AudioStreamPlayer2D.volume_db = -12.5
 	$AudioStreamPlayer2D.stream = load("res://assets/sounds/pickup.wav")
@@ -87,7 +87,7 @@ func toggle_inventory() -> void:
 		$AudioStreamPlayer2D.play()
 		
 	tween.tween_property(inventory, "position", target_position, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	
+
 func _process_input(delta) -> void:
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 
@@ -228,7 +228,7 @@ func _on_body_shape_entered(body_rid: RID, body: Node2D, body_shape_index: int, 
 			nearby_tiles.append(tile_coords)
 
 func _on_body_shape_exited(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
-	if body is TileMapLayer and body_rid != null:
+	if body and body is TileMapLayer and body_rid != null:
 		var tile_coords = tilemap.get_coords_for_body_rid(body_rid)
 		if tile_coords != null and tile_coords in nearby_tiles:
 			nearby_tiles.erase(tile_coords)
