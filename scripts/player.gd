@@ -131,6 +131,7 @@ func clamp_player_position(player_pos: Vector2) -> Vector2:
 	return player_pos
 
 func _physics_process(delta: float) -> void:
+	$UI/Main/Time/Label.text = get_parent().get_game_time_string()
 	position = clamp_player_position(position)
 	
 	_process_input(delta)
