@@ -469,6 +469,32 @@ text = "00:00 PM"
 label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 
+[node name="Home" type="Control" parent="UI/Main"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -232.0
+offset_right = 312.0
+offset_bottom = 232.0
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="UI/Main/Home"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+current_tab = 0
+
+[node name="Crafting" type="Control" parent="UI/Main/Home/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
 [connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_body_exited"]
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]

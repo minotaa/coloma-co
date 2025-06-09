@@ -34,7 +34,7 @@ texture = ExtResource("3_0cso3")
 0:0/size_in_atlas = Vector2i(3, 2)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-17.2664, -9.89223, -5.2159, -10.0721, -2.23356, -8, 0.203051, -11.0155, 4.26407, -10.8125, 4.56865, -9.08654, 22.1326, -8.98501, 21.828, 9.69569, 19.2449, 12.2304, -22.8421, 12.5901, -22.7417, 5.27933, -15.7365, -1.82746, -16.9067, -2.1583)
-0:0/0/custom_data_1 = -1
+0:0/0/custom_data_1 = 2
 0:0/0/custom_data_2 = 9999.0
 
 [sub_resource type="TileSet" id="TileSet_vt6tk"]

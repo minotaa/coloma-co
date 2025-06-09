@@ -19,8 +19,9 @@ var mining_progress = 0.0
 var mining_time = 0.0
 var is_mining = false
 var original_inventory_position: Vector2
-var tween: Tween
+var original_home_position: Vector2 
 var inventory_open: bool = false
+var home_open: bool = false
 
 var bag = Bag.new()
 
@@ -35,7 +36,9 @@ func _ready() -> void:
 	
 	Items.connect("collect_item", collect_item)
 	original_inventory_position = $UI/Main/Inventory.position
+	original_home_position = $UI/Main/Home.position
 	$UI/Main/Inventory.position -= Vector2(1000, 0)
+	$UI/Main/Home.position -= Vector2(1000, 0)
 	
 func collect_item(item: ItemStack) -> void:
 	Toast.add("Collected " + str(item.amount) + "x " + str(item.type.name))
@@ -63,11 +66,42 @@ func update_inventory() -> void:
 		entry.get_node("HBoxContainer").get_node("TextureRect").texture = item_stack.type.texture
 		$UI/Main/Inventory/ScrollContainer/VBoxContainer.add_child(entry)
 	
+func update_home() -> void:
+	pass
+	
+func toggle_home() -> void:
+	var home = $UI/Main/Home
+	update_home()
+	
+	var tween: Tween
+	if tween and tween.is_running():
+		tween.kill()
+
+	tween = get_tree().create_tween()
+	home_open = !home_open
+	
+	var target_position: Vector2
+	if home_open:
+		target_position = original_home_position
+		$AudioStreamPlayer2D.volume_db = 0.0
+		$AudioStreamPlayer2D.stream = load("res://assets/sounds/click.wav")
+		$AudioStreamPlayer2D.play()
+	else:
+		target_position = original_home_position - Vector2(1000, 0)
+		$AudioStreamPlayer2D.volume_db = 0.0
+		$AudioStreamPlayer2D.stream = load("res://assets/sounds/click1.wav")
+		$AudioStreamPlayer2D.play()
+		
+	tween.tween_property(home, "position", target_position, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	
 func toggle_inventory() -> void:
+	if home_open:
+		$UI/Main/Inventory.position = original_inventory_position - Vector2(1000, 0)
 	var inventory = $UI/Main/Inventory
 	update_inventory()
 	
-
+	var tween: Tween
 	if tween and tween.is_running():
 		tween.kill()
 
@@ -91,7 +125,7 @@ func toggle_inventory() -> void:
 func _process_input(delta) -> void:
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 
-	if Input.is_action_just_pressed("open_inventory"):
+	if Input.is_action_just_pressed("open_inventory") and not home_open:
 		toggle_inventory()
 	if inventory_open:
 		update_inventory()
@@ -139,6 +173,12 @@ func _physics_process(delta: float) -> void:
 
 	var mouse_pos = tilemap.local_to_map(tilemap.get_local_mouse_position())
 	var tile_data = tilemap.get_cell_tile_data(mouse_pos)
+	
+	if tile_data and tile_data.get_custom_data("tile_id") == 2 and nearby_tiles.has(mouse_pos) and Input.is_action_just_pressed("mine"):
+		print("Opened home GUI.")
+		toggle_home()
+		if inventory_open:
+			toggle_inventory()
 
 	if tile_data and tile_data.get_custom_data("mineable") == true and not nearby_tiles.has(mouse_pos) and Input.is_action_just_pressed("mine"):
 		Toast.add("Too far away.")
@@ -228,7 +268,7 @@ func _on_body_shape_entered(body_rid: RID, body: Node2D, body_shape_index: int, 
 	if body is TileMapLayer:
 		var tile_coords: Vector2i = tilemap.get_coords_for_body_rid(body_rid)
 		var tile_data = tilemap.get_cell_tile_data(tile_coords)
-		if tile_data and tile_data.get_custom_data("mineable"):
+		if tile_data and (tile_data.get_custom_data("tile_id") or tile_data.get_custom_data("mineable")):
 			nearby_tiles.append(tile_coords)
 
 func _on_body_shape_exited(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
