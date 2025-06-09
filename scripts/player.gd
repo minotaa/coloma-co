@@ -124,7 +124,9 @@ func toggle_inventory() -> void:
 
 func _process_input(delta) -> void:
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
-
+	if home_open:
+		velocity = Vector2.ZERO
+	
 	if Input.is_action_just_pressed("open_inventory") and not home_open:
 		toggle_inventory()
 	if inventory_open:
