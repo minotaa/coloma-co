@@ -16,13 +16,26 @@ var knockback_friction := 800.0
 var hit_cooldown = 0.0
 var max_hit_cooldown = 0.35
 
-const SPEED = 75.0
+const SPEED = 95.0
 var max_health = 100.0
 var health = 100.0
 var damage = 25
 var strength = 0
 var sword_reach := 1.35  # Base reach
 var bag = Bag.new()
+
+@onready var bombrat_counter := $"UI/Main/Bombrat Counter/Label"
+
+func _process(delta):
+	var count := 0
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy.entity.id == 1:
+			count += 1
+	
+	bombrat_counter.visible = count > 0
+	if count > 0:
+		bombrat_counter.text = "Bombrats left: %d" % count
+
 
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0:

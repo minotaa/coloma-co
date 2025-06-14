@@ -11,9 +11,9 @@ const SPEED = 4.0
 var entity = Entity.new()
 
 func _ready() -> void:
-	entity.health = 500.0
-	entity.max_health = 500.0
-	entity.defense = 10.0
+	entity.health = 550.0
+	entity.max_health = 550.0
+	entity.defense = 0.0
 	entity.name = "Bombrat"
 	entity.id = 1
 	Entities.add_entity(entity)
