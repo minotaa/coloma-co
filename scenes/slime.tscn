@@ -1,0 +1,81 @@
+[gd_scene load_steps=13 format=3 uid="uid://dkm4wygcrnihe"]
+
+[ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_n6pvg"]
+[ext_resource type="Script" uid="uid://bsxa0cvxuagjl" path="res://scripts/slime.gd" id="1_p2gj0"]
+[ext_resource type="Texture2D" uid="uid://b18eyd8gedh77" path="res://assets/sprites/slime.png" id="2_n6pvg"]
+[ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_pjw23"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
+shader = ExtResource("1_n6pvg")
+shader_parameter/shock_color = Color(1, 0, 0, 1)
+shader_parameter/amplitude = 30.0
+shader_parameter/frequecy = 10.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pjw23"]
+atlas = ExtResource("2_n6pvg")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2npkn"]
+atlas = ExtResource("2_n6pvg")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fd6lc"]
+atlas = ExtResource("2_n6pvg")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gstla"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pjw23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2npkn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fd6lc")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_v5wyi"]
+radius = 6.0
+
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_0l8pv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_n6pvg"]
+radius = 6.0
+
+[node name="Slime" type="CharacterBody2D" groups=["enemies"]]
+material = SubResource("ShaderMaterial_pjw23")
+collision_layer = 6
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("1_p2gj0")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, 3)
+texture = ExtResource("3_pjw23")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_gstla")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_v5wyi")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamPolyphonic_0l8pv")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_n6pvg")

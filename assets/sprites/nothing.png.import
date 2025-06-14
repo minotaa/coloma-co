@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dlg2q575tlgak"
-path="res://.godot/imported/pickaxe-cursor.png-d9977b331316117a17d9112b5eaa69a1.ctex"
+uid="uid://dyjdsjgec641d"
+path="res://.godot/imported/nothing.png-4b52ed4efd3b3642fc41833062940369.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pickaxe-cursor.png"
-dest_files=["res://.godot/imported/pickaxe-cursor.png-d9977b331316117a17d9112b5eaa69a1.ctex"]
+source_file="res://assets/sprites/nothing.png"
+dest_files=["res://.godot/imported/nothing.png-4b52ed4efd3b3642fc41833062940369.ctex"]
 
 [params]
 

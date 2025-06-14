@@ -1,18 +1,17 @@
-[gd_scene load_steps=56 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=76 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
-[ext_resource type="Texture2D" uid="uid://cf2hknae6eb3u" path="res://assets/sprites/spaceman-down.png" id="2_py00a"]
-[ext_resource type="Texture2D" uid="uid://bxgfptwfa675a" path="res://assets/sprites/spaceman-left.png" id="3_dmfgu"]
-[ext_resource type="Texture2D" uid="uid://xci6bwpahuq1" path="res://assets/sprites/spaceman-right.png" id="4_6qbqg"]
-[ext_resource type="Texture2D" uid="uid://skhr0go65u1a" path="res://assets/sprites/spaceman-up.png" id="5_bglcd"]
-[ext_resource type="Texture2D" uid="uid://cugxlk646lqq8" path="res://assets/sprites/pickaxe-cursor.png" id="6_ont5f"]
-[ext_resource type="Theme" uid="uid://c11leby2o82ok" path="res://assets/theme.tres" id="8_jtt8e"]
-[ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="9_6440i"]
+[ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
+[ext_resource type="Texture2D" uid="uid://clf1l0ona4m7k" path="res://assets/sprites/player-down.png" id="2_py00a"]
+[ext_resource type="Texture2D" uid="uid://dyhdb2iwitv0o" path="res://assets/sprites/player-left.png" id="3_dmfgu"]
+[ext_resource type="Texture2D" uid="uid://cckamhtmtr2h7" path="res://assets/sprites/player-right.png" id="4_6qbqg"]
+[ext_resource type="Texture2D" uid="uid://1r4ncvr4wx56" path="res://assets/sprites/player-up.png" id="5_bglcd"]
+[ext_resource type="Texture2D" uid="uid://cin2qeaggkuun" path="res://assets/sprites/sword-down.png" id="6_d2wvv"]
+[ext_resource type="Texture2D" uid="uid://coffk0valdks0" path="res://assets/sprites/sword-left.png" id="7_3v2ag"]
+[ext_resource type="Texture2D" uid="uid://p7et2h1apdb7" path="res://assets/sprites/sword-right.png" id="8_jej6c"]
+[ext_resource type="Texture2D" uid="uid://cll1oqbv8sq74" path="res://assets/sprites/sword-up.png" id="9_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://bs4bxx026a2bg" path="res://assets/sprites/light.png" id="9_fnujr"]
-[ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="10_8swnt"]
-[ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="11_vurot"]
-[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="12_3v2ag"]
-[ext_resource type="PackedScene" uid="uid://blud2wgmaud15" path="res://scenes/inventory_entry.tscn" id="13_jej6c"]
+[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="11_d2wvv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_getcb"]
 atlas = ExtResource("2_py00a")
@@ -29,6 +28,70 @@ region = Rect2(0, 0, 16, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_6fekk"]
 atlas = ExtResource("5_bglcd")
 region = Rect2(0, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oprun"]
+atlas = ExtResource("6_d2wvv")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8ls1"]
+atlas = ExtResource("6_d2wvv")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qfm1y"]
+atlas = ExtResource("6_d2wvv")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fulsm"]
+atlas = ExtResource("6_d2wvv")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4r5pv"]
+atlas = ExtResource("7_3v2ag")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_60mlk"]
+atlas = ExtResource("7_3v2ag")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i4ail"]
+atlas = ExtResource("7_3v2ag")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a38lo"]
+atlas = ExtResource("7_3v2ag")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ni07"]
+atlas = ExtResource("8_jej6c")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l71n6"]
+atlas = ExtResource("8_jej6c")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ke2ow"]
+atlas = ExtResource("8_jej6c")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ujl30"]
+atlas = ExtResource("8_jej6c")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_31cv2"]
+atlas = ExtResource("9_f1ej7")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pf23h"]
+atlas = ExtResource("9_f1ej7")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dt7fs"]
+atlas = ExtResource("9_f1ej7")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqfne"]
+atlas = ExtResource("9_f1ej7")
+region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q0rub"]
 atlas = ExtResource("2_py00a")
@@ -194,6 +257,74 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_oprun")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8ls1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qfm1y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fulsm")
+}],
+"loop": false,
+"name": &"sword_down",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4r5pv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_60mlk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i4ail")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a38lo")
+}],
+"loop": false,
+"name": &"sword_left",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ni07")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l71n6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ke2ow")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ujl30")
+}],
+"loop": false,
+"name": &"sword_right",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_31cv2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pf23h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dt7fs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wqfne")
+}],
+"loop": false,
+"name": &"sword_up",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_q0rub")
 }, {
 "duration": 1.0,
@@ -309,28 +440,55 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6w26g"]
-size = Vector2(6, 13)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_y4r1p"]
+radius = 3.0
+height = 15.5
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y4r1p"]
+size = Vector2(58, 20.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d2wvv"]
+size = Vector2(58, 20.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3v2ag"]
+size = Vector2(20.5, 58)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jej6c"]
+size = Vector2(20.5, 58)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_esh0l"]
 radius = 48.0
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_d2wvv"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_jej6c"]
-font = ExtResource("12_3v2ag")
-font_size = 22
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3v2ag"]
+bg_color = Color(0.0253638, 0.0253638, 0.0253638, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jej6c"]
+bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
 
 [sub_resource type="LabelSettings" id="LabelSettings_f1ej7"]
-font = ExtResource("12_3v2ag")
+font = ExtResource("11_d2wvv")
 font_size = 22
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 z_index = 2
 texture_filter = 1
-collision_mask = 14
+collision_mask = 11
 motion_mode = 1
 script = ExtResource("1_oxdyo")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, 3)
+texture = ExtResource("2_3v2ag")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
@@ -338,8 +496,8 @@ sprite_frames = SubResource("SpriteFrames_u8hee")
 animation = &"walk_up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 1)
-shape = SubResource("RectangleShape2D_6w26g")
+position = Vector2(0, -0.75)
+shape = SubResource("CapsuleShape2D_y4r1p")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5, 5)
@@ -350,7 +508,30 @@ position_smoothing_speed = 12.0
 visible = false
 position = Vector2(-101, -53)
 scale = Vector2(0.0277778, 0.0277778)
-texture = ExtResource("6_ont5f")
+
+[node name="SwordHbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 6
+
+[node name="up" type="CollisionShape2D" parent="SwordHbox"]
+position = Vector2(0, -20)
+shape = SubResource("RectangleShape2D_y4r1p")
+disabled = true
+
+[node name="down" type="CollisionShape2D" parent="SwordHbox"]
+position = Vector2(0, 20)
+shape = SubResource("RectangleShape2D_d2wvv")
+disabled = true
+
+[node name="right" type="CollisionShape2D" parent="SwordHbox"]
+position = Vector2(20, 0)
+shape = SubResource("RectangleShape2D_3v2ag")
+disabled = true
+
+[node name="left" type="CollisionShape2D" parent="SwordHbox"]
+position = Vector2(-20, 0)
+shape = SubResource("RectangleShape2D_jej6c")
+disabled = true
 
 [node name="Area2D" type="Area2D" parent="."]
 
@@ -377,124 +558,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ProgressBar" type="TextureProgressBar" parent="UI/Main"]
-visible = false
-layout_mode = 0
-offset_right = 152.0
-offset_bottom = 24.0
-scale = Vector2(3, 3)
-theme = ExtResource("8_jtt8e")
-fill_mode = 4
-texture_under = ExtResource("9_6440i")
-texture_over = ExtResource("10_8swnt")
-texture_progress = ExtResource("11_vurot")
-
-[node name="Inventory" type="Control" parent="UI/Main"]
+[node name="HealthBar" type="ProgressBar" parent="UI/Main"]
 layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 16.0
-offset_top = -232.0
-offset_right = 312.0
-offset_bottom = 232.0
-grow_vertical = 2
-
-[node name="Panel" type="Panel" parent="UI/Main/Inventory"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 2
+anchor_top = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="UI/Main/Inventory"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -63.0
-offset_top = 16.0
-offset_right = 63.0
-offset_bottom = 44.0
-grow_horizontal = 2
-text = "Inventory (0/25)"
-label_settings = SubResource("LabelSettings_jej6c")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Inventory"]
-layout_mode = 0
 offset_left = 16.0
-offset_top = 48.0
-offset_right = 224.0
-offset_bottom = 448.0
+offset_top = -56.0
+offset_right = 392.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_3v2ag")
+theme_override_styles/fill = SubResource("StyleBoxFlat_jej6c")
+show_percentage = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Inventory/ScrollContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="Inventory Entry" parent="UI/Main/Inventory/ScrollContainer/VBoxContainer" instance=ExtResource("13_jej6c")]
-layout_mode = 2
-
-[node name="Time" type="Control" parent="UI/Main"]
-anchors_preset = 0
-offset_left = 16.0
-offset_top = 15.0
-offset_right = 152.0
-offset_bottom = 47.0
-
-[node name="Panel" type="Panel" parent="UI/Main/Time"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="UI/Main/Time"]
+[node name="Label" type="Label" parent="UI/Main/HealthBar"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -56.0
-offset_top = -14.0
-offset_right = 56.0
-offset_bottom = 14.0
+offset_left = -32.0
+offset_top = -10.5
+offset_right = 32.0
+offset_bottom = 10.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "00:00 PM"
+text = "22/100"
 label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Home" type="Control" parent="UI/Main"]
-texture_filter = 1
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 16.0
-offset_top = -232.0
-offset_right = 312.0
-offset_bottom = 232.0
-grow_vertical = 2
-
-[node name="TabContainer" type="TabContainer" parent="UI/Main/Home"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 22
-current_tab = 0
-
-[node name="Crafting" type="Control" parent="UI/Main/Home/TabContainer"]
-layout_mode = 2
-metadata/_tab_index = 0
-
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
+[connection signal="body_entered" from="SwordHbox" to="." method="_on_sword_hbox_entered"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_body_exited"]
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]

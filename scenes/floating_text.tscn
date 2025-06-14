@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://ccfj8glgxc0w7"]
+
+[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="1_vqah5"]
+[ext_resource type="Script" uid="uid://b1it01wpadifw" path="res://scripts/floating_text.gd" id="2_ki2nc"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_27d3m"]
+font = ExtResource("1_vqah5")
+font_size = 11
+outline_color = Color(0, 0, 0, 1)
+shadow_color = Color(0, 0, 0, 0.8)
+
+[node name="Floating Text" type="Label"]
+offset_right = 23.0
+offset_bottom = 14.0
+scale = Vector2(0.5, 0.5)
+text = "100"
+label_settings = SubResource("LabelSettings_27d3m")
+script = ExtResource("2_ki2nc")

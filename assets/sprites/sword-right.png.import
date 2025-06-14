@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dlg2q575tlgak"
-path="res://.godot/imported/pickaxe-cursor.png-d9977b331316117a17d9112b5eaa69a1.ctex"
+uid="uid://p7et2h1apdb7"
+path="res://.godot/imported/sword-right.png-45d784c812bcaa88b25c83887d60e758.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pickaxe-cursor.png"
-dest_files=["res://.godot/imported/pickaxe-cursor.png-d9977b331316117a17d9112b5eaa69a1.ctex"]
+source_file="res://assets/sprites/sword-right.png"
+dest_files=["res://.godot/imported/sword-right.png-45d784c812bcaa88b25c83887d60e758.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dlg2q575tlgak"
-path="res://.godot/imported/pickaxe-cursor.png-d9977b331316117a17d9112b5eaa69a1.ctex"
+uid="uid://cvxq0jf1abijc"
+path="res://.godot/imported/bombrat-left.png-d0d575d0e836cdb3ef34d8f3867b632c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pickaxe-cursor.png"
-dest_files=["res://.godot/imported/pickaxe-cursor.png-d9977b331316117a17d9112b5eaa69a1.ctex"]
+source_file="res://assets/sprites/bombrat-left.png"
+dest_files=["res://.godot/imported/bombrat-left.png-d0d575d0e836cdb3ef34d8f3867b632c.ctex"]
 
 [params]
 
