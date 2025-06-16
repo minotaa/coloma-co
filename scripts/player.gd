@@ -21,21 +21,29 @@ var max_health = 100.0
 var health = 100.0
 var damage = 25
 var strength = 0
-var sword_reach := 1.35  # Base reach
+var sword_reach := 1.4  # Base reach
+var gold: int = 0
+
 var bag = Bag.new()
 
-@onready var bombrat_counter := $"UI/Main/Bombrat Counter/Label"
+@onready var bombrat_counter := $UI/Main/Board/Bombrats
 
-func _process(delta):
-	var count := 0
-	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1:
-			count += 1
-	
-	bombrat_counter.visible = count > 0
-	if count > 0:
-		bombrat_counter.text = "Bombrats left: %d" % count
+func _enter_tree() -> void:
+	if multiplayer.has_multiplayer_peer():
+		set_multiplayer_authority(name.to_int())
 
+func _ready() -> void:	
+	if multiplayer.has_multiplayer_peer():
+		set_multiplayer_authority(name.to_int())
+		for player in NetworkManager.players:
+			if player["id"] == name.to_int():
+				$Username.text = player["username"]
+		$Username.visible = true
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		$UI.visible = false
+		$PointLight2D.visible = false
+	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+		$Camera2D.make_current()
 
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0:
@@ -72,7 +80,7 @@ func show_floating_text(amount: int, center_position: Vector2):
 	var floating_text = floating_text_scene.instantiate()
 	floating_text.text = str(amount)
 	(floating_text as Label).label_settings.font_color = Color.RED
-	get_parent().add_child(floating_text)
+	$"..".add_child(floating_text)
 
 	var random_offset = Vector2(
 		randi_range(-8, 8),
@@ -82,6 +90,8 @@ func show_floating_text(amount: int, center_position: Vector2):
 
 func _process_input(delta) -> void:
 	# Handle movement input
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		return
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 	var velocity_length = velocity.length_squared()
 	var is_moving = velocity_length > 0
@@ -174,9 +184,10 @@ func _disable_all_sword_hitboxes() -> void:
 
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
-	$UI/Main/HealthBar.max_value = max_health
-	$UI/Main/HealthBar.value = health
-	$UI/Main/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
+	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
+		$UI/Main/HealthBar.max_value = max_health
+		$UI/Main/HealthBar.value = health
+		$UI/Main/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	_process_input(delta)
 	if sword_hitbox_active:
@@ -190,6 +201,16 @@ func _physics_process(delta: float) -> void:
 			sword_hitbox_active = false
 			hit_enemies.clear()
 			_disable_all_sword_hitboxes()
+	var count := 0
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy.entity.id == 1:
+			count += 1
+	if count > 0:
+		bombrat_counter.text = "Bombrats left: %d" % count
+
+	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
+		$UI/Main/Board/Wave.text = "Wave: " + str(get_parent().wave)
+		$UI/Main/Board/Gold.text = "Gold: " + str(gold)
 
 func _animation_finished() -> void:
 	if $AnimatedSprite2D.animation.begins_with("sword_"):

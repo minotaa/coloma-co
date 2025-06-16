@@ -38,7 +38,7 @@ func show_floating_text(amount: int, center_position: Vector2):
 	var floating_text = floating_text_scene.instantiate()
 	floating_text.text = str(amount)
 	(floating_text as Label).label_settings.font_color = Color.WHITE
-	get_parent().add_child(floating_text)
+	$"..".add_child(floating_text, true)
 
 	var random_offset = Vector2(
 		randi_range(-8, 8),
@@ -78,6 +78,7 @@ func _physics_process(delta: float) -> void:
 		global_position += knockback_velocity * delta
 		knockback_timer -= delta
 		sprite.position.y = 0  # Reset vertical bobbing during knockback
+		hop_timer = HOP_INTERVAL
 		return  # Skip normal hopping behavior while knocked back
 
 	if not is_hopping:

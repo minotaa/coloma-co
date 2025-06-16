@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="Coloma Co."
-run/main_scene="res://scenes/map.tscn"
+config/version="1"
+run/main_scene="uid://bow6ppc3d127l"
 config/features=PackedStringArray("4.4", "Mobile")
 run/max_fps=60
 boot_splash/bg_color=Color(0.803922, 0.635294, 0.568627, 1)
@@ -26,6 +27,7 @@ Toast="*res://scripts/toastmanager.gd"
 Tiles="*res://scripts/types/tiles.gd"
 Entities="*res://scripts/types/entities.gd"
 Items="*res://scripts/types/items.gd"
+NetworkManager="*res://scripts/network_manager.gd"
 
 [display]
 
@@ -93,6 +95,11 @@ open_inventory={
 2d_physics/layer_2="mobs"
 2d_physics/layer_3="ephemeral"
 2d_physics/layer_4="gem"
+
+[network]
+
+limits/packet_peer_stream/max_buffer_po2=512
+packet_peer_stream/max_channels=true
 
 [physics]
 

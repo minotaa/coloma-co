@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://bfnnju2fwq13d"]
+[gd_scene load_steps=30 format=3 uid="uid://bfnnju2fwq13d"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_hebxe"]
 [ext_resource type="Script" uid="uid://dbkhpbgs1cksc" path="res://scripts/bombrat.gd" id="2_svhan"]
@@ -12,86 +12,87 @@
 shader = ExtResource("1_hebxe")
 shader_parameter/shock_color = Color(1, 0, 0, 1)
 shader_parameter/amplitude = 30.0
-shader_parameter/frequecy = 10.0
+shader_parameter/frequency = 10.0
+shader_parameter/shock_time = 0.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_so7ov"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_hebxe"]
 atlas = ExtResource("4_7vwjr")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(0, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_v3g5b"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_svhan"]
 atlas = ExtResource("4_7vwjr")
-region = Rect2(32, 0, 32, 32)
+region = Rect2(16, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_74tc2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_aft4d"]
 atlas = ExtResource("4_7vwjr")
-region = Rect2(64, 0, 32, 32)
+region = Rect2(32, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wsagu"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_7vwjr"]
 atlas = ExtResource("4_7vwjr")
-region = Rect2(96, 0, 32, 32)
+region = Rect2(48, 0, 16, 17)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qm7hw"]
+atlas = ExtResource("5_qm7hw")
+region = Rect2(0, 0, 16, 17)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ucap"]
+atlas = ExtResource("5_qm7hw")
+region = Rect2(16, 0, 16, 17)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8hrx"]
+atlas = ExtResource("5_qm7hw")
+region = Rect2(32, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vtmst"]
 atlas = ExtResource("5_qm7hw")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(48, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8pl1a"]
-atlas = ExtResource("5_qm7hw")
-region = Rect2(32, 0, 32, 32)
+atlas = ExtResource("6_0ucap")
+region = Rect2(0, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_csxp0"]
-atlas = ExtResource("5_qm7hw")
-region = Rect2(64, 0, 32, 32)
+atlas = ExtResource("6_0ucap")
+region = Rect2(16, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0cfbm"]
-atlas = ExtResource("5_qm7hw")
-region = Rect2(96, 0, 32, 32)
+atlas = ExtResource("6_0ucap")
+region = Rect2(32, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kb7tu"]
 atlas = ExtResource("6_0ucap")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(48, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vum1g"]
-atlas = ExtResource("6_0ucap")
-region = Rect2(32, 0, 32, 32)
+atlas = ExtResource("7_a8hrx")
+region = Rect2(0, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1kpmd"]
-atlas = ExtResource("6_0ucap")
-region = Rect2(64, 0, 32, 32)
+atlas = ExtResource("7_a8hrx")
+region = Rect2(16, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6744l"]
-atlas = ExtResource("6_0ucap")
-region = Rect2(96, 0, 32, 32)
+atlas = ExtResource("7_a8hrx")
+region = Rect2(32, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aew5s"]
 atlas = ExtResource("7_a8hrx")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xalga"]
-atlas = ExtResource("7_a8hrx")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x2nd0"]
-atlas = ExtResource("7_a8hrx")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7cg86"]
-atlas = ExtResource("7_a8hrx")
-region = Rect2(96, 0, 32, 32)
+region = Rect2(48, 0, 16, 17)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_iw53l"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_so7ov")
+"texture": SubResource("AtlasTexture_hebxe")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_v3g5b")
+"texture": SubResource("AtlasTexture_svhan")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_74tc2")
+"texture": SubResource("AtlasTexture_aft4d")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wsagu")
+"texture": SubResource("AtlasTexture_7vwjr")
 }],
 "loop": true,
 "name": &"bombrat-down",
@@ -99,8 +100,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_vtmst")
+"texture": SubResource("AtlasTexture_qm7hw")
 }, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ucap")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8hrx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vtmst")
+}],
+"loop": true,
+"name": &"bombrat-left",
+"speed": 5.0
+}, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_8pl1a")
 }, {
@@ -109,15 +124,15 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0cfbm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kb7tu")
 }],
 "loop": true,
-"name": &"bombrat-left",
+"name": &"bombrat-right",
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kb7tu")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vum1g")
 }, {
@@ -126,23 +141,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6744l")
-}],
-"loop": true,
-"name": &"bombrat-right",
-"speed": 5.0
 }, {
-"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_aew5s")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xalga")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x2nd0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7cg86")
 }],
 "loop": true,
 "name": &"bombrat-up",
@@ -157,6 +158,23 @@ radius = 6.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_n6pvg"]
 radius = 6.0
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_hebxe"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("AnimatedSprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("AnimatedSprite2D:frame")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:modulate:a")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath("AnimatedSprite2D:material")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+
 [node name="Bombrat" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 6
@@ -169,9 +187,8 @@ position = Vector2(0, 3)
 texture = ExtResource("3_aft4d")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_iw53l")
-animation = &"bombrat-up"
+animation = &"bombrat-down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
@@ -184,8 +201,11 @@ stream = SubResource("AudioStreamPolyphonic_0l8pv")
 
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 2
-collision_mask = 7
+collision_mask = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 position = Vector2(0, 2)
 shape = SubResource("CircleShape2D_n6pvg")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_hebxe")

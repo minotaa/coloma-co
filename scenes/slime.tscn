@@ -1,39 +1,40 @@
-[gd_scene load_steps=13 format=3 uid="uid://dkm4wygcrnihe"]
+[gd_scene load_steps=14 format=3 uid="uid://dkm4wygcrnihe"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_n6pvg"]
 [ext_resource type="Script" uid="uid://bsxa0cvxuagjl" path="res://scripts/slime.gd" id="1_p2gj0"]
-[ext_resource type="Texture2D" uid="uid://b18eyd8gedh77" path="res://assets/sprites/slime.png" id="2_n6pvg"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_pjw23"]
+[ext_resource type="Texture2D" uid="uid://g7stbhs0x2rv" path="res://assets/sprites/new-slime.png" id="4_pjw23"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
 shader = ExtResource("1_n6pvg")
 shader_parameter/shock_color = Color(1, 0, 0, 1)
 shader_parameter/amplitude = 30.0
-shader_parameter/frequecy = 10.0
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pjw23"]
-atlas = ExtResource("2_n6pvg")
-region = Rect2(0, 0, 32, 32)
+shader_parameter/frequency = 10.0
+shader_parameter/shock_time = 0.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2npkn"]
-atlas = ExtResource("2_n6pvg")
-region = Rect2(32, 0, 32, 32)
+atlas = ExtResource("4_pjw23")
+region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fd6lc"]
-atlas = ExtResource("2_n6pvg")
-region = Rect2(64, 0, 32, 32)
+atlas = ExtResource("4_pjw23")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gstla"]
+atlas = ExtResource("4_pjw23")
+region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_gstla"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_pjw23")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_2npkn")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fd6lc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gstla")
 }],
 "loop": true,
 "name": &"default",
@@ -48,6 +49,20 @@ radius = 6.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_n6pvg"]
 radius = 6.0
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_pjw23"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("AnimatedSprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("AnimatedSprite2D:frame")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath("Slime:modulate:a")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+
 [node name="Slime" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 6
@@ -60,7 +75,6 @@ position = Vector2(0, 3)
 texture = ExtResource("3_pjw23")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_gstla")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -79,3 +93,6 @@ collision_mask = 7
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 position = Vector2(0, 3)
 shape = SubResource("CircleShape2D_n6pvg")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_pjw23")

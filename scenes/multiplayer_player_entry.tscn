@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://bkcev63ddja1l"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xvryd"]
+font_size = 33
+
+[node name="Player" type="Control"]
+custom_minimum_size = Vector2(290, 64)
+layout_mode = 3
+anchor_right = 0.238
+anchor_bottom = 0.089
+offset_left = 1.0
+offset_right = 0.359985
+offset_bottom = -0.0800018
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Player"
+label_settings = SubResource("LabelSettings_xvryd")
+vertical_alignment = 1

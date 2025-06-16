@@ -1,12 +1,14 @@
 extends CharacterBody2D
 
-const SPEED = 4.0
+const SPEED = 6.0
 
 @onready var agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision: CollisionShape2D = $CollisionShape2D
 @onready var normal_material: Material = sprite.material
 @onready var shock_material = preload("res://scenes/shock.tres")
+
+var explosion_scene = preload("res://scenes/explosion.tscn")
 
 var entity = Entity.new()
 
@@ -20,21 +22,27 @@ func _ready() -> void:
 	sprite.play("bombrat-down")
 
 func die() -> void:
-	collision.disabled = true
+	$Hurtbox/CollisionShape2D.disabled = true
 	Entities.remove_entity(entity)
 	var tween = create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(Callable(self, "queue_free"))
 
 func explode() -> void:
-	for body in $Hurtbox.get_overlapping_bodies():
-		if body.is_in_group("gem"):
-			body.take_damage(0.10)  # 10% damage
+	print("exploded")
+	var explosion = explosion_scene.instantiate()
+	explosion.global_position = global_position
+	explosion.emitting = true
+	$"..".add_child(explosion, true)
+	for area in $Hurtbox.get_overlapping_areas():
+		if area.is_in_group("gem"):
+			area.take_damage(10.0)  # 10% damage
 	die()
 
 func _physics_process(delta: float) -> void:
-	for body in $Hurtbox.get_overlapping_bodies():
-		if body.is_in_group("gem"):
+	for area in $Hurtbox.get_overlapping_areas():
+		if area.is_in_group("gem"):
+			print("found gem")
 			explode()
 			return
 
@@ -53,7 +61,7 @@ func show_floating_text(amount: int, center_position: Vector2):
 	var floating_text = floating_text_scene.instantiate()
 	floating_text.text = str(amount)
 	(floating_text as Label).label_settings.font_color = Color.WHITE
-	get_parent().add_child(floating_text)
+	$"..".add_child(floating_text, true)
 
 	var random_offset = Vector2(
 		randi_range(-8, 8),

@@ -1,0 +1,347 @@
+[gd_scene load_steps=9 format=3 uid="uid://dej207wipn6fc"]
+
+[ext_resource type="Script" uid="uid://bdf37d301uotm" path="res://scripts/main_menu.gd" id="1_ekxnf"]
+[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_bqqt6"]
+[ext_resource type="PackedScene" uid="uid://bkcev63ddja1l" path="res://scenes/multiplayer_player_entry.tscn" id="3_bqqt6"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_wu84c"]
+font = ExtResource("2_bqqt6")
+font_size = 66
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_bqqt6"]
+font = ExtResource("2_bqqt6")
+font_size = 44
+
+[sub_resource type="LabelSettings" id="LabelSettings_8ln24"]
+font = ExtResource("2_bqqt6")
+font_size = 33
+
+[sub_resource type="LabelSettings" id="LabelSettings_ekxnf"]
+font = ExtResource("2_bqqt6")
+font_size = 33
+
+[sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]
+font = ExtResource("2_bqqt6")
+font_size = 22
+
+[node name="Main Menu" type="Node2D"]
+script = ExtResource("1_ekxnf")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Main" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -210.0
+offset_top = 56.0
+offset_right = 210.0
+offset_bottom = 140.0
+grow_horizontal = 2
+text = "Coloma Co."
+label_settings = SubResource("LabelSettings_wu84c")
+
+[node name="Subtitle" type="Label" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -224.0
+offset_top = 128.0
+offset_right = 224.0
+offset_bottom = 184.0
+grow_horizontal = 2
+text = "by Juan Pichardo"
+label_settings = SubResource("LabelSettings_bqqt6")
+
+[node name="Mode" type="Label" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -232.0
+offset_top = 279.0
+offset_right = 232.0
+offset_bottom = 335.0
+grow_horizontal = 2
+text = "-- select your mode--"
+label_settings = SubResource("LabelSettings_8ln24")
+horizontal_alignment = 1
+
+[node name="Version" type="Label" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -305.0
+offset_top = -64.0
+offset_right = -25.0
+offset_bottom = -22.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "v0"
+label_settings = SubResource("LabelSettings_ekxnf")
+horizontal_alignment = 2
+
+[node name="Buttons" type="Control" parent="UI/Main"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Singleplayer" type="Button" parent="UI/Main/Buttons"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 388.0
+offset_top = 312.0
+offset_right = 852.0
+offset_bottom = 384.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "Singleplayer"
+
+[node name="LAN" type="Button" parent="UI/Main/Buttons"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 388.0
+offset_top = 400.0
+offset_right = 852.0
+offset_bottom = 472.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "LAN"
+
+[node name="LAN Buttons" type="Control" parent="UI/Main"]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Host" type="Button" parent="UI/Main/LAN Buttons"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 388.0
+offset_top = 393.0
+offset_right = 852.0
+offset_bottom = 465.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "Host"
+
+[node name="Join" type="Button" parent="UI/Main/LAN Buttons"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 388.0
+offset_top = 480.0
+offset_right = 852.0
+offset_bottom = 552.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "Join"
+
+[node name="Back" type="Button" parent="UI/Main/LAN Buttons"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 388.0
+offset_top = 568.0
+offset_right = 852.0
+offset_bottom = 618.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "Back"
+
+[node name="LineEdit" type="LineEdit" parent="UI/Main/LAN Buttons"]
+layout_mode = 0
+offset_left = 408.0
+offset_top = 336.0
+offset_right = 872.0
+offset_bottom = 400.0
+theme_override_font_sizes/font_size = 33
+placeholder_text = "Username"
+alignment = 1
+max_length = 16
+
+[node name="Players" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Back" type="Button" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = 215.0
+offset_right = 232.0
+offset_bottom = 265.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "Back"
+
+[node name="Panel" type="Panel" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -28.0
+offset_right = 320.0
+offset_bottom = 204.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Count" type="Label" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -232.0
+offset_top = 344.0
+offset_right = 232.0
+offset_bottom = 400.0
+grow_horizontal = 2
+text = "Players (0/4)"
+label_settings = SubResource("LabelSettings_rtw2f")
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -296.0
+offset_top = 24.0
+offset_right = 8.0
+offset_bottom = 192.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Players/ScrollContainer"]
+layout_mode = 2
+
+[node name="Player" parent="UI/Main/Players/ScrollContainer/VBoxContainer" instance=ExtResource("3_bqqt6")]
+layout_mode = 2
+
+[node name="Player2" parent="UI/Main/Players/ScrollContainer/VBoxContainer" instance=ExtResource("3_bqqt6")]
+layout_mode = 2
+
+[node name="Start" type="Button" parent="UI/Main/Players"]
+layout_mode = 2
+offset_left = 664.0
+offset_top = 504.0
+offset_right = 944.0
+offset_bottom = 554.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "Start"
+
+[node name="Join" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Address" type="LineEdit" parent="UI/Main/Join"]
+layout_mode = 0
+offset_left = 408.0
+offset_top = 336.0
+offset_right = 872.0
+offset_bottom = 400.0
+theme_override_font_sizes/font_size = 33
+placeholder_text = "IP Address"
+alignment = 1
+max_length = 16
+
+[node name="Join" type="Button" parent="UI/Main/Join"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = 59.0
+offset_right = 232.0
+offset_bottom = 131.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "Join"
+
+[node name="Back" type="Button" parent="UI/Main/Join"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = 151.0
+offset_right = 232.0
+offset_bottom = 201.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+text = "Back"
+
+[connection signal="pressed" from="UI/Main/Buttons/Singleplayer" to="." method="_on_singleplayer_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/LAN" to="." method="_on_lan_pressed"]
+[connection signal="pressed" from="UI/Main/LAN Buttons/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="UI/Main/LAN Buttons/Join" to="." method="_on_lan_join_pressed"]
+[connection signal="pressed" from="UI/Main/LAN Buttons/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="UI/Main/Players/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="UI/Main/Players/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="UI/Main/Join/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="UI/Main/Join/Back" to="." method="_on_back_pressed"]
