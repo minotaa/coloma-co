@@ -16,6 +16,10 @@ func _on_back_pressed() -> void:
 	$"UI/Main/LAN Buttons".visible = false
 	$UI/Main/Players.visible = false
 	if multiplayer != null and multiplayer.has_multiplayer_peer():
+		NetworkManager.update_players.disconnect(_on_update_players)
+		multiplayer.peer_connected.disconnect(NetworkManager._player_joined)
+		multiplayer.peer_disconnected.disconnect(NetworkManager._player_quit)
+		
 		multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
 		multiplayer.multiplayer_peer = null
 		NetworkManager.players = []
@@ -81,5 +85,5 @@ func _on_start_pressed() -> void:
 
 @rpc("authority", "call_local", "reliable")
 func start_game() -> void:
-	add_child(preload("res://scenes/map.tscn").instantiate())
+	get_parent().add_child(preload("res://scenes/map.tscn").instantiate())
 	call_deferred("queue_free")

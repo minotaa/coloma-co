@@ -103,6 +103,7 @@ func send_info(id: int, username: String) -> void:
 			print("[server] Updated players list:")
 			for p in players:
 				print(p)
+		Toast.add.rpc(username + " joined the server!")
 		broadcast_players.rpc(players)
 		update_players.emit(players)
 
@@ -135,12 +136,25 @@ func server_disconnected() -> void:
 	multiplayer.server_disconnected.disconnect(server_disconnected)
 	multiplayer.connection_failed.disconnect(connection_failed)
 	multiplayer.multiplayer_peer = null
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
-
+	if get_tree().current_scene.get_node("Game") != null:
+		get_tree().current_scene.get_node("Game").queue_free()
+		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+	else:
+		if get_tree().current_scene.get_node("Main Menu") != null:
+			get_tree().current_scene.get_node("Main Menu").queue_free()
+		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		
 func connection_failed() -> void:
 	print("Connection failed")
 	Toast.add("Connection failed.")
 	multiplayer.server_disconnected.disconnect(server_disconnected)
 	multiplayer.connection_failed.disconnect(connection_failed)
 	multiplayer.multiplayer_peer = null
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	if get_tree().current_scene.get_node("Game") != null:
+		get_tree().current_scene.get_node("Game").queue_free()
+		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+	else:
+		if get_tree().current_scene.get_node("Main Menu") != null:
+			get_tree().current_scene.get_node("Main Menu").queue_free()
+		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		

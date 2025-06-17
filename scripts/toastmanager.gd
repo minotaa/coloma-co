@@ -17,6 +17,7 @@ func _ready() -> void:
 	canvas_layer.layer = 128
 	add_child(canvas_layer)
 
+@rpc("call_local")
 func add(text: String):
 	var config = { "text": text }
 

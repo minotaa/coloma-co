@@ -2,6 +2,7 @@ extends Node2D
 
 var rng = RandomNumberGenerator.new()
 var wave: int = 0
+var gold: int = 0
 var bombrats_left: int = 0
 var started: bool = false
 
@@ -49,8 +50,16 @@ func _process(delta: float) -> void:
 			bombrats_left += 1
 
 	if bombrats_left <= 0 and started == true:
-		Toast.add("Wave complete!")
+		Toast.add.rpc("Wave complete!")
 		spawn_wave()
+
+@rpc("authority", "call_remote")
+func update_wave(wave: int) -> void:
+	self.wave = wave
+	
+@rpc("authority", "call_remote")
+func update_gold(gold: int) -> void:
+	self.gold = gold
 
 func player_joined(id) -> void:
 	if not multiplayer.is_server():
@@ -71,6 +80,7 @@ func player_quit(id) -> void:
 
 func spawn_wave() -> void:
 	wave += 1
+	update_wave.rpc(wave)
 	match wave:
 		1:
 			spawn_bombrat("north")

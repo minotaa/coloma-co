@@ -223,5 +223,5 @@ func _process_hit(body):
 		var defense = body.entity.defense
 		var defense_factor = 1.0 - (defense / (defense + 100.0))
 		var total_damage = damage_before_defense * defense_factor
-		body.take_damage(total_damage, global_position)
+		body.take_damage.rpc(total_damage, global_position)
 	

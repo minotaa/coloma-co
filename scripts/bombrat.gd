@@ -56,7 +56,8 @@ func _physics_process(delta: float) -> void:
 
 		update_sprite_direction(velocity)
 
-func show_floating_text(amount: int, center_position: Vector2):
+@rpc("call_local")
+func _show_damage_feedback(amount: int, center_position: Vector2):
 	var floating_text_scene = preload("res://scenes/floating_text.tscn")
 	var floating_text = floating_text_scene.instantiate()
 	floating_text.text = str(amount)
@@ -69,16 +70,25 @@ func show_floating_text(amount: int, center_position: Vector2):
 	)
 	floating_text.position = center_position + random_offset
 
+@rpc("any_peer", "call_local")
 func take_damage(amount: float, from_position: Vector2) -> void:
+	# Only let authority actually apply damage logic
+	if not is_multiplayer_authority():
+		return
+
 	print("Took ", amount, " damage")
 	entity.health -= amount
-	show_floating_text(amount, global_position)
-	sprite.material = shock_material
-	await get_tree().create_timer(0.1).timeout
-	sprite.material = normal_material
+
+	# Sync floating text on all peers
+	_show_damage_feedback.rpc(amount, global_position)
+
 	if entity.health <= 0:
 		print("dead")
 		die()
+
+	sprite.material = shock_material
+	await get_tree().create_timer(0.1).timeout
+	sprite.material = normal_material
 
 func update_sprite_direction(dir: Vector2) -> void:
 	if abs(dir.x) > abs(dir.y):

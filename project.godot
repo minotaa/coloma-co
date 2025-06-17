@@ -96,11 +96,6 @@ open_inventory={
 2d_physics/layer_3="ephemeral"
 2d_physics/layer_4="gem"
 
-[network]
-
-limits/packet_peer_stream/max_buffer_po2=512
-packet_peer_stream/max_channels=true
-
 [physics]
 
 2d/default_gravity_vector=Vector2(0, 0)
