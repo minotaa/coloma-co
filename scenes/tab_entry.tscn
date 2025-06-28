@@ -1,0 +1,74 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2i53glql5uik"]
+
+[ext_resource type="Texture2D" uid="uid://mwvgbkud1ud4" path="res://assets/sprites/player_head.png" id="1_31gel"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_igree"]
+font_size = 44
+
+[node name="Tab Entry" type="Control"]
+custom_minimum_size = Vector2(1112, 104)
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.144
+offset_bottom = 0.319992
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 8.0
+offset_top = -42.0
+offset_right = 92.0
+offset_bottom = 42.0
+grow_vertical = 2
+texture = ExtResource("1_31gel")
+expand_mode = 3
+
+[node name="Name" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 105.0
+offset_top = -21.0
+offset_right = 273.0
+offset_bottom = 35.0
+grow_vertical = 2
+text = "Player"
+label_settings = SubResource("LabelSettings_igree")
+
+[node name="Kills" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -28.0
+offset_bottom = 28.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "0"
+label_settings = SubResource("LabelSettings_igree")
+horizontal_alignment = 1
+
+[node name="Gold" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -176.0
+offset_top = -28.0
+offset_right = -96.0
+offset_bottom = 28.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "0"
+label_settings = SubResource("LabelSettings_igree")
+horizontal_alignment = 1

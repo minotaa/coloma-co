@@ -1,9 +1,10 @@
-[gd_scene load_steps=81 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=93 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
 [ext_resource type="Texture2D" uid="uid://clf1l0ona4m7k" path="res://assets/sprites/player-down.png" id="2_py00a"]
 [ext_resource type="Texture2D" uid="uid://dyhdb2iwitv0o" path="res://assets/sprites/player-left.png" id="3_dmfgu"]
+[ext_resource type="Texture2D" uid="uid://jlrmv517akl5" path="res://assets/sprites/dead.png" id="3_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://cckamhtmtr2h7" path="res://assets/sprites/player-right.png" id="4_6qbqg"]
 [ext_resource type="Texture2D" uid="uid://1r4ncvr4wx56" path="res://assets/sprites/player-up.png" id="5_bglcd"]
 [ext_resource type="Texture2D" uid="uid://cin2qeaggkuun" path="res://assets/sprites/sword-down.png" id="6_d2wvv"]
@@ -12,7 +13,17 @@
 [ext_resource type="Texture2D" uid="uid://cll1oqbv8sq74" path="res://assets/sprites/sword-up.png" id="9_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://bs4bxx026a2bg" path="res://assets/sprites/light.png" id="9_fnujr"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="11_d2wvv"]
-[ext_resource type="FontFile" uid="uid://cxii8uarl0lvi" path="res://assets/fonts/BitPotion.ttf" id="13_jej6c"]
+[ext_resource type="Texture2D" uid="uid://d4b5761just5a" path="res://assets/sprites/coins.png" id="14_a8ls1"]
+[ext_resource type="Texture2D" uid="uid://ckwubckjl6ssl" path="res://assets/sprites/bombrat-down.png" id="15_qfm1y"]
+[ext_resource type="PackedScene" uid="uid://d2i53glql5uik" path="res://scenes/tab_entry.tscn" id="16_a8ls1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnwbv"]
+atlas = ExtResource("3_f1ej7")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gl8cc"]
+atlas = ExtResource("3_f1ej7")
+region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_getcb"]
 atlas = ExtResource("2_py00a")
@@ -224,6 +235,17 @@ region = Rect2(112, 0, 16, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_u8hee"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wnwbv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gl8cc")
+}],
+"loop": false,
+"name": &"death",
+"speed": 2.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_getcb")
@@ -462,32 +484,91 @@ radius = 48.0
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_d2wvv"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3v2ag"]
-bg_color = Color(0.0253638, 0.0253638, 0.0253638, 1)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8ls1"]
+bg_color = Color(0.0235294, 0.0235294, 0.0235294, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_size = 1
+shadow_offset = Vector2(1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jej6c"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oprun"]
 bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_size = 1
+shadow_offset = Vector2(1, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_f1ej7"]
 font = ExtResource("11_d2wvv")
 font_size = 22
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3v2ag"]
+bg_color = Color(0.0235294, 0.0235294, 0.0235294, 0.827451)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_size = 1
+shadow_offset = Vector2(1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qfm1y"]
+bg_color = Color(1, 1, 1, 0.827451)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_size = 1
+shadow_offset = Vector2(1, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f1ej7"]
-bg_color = Color(0.0745098, 0.0745098, 0.0745098, 1)
+bg_color = Color(0.0745098, 0.0745098, 0.0745098, 0.760784)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
+expand_margin_top = 4.0
+expand_margin_bottom = 4.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_oprun"]
+font_size = 22
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fulsm"]
+bg_color = Color(0.0745098, 0.0745098, 0.0745098, 0.760784)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_487ah"]
+atlas = ExtResource("15_qfm1y")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jej6c"]
+font = ExtResource("11_d2wvv")
+font_size = 22
+shadow_size = 0
+shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="LabelSettings" id="LabelSettings_fulsm"]
+font = ExtResource("11_d2wvv")
+font_size = 44
+shadow_size = 0
+shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qfm1y"]
+font = ExtResource("11_d2wvv")
 font_size = 22
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3v2ag"]
@@ -500,9 +581,12 @@ properties/1/replication_mode = 1
 properties/2/path = NodePath("AnimatedSprite2D:frame")
 properties/2/spawn = true
 properties/2/replication_mode = 1
+properties/3/path = NodePath(".:gold")
+properties/3/spawn = true
+properties/3/replication_mode = 1
 
 [sub_resource type="LabelSettings" id="LabelSettings_a8ls1"]
-font = ExtResource("13_jej6c")
+font_size = 22
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 z_index = 2
@@ -518,7 +602,7 @@ texture = ExtResource("2_3v2ag")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_u8hee")
-animation = &"walk_up"
+animation = &"idle_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -0.75)
@@ -585,16 +669,19 @@ grow_vertical = 2
 
 [node name="HealthBar" type="ProgressBar" parent="UI/Main"]
 layout_mode = 1
-anchors_preset = 2
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -56.0
-offset_right = 392.0
-offset_bottom = -16.0
+offset_left = -188.0
+offset_top = -64.0
+offset_right = 188.0
+offset_bottom = -24.0
+grow_horizontal = 2
 grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxFlat_3v2ag")
-theme_override_styles/fill = SubResource("StyleBoxFlat_jej6c")
+theme_override_styles/background = SubResource("StyleBoxFlat_a8ls1")
+theme_override_styles/fill = SubResource("StyleBoxFlat_oprun")
 show_percentage = false
 
 [node name="Label" type="Label" parent="UI/Main/HealthBar"]
@@ -610,79 +697,227 @@ offset_right = 32.0
 offset_bottom = 10.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "22/100"
+text = "Uh oh!"
 label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Board" type="Panel" parent="UI/Main"]
+[node name="SprintBar" type="ProgressBar" parent="UI/Main"]
 layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -188.0
+offset_top = -96.0
+offset_right = 188.0
+offset_bottom = -72.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_3v2ag")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qfm1y")
+max_value = 250.0
+show_percentage = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main"]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 304.0
-offset_bottom = 128.0
+offset_right = 256.0
+offset_bottom = 56.0
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Wave" type="PanelContainer" parent="UI/Main/HBoxContainer"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_f1ej7")
 
-[node name="Wave" type="Label" parent="UI/Main/Board"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -128.0
-offset_top = 14.0
-offset_right = 128.0
-offset_bottom = 42.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Label" type="Label" parent="UI/Main/HBoxContainer/Wave"]
+layout_mode = 2
 text = "Wave: 0"
 label_settings = SubResource("LabelSettings_oprun")
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Gold" type="Label" parent="UI/Main/Board"]
+[node name="Bombrats" type="PanelContainer" parent="UI/Main/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fulsm")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main/HBoxContainer/Bombrats"]
+layout_mode = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="UI/Main/HBoxContainer/Bombrats/HBoxContainer"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_487ah")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="UI/Main/HBoxContainer/Bombrats/HBoxContainer"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_oprun")
+vertical_alignment = 1
+
+[node name="Gold" type="PanelContainer" parent="UI/Main/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fulsm")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main/HBoxContainer/Gold"]
+layout_mode = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="UI/Main/HBoxContainer/Gold/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("14_a8ls1")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UI/Main/HBoxContainer/Gold/HBoxContainer"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_oprun")
+vertical_alignment = 1
+
+[node name="Title" type="Label" parent="UI/Main"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -128.0
-offset_top = -15.0
-offset_right = 128.0
-offset_bottom = 13.0
+offset_left = -20.0
+offset_top = -10.5
+offset_right = 20.0
+offset_bottom = 10.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "Gold: 0"
-label_settings = SubResource("LabelSettings_oprun")
+label_settings = SubResource("LabelSettings_jej6c")
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Bombrats" type="Label" parent="UI/Main/Board"]
+[node name="Tab" type="Control" parent="UI/Main"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -128.0
-offset_top = -45.0
-offset_right = 128.0
-offset_bottom = -17.0
+offset_left = -576.0
+offset_top = -224.0
+offset_right = 576.0
+offset_bottom = 224.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Bombrats left: 0"
-label_settings = SubResource("LabelSettings_oprun")
+
+[node name="Panel" type="Panel" parent="UI/Main/Tab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fulsm")
+
+[node name="Title" type="Label" parent="UI/Main/Tab"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -116.0
+offset_top = 8.0
+offset_right = 116.0
+offset_bottom = 50.0
+grow_horizontal = 2
+size_flags_vertical = 0
+text = "Players"
+label_settings = SubResource("LabelSettings_fulsm")
+horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Kills" type="Label" parent="UI/Main/Tab"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 496.0
+offset_top = 80.0
+offset_right = 566.0
+offset_bottom = 122.0
+grow_horizontal = 2
+size_flags_vertical = 0
+text = "Kills"
+label_settings = SubResource("LabelSettings_qfm1y")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Gold" type="Label" parent="UI/Main/Tab"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 376.0
+offset_top = 80.0
+offset_right = 446.0
+offset_bottom = 122.0
+grow_horizontal = 2
+size_flags_vertical = 0
+text = "Gold"
+label_settings = SubResource("LabelSettings_qfm1y")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Players" type="Label" parent="UI/Main/Tab"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -452.0
+offset_top = 80.0
+offset_right = -256.0
+offset_bottom = 122.0
+grow_horizontal = 2
+size_flags_vertical = 0
+text = "Player"
+label_settings = SubResource("LabelSettings_qfm1y")
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Tab"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -560.0
+offset_top = -128.0
+offset_right = 560.0
+offset_bottom = 208.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Tab/ScrollContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Tab Entry" parent="UI/Main/Tab/ScrollContainer/VBoxContainer" instance=ExtResource("16_a8ls1")]
+layout_mode = 2
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
 
 [node name="Username" type="Label" parent="."]
 visible = false
-offset_left = -64.0
-offset_top = -37.0
-offset_right = 64.0
-offset_bottom = -9.0
+offset_left = -29.0
+offset_top = -32.0
+offset_right = 99.0
+offset_bottom = -4.0
+scale = Vector2(0.45, 0.45)
 text = "Minota"
 label_settings = SubResource("LabelSettings_a8ls1")
 horizontal_alignment = 1

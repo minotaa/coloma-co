@@ -17,6 +17,10 @@ var hit_cooldown = 0.0
 var max_hit_cooldown = 0.35
 
 const SPEED = 95.0
+const SPRINT_MULTIPLIER = 1.45
+var exhausted = false # When you deplete your sprint completely you will become exhausted
+var sprint = 250
+var alive: bool = true
 var max_health = 100.0
 var health = 100.0
 var damage = 25
@@ -26,11 +30,17 @@ var gold: int = 0
 
 var bag = Bag.new()
 
-@onready var bombrat_counter := $UI/Main/Board/Bombrats
+@onready var bombrat_counter := $UI/Main/HBoxContainer/Bombrats/HBoxContainer/Label
 
 func _enter_tree() -> void:
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
+
+func send_title(title: String, delay: float) -> void:
+	print("Showing title \"" + title + "\" to player.")
+	$UI/Main/Title.text = title
+	await get_tree().create_timer(delay).timeout
+	$UI/Main/Title.text = ""
 
 func _ready() -> void:	
 	if multiplayer.has_multiplayer_peer():
@@ -46,7 +56,7 @@ func _ready() -> void:
 		$Camera2D.make_current()
 
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
-	if hit_cooldown > 0.0:
+	if hit_cooldown > 0.0 or not alive:
 		return
 	print("Player took ", amount, " damage")
 	hit_cooldown = max_hit_cooldown
@@ -60,7 +70,18 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	$AnimatedSprite2D.material = null
 
 func die() -> void:
-	pass
+	$AnimatedSprite2D.play("death")
+	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
+	Toast.add("You're dead... you will respawn in 10 seconds.")
+	alive = false
+	await get_tree().create_timer(10.0).timeout
+	health = max_health
+	gold = max(roundi(gold / 2), 0)
+	Toast.add("You respawned!")
+	play_idle_animation()
+	$AnimatedSprite2D.material = null
+	global_position = Vector2.ZERO
+	alive = true
 
 func play_animation(name: String, backwards: bool = false, speed: float = 1) -> void:
 	if backwards == false:
@@ -80,7 +101,7 @@ func show_floating_text(amount: int, center_position: Vector2):
 	var floating_text = floating_text_scene.instantiate()
 	floating_text.text = str(amount)
 	(floating_text as Label).label_settings.font_color = Color.RED
-	$"..".add_child(floating_text)
+	$"..".add_child(floating_text, true)
 
 	var random_offset = Vector2(
 		randi_range(-8, 8),
@@ -91,6 +112,8 @@ func show_floating_text(amount: int, center_position: Vector2):
 func _process_input(delta) -> void:
 	# Handle movement input
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		return
+	if not alive:
 		return
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 	var velocity_length = velocity.length_squared()
@@ -133,6 +156,51 @@ func _process_input(delta) -> void:
 		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 	else:
 		knockback_velocity = Vector2.ZERO
+	
+	if Input.is_action_pressed("sprint") and sprint > 0 and not exhausted:
+		velocity *= SPRINT_MULTIPLIER
+		if velocity.length() > 0:
+			sprint -= 1
+	if sprint <= 0:
+		exhausted = true
+	if exhausted:
+		velocity *= 0.55
+	if (velocity.length() == 0 and sprint < 250) or (exhausted and sprint < 150):
+		if not exhausted:
+			sprint += 1
+		else:
+			sprint += 0.5
+	if velocity.length() == SPEED and sprint < 250:
+		sprint += 0.45
+	
+	if Input.is_action_pressed("info"):
+		$UI/Main/Tab.visible = true
+		for children in $UI/Main/Tab/ScrollContainer/VBoxContainer.get_children():
+			children.queue_free()
+		
+		if multiplayer.has_multiplayer_peer():
+			$UI/Main/Tab/Title.text = "Players (" + str(NetworkManager.players.size()) + ")"
+			for player in NetworkManager.players:
+				var kills = 0
+				if get_parent().kills.has(str(player["id"])) and get_parent().kills[str(player["id"])].has("bombrat"):
+					kills = get_parent().kills[str(player["id"])]["bombrat"]
+				var tab_entry = preload("res://scenes/tab_entry.tscn").instantiate()
+				tab_entry.get_node("Name").text = player["username"]
+				tab_entry.get_node("Kills").text = str(kills)
+				tab_entry.get_node("Gold").text = str(get_parent().get_node(str(player["id"])).gold)
+				$UI/Main/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
+		else:
+			$UI/Main/Tab/Title.text = "Player"
+			var tab_entry = preload("res://scenes/tab_entry.tscn").instantiate()
+			tab_entry.get_node("Name").text = "Player"
+			tab_entry.get_node("Gold").text = str(gold)
+			var kills = 0
+			if get_parent().kills.has("Player") and get_parent().kills["Player"].has("bombrat"):
+				kills = get_parent().kills["Player"]["bombrat"]
+			tab_entry.get_node("Kills").text = str(kills)
+			$UI/Main/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
+	else:
+		$UI/Main/Tab.visible = false
 	
 	move_and_slide()
 
@@ -187,6 +255,12 @@ func _physics_process(delta: float) -> void:
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
 		$UI/Main/HealthBar.max_value = max_health
 		$UI/Main/HealthBar.value = health
+		$UI/Main/SprintBar.value = sprint
+		if sprint >= 250:
+			exhausted = false
+			$UI/Main/SprintBar.visible = false
+		else:
+			$UI/Main/SprintBar.visible = true
 		$UI/Main/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	_process_input(delta)
@@ -206,22 +280,24 @@ func _physics_process(delta: float) -> void:
 		if enemy.entity.id == 1:
 			count += 1
 	if count > 0:
-		bombrat_counter.text = "Bombrats left: %d" % count
+		bombrat_counter.text = "%d" % count
 
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
-		$UI/Main/Board/Wave.text = "Wave: " + str(get_parent().wave)
-		$UI/Main/Board/Gold.text = "Gold: " + str(gold)
+		$UI/Main/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
+		$UI/Main/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 
 func _animation_finished() -> void:
 	if $AnimatedSprite2D.animation.begins_with("sword_"):
 		play_idle_animation()
 
 func _process_hit(body):
-	print("processed hit")
+	#print("processed hit")
 	if body.is_in_group("enemies"):
 		var damage_before_defense = damage * (1.0 + strength / 100.0)
 		var defense = body.entity.defense
 		var defense_factor = 1.0 - (defense / (defense + 100.0))
 		var total_damage = damage_before_defense * defense_factor
-		body.take_damage.rpc(total_damage, global_position)
-	
+		if multiplayer.has_multiplayer_peer():
+			body.take_damage.rpc(total_damage, global_position, self)
+		else:
+			body.take_damage(total_damage, global_position, self)

@@ -14,6 +14,7 @@ const KNOCKBACK_SPEED := 200.0
 @onready var shock_material = preload("res://scenes/shock.tres")
 @onready var collision: CollisionShape2D = $CollisionShape2D
 
+var alive: bool = true
 var knockback_velocity: Vector2 = Vector2.ZERO
 var knockback_timer: float = 0.0
 var hop_timer: float = 0.0
@@ -33,7 +34,9 @@ func _ready() -> void:
 	Entities.add_entity(entity)
 	sprite.play("default")
 
-func show_floating_text(amount: int, center_position: Vector2):
+
+@rpc("call_local")
+func _show_damage_feedback(amount: int, center_position: Vector2):
 	var floating_text_scene = preload("res://scenes/floating_text.tscn")
 	var floating_text = floating_text_scene.instantiate()
 	floating_text.text = str(amount)
@@ -46,19 +49,35 @@ func show_floating_text(amount: int, center_position: Vector2):
 	)
 	floating_text.position = center_position + random_offset
 
-func take_damage(amount: float, from_position: Vector2) -> void:
-	var direction = (global_position - from_position).normalized()
-	knockback_velocity = direction * KNOCKBACK_SPEED
-	knockback_timer = KNOCKBACK_DURATION
+@rpc("any_peer", "call_local")
+func take_damage(amount: float, from_position: Vector2, person: Node2D) -> void:
+	# Only let authority actually apply damage logic
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		return
+
 	print("Took ", amount, " damage")
 	entity.health -= amount
-	show_floating_text(amount, global_position)
+
+	# Sync floating text on all peers
+	if multiplayer.has_multiplayer_peer():
+		_show_damage_feedback.rpc(amount, global_position)
+	else:
+		_show_damage_feedback(amount, global_position)
+
+	if entity.health <= 0 and alive:
+		print("dead")
+		die()
+		alive = false
+		person.gold += 12
+		if multiplayer.has_multiplayer_peer():
+			Toast.add.rpc_id(int(person.name), "+5 Gold")
+		else:
+			Toast.add("+5 Gold")
+		get_parent().add_kill(person.name, "slime")
+
 	sprite.material = shock_material
 	await get_tree().create_timer(0.1).timeout
 	sprite.material = normal_material
-	if entity.health <= 0:
-		print("dead")
-		die()
 
 func die() -> void:
 	collision.disabled = true
@@ -69,8 +88,15 @@ func die() -> void:
 	tween.tween_callback(Callable(self, "queue_free"))
 
 func _physics_process(delta: float) -> void:
+	if entity != null:
+		$ProgressBar.value = entity.health
+		$ProgressBar.max_value = entity.max_health 
+		if entity.health == entity.max_health:
+			$ProgressBar.visible = false
+		else:
+			$ProgressBar.visible = true
 	for body in $Hurtbox.get_overlapping_bodies():
-		if body.is_in_group("players"):
+		if body.is_in_group("players") and alive:
 			body.take_damage(10, global_position)
 			pass
 	if knockback_timer > 0.0:

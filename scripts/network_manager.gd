@@ -45,7 +45,8 @@ func join_server(address: String, username: String = "Player") -> bool:
 	multiplayer.connection_failed.connect(connection_failed)
 
 	# Wait a moment for connection to establish
-	await get_tree().create_timer(0.1).timeout
+	while not multiplayer.has_multiplayer_peer() or multiplayer.get_unique_id() == 1:
+		await get_tree().process_frame
 
 	# Tell the server our username
 	send_info.rpc(multiplayer.get_unique_id(), username)
@@ -59,6 +60,14 @@ func host_server(port: int) -> bool:
 	var error = peer.create_server(port)
 	if error != OK:
 		print("Error while starting server: " + str(error))
+		if get_tree().current_scene.get_node("Game") != null:
+			get_tree().current_scene.get_node("Game").queue_free()
+			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		else:
+			if get_tree().current_scene.get_node("Main Menu") != null:
+				get_tree().current_scene.get_node("Main Menu").queue_free()
+			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		Toast.add("An error occurred while starting server.")
 		return false
 
 	print("Created server with IP " + DEFAULT_SERVER_IP + " on port " + str(PORT))

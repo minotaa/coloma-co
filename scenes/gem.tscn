@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://m0qejj1h83sm"]
+[gd_scene load_steps=7 format=3 uid="uid://m0qejj1h83sm"]
 
 [ext_resource type="Texture2D" uid="uid://xbb6xxfxqy42" path="res://assets/sprites/gem.png" id="1_5cxma"]
 [ext_resource type="Script" uid="uid://cssp1n1daljjh" path="res://scripts/gem.gd" id="1_mpwtx"]
@@ -7,6 +7,12 @@
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bhq7q"]
 radius = 15.0
 height = 32.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bhq7q"]
+bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rj4j3"]
+bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
 [node name="Gem" type="Area2D" groups=["gem"]]
 z_index = 3
@@ -25,3 +31,12 @@ texture = ExtResource("1_5cxma")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_bhq7q")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -32.0
+offset_top = -30.0
+offset_right = 32.0
+offset_bottom = -26.0
+theme_override_styles/background = SubResource("StyleBoxFlat_bhq7q")
+theme_override_styles/fill = SubResource("StyleBoxFlat_rj4j3")
+show_percentage = false

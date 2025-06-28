@@ -43,7 +43,7 @@ func _on_singleplayer_pressed() -> void:
 		multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
 		multiplayer.multiplayer_peer = null
 		NetworkManager.players = []
-	get_tree().change_scene_to_file("res://scenes/map.tscn")
+	Man.start_game()
 
 func _on_update_players(players: Array) -> void:
 	var container = $UI/Main/Players/ScrollContainer/VBoxContainer
@@ -81,9 +81,4 @@ func _on_lan_join_pressed() -> void:
 
 func _on_start_pressed() -> void:
 	if multiplayer.is_server():
-		start_game.rpc()
-
-@rpc("authority", "call_local", "reliable")
-func start_game() -> void:
-	get_parent().add_child(preload("res://scenes/map.tscn").instantiate())
-	call_deferred("queue_free")
+		Man.start_game.rpc()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://bfnnju2fwq13d"]
+[gd_scene load_steps=32 format=3 uid="uid://bfnnju2fwq13d"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_hebxe"]
 [ext_resource type="Script" uid="uid://dbkhpbgs1cksc" path="res://scripts/bombrat.gd" id="2_svhan"]
@@ -172,6 +172,12 @@ properties/3/path = NodePath(".:modulate:a")
 properties/3/spawn = true
 properties/3/replication_mode = 1
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hebxe"]
+bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svhan"]
+bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
+
 [node name="Bombrat" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 6
@@ -206,3 +212,12 @@ shape = SubResource("CircleShape2D_n6pvg")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_hebxe")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -9.0
+offset_top = 12.0
+offset_right = 9.0
+offset_bottom = 16.0
+theme_override_styles/background = SubResource("StyleBoxFlat_hebxe")
+theme_override_styles/fill = SubResource("StyleBoxFlat_svhan")
+show_percentage = false

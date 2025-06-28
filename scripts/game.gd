@@ -5,12 +5,21 @@ var wave: int = 0
 var gold: int = 0
 var bombrats_left: int = 0
 var started: bool = false
+var kills = {}
 
 var bombrat = preload("res://scenes/bombrat.tscn")
 var slime = preload("res://scenes/slime.tscn")
 var player_scene = preload("res://scenes/player.tscn")
 
 @onready var spawner_layer = $Spawner
+
+func add_kill(player_id: String, enemy_type: String) -> void:
+	if not kills.has(player_id):
+		kills[player_id] = {}
+	if not kills[player_id].has(enemy_type):
+		kills[player_id][enemy_type] = 0
+	kills[player_id][enemy_type] += 1
+	update_kills.rpc(kills)
 
 func _ready() -> void:
 	if not multiplayer.has_multiplayer_peer():
@@ -19,6 +28,8 @@ func _ready() -> void:
 		p.name = "Player"
 		call_deferred("add_child", p, true)
 		spawn_wave()
+		Toast.add("Wave started!")
+		started = true
 		return
 
 	# Multiplayer: spawn players from the current list
@@ -38,6 +49,7 @@ func _ready() -> void:
 
 		# Only the server spawns waves
 		spawn_wave()
+		Toast.add.rpc("Wave started!")
 		started = true
 
 func _process(delta: float) -> void:
@@ -50,8 +62,15 @@ func _process(delta: float) -> void:
 			bombrats_left += 1
 
 	if bombrats_left <= 0 and started == true:
-		Toast.add.rpc("Wave complete!")
+		if multiplayer.has_multiplayer_peer():
+			Toast.add.rpc("Wave complete!")
+		else:
+			Toast.add("Wave complete!")
 		spawn_wave()
+
+@rpc("authority", "call_remote")
+func update_kills(kills: Dictionary) -> void:
+	self.kills = kills
 
 @rpc("authority", "call_remote")
 func update_wave(wave: int) -> void:
@@ -80,7 +99,20 @@ func player_quit(id) -> void:
 
 func spawn_wave() -> void:
 	wave += 1
-	update_wave.rpc(wave)
+	if multiplayer.has_multiplayer_peer():
+		update_wave.rpc(wave)
+	for player in get_tree().get_nodes_in_group("players"):
+		if player.health < player.max_health:
+			var old_health = player.health
+			player.health = min(player.health + 20, player.max_health)
+			var healed = roundi(player.health - old_health)
+
+			if healed > 0:
+				if multiplayer.has_multiplayer_peer():
+					Toast.add.rpc_id(int(player.name), "+" + str(healed) + " HP")
+				else:
+					Toast.add("+" + str(healed) + " HP")
+
 	match wave:
 		1:
 			spawn_bombrat("north")
@@ -118,13 +150,13 @@ func spawn_wave() -> void:
 
 func spawn_bombrats(count: int) -> void:
 	for i in count:
-		await get_tree().create_timer(1.5).timeout
+		await get_tree().create_timer(2.5).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_bombrat(directions.pick_random())
 
 func spawn_slimes(count: int) -> void:
 	for i in count:
-		await get_tree().create_timer(1.5).timeout
+		await get_tree().create_timer(2.5).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_slime(directions.pick_random())
 
@@ -190,6 +222,4 @@ func spawn_bombrat(direction: String) -> void:
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
 		var bomb = bombrat.instantiate()
 		bomb.global_position = spawn_pos
-		print(spawn_pos)
 		add_child(bomb, true)
-		#$MultiplayerSpawner.spawn()

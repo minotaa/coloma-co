@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-const SPEED = 6.0
+const SPEED = 10.0
 
 @onready var agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -8,13 +8,14 @@ const SPEED = 6.0
 @onready var normal_material: Material = sprite.material
 @onready var shock_material = preload("res://scenes/shock.tres")
 
+var alive: bool = true
 var explosion_scene = preload("res://scenes/explosion.tscn")
 
 var entity = Entity.new()
 
 func _ready() -> void:
-	entity.health = 550.0
-	entity.max_health = 550.0
+	entity.health = 500.0
+	entity.max_health = 500.0
 	entity.defense = 0.0
 	entity.name = "Bombrat"
 	entity.id = 1
@@ -40,8 +41,15 @@ func explode() -> void:
 	die()
 
 func _physics_process(delta: float) -> void:
+	if entity != null:
+		$ProgressBar.value = entity.health
+		$ProgressBar.max_value = entity.max_health 
+		if entity.health == entity.max_health:
+			$ProgressBar.visible = false
+		else:
+			$ProgressBar.visible = true
 	for area in $Hurtbox.get_overlapping_areas():
-		if area.is_in_group("gem"):
+		if area.is_in_group("gem") and alive:
 			print("found gem")
 			explode()
 			return
@@ -71,20 +79,30 @@ func _show_damage_feedback(amount: int, center_position: Vector2):
 	floating_text.position = center_position + random_offset
 
 @rpc("any_peer", "call_local")
-func take_damage(amount: float, from_position: Vector2) -> void:
+func take_damage(amount: float, from_position: Vector2, person: Node2D) -> void:
 	# Only let authority actually apply damage logic
-	if not is_multiplayer_authority():
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
 
 	print("Took ", amount, " damage")
 	entity.health -= amount
 
 	# Sync floating text on all peers
-	_show_damage_feedback.rpc(amount, global_position)
+	if multiplayer.has_multiplayer_peer():
+		_show_damage_feedback.rpc(amount, global_position)
+	else:
+		_show_damage_feedback(amount, global_position)
 
-	if entity.health <= 0:
+	if entity.health <= 0 and alive:
 		print("dead")
 		die()
+		alive = false
+		person.gold += 5
+		if multiplayer.has_multiplayer_peer():
+			Toast.add.rpc_id(int(person.name), "+5 Gold")
+		else:
+			Toast.add("+5 Gold")
+		get_parent().add_kill(person.name, "bombrat")
 
 	sprite.material = shock_material
 	await get_tree().create_timer(0.1).timeout
@@ -113,5 +131,4 @@ func get_nearest_gem() -> Node2D:
 			if dist < nearest_distance:
 				nearest_distance = dist
 				nearest = gem
-
 	return nearest
