@@ -1,12 +1,12 @@
 extends CharacterBody2D
 
 const SPEED = 40
-const HOP_INTERVAL = 0.6
+const HOP_INTERVAL = 1.0
 const HOP_DURATION = 0.2
 const HOP_HEIGHT = 6.0
 const KNOCKBACK_DURATION := 0.1
 const KNOCKBACK_SPEED := 200.0
-
+const HOP_WINDUP_TIME = 0.3
 
 @onready var agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -22,12 +22,14 @@ var is_hopping: bool = false
 var hop_start_pos: Vector2
 var hop_target_pos: Vector2
 var hop_progress: float = 0.0
+var is_winding_up = false
+var windup_timer = 0.0
 
 var entity = Entity.new()
 
 func _ready() -> void:
-	entity.health = 50.0
-	entity.max_health = 50.0
+	entity.health = 75.0
+	entity.max_health = 75.0
 	entity.defense = 0.0
 	entity.name = "Slime"
 	entity.id = 0
@@ -49,8 +51,14 @@ func _show_damage_feedback(amount: int, center_position: Vector2):
 	)
 	floating_text.position = center_position + random_offset
 
+@rpc("call_local")
+func _flash_material():
+	sprite.material = shock_material
+	await get_tree().create_timer(0.1).timeout
+	sprite.material = normal_material
+
 @rpc("any_peer", "call_local")
-func take_damage(amount: float, from_position: Vector2, person: Node2D) -> void:
+func take_damage(amount: float, from_position: Vector2, name: String) -> void:
 	# Only let authority actually apply damage logic
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
@@ -61,19 +69,22 @@ func take_damage(amount: float, from_position: Vector2, person: Node2D) -> void:
 	# Sync floating text on all peers
 	if multiplayer.has_multiplayer_peer():
 		_show_damage_feedback.rpc(amount, global_position)
+		_flash_material.rpc()
 	else:
 		_show_damage_feedback(amount, global_position)
+		_flash_material()
 
 	if entity.health <= 0 and alive:
 		print("dead")
 		die()
 		alive = false
-		person.gold += 12
 		if multiplayer.has_multiplayer_peer():
-			Toast.add.rpc_id(int(person.name), "+5 Gold")
+			Toast.add.rpc_id(int(name), "+12 Gold")
+			get_parent().add_gold.rpc(name, 12)
 		else:
-			Toast.add("+5 Gold")
-		get_parent().add_kill(person.name, "slime")
+			Toast.add("+12 Gold")
+			get_parent().add_gold(name, 12)
+		get_parent().add_kill(name, "slime")
 
 	sprite.material = shock_material
 	await get_tree().create_timer(0.1).timeout
@@ -88,41 +99,54 @@ func die() -> void:
 	tween.tween_callback(Callable(self, "queue_free"))
 
 func _physics_process(delta: float) -> void:
-	if entity != null:
-		$ProgressBar.value = entity.health
-		$ProgressBar.max_value = entity.max_health 
-		if entity.health == entity.max_health:
-			$ProgressBar.visible = false
-		else:
-			$ProgressBar.visible = true
+	if (multiplayer.has_multiplayer_peer() and multiplayer.is_server()) or not multiplayer.has_multiplayer_peer():
+		if entity != null:
+			$ProgressBar.value = entity.health
+			$ProgressBar.max_value = entity.max_health 
+			if entity.health == entity.max_health:
+				$ProgressBar.visible = false
+			else:
+				$ProgressBar.visible = true
 	for body in $Hurtbox.get_overlapping_bodies():
 		if body.is_in_group("players") and alive:
 			body.take_damage(10, global_position)
 			pass
 	if knockback_timer > 0.0:
-		# Apply knockback
 		global_position += knockback_velocity * delta
 		knockback_timer -= delta
-		sprite.position.y = 0  # Reset vertical bobbing during knockback
+		sprite.position.y = 0
 		hop_timer = HOP_INTERVAL
-		return  # Skip normal hopping behavior while knocked back
+		is_winding_up = false  # Cancel wind-up if knocked back
+		$Target.visible = false
+		return
 
-	if not is_hopping:
+	if not is_hopping and not is_winding_up:
 		hop_timer -= delta
 		if hop_timer <= 0.0:
 			var target = get_nearest_player()
 			if target:
 				agent.target_position = target.global_position
-				
 				hop_start_pos = global_position
 				hop_target_pos = agent.get_next_path_position()
-				hop_progress = 0.0
-				is_hopping = true
-	else:
+				$Target.global_position = hop_target_pos
+				$Target.visible = true
+
+				is_winding_up = true
+				windup_timer = HOP_WINDUP_TIME
+
+	elif is_winding_up:
+		windup_timer -= delta
+		if windup_timer <= 0.0:
+			is_winding_up = false
+			is_hopping = true
+			hop_progress = 0.0
+
+	elif is_hopping:
 		hop_progress += delta / HOP_DURATION
 		if hop_progress >= 1.0:
 			hop_progress = 1.0
 			is_hopping = false
+			$Target.visible = false
 			hop_timer = HOP_INTERVAL
 
 		var move_vec = hop_target_pos - hop_start_pos
@@ -131,10 +155,11 @@ func _physics_process(delta: float) -> void:
 	# Update vertical offset of sprite (hop arc)
 	if is_hopping:
 		var t = hop_progress
-		var height = 4 * HOP_HEIGHT * t * (t - 1)  # Parabolic curve
+		var height = 4 * HOP_HEIGHT * t * (t - 1)
 		sprite.position.y = height
 	else:
 		sprite.position.y = 0
+
 
 
 func get_nearest_player() -> Node2D:
@@ -143,7 +168,7 @@ func get_nearest_player() -> Node2D:
 	var nearest_distance: float = INF
 
 	for player in players:
-		if player is Node2D:
+		if player is Node2D and player.alive:
 			var dist: float = global_position.distance_squared_to(player.global_position)
 			if dist < nearest_distance:
 				nearest_distance = dist

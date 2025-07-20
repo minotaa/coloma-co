@@ -45,12 +45,12 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -210.0
-offset_top = 56.0
-offset_right = 210.0
-offset_bottom = 140.0
+offset_left = -612.5
+offset_top = 24.0
+offset_right = 84.5
+offset_bottom = 115.0
 grow_horizontal = 2
-text = "this is where the game title goes"
+text = "Myrkwood: Offshoot"
 label_settings = SubResource("LabelSettings_wu84c")
 
 [node name="Subtitle" type="Label" parent="UI/Main"]
@@ -58,23 +58,24 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -224.0
-offset_top = 137.0
-offset_right = 224.0
-offset_bottom = 193.0
+offset_left = -608.0
+offset_top = 105.0
+offset_right = -160.0
+offset_bottom = 161.0
 grow_horizontal = 2
 text = "by Juan Pichardo"
 label_settings = SubResource("LabelSettings_bqqt6")
 
 [node name="Mode" type="Label" parent="UI/Main"]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -232.0
-offset_top = 279.0
-offset_right = 232.0
-offset_bottom = 335.0
+offset_left = -616.0
+offset_top = 672.0
+offset_right = -152.0
+offset_bottom = 728.0
 grow_horizontal = 2
 text = "-- select your mode--"
 label_settings = SubResource("LabelSettings_8ln24")
@@ -98,39 +99,36 @@ label_settings = SubResource("LabelSettings_ekxnf")
 horizontal_alignment = 2
 
 [node name="Buttons" type="Control" parent="UI/Main"]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Singleplayer" type="Button" parent="UI/Main/Buttons"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 388.0
-offset_top = 312.0
-offset_right = 852.0
-offset_bottom = 384.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -184.0
+offset_right = 488.0
+offset_bottom = -112.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
 text = "Singleplayer"
 
 [node name="LAN" type="Button" parent="UI/Main/Buttons"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 388.0
-offset_top = 400.0
-offset_right = 852.0
-offset_bottom = 472.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -96.0
+offset_right = 488.0
+offset_bottom = -24.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
 text = "LAN"
 

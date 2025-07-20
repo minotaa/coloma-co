@@ -1,4 +1,4 @@
-[gd_scene load_steps=93 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=102 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -16,6 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://d4b5761just5a" path="res://assets/sprites/coins.png" id="14_a8ls1"]
 [ext_resource type="Texture2D" uid="uid://ckwubckjl6ssl" path="res://assets/sprites/bombrat-down.png" id="15_qfm1y"]
 [ext_resource type="PackedScene" uid="uid://d2i53glql5uik" path="res://scenes/tab_entry.tscn" id="16_a8ls1"]
+[ext_resource type="PackedScene" uid="uid://dicfu5afqotfu" path="res://scenes/catalog_item.tscn" id="17_fulsm"]
+[ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="17_qfm1y"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wnwbv"]
 atlas = ExtResource("3_f1ej7")
@@ -293,7 +295,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"sword_down",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -310,7 +312,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"sword_left",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -327,7 +329,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"sword_right",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -344,7 +346,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"sword_up",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -463,9 +465,8 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_y4r1p"]
-radius = 3.0
-height = 15.5
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qfm1y"]
+size = Vector2(8, 18.75)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4r1p"]
 size = Vector2(58, 20.5)
@@ -553,9 +554,9 @@ expand_margin_bottom = 4.0
 atlas = ExtResource("15_qfm1y")
 region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="LabelSettings" id="LabelSettings_jej6c"]
+[sub_resource type="LabelSettings" id="LabelSettings_4r5pv"]
 font = ExtResource("11_d2wvv")
-font_size = 22
+font_size = 88
 shadow_size = 0
 shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
 shadow_offset = Vector2(4, 4)
@@ -570,6 +571,51 @@ shadow_offset = Vector2(4, 4)
 [sub_resource type="LabelSettings" id="LabelSettings_qfm1y"]
 font = ExtResource("11_d2wvv")
 font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_60mlk"]
+font = ExtResource("11_d2wvv")
+font_size = 33
+shadow_size = 0
+shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="GDScript" id="GDScript_fulsm"]
+resource_name = "healing_potion"
+script/source = "extends Control
+
+func _on_button_pressed() -> void:
+	print(\"uhhh... healing potion... bought?\")
+"
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fulsm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4r5pv"]
+bg_color = Color(0.125911, 0.125911, 0.125911, 0.717647)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_60mlk"]
+bg_color = Color(0.210507, 0.210507, 0.210507, 0.745098)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i4ail"]
+bg_color = Color(0.357191, 0.357191, 0.357191, 0.745098)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a38lo"]
+bg_color = Color(0.0156863, 0.0156863, 0, 0.717647)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3v2ag"]
 properties/0/path = NodePath(".:position")
@@ -586,7 +632,8 @@ properties/3/spawn = true
 properties/3/replication_mode = 1
 
 [sub_resource type="LabelSettings" id="LabelSettings_a8ls1"]
-font_size = 22
+font = ExtResource("17_qfm1y")
+font_size = 25
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 z_index = 2
@@ -605,8 +652,8 @@ sprite_frames = SubResource("SpriteFrames_u8hee")
 animation = &"idle_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -0.75)
-shape = SubResource("CapsuleShape2D_y4r1p")
+position = Vector2(0, -1.375)
+shape = SubResource("RectangleShape2D_qfm1y")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5, 5)
@@ -643,6 +690,7 @@ shape = SubResource("RectangleShape2D_jej6c")
 disabled = true
 
 [node name="Area2D" type="Area2D" parent="."]
+collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_esh0l")
@@ -717,7 +765,7 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_3v2ag")
 theme_override_styles/fill = SubResource("StyleBoxFlat_qfm1y")
-max_value = 250.0
+max_value = 220.0
 show_percentage = false
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Main"]
@@ -796,11 +844,12 @@ offset_right = 20.0
 offset_bottom = 10.5
 grow_horizontal = 2
 grow_vertical = 2
-label_settings = SubResource("LabelSettings_jej6c")
+label_settings = SubResource("LabelSettings_4r5pv")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Tab" type="Control" parent="UI/Main"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -908,16 +957,116 @@ alignment = 1
 [node name="Tab Entry" parent="UI/Main/Tab/ScrollContainer/VBoxContainer" instance=ExtResource("16_a8ls1")]
 layout_mode = 2
 
+[node name="Shop" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="UI/Main/Shop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 80.0
+offset_right = -24.0
+offset_bottom = -112.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fulsm")
+
+[node name="Title" type="Label" parent="UI/Main/Shop/Panel"]
+layout_mode = 1
+offset_left = 32.0
+offset_top = 24.0
+offset_right = 144.0
+offset_bottom = 80.0
+size_flags_vertical = 0
+text = "Shop"
+label_settings = SubResource("LabelSettings_60mlk")
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main/Shop/Panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -125.0
+offset_top = 22.0
+offset_right = -16.0
+offset_bottom = 64.0
+grow_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="UI/Main/Shop/Panel/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("14_a8ls1")
+expand_mode = 2
+
+[node name="Gold" type="Label" parent="UI/Main/Shop/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "000"
+label_settings = SubResource("LabelSettings_60mlk")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Shop/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.026
+anchor_top = 0.167
+anchor_right = 0.987
+anchor_bottom = 0.879
+offset_left = -0.0320015
+offset_top = -0.176003
+offset_right = 0.0159912
+offset_bottom = -0.11203
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="UI/Main/Shop/Panel/ScrollContainer"]
+layout_mode = 2
+columns = 6
+
+[node name="Catalog Item" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
+layout_mode = 2
+script = SubResource("GDScript_fulsm")
+
+[node name="Close" type="Button" parent="UI/Main/Shop/Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -188.0
+offset_top = -48.0
+offset_right = 188.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_4r5pv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_60mlk")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_i4ail")
+theme_override_styles/normal = SubResource("StyleBoxFlat_a38lo")
+text = "Close"
+
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
 
 [node name="Username" type="Label" parent="."]
 visible = false
-offset_left = -29.0
-offset_top = -32.0
-offset_right = 99.0
-offset_bottom = -4.0
-scale = Vector2(0.45, 0.45)
+offset_left = -80.0
+offset_top = -27.0
+offset_right = 377.0
+offset_bottom = 1.0
+scale = Vector2(0.35, 0.35)
 text = "Minota"
 label_settings = SubResource("LabelSettings_a8ls1")
 horizontal_alignment = 1
@@ -929,3 +1078,6 @@ vertical_alignment = 1
 [connection signal="body_exited" from="Area2D" to="." method="_on_body_exited"]
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]
 [connection signal="body_shape_exited" from="Area2D" to="." method="_on_body_shape_exited"]
+[connection signal="pressed" from="UI/Main/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
+
+[editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]

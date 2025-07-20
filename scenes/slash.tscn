@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3 uid="uid://dcy0t5qh6b33u"]
+
+[ext_resource type="Texture2D" uid="uid://ltjnin8y5qn2" path="res://assets/sprites/slash.png" id="1_3c2nd"]
+[ext_resource type="Script" uid="uid://c04wfkbnrfspx" path="res://scripts/temporary_particles.gd" id="2_fg1j7"]
+
+[sub_resource type="Curve" id="Curve_cta5r"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.394161, 0.841463), 0.0, 0.0, 0, 0, Vector2(0.653285, 0.686992), 0.0, 0.0, 0, 0, Vector2(0.875912, 0.418699), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_h4wl3"]
+curve = SubResource("Curve_cta5r")
+
+[sub_resource type="Curve" id="Curve_0r51w"]
+_data = [Vector2(0, 0.54878), 0.0, 0.0, 0, 0, Vector2(0.29927, 0.894309), 0.0, 0.0, 0, 0, Vector2(0.627737, 1), 0.0, 0.0, 0, 0, Vector2(0.956204, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_41gm4"]
+curve = SubResource("Curve_0r51w")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8rqhb"]
+particle_flag_disable_z = true
+angle_min = -180.0
+angle_max = -180.0
+gravity = Vector3(98, 0, 0)
+radial_accel_min = -2.23517e-06
+radial_accel_max = -2.23517e-06
+tangential_accel_min = -2.23517e-06
+tangential_accel_max = -2.23517e-06
+scale_min = 2.0
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_41gm4")
+alpha_curve = SubResource("CurveTexture_h4wl3")
+collision_mode = 1
+collision_friction = 0.0
+collision_bounce = 1.0
+collision_use_scale = true
+
+[node name="Slash" type="GPUParticles2D"]
+emitting = false
+amount = 1
+texture = ExtResource("1_3c2nd")
+lifetime = 0.5
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_8rqhb")
+script = ExtResource("2_fg1j7")

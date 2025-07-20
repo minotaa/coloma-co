@@ -16,16 +16,16 @@ var knockback_friction := 800.0
 var hit_cooldown = 0.0
 var max_hit_cooldown = 0.35
 
-const SPEED = 95.0
+const SPEED = 120.0
 const SPRINT_MULTIPLIER = 1.45
 var exhausted = false # When you deplete your sprint completely you will become exhausted
-var sprint = 250
+var sprint = 220
 var alive: bool = true
 var max_health = 100.0
 var health = 100.0
 var damage = 25
 var strength = 0
-var sword_reach := 1.4  # Base reach
+var sword_reach := 1.55  # Base reach
 var gold: int = 0
 
 var bag = Bag.new()
@@ -72,12 +72,18 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 func die() -> void:
 	$AnimatedSprite2D.play("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
-	Toast.add("You're dead... you will respawn in 10 seconds.")
+	if not multiplayer.has_multiplayer_peer():
+		Toast.add("You're dead... you will respawn in 10 seconds.")
+	else:
+		Toast.add.rpc_id(int(name), "You're dead... you will respawn in 10 seconds.")
 	alive = false
 	await get_tree().create_timer(10.0).timeout
 	health = max_health
 	gold = max(roundi(gold / 2), 0)
-	Toast.add("You respawned!")
+	if not multiplayer.has_multiplayer_peer():
+		Toast.add("You respawned! You lost half your gold.")
+	else:
+		Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
 	play_idle_animation()
 	$AnimatedSprite2D.material = null
 	global_position = Vector2.ZERO
@@ -115,6 +121,17 @@ func _process_input(delta) -> void:
 		return
 	if not alive:
 		return
+	if Input.is_action_just_pressed("interact"):
+		if not $UI/Main/Shop.visible:
+			for area in $Area2D.get_overlapping_areas():
+				if (area as Area2D).is_in_group("gem"):
+					$UI/Main/Shop.visible = true
+					play_idle_animation()
+		else:
+			$UI/Main/Shop.visible = false
+			
+	if $UI/Main/Shop.visible:
+		return
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 	var velocity_length = velocity.length_squared()
 	var is_moving = velocity_length > 0
@@ -142,12 +159,39 @@ func _process_input(delta) -> void:
 		if $AnimatedSprite2D.animation.begins_with("walk_"):
 			play_idle_animation()
 
-	# Handle sword attack
-	if Input.is_action_just_pressed("attack"):
-		play_animation("sword_" + last_direction)
-		_enable_sword_hitbox(last_direction)
+	# Determine attack direction
+	var attack_dir := ""
+
+	if Input.is_action_just_pressed("attack_up"):
+		attack_dir = "up"
+	elif Input.is_action_just_pressed("attack_down"):
+		attack_dir = "down"
+	elif Input.is_action_just_pressed("attack_left"):
+		attack_dir = "left"
+	elif Input.is_action_just_pressed("attack_right"):
+		attack_dir = "right"
+	elif Input.is_action_just_pressed("attack"):
+		var mouse_pos = get_global_mouse_position()
+		var direction_vec = (mouse_pos - global_position).normalized()
+
+		if abs(direction_vec.x) > abs(direction_vec.y):
+			if direction_vec.x > 0.0:
+				attack_dir = "right"
+			else:
+				attack_dir = "left"
+		else:
+			if direction_vec.y > 0.0:
+				attack_dir = "down"
+			else:
+				attack_dir = "up"
+
+	# Perform attack if a direction was determined
+	if attack_dir != "":
+		play_animation("sword_" + attack_dir)
+		_enable_sword_hitbox(attack_dir)
 		sword_hitbox_timer = SWORD_HITBOX_TIME
 		sword_hitbox_active = true
+
 
 	# Apply velocity and move
 	velocity *= SPEED
@@ -165,15 +209,15 @@ func _process_input(delta) -> void:
 		exhausted = true
 	if exhausted:
 		velocity *= 0.55
-	if (velocity.length() == 0 and sprint < 250) or (exhausted and sprint < 150):
+	if (velocity.length() == 0 and sprint < 220) or (exhausted and sprint < 220):
 		if not exhausted:
 			sprint += 1
 		else:
 			sprint += 0.5
-	if velocity.length() == SPEED and sprint < 250:
+	if velocity.length() == SPEED and sprint < 220:
 		sprint += 0.45
 	
-	if Input.is_action_pressed("info"):
+	if Input.is_action_pressed("info") and not $UI/Main/Shop.visible:
 		$UI/Main/Tab.visible = true
 		for children in $UI/Main/Tab/ScrollContainer/VBoxContainer.get_children():
 			children.queue_free()
@@ -220,22 +264,35 @@ func _enable_sword_hitbox(direction: String) -> void:
 			var reach_factor := sword_reach / 2.0
 
 			if shape is RectangleShape2D:
+				var slash = preload("res://scenes/slash.tscn").instantiate()
+				slash.emitting = true
 				if direction == "up":
 					shape.size = Vector2(58.0, 20.5 * reach_factor)
 					shape_node.position = Vector2(0, -20 * reach_factor)
-
+					slash.process_material.gravity = Vector3(0.0, -98.0, 0.0)
+					slash.process_material.angle_min = 0
+					slash.process_material.angle_max = 0
+					
 				elif direction == "down":
 					shape.size = Vector2(58.0, 20.5 * reach_factor)
 					shape_node.position = Vector2(0, 20 * reach_factor)
+					slash.process_material.gravity = Vector3(0.0, 98.0, 0.0)
+					slash.process_material.angle_min = -180
+					slash.process_material.angle_max = -180
 
 				elif direction == "left":
 					shape.size = Vector2(20.5 * reach_factor, 58.0)
 					shape_node.position = Vector2(-20 * reach_factor, 0)
-
+					slash.process_material.gravity = Vector3(-98.0, 0.0, 0.0)
+					slash.process_material.angle_min = 90
+					slash.process_material.angle_max = 90
+					
 				elif direction == "right":
 					shape.size = Vector2(20.5 * reach_factor, 58.0)
 					shape_node.position = Vector2(20 * reach_factor, 0)
-
+				
+				slash.global_position = shape_node.global_position + Vector2(-999999, 0)
+				get_parent().add_child(slash, true)
 
 func _disable_all_sword_hitboxes() -> void:
 	for child in $SwordHbox.get_children():
@@ -256,7 +313,7 @@ func _physics_process(delta: float) -> void:
 		$UI/Main/HealthBar.max_value = max_health
 		$UI/Main/HealthBar.value = health
 		$UI/Main/SprintBar.value = sprint
-		if sprint >= 250:
+		if sprint >= 220:
 			exhausted = false
 			$UI/Main/SprintBar.visible = false
 		else:
@@ -290,6 +347,15 @@ func _animation_finished() -> void:
 	if $AnimatedSprite2D.animation.begins_with("sword_"):
 		play_idle_animation()
 
+@rpc("any_peer", "call_local")
+func add_hit_particles(position: Vector2, angle: float):
+	var hitting_particles = preload("res://scenes/hitting_particles.tscn")
+	var particles = hitting_particles.instantiate()
+	get_parent().add_child(particles, true)
+	particles.global_position = position
+	particles.rotation = angle
+	particles.emitting = true
+
 func _process_hit(body):
 	#print("processed hit")
 	if body.is_in_group("enemies"):
@@ -297,7 +363,15 @@ func _process_hit(body):
 		var defense = body.entity.defense
 		var defense_factor = 1.0 - (defense / (defense + 100.0))
 		var total_damage = damage_before_defense * defense_factor
+		var direction = body.global_position - global_position
+		var midpoint = global_position + direction * 0.5
+		var angle = direction.angle()
 		if multiplayer.has_multiplayer_peer():
-			body.take_damage.rpc(total_damage, global_position, self)
+			body.take_damage.rpc(total_damage, global_position, name)
+			add_hit_particles.rpc(midpoint, angle)
 		else:
-			body.take_damage(total_damage, global_position, self)
+			body.take_damage(total_damage, global_position, name)
+			add_hit_particles(midpoint, angle)
+
+func _on_shop_close_button_pressed() -> void:
+	$UI/Main/Shop.visible = false

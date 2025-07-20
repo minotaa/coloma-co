@@ -6,4 +6,5 @@
 shader = ExtResource("1_60b1o")
 shader_parameter/shock_color = Color(1, 0, 0, 1)
 shader_parameter/amplitude = 20.0
-shader_parameter/frequecy = 20.0
+shader_parameter/frequency = 10.0
+shader_parameter/shock_time = 0.0

@@ -1,11 +1,11 @@
 [gd_scene load_steps=4 format=3 uid="uid://ccfj8glgxc0w7"]
 
-[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="1_vqah5"]
+[ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="1_vqah5"]
 [ext_resource type="Script" uid="uid://b1it01wpadifw" path="res://scripts/floating_text.gd" id="2_ki2nc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_27d3m"]
 font = ExtResource("1_vqah5")
-font_size = 11
+font_size = 17
 outline_color = Color(0, 0, 0, 1)
 shadow_color = Color(0, 0, 0, 0.8)
 

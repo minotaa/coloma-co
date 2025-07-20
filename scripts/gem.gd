@@ -19,7 +19,7 @@ func _ready() -> void:
 
 func take_damage(amount: float) -> void:
 	entity.health -= amount
-	Toast.add("The Gem took damage! It has " + str(roundi(entity.health)) + " HP left!" )
+	Toast.add("The Gem cracked! It has " + str(roundi(entity.health)) + " HP left!" )
 	if entity.health <= 0.0:
 		die()
 		

@@ -1,7 +1,7 @@
 extends Node2D
 
 func _ready() -> void:
-	$UI/Main/Title.text = ProjectSettings.get_setting("application/config/name")
+	$UI/Main/Title.text = "Myrkwood: Offshoot"
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
 
 func _on_lan_pressed() -> void:

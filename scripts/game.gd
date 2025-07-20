@@ -19,7 +19,8 @@ func add_kill(player_id: String, enemy_type: String) -> void:
 	if not kills[player_id].has(enemy_type):
 		kills[player_id][enemy_type] = 0
 	kills[player_id][enemy_type] += 1
-	update_kills.rpc(kills)
+	if multiplayer.has_multiplayer_peer():
+		update_kills.rpc(kills)
 
 func _ready() -> void:
 	if not multiplayer.has_multiplayer_peer():
@@ -34,14 +35,24 @@ func _ready() -> void:
 
 	# Multiplayer: spawn players from the current list
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		var radius = 20  # Radius of the spawn circle
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+
 		for player_data in NetworkManager.players:
 			var peer_id = player_data["id"]
 			var p = player_scene.instantiate()
 			p.name = str(peer_id)
 			p.get_node("Username").text = player_data["username"]
-			p.global_position = Vector2(0,0)
+
+			# Random angle around the circle
+			var angle = rng.randf_range(0.0, TAU)
+			var offset = Vector2(cos(angle), sin(angle)) * radius
+			p.global_position = offset  # Spawn relative to (0,0); adjust if needed
+
 			p.set_multiplayer_authority(peer_id)
 			call_deferred("add_child", p, true)
+
 
 		# Connect signals for player joins and quits
 		NetworkManager.player_joined.connect(player_joined)
@@ -76,9 +87,9 @@ func update_kills(kills: Dictionary) -> void:
 func update_wave(wave: int) -> void:
 	self.wave = wave
 	
-@rpc("authority", "call_remote")
-func update_gold(gold: int) -> void:
-	self.gold = gold
+@rpc("authority", "call_local")
+func add_gold(id: String, amount: int) -> void:
+	get_node(id).gold += amount
 
 func player_joined(id) -> void:
 	if not multiplayer.is_server():
@@ -150,13 +161,15 @@ func spawn_wave() -> void:
 
 func spawn_bombrats(count: int) -> void:
 	for i in count:
-		await get_tree().create_timer(2.5).timeout
+		var delay = randf_range(1.00, 2.25)
+		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_bombrat(directions.pick_random())
 
 func spawn_slimes(count: int) -> void:
 	for i in count:
-		await get_tree().create_timer(2.5).timeout
+		var delay = randf_range(1.00, 2.25)
+		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_slime(directions.pick_random())
 

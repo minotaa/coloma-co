@@ -45,8 +45,9 @@ func join_server(address: String, username: String = "Player") -> bool:
 	multiplayer.connection_failed.connect(connection_failed)
 
 	# Wait a moment for connection to establish
-	while not multiplayer.has_multiplayer_peer() or multiplayer.get_unique_id() == 1:
-		await get_tree().process_frame
+	while not multiplayer.multiplayer_peer.get_connection_status() == 2 or multiplayer.get_unique_id() == 1:
+		print("Stalling...")
+		await get_tree().create_timer(0.1).timeout
 
 	# Tell the server our username
 	send_info.rpc(multiplayer.get_unique_id(), username)

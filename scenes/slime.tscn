@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://dkm4wygcrnihe"]
+[gd_scene load_steps=17 format=3 uid="uid://dkm4wygcrnihe"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_n6pvg"]
 [ext_resource type="Script" uid="uid://bsxa0cvxuagjl" path="res://scripts/slime.gd" id="1_p2gj0"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_pjw23"]
 [ext_resource type="Texture2D" uid="uid://g7stbhs0x2rv" path="res://assets/sprites/new-slime.png" id="4_pjw23"]
+[ext_resource type="Texture2D" uid="uid://b4ifcnh4bwsck" path="res://assets/sprites/target.png" id="5_2npkn"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
 shader = ExtResource("1_n6pvg")
@@ -62,6 +63,18 @@ properties/2/replication_mode = 1
 properties/3/path = NodePath(".:modulate:a")
 properties/3/spawn = true
 properties/3/replication_mode = 1
+properties/4/path = NodePath("ProgressBar:visible")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath("ProgressBar:min_value")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+properties/6/path = NodePath("ProgressBar:max_value")
+properties/6/spawn = true
+properties/6/replication_mode = 1
+properties/7/path = NodePath("ProgressBar:value")
+properties/7/spawn = true
+properties/7/replication_mode = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pjw23"]
 bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
@@ -105,9 +118,15 @@ replication_config = SubResource("SceneReplicationConfig_pjw23")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 offset_left = -9.0
-offset_top = 12.0
+offset_top = -9.0
 offset_right = 9.0
-offset_bottom = 16.0
+offset_bottom = -5.0
 theme_override_styles/background = SubResource("StyleBoxFlat_pjw23")
 theme_override_styles/fill = SubResource("StyleBoxFlat_2npkn")
 show_percentage = false
+
+[node name="Target" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.592157)
+z_index = -1
+texture = ExtResource("5_2npkn")
