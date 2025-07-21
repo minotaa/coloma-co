@@ -126,6 +126,7 @@ func spawn_wave() -> void:
 
 	match wave:
 		1:
+			spawn_slime("south") # testing
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 		2:

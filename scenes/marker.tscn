@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://co1u1bfrscn7q"]
+
+[ext_resource type="Texture2D" uid="uid://b6x2ks8yfiru2" path="res://assets/sprites/caret.png" id="1_hy4mp"]
+
+[node name="TextureRect" type="TextureRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("1_hy4mp")

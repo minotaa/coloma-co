@@ -128,5 +128,6 @@ show_percentage = false
 [node name="Target" type="Sprite2D" parent="."]
 visible = false
 modulate = Color(1, 1, 1, 0.592157)
+top_level = true
 z_index = -1
 texture = ExtResource("5_2npkn")

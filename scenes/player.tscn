@@ -1,4 +1,4 @@
-[gd_scene load_steps=102 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=103 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://cll1oqbv8sq74" path="res://assets/sprites/sword-up.png" id="9_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://bs4bxx026a2bg" path="res://assets/sprites/light.png" id="9_fnujr"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="11_d2wvv"]
+[ext_resource type="PackedScene" uid="uid://ob7qtnaqlwp2" path="res://scenes/inventory_slot.tscn" id="14_4r5pv"]
 [ext_resource type="Texture2D" uid="uid://d4b5761just5a" path="res://assets/sprites/coins.png" id="14_a8ls1"]
 [ext_resource type="Texture2D" uid="uid://ckwubckjl6ssl" path="res://assets/sprites/bombrat-down.png" id="15_qfm1y"]
 [ext_resource type="PackedScene" uid="uid://d2i53glql5uik" path="res://scenes/tab_entry.tscn" id="16_a8ls1"]
@@ -583,8 +584,22 @@ shadow_offset = Vector2(4, 4)
 resource_name = "healing_potion"
 script/source = "extends Control
 
+var cost = 100
+var item_id = 0
+
 func _on_button_pressed() -> void:
-	print(\"uhhh... healing potion... bought?\")
+	#print(\"uhhh... healing potion... bought?\")
+	#print(Man.get_player().gold)
+	if Man.get_player().gold >= cost:
+		if Man.get_player().bag.list.size() < 3:
+			Man.get_player().gold -= cost
+			Man.get_player().bag.add_item(ItemStack.new(Items.get_by_id(0), 1))
+			Toast.add(\"You purchased: \" + str(ItemStack.new(Items.get_by_id(0), 1)))
+			Toast.add(\"-\" + str(cost) + \" Gold\")
+		else:
+			Toast.add(\"You don't have the inventory space!\")
+	else:
+		Toast.add(\"You can't afford this!\")
 "
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fulsm"]
@@ -722,10 +737,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -188.0
-offset_top = -64.0
-offset_right = 188.0
-offset_bottom = -24.0
+offset_left = -160.0
+offset_top = -176.0
+offset_right = 160.0
+offset_bottom = -136.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_a8ls1")
@@ -757,16 +772,41 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -188.0
-offset_top = -96.0
-offset_right = 188.0
-offset_bottom = -72.0
+offset_left = -160.0
+offset_top = -208.0
+offset_right = 160.0
+offset_bottom = -184.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_3v2ag")
 theme_override_styles/fill = SubResource("StyleBoxFlat_qfm1y")
 max_value = 220.0
 show_percentage = false
+
+[node name="Inventory" type="HBoxContainer" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -164.0
+offset_top = -124.0
+offset_right = 164.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="Slot1" parent="UI/Main/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/Main/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/Main/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Main"]
 layout_mode = 0
@@ -1000,6 +1040,7 @@ offset_top = 22.0
 offset_right = -16.0
 offset_bottom = 64.0
 grow_horizontal = 0
+alignment = 2
 
 [node name="TextureRect" type="TextureRect" parent="UI/Main/Shop/Panel/HBoxContainer"]
 layout_mode = 2
@@ -1056,6 +1097,17 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_60mlk")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_i4ail")
 theme_override_styles/normal = SubResource("StyleBoxFlat_a38lo")
 text = "Close"
+
+[node name="Markers" type="Control" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -328.0
+offset_top = 8.0
+offset_right = 448.0
+offset_bottom = 72.0
+grow_horizontal = 2
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")

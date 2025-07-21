@@ -12,3 +12,13 @@ func end_game() -> void:
 	if get_tree().current_scene.get_node("Game") != null:
 		get_tree().current_scene.get_node("Game").queue_free()
 	
+func get_player() -> Node2D:
+	for player in get_tree().get_nodes_in_group("players"):
+		if multiplayer.has_multiplayer_peer():
+			if player.name == str(multiplayer.get_unique_id()):
+				return player
+		else:
+			if player.name == "Player":
+				return player
+
+	return null

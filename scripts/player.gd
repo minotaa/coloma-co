@@ -127,6 +127,7 @@ func _process_input(delta) -> void:
 				if (area as Area2D).is_in_group("gem"):
 					$UI/Main/Shop.visible = true
 					play_idle_animation()
+					$UI/Main/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 		else:
 			$UI/Main/Shop.visible = false
 			
@@ -307,6 +308,15 @@ func _disable_all_sword_hitboxes() -> void:
 	#player_pos.y = clamp(player_pos.y, -half_height, half_height)
 	#return player_pos
 
+func get_bombrats_to_track():
+	var bombrats = []
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy.entity.id == 1:
+			bombrats.append(enemy)
+	return bombrats
+
+var tracked_markers := {}
+
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
@@ -321,6 +331,30 @@ func _physics_process(delta: float) -> void:
 		$UI/Main/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	_process_input(delta)
+	var slots = $UI/Main/Inventory.get_children()
+
+	for i in slots.size():
+		var slot = slots[i]
+		var icon = slot.get_node("TextureRect")
+		var amount_label = slot.get_node("Label")
+		var progress_bar = slot.get_node("ProgressBar")
+
+		if i < bag.list.size():
+			var stack = bag.list[i]
+
+			# Set the item properly
+			slot.set_item(stack.type)
+
+			# Make sure slot visuals are visible
+			icon.visible = true
+			amount_label.visible = stack.amount > 1
+			progress_bar.visible = stack.type.cooldown
+		else:
+			# Clear visuals, keep slot visible but blank
+			icon.visible = false
+			amount_label.visible = false
+			progress_bar.visible = false
+
 	if sword_hitbox_active:
 		for body in $SwordHbox.get_overlapping_bodies():
 			if body.is_in_group("enemies") and body not in hit_enemies:
