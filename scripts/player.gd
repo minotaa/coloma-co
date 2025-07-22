@@ -265,35 +265,35 @@ func _enable_sword_hitbox(direction: String) -> void:
 			var reach_factor := sword_reach / 2.0
 
 			if shape is RectangleShape2D:
-				var slash = preload("res://scenes/slash.tscn").instantiate()
-				slash.emitting = true
+				#var slash = preload("res://scenes/slash.tscn").instantiate()
+				#slash.emitting = true
 				if direction == "up":
 					shape.size = Vector2(58.0, 20.5 * reach_factor)
 					shape_node.position = Vector2(0, -20 * reach_factor)
-					slash.process_material.gravity = Vector3(0.0, -98.0, 0.0)
-					slash.process_material.angle_min = 0
-					slash.process_material.angle_max = 0
+					#slash.process_material.gravity = Vector3(0.0, -98.0, 0.0)
+					#slash.process_material.angle_min = 0
+					#slash.process_material.angle_max = 0
 					
 				elif direction == "down":
 					shape.size = Vector2(58.0, 20.5 * reach_factor)
 					shape_node.position = Vector2(0, 20 * reach_factor)
-					slash.process_material.gravity = Vector3(0.0, 98.0, 0.0)
-					slash.process_material.angle_min = -180
-					slash.process_material.angle_max = -180
+					#slash.process_material.gravity = Vector3(0.0, 98.0, 0.0)
+					#slash.process_material.angle_min = -180
+					#slash.process_material.angle_max = -180
 
 				elif direction == "left":
 					shape.size = Vector2(20.5 * reach_factor, 58.0)
 					shape_node.position = Vector2(-20 * reach_factor, 0)
-					slash.process_material.gravity = Vector3(-98.0, 0.0, 0.0)
-					slash.process_material.angle_min = 90
-					slash.process_material.angle_max = 90
+					#slash.process_material.gravity = Vector3(-98.0, 0.0, 0.0)
+					#slash.process_material.angle_min = 90
+					#slash.process_material.angle_max = 90
 					
 				elif direction == "right":
 					shape.size = Vector2(20.5 * reach_factor, 58.0)
 					shape_node.position = Vector2(20 * reach_factor, 0)
 				
-				slash.global_position = shape_node.global_position + Vector2(-999999, 0)
-				get_parent().add_child(slash, true)
+				#slash.global_position = shape_node.global_position
+				#get_parent().add_child(slash, true)
 
 func _disable_all_sword_hitboxes() -> void:
 	for child in $SwordHbox.get_children():
@@ -307,15 +307,6 @@ func _disable_all_sword_hitboxes() -> void:
 	#player_pos.x = clamp(player_pos.x, -half_width, half_width)
 	#player_pos.y = clamp(player_pos.y, -half_height, half_height)
 	#return player_pos
-
-func get_bombrats_to_track():
-	var bombrats = []
-	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1:
-			bombrats.append(enemy)
-	return bombrats
-
-var tracked_markers := {}
 
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)

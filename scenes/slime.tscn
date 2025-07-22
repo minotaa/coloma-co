@@ -38,7 +38,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_gstla")
 }],
 "loop": true,
-"name": &"default",
+"name": &"bauble",
 "speed": 8.0
 }]
 

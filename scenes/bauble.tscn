@@ -1,0 +1,237 @@
+[gd_scene load_steps=32 format=3 uid="uid://dqoqkud0rwv3l"]
+
+[ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_nd4x7"]
+[ext_resource type="Script" uid="uid://daxy5xkumt1x1" path="res://scripts/bauble.gd" id="2_dik18"]
+[ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_18mnm"]
+[ext_resource type="Texture2D" uid="uid://rvcg5ekyts0y" path="res://assets/sprites/bauble-down.png" id="4_d3uq1"]
+[ext_resource type="Texture2D" uid="uid://ddjx5jer42ygl" path="res://assets/sprites/bauble-left.png" id="5_apgml"]
+[ext_resource type="Texture2D" uid="uid://dhdm0byixekbh" path="res://assets/sprites/bauble-right.png" id="6_jrjpr"]
+[ext_resource type="Texture2D" uid="uid://btj0aqsiv3ylk" path="res://assets/sprites/bauble-up.png" id="7_ysy7g"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
+shader = ExtResource("1_nd4x7")
+shader_parameter/shock_color = Color(1, 0, 0, 1)
+shader_parameter/amplitude = 30.0
+shader_parameter/frequency = 10.0
+shader_parameter/shock_time = 0.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cxgyb"]
+atlas = ExtResource("4_d3uq1")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yyip7"]
+atlas = ExtResource("4_d3uq1")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lchr1"]
+atlas = ExtResource("4_d3uq1")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ygmum"]
+atlas = ExtResource("4_d3uq1")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uihbi"]
+atlas = ExtResource("5_apgml")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e3nxw"]
+atlas = ExtResource("5_apgml")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yf6nq"]
+atlas = ExtResource("5_apgml")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b285d"]
+atlas = ExtResource("5_apgml")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krlqm"]
+atlas = ExtResource("6_jrjpr")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1imfl"]
+atlas = ExtResource("6_jrjpr")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xchid"]
+atlas = ExtResource("6_jrjpr")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4c6aq"]
+atlas = ExtResource("6_jrjpr")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uyg30"]
+atlas = ExtResource("7_ysy7g")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_28ao4"]
+atlas = ExtResource("7_ysy7g")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dpjug"]
+atlas = ExtResource("7_ysy7g")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r74fg"]
+atlas = ExtResource("7_ysy7g")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dmbr2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cxgyb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yyip7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lchr1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ygmum")
+}],
+"loop": true,
+"name": &"bauble-down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uihbi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e3nxw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yf6nq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b285d")
+}],
+"loop": true,
+"name": &"bauble-left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krlqm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1imfl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xchid")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4c6aq")
+}],
+"loop": true,
+"name": &"bauble-right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uyg30")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_28ao4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dpjug")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r74fg")
+}],
+"loop": true,
+"name": &"bauble-up",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nd4x7"]
+radius = 6.0
+height = 22.0
+
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_0l8pv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_n6pvg"]
+radius = 6.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_hebxe"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("AnimatedSprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("AnimatedSprite2D:frame")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:modulate:a")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath("ProgressBar:value")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath("ProgressBar:visible")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+properties/6/path = NodePath("ProgressBar:min_value")
+properties/6/spawn = true
+properties/6/replication_mode = 1
+properties/7/path = NodePath("ProgressBar:max_value")
+properties/7/spawn = true
+properties/7/replication_mode = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hebxe"]
+bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svhan"]
+bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
+
+[node name="Bauble" type="CharacterBody2D" groups=["enemies"]]
+material = SubResource("ShaderMaterial_pjw23")
+collision_layer = 6
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("2_dik18")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, 3)
+texture = ExtResource("3_18mnm")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+sprite_frames = SubResource("SpriteFrames_dmbr2")
+animation = &"bauble-down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("CapsuleShape2D_nd4x7")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamPolyphonic_0l8pv")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 15
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -7)
+shape = SubResource("CircleShape2D_n6pvg")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_hebxe")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -9.0
+offset_top = -22.0
+offset_right = 9.0
+offset_bottom = -18.0
+theme_override_styles/background = SubResource("StyleBoxFlat_hebxe")
+theme_override_styles/fill = SubResource("StyleBoxFlat_svhan")
+show_percentage = false

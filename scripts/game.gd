@@ -9,6 +9,7 @@ var kills = {}
 
 var bombrat = preload("res://scenes/bombrat.tscn")
 var slime = preload("res://scenes/slime.tscn")
+var bauble = preload("res://scenes/bauble.tscn")
 var player_scene = preload("res://scenes/player.tscn")
 
 @onready var spawner_layer = $Spawner
@@ -126,7 +127,7 @@ func spawn_wave() -> void:
 
 	match wave:
 		1:
-			spawn_slime("south") # testing
+			spawn_bauble("south") # testing
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 		2:
@@ -173,6 +174,13 @@ func spawn_slimes(count: int) -> void:
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_slime(directions.pick_random())
+
+func spawn_baubles(count: int) -> void:
+	for i in count:
+		var delay = randf_range(1.00, 2.25)
+		await get_tree().create_timer(delay).timeout
+		var directions = ["north", "south", "west", "east"]
+		spawn_bauble(directions.pick_random())
 
 func spawn_slime(direction: String) -> void:
 	var matching_cells: Array[Vector2i] = []
@@ -237,3 +245,35 @@ func spawn_bombrat(direction: String) -> void:
 		var bomb = bombrat.instantiate()
 		bomb.global_position = spawn_pos
 		add_child(bomb, true)
+
+func spawn_bauble(direction: String) -> void:
+	var matching_cells: Array[Vector2i] = []
+	var cells = spawner_layer.get_used_cells()
+
+	for cell_loc in cells:
+		var data = spawner_layer.get_cell_tile_data(cell_loc)
+		if not data:
+			continue
+		if data.get_custom_data("type") != "corner":
+			continue
+
+		match direction:
+			"north":
+				if cell_loc.y < 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"south":
+				if cell_loc.y > 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"west":
+				if cell_loc.x < 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+			"east":
+				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+
+	if matching_cells:
+		var selected_cell = matching_cells.pick_random()
+		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		var baub = bauble.instantiate()
+		baub.global_position = spawn_pos
+		add_child(baub, true)
