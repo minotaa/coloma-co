@@ -249,6 +249,22 @@ func _process_input(delta) -> void:
 	
 	move_and_slide()
 
+func press_inventory_slot(index: int) -> void:
+	var slots = $UI/Main/Inventory.get_children()
+	if index >= 0 and index < slots.size():
+		var button = slots[index].get_node("Button")
+		button.emit_signal("pressed")
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		match event.keycode:
+			49:
+				press_inventory_slot(0)
+			50:
+				press_inventory_slot(1)
+			51:
+				press_inventory_slot(2)
+
 func _enable_sword_hitbox(direction: String) -> void:
 	var hitbox = $SwordHbox
 

@@ -5,6 +5,7 @@ var wave: int = 0
 var gold: int = 0
 var bombrats_left: int = 0
 var started: bool = false
+var spawning_wave: bool = false
 var kills = {}
 
 var bombrat = preload("res://scenes/bombrat.tscn")
@@ -68,12 +69,15 @@ func _process(delta: float) -> void:
 	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		return
 
-	bombrats_left = 0
+	if not started or spawning_wave:
+		return
+
+	var bombrats_left := 0
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		if enemy.entity.id == 1:
 			bombrats_left += 1
 
-	if bombrats_left <= 0 and started == true:
+	if bombrats_left <= 0:
 		if multiplayer.has_multiplayer_peer():
 			Toast.add.rpc("Wave complete!")
 		else:
@@ -110,24 +114,27 @@ func player_quit(id) -> void:
 			child.call_deferred("queue_free")
 
 func spawn_wave() -> void:
+	spawning_wave = true
 	wave += 1
+
 	if multiplayer.has_multiplayer_peer():
 		update_wave.rpc(wave)
+
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.health < player.max_health:
 			var old_health = player.health
-			player.health = min(player.health + 20, player.max_health)
+			player.health = min(player.health + 10, player.max_health)
 			var healed = roundi(player.health - old_health)
 
 			if healed > 0:
+				var text = "+" + str(healed) + " HP"
 				if multiplayer.has_multiplayer_peer():
-					Toast.add.rpc_id(int(player.name), "+" + str(healed) + " HP")
+					Toast.add.rpc_id(int(player.name), text)
 				else:
-					Toast.add("+" + str(healed) + " HP")
+					Toast.add(text)
 
 	match wave:
 		1:
-			spawn_bauble("south") # testing
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 		2:
@@ -140,44 +147,71 @@ func spawn_wave() -> void:
 			spawn_bombrat("south")
 			spawn_bombrat("west")
 			spawn_bombrat("east")
-			spawn_bombrats(2)
+			await spawn_bombrats(2)
 		4:
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 			spawn_bombrat("west")
 			spawn_bombrat("east")
-			spawn_bombrats(3)
+			await spawn_bombrats(3)
 			spawn_slime("north")
 			spawn_slime("south")
 		5:
-			spawn_bombrat("north")
-			spawn_bombrat("south")
-			spawn_bombrat("west")
-			spawn_bombrat("east")
-			spawn_bombrats(5)
-			spawn_slimes(3)
+			await spawn_bombrats(5)
+			await spawn_slimes(3)
+		6:
+			await spawn_bombrats(5)
+			await spawn_slimes(4)
+		7:
+			await spawn_bombrats(4)
+			await spawn_slimes(4)
+			spawn_bauble("north")
+		8:
+			await spawn_bombrats(4)
+			await spawn_slimes(5)
+			await spawn_baubles(2)
+		9:
+			await spawn_bombrats(5)
+			await spawn_slimes(5)
+			await spawn_baubles(3)
+		10:
+			await spawn_bombrats(5)
+			await spawn_slimes(5)
+			await spawn_baubles(4)
 		_:
-			spawn_bombrat("north")
-			spawn_bombrats(6 + wave)
-			spawn_slimes(4 + int(wave / 2))
+			await spawn_bombrats(4 + wave)
+			await spawn_slimes(4 + int(wave / 2))
+
+			var bauble_chance := clampf(0.25 + float(wave) / 30.0, 0.25, 0.75)
+			var baubles_to_spawn := 0
+
+			for i in range(5):
+				if randf() < bauble_chance:
+					baubles_to_spawn += 1
+					
+			if baubles_to_spawn > 0:
+				await spawn_baubles(baubles_to_spawn)
+
+
+	spawning_wave = false
 
 func spawn_bombrats(count: int) -> void:
 	for i in count:
-		var delay = randf_range(1.00, 2.25)
+		var delay = randf_range(0.75, 2.25)
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_bombrat(directions.pick_random())
 
 func spawn_slimes(count: int) -> void:
 	for i in count:
-		var delay = randf_range(1.00, 2.25)
+		var delay = randf_range(0.75, 2.25)
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_slime(directions.pick_random())
 
 func spawn_baubles(count: int) -> void:
 	for i in count:
-		var delay = randf_range(1.00, 2.25)
+		var delay = randf_range(0.75, 2.25)
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_bauble(directions.pick_random())

@@ -1,10 +1,10 @@
 extends CharacterBody2D
 
 const SHOOT_INTERVAL := 2.0
-const SHOOT_DISTANCE := 256.0  # Only shoot if player is within this range
-const RETREAT_DISTANCE := 100.0  # Try to maintain this distance from the player
-const SPEED = 80.0
-
+const RETREAT_DISTANCE := 70.0  # Try to maintain this distance from the player
+const APPROACH_DISTANCE := 90
+const APPROACH_SPEED = 30.0
+const RETREAT_SPEED = 80.0
 
 @onready var agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -12,6 +12,7 @@ const SPEED = 80.0
 @onready var normal_material: Material = sprite.material
 @onready var shock_material = preload("res://scenes/shock.tres")
 
+var move_mode = "idle"
 var alive: bool = true
 var explosion_scene = preload("res://scenes/explosion.tscn")
 var shoot_timer := 0.0
@@ -34,6 +35,34 @@ func die() -> void:
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(Callable(self, "queue_free"))
 
+func get_retreat_position_away_from(player_pos: Vector2) -> Vector2:
+	var best_pos = global_position
+	var best_dist = 0.0
+
+	# Save the original target to restore after testing
+	var original_target = agent.target_position
+
+	for angle_deg in range(0, 360, 20):
+		for radius in [64, 96, 128, 160, 192]:
+			var angle_rad = deg_to_rad(angle_deg)
+			var offset = Vector2(cos(angle_rad), sin(angle_rad)) * radius
+			var candidate = global_position + offset
+
+			# Temporarily test path to candidate
+			agent.target_position = candidate
+			var next_pos = agent.get_next_path_position()
+
+			if next_pos != Vector2.ZERO:
+				var dist = candidate.distance_squared_to(player_pos)
+				if dist > best_dist:
+					best_dist = dist
+					best_pos = candidate
+
+	# Restore original target
+	agent.target_position = original_target
+
+	return best_pos
+
 func _physics_process(delta: float) -> void:
 	if (multiplayer.has_multiplayer_peer() and multiplayer.is_server()) or not multiplayer.has_multiplayer_peer():
 		if entity != null:
@@ -41,25 +70,60 @@ func _physics_process(delta: float) -> void:
 			$ProgressBar.max_value = entity.max_health 
 			$ProgressBar.visible = entity.health < entity.max_health
 
-		var player = get_nearest_player()
-		if player:
-			var to_player = player.global_position - global_position
-			var dist_squared = to_player.length_squared()
+	var player = get_nearest_player()
+	if player:
+		var dist_squared = global_position.distance_squared_to(player.global_position)
+		var target_speed = 40.0
 
-			# If too close, retreat using navigation
-			if dist_squared < RETREAT_DISTANCE * RETREAT_DISTANCE:
-				var retreat_direction = -(to_player.normalized())
-				var retreat_target = global_position + retreat_direction * 64.0  # Step back a little
+		if dist_squared < RETREAT_DISTANCE * RETREAT_DISTANCE:
+			# Retreating: run away fast
+			move_mode = "retreat"
+			target_speed = RETREAT_SPEED
+
+			if agent.is_navigation_finished():
+				var retreat_target = get_retreat_position_away_from(player.global_position)
 				agent.target_position = retreat_target
 
-				var next_position = agent.get_next_path_position()
-				var direction = (next_position - global_position).normalized()
-				velocity = direction * SPEED
+		elif dist_squared > APPROACH_DISTANCE * APPROACH_DISTANCE:
+			# Approaching: move slower toward player
+			move_mode = "approach"
+			target_speed = APPROACH_SPEED
 
-				var collision = move_and_collide(velocity * delta)
-				update_sprite_direction(velocity)
+			agent.target_position = player.global_position
+
+		else:
+			# Idle (safe zone): stop moving
+			move_mode = "idle"
+			agent.set_target_position(global_position)
+
+		var next_pos = agent.get_next_path_position()
+
+		if next_pos != Vector2.ZERO:
+			var direction = (next_pos - global_position).normalized()
+			velocity = direction * target_speed
+			move_and_slide()
+
+			# Face movement direction only if retreating
+			if move_mode == "retreat":
+				update_sprite_direction(direction)
 			else:
-				velocity = Vector2.ZERO
+				# Otherwise face nearest player
+				var face_dir = (player.global_position - global_position).normalized()
+				update_sprite_direction(face_dir)
+		else:
+			velocity = Vector2.ZERO
+
+			# When idle with no movement, still face player
+			if move_mode == "idle":
+				var face_dir = (player.global_position - global_position).normalized()
+				update_sprite_direction(face_dir)
+
+		if move_mode == "idle":
+		# Shooting logic
+			shoot_timer -= delta
+			if shoot_timer <= 0.0:
+				shoot_at_player(player.global_position)
+				shoot_timer = SHOOT_INTERVAL
 
 			# Shooting
 			#shoot_timer -= delta
@@ -149,3 +213,9 @@ func get_nearest_player() -> Node2D:
 				nearest = player
 
 	return nearest
+
+func shoot_at_player(target_pos: Vector2) -> void:
+	var bullet = preload("res://scenes/bullet.tscn").instantiate()
+	bullet.global_position = global_position
+	bullet.direction = (target_pos - global_position).normalized()
+	get_tree().current_scene.add_child(bullet)

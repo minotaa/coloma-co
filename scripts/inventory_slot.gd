@@ -18,6 +18,7 @@ func _process(delta: float) -> void:
 	if item == null:
 		return
 
+	$Button.disabled = !Man.get_player().alive
 	var stack = Man.get_player().bag.get_item_stack(item)
 	if stack != null:
 		$Label.text = str(stack.amount) + "x"

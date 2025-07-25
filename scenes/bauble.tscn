@@ -151,8 +151,8 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nd4x7"]
-radius = 6.0
-height = 22.0
+radius = 4.0
+height = 8.0
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_0l8pv"]
 
@@ -208,13 +208,15 @@ sprite_frames = SubResource("SpriteFrames_dmbr2")
 animation = &"bauble-down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -2)
+position = Vector2(0, -7)
 shape = SubResource("CapsuleShape2D_nd4x7")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamPolyphonic_0l8pv")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+radius = 20.0
 
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 2
