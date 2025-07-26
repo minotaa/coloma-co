@@ -20,5 +20,4 @@ func get_player() -> Node2D:
 		else:
 			if player.name == "Player":
 				return player
-
 	return null

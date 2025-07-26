@@ -37,7 +37,7 @@ func _init() -> void:
 	var healing_potion = Consumable.new(0, "Healing Potion", atlas)
 	healing_potion.description = "Heals +50 HP, 10 second cooldown."
 	healing_potion.cooldown = true
-	healing_potion.cooldown_seconds = 4.5
+	healing_potion.cooldown_seconds = 10.0
 	healing_potion.infinite = false
 	healing_potion.on_consume = func():
 		var player = Man.get_player()

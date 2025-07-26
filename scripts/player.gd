@@ -32,6 +32,13 @@ var bag = Bag.new()
 
 @onready var bombrat_counter := $UI/Main/HBoxContainer/Bombrats/HBoxContainer/Label
 
+func get_bombrats_to_track():
+	var bombrats = []
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy.entity.id == 1:
+			bombrats.append(enemy)
+	return bombrats
+
 func _enter_tree() -> void:
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
@@ -324,6 +331,12 @@ func _disable_all_sword_hitboxes() -> void:
 	#player_pos.y = clamp(player_pos.y, -half_height, half_height)
 	#return player_pos
 
+@onready var camera := get_viewport().get_camera_2d()
+@onready var marker_container := $UI/Main/Markers
+@onready var marker_scene := preload("res://scenes/marker.tscn")
+
+var active_markers := {}
+
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
@@ -348,16 +361,11 @@ func _physics_process(delta: float) -> void:
 
 		if i < bag.list.size():
 			var stack = bag.list[i]
-
-			# Set the item properly
 			slot.set_item(stack.type)
-
-			# Make sure slot visuals are visible
 			icon.visible = true
 			amount_label.visible = stack.amount > 1
 			progress_bar.visible = stack.type.cooldown
 		else:
-			# Clear visuals, keep slot visible but blank
 			icon.visible = false
 			amount_label.visible = false
 			progress_bar.visible = false
@@ -384,6 +392,76 @@ func _physics_process(delta: float) -> void:
 		$UI/Main/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
 		$UI/Main/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 
+	for bombrat in get_bombrats_to_track():
+		if not is_instance_valid(bombrat):
+			continue
+		
+		if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
+			_remove_marker(bombrat)
+			continue
+			
+		var dir = (bombrat.global_position - global_position).normalized()
+		var direction_node = _get_direction_node_from_vector(dir)
+
+		if direction_node == null:
+			_remove_marker(bombrat)
+			continue
+
+		var marker = active_markers.get(bombrat)
+		if marker == null:
+			marker = marker_scene.instantiate()
+			direction_node.add_child(marker)
+			active_markers[bombrat] = marker
+
+		marker.position = _calculate_offset_in_direction_node(dir, direction_node)
+
+		# Snap to cardinal direction
+		match direction_node.name:
+			"Up":
+				marker.rotation = 0
+			"Right":
+				marker.rotation = PI / 2
+			"Down":
+				marker.rotation = PI
+			"Left":
+				marker.rotation = -PI / 2
+
+		# Optional: rotate or flip marker based on direction if needed
+
+	# Clean up markers for dead bombrats
+	for tracked in active_markers.keys():
+		if not is_instance_valid(tracked) or not get_bombrats_to_track().has(tracked):
+			_remove_marker(tracked)
+
+
+func _remove_marker(bombrat):
+	if active_markers.has(bombrat):
+		active_markers[bombrat].queue_free()
+		active_markers.erase(bombrat)
+
+func _get_direction_node_from_vector(vec: Vector2) -> Control:
+	var abs_x = abs(vec.x)
+	var abs_y = abs(vec.y)
+
+	if abs_x > abs_y:
+		return marker_container.get_node("Right") if vec.x > 0 else marker_container.get_node("Left")
+	else:
+		return marker_container.get_node("Down") if vec.y > 0 else marker_container.get_node("Up")
+
+func _calculate_offset_in_direction_node(dir: Vector2, node: Control) -> Vector2:
+	var size = node.get_size()
+	
+	if node.name == "Up" or node.name == "Down":
+		var x = clamp(dir.x * size.x * 0.25 + size.x / 2, 8, size.x - 8)
+		var y = size.y / 2
+		return Vector2(x, y)
+	elif node.name == "Left" or node.name == "Right":
+		var x = size.x / 2
+		var y = clamp(dir.y * size.y * 0.25 + size.y / 2, 8, size.y - 8)
+		return Vector2(x, y)
+	else:
+		return size / 2  # fallback
+		
 func _animation_finished() -> void:
 	if $AnimatedSprite2D.animation.begins_with("sword_"):
 		play_idle_animation()

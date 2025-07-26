@@ -3,7 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://b6x2ks8yfiru2" path="res://assets/sprites/caret.png" id="1_hy4mp"]
 
 [node name="TextureRect" type="TextureRect"]
-offset_right = 40.0
-offset_bottom = 40.0
-scale = Vector2(1.5, 1.5)
+modulate = Color(1, 1, 1, 0.352941)
+anchors_preset = -1
+offset_right = 43.0
+offset_bottom = 43.0
+pivot_offset = Vector2(21, 21)
 texture = ExtResource("1_hy4mp")
