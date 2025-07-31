@@ -130,10 +130,10 @@ func _physics_process(delta: float) -> void:
 			#if shoot_timer <= 0.0 and dist_to_player <= SHOOT_DISTANCE:
 				#shoot_at_player(player.global_position)
 				#shoot_timer = SHOOT_INTERVAL
-	for body in $Hurtbox.get_overlapping_bodies():
-		if body.is_in_group("players") and alive:
-			body.take_damage(10, global_position)
-			pass
+	#for body in $Hurtbox.get_overlapping_bodies():
+		#if body.is_in_group("players") and alive:
+			#body.take_damage(10, global_position)
+			#pass
 
 @rpc("call_local")
 func _show_damage_feedback(amount: int, center_position: Vector2):

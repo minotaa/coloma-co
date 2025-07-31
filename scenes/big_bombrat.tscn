@@ -1,98 +1,98 @@
-[gd_scene load_steps=32 format=3 uid="uid://bfnnju2fwq13d"]
+[gd_scene load_steps=32 format=3 uid="uid://8l2rb5w08s7r"]
 
-[ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_hebxe"]
-[ext_resource type="Script" uid="uid://dbkhpbgs1cksc" path="res://scripts/bombrat.gd" id="2_svhan"]
-[ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_aft4d"]
-[ext_resource type="Texture2D" uid="uid://ckwubckjl6ssl" path="res://assets/sprites/bombrat-down.png" id="4_7vwjr"]
-[ext_resource type="Texture2D" uid="uid://cvxq0jf1abijc" path="res://assets/sprites/bombrat-left.png" id="5_qm7hw"]
-[ext_resource type="Texture2D" uid="uid://doerngmwc4448" path="res://assets/sprites/bombrat-right.png" id="6_0ucap"]
-[ext_resource type="Texture2D" uid="uid://4hr2f4vcjjha" path="res://assets/sprites/bombrat-up.png" id="7_a8hrx"]
+[ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_xl135"]
+[ext_resource type="Script" uid="uid://ca20qwvpfpf54" path="res://scripts/big_bombrat.gd" id="2_e0dvi"]
+[ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_17e8w"]
+[ext_resource type="Texture2D" uid="uid://djo52m8eivbuq" path="res://assets/sprites/big-bombrat-down.png" id="4_ork2k"]
+[ext_resource type="Texture2D" uid="uid://brxb7o3ybg78a" path="res://assets/sprites/big-bombrat-left.png" id="5_yx08p"]
+[ext_resource type="Texture2D" uid="uid://bschxkwh875j2" path="res://assets/sprites/big-bombrat-right.png" id="6_r74p4"]
+[ext_resource type="Texture2D" uid="uid://4hr2f4vcjjha" path="res://assets/sprites/bombrat-up.png" id="7_fxcaw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
-shader = ExtResource("1_hebxe")
+shader = ExtResource("1_xl135")
 shader_parameter/shock_color = Color(1, 0, 0, 1)
 shader_parameter/amplitude = 30.0
 shader_parameter/frequency = 10.0
 shader_parameter/shock_time = 0.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hebxe"]
-atlas = ExtResource("4_7vwjr")
+[sub_resource type="AtlasTexture" id="AtlasTexture_m6gq8"]
+atlas = ExtResource("4_ork2k")
 region = Rect2(0, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_svhan"]
-atlas = ExtResource("4_7vwjr")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ef3s1"]
+atlas = ExtResource("4_ork2k")
 region = Rect2(16, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aft4d"]
-atlas = ExtResource("4_7vwjr")
+[sub_resource type="AtlasTexture" id="AtlasTexture_p3271"]
+atlas = ExtResource("4_ork2k")
 region = Rect2(32, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_7vwjr"]
-atlas = ExtResource("4_7vwjr")
+[sub_resource type="AtlasTexture" id="AtlasTexture_nvqj3"]
+atlas = ExtResource("4_ork2k")
 region = Rect2(48, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qm7hw"]
-atlas = ExtResource("5_qm7hw")
+[sub_resource type="AtlasTexture" id="AtlasTexture_2stfr"]
+atlas = ExtResource("5_yx08p")
 region = Rect2(0, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_0ucap"]
-atlas = ExtResource("5_qm7hw")
+[sub_resource type="AtlasTexture" id="AtlasTexture_0jijy"]
+atlas = ExtResource("5_yx08p")
 region = Rect2(16, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_a8hrx"]
-atlas = ExtResource("5_qm7hw")
+[sub_resource type="AtlasTexture" id="AtlasTexture_gfl07"]
+atlas = ExtResource("5_yx08p")
 region = Rect2(32, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_vtmst"]
-atlas = ExtResource("5_qm7hw")
+[sub_resource type="AtlasTexture" id="AtlasTexture_hutl7"]
+atlas = ExtResource("5_yx08p")
 region = Rect2(48, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8pl1a"]
-atlas = ExtResource("6_0ucap")
+[sub_resource type="AtlasTexture" id="AtlasTexture_57cq1"]
+atlas = ExtResource("6_r74p4")
 region = Rect2(0, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_csxp0"]
-atlas = ExtResource("6_0ucap")
+[sub_resource type="AtlasTexture" id="AtlasTexture_xsrma"]
+atlas = ExtResource("6_r74p4")
 region = Rect2(16, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_0cfbm"]
-atlas = ExtResource("6_0ucap")
+[sub_resource type="AtlasTexture" id="AtlasTexture_vs655"]
+atlas = ExtResource("6_r74p4")
 region = Rect2(32, 0, 16, 17)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_kb7tu"]
-atlas = ExtResource("6_0ucap")
+[sub_resource type="AtlasTexture" id="AtlasTexture_jl8u6"]
+atlas = ExtResource("6_r74p4")
 region = Rect2(48, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vum1g"]
-atlas = ExtResource("7_a8hrx")
+atlas = ExtResource("7_fxcaw")
 region = Rect2(0, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1kpmd"]
-atlas = ExtResource("7_a8hrx")
+atlas = ExtResource("7_fxcaw")
 region = Rect2(16, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6744l"]
-atlas = ExtResource("7_a8hrx")
+atlas = ExtResource("7_fxcaw")
 region = Rect2(32, 0, 16, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aew5s"]
-atlas = ExtResource("7_a8hrx")
+atlas = ExtResource("7_fxcaw")
 region = Rect2(48, 0, 16, 17)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_iw53l"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_52l12"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hebxe")
+"texture": SubResource("AtlasTexture_m6gq8")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_svhan")
+"texture": SubResource("AtlasTexture_ef3s1")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_aft4d")
+"texture": SubResource("AtlasTexture_p3271")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_7vwjr")
+"texture": SubResource("AtlasTexture_nvqj3")
 }],
 "loop": true,
 "name": &"bombrat-down",
@@ -100,16 +100,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qm7hw")
+"texture": SubResource("AtlasTexture_2stfr")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_0ucap")
+"texture": SubResource("AtlasTexture_0jijy")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_a8hrx")
+"texture": SubResource("AtlasTexture_gfl07")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_vtmst")
+"texture": SubResource("AtlasTexture_hutl7")
 }],
 "loop": true,
 "name": &"bombrat-left",
@@ -117,16 +117,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8pl1a")
+"texture": SubResource("AtlasTexture_57cq1")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_csxp0")
+"texture": SubResource("AtlasTexture_xsrma")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_0cfbm")
+"texture": SubResource("AtlasTexture_vs655")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_kb7tu")
+"texture": SubResource("AtlasTexture_jl8u6")
 }],
 "loop": true,
 "name": &"bombrat-right",
@@ -190,19 +190,21 @@ bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svhan"]
 bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
-[node name="Bombrat" type="CharacterBody2D" groups=["enemies"]]
+[node name="Big Bombrat" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 6
 collision_mask = 7
 motion_mode = 1
-script = ExtResource("2_svhan")
+script = ExtResource("2_e0dvi")
 
 [node name="Shadow" type="Sprite2D" parent="."]
-position = Vector2(0, 3)
-texture = ExtResource("3_aft4d")
+position = Vector2(0, 6)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("3_17e8w")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_iw53l")
+scale = Vector2(1.5, 1.5)
+sprite_frames = SubResource("SpriteFrames_52l12")
 animation = &"bombrat-down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -235,3 +237,5 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_svhan")
 show_percentage = false
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(0, -1.5)
+scale = Vector2(1, 1.35)

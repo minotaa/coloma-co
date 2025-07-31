@@ -1,38 +1,42 @@
-[gd_scene load_steps=12 format=3 uid="uid://dicfu5afqotfu"]
+[gd_scene load_steps=16 format=3 uid="uid://dicfu5afqotfu"]
 
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="1_dhxhl"]
+[ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="1_grc48"]
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_oa20i"]
+[ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="2_6o20a"]
+[ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="3_hyi72"]
 [ext_resource type="Texture2D" uid="uid://d4b5761just5a" path="res://assets/sprites/coins.png" id="3_mtjpl"]
+[ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="4_e3oif"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dhxhl"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mtjpl"]
-bg_color = Color(0.125911, 0.125911, 0.125911, 0.717647)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_emsfw"]
+texture = ExtResource("1_grc48")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k4xkc"]
-bg_color = Color(0.210507, 0.210507, 0.210507, 0.745098)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a0ot6"]
+texture = ExtResource("2_6o20a")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wrk1y"]
-bg_color = Color(0.357191, 0.357191, 0.357191, 0.745098)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_apdh8"]
+texture = ExtResource("3_hyi72")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vchey"]
-bg_color = Color(0.0156863, 0.0156863, 0, 0.717647)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1g7mf"]
+texture = ExtResource("4_e3oif")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_dhxhl"]
 font = ExtResource("1_dhxhl")
@@ -50,11 +54,11 @@ shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
 shadow_offset = Vector2(4, 4)
 
 [node name="Catalog Item" type="Control"]
-custom_minimum_size = Vector2(192, 270)
+custom_minimum_size = Vector2(192, 280)
 layout_mode = 3
 anchor_right = 0.15
 anchor_bottom = 0.362
-offset_bottom = 9.35999
+offset_bottom = 19.36
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -66,10 +70,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_dhxhl")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_mtjpl")
-theme_override_styles/hover = SubResource("StyleBoxFlat_k4xkc")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_wrk1y")
-theme_override_styles/normal = SubResource("StyleBoxFlat_vchey")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_emsfw")
+theme_override_styles/hover = SubResource("StyleBoxTexture_a0ot6")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_apdh8")
+theme_override_styles/normal = SubResource("StyleBoxTexture_1g7mf")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -111,9 +115,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -39.0
-offset_top = -36.0
+offset_top = -44.0
 offset_right = 39.0
-offset_bottom = -8.0
+offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
 

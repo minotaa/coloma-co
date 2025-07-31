@@ -28,14 +28,40 @@ var strength = 0
 var sword_reach := 1.55  # Base reach
 var gold: int = 0
 
+var revival_time: float = 0.0
+const MAX_REVIVAL_TIME: float = 10.0 # like in seconds and stuff
 var bag = Bag.new()
 
+# stats and stuff
+var total_damage_taken: float = 0.0
+var damage_taken: float = 0.0
+
+var total_damage_dealt: float = 0.0
+var damage_dealt: float = 0.0
+
+var total_gold_collected: int = 0
+var gold_collected: int = 0
+
+var total_damage_healed: float = 0.0
+var damage_healed: float = 0.0
+
+var total_kills: int = 0
+var kills: int = 0
+
+@onready var hitting_particles_instance = preload("res://scenes/hitting_particles.tscn")
 @onready var bombrat_counter := $UI/Main/HBoxContainer/Bombrats/HBoxContainer/Label
 
 func get_bombrats_to_track():
 	var bombrats = []
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1:
+		if enemy.entity.id == 1 or enemy.entity.id == 3:
+			bombrats.append(enemy)
+	return bombrats
+	
+func get_big_bombrats_to_track():
+	var bombrats = []
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy.entity.id == 3:
 			bombrats.append(enemy)
 	return bombrats
 
@@ -68,6 +94,8 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	print("Player took ", amount, " damage")
 	hit_cooldown = max_hit_cooldown
 	health = health - amount
+	damage_taken += amount
+	total_damage_taken += amount
 	apply_knockback(location, 220.0)
 	show_floating_text(amount, global_position)
 	if health <= 0:
@@ -76,25 +104,35 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	await get_tree().create_timer(0.1).timeout
 	$AnimatedSprite2D.material = null
 
+func percent(current: float, total: float) -> String:
+	if total > 0.0:
+		return str(roundi((current / total) * 100)) + "%"
+	return "0%"
+
 func die() -> void:
 	$AnimatedSprite2D.play("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
-	if not multiplayer.has_multiplayer_peer():
-		Toast.add("You're dead... you will respawn in 10 seconds.")
-	else:
-		Toast.add.rpc_id(int(name), "You're dead... you will respawn in 10 seconds.")
+	Toast.add("You're dead... you will respawn in 10 seconds.")
+	revival_time = MAX_REVIVAL_TIME
 	alive = false
-	await get_tree().create_timer(10.0).timeout
-	health = max_health
-	gold = max(roundi(gold / 2), 0)
-	if not multiplayer.has_multiplayer_peer():
-		Toast.add("You respawned! You lost half your gold.")
-	else:
-		Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
-	play_idle_animation()
-	$AnimatedSprite2D.material = null
-	global_position = Vector2.ZERO
-	alive = true
+	hide_ui()
+	$"UI/Main/Game Over".visible = true	
+	var stats_text := "This life:\n"
+	stats_text += "Gold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
+	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
+	stats_text += "Damage Dealt:\t " + str(roundi(damage_dealt)) + " (" + percent(damage_dealt, total_damage_dealt) + ")\n"
+	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
+	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
+
+	$"UI/Main/Game Over/Panel/Meta".text = stats_text
+	
+	#health = max_health
+	#gold = max(roundi(gold / 2), 0)
+	#Toast.add("You respawned! You lost half your gold.")
+	#play_idle_animation()
+	#$AnimatedSprite2D.material = null
+	#global_position = Vector2.ZERO
+	#alive = true
 
 func play_animation(name: String, backwards: bool = false, speed: float = 1) -> void:
 	if backwards == false:
@@ -126,7 +164,9 @@ func _process_input(delta) -> void:
 	# Handle movement input
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
-	if not alive:
+	if $UI/Main/ChatBar.has_focus():
+		play_idle_animation()
+	if not alive or $UI/Main/ChatBar.has_focus():
 		return
 	if Input.is_action_just_pressed("interact"):
 		if not $UI/Main/Shop.visible:
@@ -248,7 +288,10 @@ func _process_input(delta) -> void:
 			tab_entry.get_node("Gold").text = str(gold)
 			var kills = 0
 			if get_parent().kills.has("Player") and get_parent().kills["Player"].has("bombrat"):
-				kills = get_parent().kills["Player"]["bombrat"]
+				var big_bombrat = 0
+				if get_parent().kills["Player"].has("big_bombrat"):
+					big_bombrat = get_parent().kills["Player"]["big_bombrat"]
+				kills = get_parent().kills["Player"]["bombrat"] + big_bombrat
 			tab_entry.get_node("Kills").text = str(kills)
 			$UI/Main/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
 	else:
@@ -263,6 +306,8 @@ func press_inventory_slot(index: int) -> void:
 		button.emit_signal("pressed")
 
 func _unhandled_input(event: InputEvent) -> void:
+	if !is_multiplayer_authority():
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			49:
@@ -271,6 +316,19 @@ func _unhandled_input(event: InputEvent) -> void:
 				press_inventory_slot(1)
 			51:
 				press_inventory_slot(2)
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
+		$UI/Main/ChatBar.grab_focus()
+		for child in $UI/Main/Chat/VBoxContainer.get_children():
+			child.visible = true
+			child.modulate = Color(1, 1, 1, 1)
+			for node in child.get_children():
+				if node is Timer:
+					node.stop()
+	if event is InputEventKey and event.pressed and $UI/Main/ChatBar.has_focus() and event.keycode == KEY_ESCAPE:
+		$UI/Main/ChatBar.text = ""
+		$UI/Main/ChatBar.release_focus()
+		for child in $UI/Main/Chat/VBoxContainer.get_children():
+			child.visible = false
 
 func _enable_sword_hitbox(direction: String) -> void:
 	var hitbox = $SwordHbox
@@ -337,8 +395,38 @@ func _disable_all_sword_hitboxes() -> void:
 
 var active_markers := {}
 
+func show_ui() -> void:
+	$UI/Main/Markers.visible = true
+	$UI/Main/HealthBar.visible = true
+	$UI/Main/SprintBar.visible = true
+	$UI/Main/Inventory.visible = true
+	$UI/Main/HBoxContainer.visible = true
+
+func hide_ui() -> void:
+	$UI/Main/Markers.visible = false
+	$UI/Main/HealthBar.visible = false
+	$UI/Main/SprintBar.visible = false
+	$UI/Main/Inventory.visible = false
+	$UI/Main/HBoxContainer.visible = false
+	$UI/Main/Tab.visible = false
+	$UI/Main/Shop.visible = false
+
+const FADE_SPEED := 5.0
+
+func _is_mouse_over_chat_bar() -> bool:
+	if not $UI/Main/ChatBar.visible:
+		return false
+	var local_mouse_pos = $UI/Main/ChatBar.get_local_mouse_position()
+	return $UI/Main/ChatBar.get_rect().has_point(local_mouse_pos)
+
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
+	var focused = $UI/Main/ChatBar.has_focus()
+	var hovered = _is_mouse_over_chat_bar()
+	if focused or hovered:
+		$UI/Main/ChatBar.modulate.a = lerp($UI/Main/ChatBar.modulate.a, 1.0, FADE_SPEED * delta)
+	else:
+		$UI/Main/ChatBar.modulate.a = lerp($UI/Main/ChatBar.modulate.a, 0.0, FADE_SPEED * delta)
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
 		$UI/Main/HealthBar.max_value = max_health
 		$UI/Main/HealthBar.value = health
@@ -350,6 +438,26 @@ func _physics_process(delta: float) -> void:
 			$UI/Main/SprintBar.visible = true
 		$UI/Main/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
+	if $"UI/Main/Game Over".visible:
+		$"UI/Main/Game Over/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
+	if not alive:
+		revival_time -= delta
+		if revival_time <= 0.0:
+			revival_time = 0.0
+			damage_dealt = 0.0
+			damage_healed = 0.0
+			damage_taken = 0.0
+			gold_collected = 0.0
+			kills = 0
+			$"UI/Main/Game Over".visible = false
+			health = max_health
+			gold = max(roundi(gold / 2), 0)
+			Toast.add("You respawned! You lost half your gold.")
+			play_idle_animation()
+			$AnimatedSprite2D.material = null
+			global_position = Vector2.ZERO
+			alive = true
+			show_ui()
 	_process_input(delta)
 	var slots = $UI/Main/Inventory.get_children()
 
@@ -383,12 +491,12 @@ func _physics_process(delta: float) -> void:
 			_disable_all_sword_hitboxes()
 	var count := 0
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1:
+		if enemy.entity.id == 1 or enemy.entity.id == 3:
 			count += 1
 	if count > 0:
 		bombrat_counter.text = "%d" % count
 
-	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
+	if $UI/Main.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
 		$UI/Main/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
 		$UI/Main/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 
@@ -426,9 +534,41 @@ func _physics_process(delta: float) -> void:
 			"Left":
 				marker.rotation = -PI / 2
 
-		# Optional: rotate or flip marker based on direction if needed
+	for bombrat in get_big_bombrats_to_track():
+		if not is_instance_valid(bombrat):
+			continue
+		
+		if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
+			_remove_marker(bombrat)
+			continue
+			
+		var dir = (bombrat.global_position - global_position).normalized()
+		var direction_node = _get_direction_node_from_vector(dir)
 
-	# Clean up markers for dead bombrats
+		if direction_node == null:
+			_remove_marker(bombrat)
+			continue
+
+		var marker = active_markers.get(bombrat)
+		if marker == null:
+			marker = marker_scene.instantiate()
+			direction_node.add_child(marker)
+			active_markers[bombrat] = marker
+
+		marker.position = _calculate_offset_in_direction_node(dir, direction_node)
+		marker.scale = Vector2(1.5, 1.5)
+
+		# Snap to cardinal direction
+		match direction_node.name:
+			"Up":
+				marker.rotation = 0
+			"Right":
+				marker.rotation = PI / 2
+			"Down":
+				marker.rotation = PI
+			"Left":
+				marker.rotation = -PI / 2
+	
 	for tracked in active_markers.keys():
 		if not is_instance_valid(tracked) or not get_bombrats_to_track().has(tracked):
 			_remove_marker(tracked)
@@ -468,7 +608,7 @@ func _animation_finished() -> void:
 
 @rpc("any_peer", "call_local")
 func add_hit_particles(position: Vector2, angle: float):
-	var hitting_particles = preload("res://scenes/hitting_particles.tscn")
+	var hitting_particles = hitting_particles_instance
 	var particles = hitting_particles.instantiate()
 	get_parent().add_child(particles, true)
 	particles.global_position = position
@@ -485,6 +625,8 @@ func _process_hit(body):
 		var direction = body.global_position - global_position
 		var midpoint = global_position + direction * 0.5
 		var angle = direction.angle()
+		damage_dealt += total_damage 
+		total_damage_dealt += total_damage
 		if multiplayer.has_multiplayer_peer():
 			body.take_damage.rpc(total_damage, global_position, name)
 			add_hit_particles.rpc(midpoint, angle)
@@ -494,3 +636,46 @@ func _process_hit(body):
 
 func _on_shop_close_button_pressed() -> void:
 	$UI/Main/Shop.visible = false
+
+func add_message(message: String, player_name: String) -> void:
+	print("[" + str(multiplayer.get_unique_id()) + "] Received message: ", message)
+	var chat_message = load("res://scenes/chat_message.tscn").instantiate()
+	chat_message.text = player_name + ": " + message
+	chat_message.visible = true
+	chat_message.modulate = Color(1, 1, 1, 1)
+	$UI/Main/Chat/VBoxContainer.add_child(chat_message, true)
+	print("[" + str(multiplayer.get_unique_id()) + "] added message to client")
+
+func _on_chat_bar_submitted(new_text: String) -> void:
+	$UI/Main/ChatBar.text = ""
+	$UI/Main/ChatBar.release_focus()
+
+	var resume_fadeout := false
+
+	for child in $UI/Main/Chat/VBoxContainer.get_children():
+		for node in child.get_children():
+			if node is Timer and node.time_left > 0:
+				resume_fadeout = true
+				break
+		if resume_fadeout:
+			break
+
+
+	for child in $UI/Main/Chat/VBoxContainer.get_children():
+		if resume_fadeout:
+			child.visible = true
+			child.modulate = Color(1, 1, 1, 1)
+			for node in child.get_children():
+				if node is Timer:
+					node.start()
+		else:
+			child.visible = false
+
+	if new_text == "":
+		return
+
+	var player_name = NetworkManager.player_name if NetworkManager.player_name != "" else "Player"
+	if multiplayer.has_multiplayer_peer():
+		NetworkManager.send_message.rpc(new_text, player_name)
+	else:
+		add_message(new_text, player_name)

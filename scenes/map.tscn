@@ -18,7 +18,7 @@ polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
 agent_radius = 0.0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_caxrt"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2klcf"]
 texture = ExtResource("1_wya76")
 0:0/0 = 0
 0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_0cso3")
@@ -56,7 +56,7 @@ texture = ExtResource("1_wya76")
 [sub_resource type="TileSet" id="TileSet_1uax0"]
 physics_layer_0/collision_layer = 1
 navigation_layer_0/layers = 1
-sources/0 = SubResource("TileSetAtlasSource_caxrt")
+sources/0 = SubResource("TileSetAtlasSource_2klcf")
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_xmomj"]
 polygon = PackedVector2Array(-4.375, -4.375, -3.88909, -4.86136, -2.91682, -4.94975, -3.18198, -6.01041, 1.94454, -6.18719, 2.03293, -5.03814, 3.95538, -5.01604, 3.97748, -4.15425, 4.86136, -3.88909, 5.21491, -2.91682, 6.01041, -2.91682, 5.92202, -0.441942, 6.0546, 0, 6.96058, 0.0441942, 7.04897, 4.02167, 6.01041, 4.06586, 5.92202, 5.03814, 5.03814, 5.12652, 4.99394, 6.03251, 4.04377, 6.01041, 4.02167, 7.00478, -5.01604, 6.98268, -5.01604, 6.03251, -6.01041, 5.96621, -6.0546, 4.13216, -6.16509, 4.04377, -7.02687, 3.95538, -7.00478, 0, -6.01041, -0.0883884, -5.96621, -3.0273, -5.08233, -3.0273, -5.12652, -3.88909)

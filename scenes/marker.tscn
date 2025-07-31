@@ -4,7 +4,6 @@
 
 [node name="TextureRect" type="TextureRect"]
 modulate = Color(1, 1, 1, 0.352941)
-anchors_preset = -1
 offset_right = 43.0
 offset_bottom = 43.0
 pivot_offset = Vector2(21, 21)

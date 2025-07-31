@@ -237,3 +237,7 @@ offset_bottom = -18.0
 theme_override_styles/background = SubResource("StyleBoxFlat_hebxe")
 theme_override_styles/fill = SubResource("StyleBoxFlat_svhan")
 show_percentage = false
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0

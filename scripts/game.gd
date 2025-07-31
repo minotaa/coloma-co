@@ -9,6 +9,7 @@ var spawning_wave: bool = false
 var kills = {}
 
 var bombrat = preload("res://scenes/bombrat.tscn")
+var big_bombrat = preload("res://scenes/big_bombrat.tscn")
 var slime = preload("res://scenes/slime.tscn")
 var bauble = preload("res://scenes/bauble.tscn")
 var player_scene = preload("res://scenes/player.tscn")
@@ -21,6 +22,8 @@ func add_kill(player_id: String, enemy_type: String) -> void:
 	if not kills[player_id].has(enemy_type):
 		kills[player_id][enemy_type] = 0
 	kills[player_id][enemy_type] += 1
+	get_node(str(player_id)).kills += 1
+	get_node(str(player_id)).total_kills += 1
 	if multiplayer.has_multiplayer_peer():
 		update_kills.rpc(kills)
 
@@ -74,7 +77,7 @@ func _process(delta: float) -> void:
 
 	var bombrats_left := 0
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1:
+		if enemy.entity.id == 1 or enemy.entity.id == 3:
 			bombrats_left += 1
 
 	if bombrats_left <= 0:
@@ -95,6 +98,8 @@ func update_wave(wave: int) -> void:
 @rpc("authority", "call_local")
 func add_gold(id: String, amount: int) -> void:
 	get_node(id).gold += amount
+	get_node(id).gold_collected += amount
+	get_node(id).total_gold_collected += amount
 
 func player_joined(id) -> void:
 	if not multiplayer.is_server():
@@ -121,10 +126,12 @@ func spawn_wave() -> void:
 		update_wave.rpc(wave)
 
 	for player in get_tree().get_nodes_in_group("players"):
-		if player.health < player.max_health:
+		if player.health < player.max_health and player.alive:
 			var old_health = player.health
 			player.health = min(player.health + 10, player.max_health)
 			var healed = roundi(player.health - old_health)
+			player.damage_healed += healed
+			player.total_damage_healed += healed
 
 			if healed > 0:
 				var text = "+" + str(healed) + " HP"
@@ -276,9 +283,14 @@ func spawn_bombrat(direction: String) -> void:
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
-		var bomb = bombrat.instantiate()
-		bomb.global_position = spawn_pos
-		add_child(bomb, true)
+		if wave >= 10 and randf() <= 0.3:
+			var bomb = big_bombrat.instantiate()
+			bomb.global_position = spawn_pos
+			add_child(bomb, true)
+		else:
+			var bomb = bombrat.instantiate()
+			bomb.global_position = spawn_pos
+			add_child(bomb, true)
 
 func spawn_bauble(direction: String) -> void:
 	var matching_cells: Array[Vector2i] = []

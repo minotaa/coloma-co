@@ -1,38 +1,42 @@
-[gd_scene load_steps=13 format=3 uid="uid://ob7qtnaqlwp2"]
+[gd_scene load_steps=17 format=3 uid="uid://ob7qtnaqlwp2"]
 
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_bxqf6"]
 [ext_resource type="Script" uid="uid://cdrjmmn8sndql" path="res://scripts/inventory_slot.gd" id="1_hddt5"]
+[ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="2_bbig2"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_hddt5"]
+[ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="2_t1mo2"]
+[ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="3_st3ap"]
+[ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="4_6eu8d"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bbig2"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c13kb"]
-bg_color = Color(0.253843, 0.253843, 0.253843, 0.717647)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nn13w"]
+texture = ExtResource("2_t1mo2")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s2hqy"]
-bg_color = Color(0.210507, 0.210507, 0.210507, 0.745098)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_68j0h"]
+texture = ExtResource("3_st3ap")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t1mo2"]
-bg_color = Color(0.357191, 0.357191, 0.357191, 0.745098)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_54d7y"]
+texture = ExtResource("4_6eu8d")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_st3ap"]
-bg_color = Color(0.0156863, 0.0156863, 0, 0.717647)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_c13kb"]
+texture = ExtResource("2_bbig2")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6eu8d"]
 atlas = ExtResource("1_bxqf6")
@@ -54,12 +58,12 @@ corner_radius_bottom_right = 24
 corner_radius_bottom_left = 24
 
 [node name="Inventory Slot" type="Control"]
-custom_minimum_size = Vector2(100, 100)
+custom_minimum_size = Vector2(105, 105)
 layout_mode = 3
-anchor_right = 0.078
-anchor_bottom = 0.139
-offset_right = 0.159996
-offset_bottom = -0.0800095
+anchor_right = 0.094
+anchor_bottom = 0.167
+offset_right = -0.320007
+offset_bottom = -0.240005
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hddt5")
@@ -72,10 +76,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_bbig2")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_c13kb")
-theme_override_styles/hover = SubResource("StyleBoxFlat_s2hqy")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_t1mo2")
-theme_override_styles/normal = SubResource("StyleBoxFlat_st3ap")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_nn13w")
+theme_override_styles/hover = SubResource("StyleBoxTexture_68j0h")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_54d7y")
+theme_override_styles/normal = SubResource("StyleBoxTexture_c13kb")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1
@@ -85,9 +89,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -32.0
-offset_top = -32.0
+offset_top = -24.0
 offset_right = 32.0
-offset_bottom = 32.0
+offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -100,8 +104,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -44.0
+offset_top = 7.0
 offset_right = 44.0
-offset_bottom = 28.0
+offset_bottom = 35.0
 grow_horizontal = 2
 text = "x0"
 label_settings = SubResource("LabelSettings_nn13w")

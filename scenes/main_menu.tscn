@@ -1,18 +1,79 @@
-[gd_scene load_steps=10 format=3 uid="uid://dej207wipn6fc"]
+[gd_scene load_steps=34 format=4 uid="uid://dej207wipn6fc"]
 
 [ext_resource type="Script" uid="uid://bdf37d301uotm" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_bqqt6"]
 [ext_resource type="FontFile" uid="uid://guy3qt670gxi" path="res://assets/fonts/DungeonFont.ttf" id="2_wu84c"]
 [ext_resource type="PackedScene" uid="uid://bkcev63ddja1l" path="res://scenes/multiplayer_player_entry.tscn" id="3_bqqt6"]
+[ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="5_5dd4i"]
+[ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="5_oa1go"]
+[ext_resource type="Texture2D" uid="uid://b602snonljd6m" path="res://assets/sprites/tiles.png" id="5_rtw2f"]
+[ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="6_lgwnu"]
+[ext_resource type="PackedScene" uid="uid://b3wafympohi6" path="res://scenes/demoman.tscn" id="6_rtw2f"]
+[ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="7_flqon"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_0cso3"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_2klcf"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tbmy8"]
+texture = ExtResource("5_rtw2f")
+0:0/0 = 0
+0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_0cso3")
+3:0/0 = 0
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+0:1/0 = 0
+0:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+1:1/0 = 0
+1:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+2:1/0 = 0
+2:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+3:1/0 = 0
+3:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+4:1/0 = 0
+4:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+4:0/0 = 0
+4:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+5:0/0 = 0
+5:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+6:0/0 = 0
+6:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+7:0/0 = 0
+7:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+8:0/0 = 0
+8:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+5:1/0 = 0
+5:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+6:1/0 = 0
+6:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+7:1/0 = 0
+7:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+8:1/0 = 0
+8:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2klcf")
+
+[sub_resource type="TileSet" id="TileSet_jk1qb"]
+physics_layer_0/collision_layer = 1
+navigation_layer_0/layers = 1
+sources/0 = SubResource("TileSetAtlasSource_tbmy8")
 
 [sub_resource type="LabelSettings" id="LabelSettings_wu84c"]
 font = ExtResource("2_wu84c")
-font_size = 90
+font_size = 102
+outline_size = 24
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_bqqt6"]
 font = ExtResource("2_bqqt6")
 font_size = 44
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_8ln24"]
 font = ExtResource("2_bqqt6")
@@ -22,12 +83,65 @@ font_size = 33
 font = ExtResource("2_bqqt6")
 font_size = 33
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5dd4i"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rcqid"]
+texture = ExtResource("5_5dd4i")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1ajci"]
+texture = ExtResource("6_lgwnu")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7b55j"]
+texture = ExtResource("7_flqon")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tbmy8"]
+texture = ExtResource("5_oa1go")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j7ex8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lgwnu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flqon"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rcqid"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1ajci"]
+
 [sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]
 font = ExtResource("2_bqqt6")
 font_size = 22
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7b55j"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5pajh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a8gd2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hstxw"]
+
 [node name="Main Menu" type="Node2D"]
 script = ExtResource("1_ekxnf")
+
+[node name="Ground" type="TileMapLayer" parent="."]
+z_index = -2
+tile_map_data = PackedByteArray("AAD4//z/AAAHAAAAAAD7//z/AAAHAAAAAAD8//3/AAAHAAAAAAD4//7/AAAHAAAAAAD7//7/AAAIAAEAAAD8////AAAIAAEAAAD4/wAAAAAHAAAAAAD7/wAAAAAHAAAAAAD8/wEAAAAHAAAAAAD4/wIAAAAHAAAAAAD7/wIAAAAGAAAAAAD8/wMAAAAIAAEAAAD9//z/AAAHAAAAAAAAAPz/AAAIAAEAAAABAP3/AAAIAAEAAAD9//7/AAAIAAEAAAAAAP7/AAAEAAAAAAABAP//AAAIAAEAAAD9/wAAAAAHAAAAAAAAAAAAAAAIAAEAAAABAAEAAAAIAAEAAAD9/wIAAAAHAAAAAAAAAAIAAAAEAAAAAAABAAMAAAAEAAAAAAACAPz/AAAHAAAAAAAFAPz/AAAGAAAAAAAGAP3/AAAHAAAAAAACAP7/AAAEAAAAAAAFAP7/AAAEAAAAAAAGAP//AAAIAAEAAAACAAAAAAAFAAAAAAAFAAAAAAAEAAAAAAAGAAEAAAAEAAAAAAACAAIAAAAIAAEAAAAFAAIAAAAIAAEAAAAGAAMAAAAIAAEAAAAHAPz/AAAHAAAAAAAHAP7/AAAEAAAAAAAHAAAAAAAEAAAAAAAHAAIAAAAHAAAAAAD4//3/AAAHAAAAAAD4////AAAEAAAAAAD4/wEAAAAHAAAAAAD4/wMAAAAEAAAAAAD5//z/AAAGAAAAAAD5//3/AAAEAAAAAAD5//7/AAAEAAAAAAD5////AAAEAAAAAAD5/wAAAAAHAAAAAAD5/wEAAAAFAAAAAAD5/wIAAAAEAAAAAAD5/wMAAAAEAAAAAAD6//z/AAAIAAEAAAD6//3/AAAHAAAAAAD6//7/AAAFAAAAAAD6////AAAHAAAAAAD6/wAAAAAHAAAAAAD6/wEAAAAIAAEAAAD6/wIAAAAEAAAAAAD6/wMAAAAHAAAAAAD7//3/AAAHAAAAAAD7////AAAEAAAAAAD7/wEAAAAEAAAAAAD7/wMAAAAIAAEAAAD8//z/AAAFAAAAAAD8//7/AAAEAAAAAAD8/wAAAAAEAAAAAAD8/wIAAAAIAAEAAAD9//3/AAAHAAAAAAD9////AAAEAAAAAAD9/wEAAAAEAAAAAAD9/wMAAAAHAAAAAAD+//z/AAAHAAAAAAD+//3/AAAIAAEAAAD+//7/AAAHAAAAAAD+////AAAEAAAAAAD+/wAAAAAEAAAAAAD+/wEAAAAFAAAAAAD+/wIAAAAEAAAAAAD+/wMAAAAIAAEAAAD///z/AAAIAAEAAAD///3/AAAHAAAAAAD///7/AAAHAAAAAAD/////AAAIAAEAAAD//wAAAAAHAAAAAAD//wEAAAAIAAEAAAD//wIAAAAHAAAAAAD//wMAAAAIAAEAAAAAAP3/AAAGAAAAAAAAAP//AAAIAAEAAAAAAAEAAAAEAAAAAAAAAAMAAAAHAAAAAAABAPz/AAAEAAAAAAABAP7/AAAIAAEAAAABAAAAAAAEAAAAAAABAAIAAAAIAAEAAAACAP3/AAAIAAEAAAACAP//AAAIAAEAAAACAAEAAAAIAAEAAAACAAMAAAAIAAEAAAADAPz/AAAIAAEAAAADAP3/AAAEAAAAAAADAP7/AAAIAAEAAAADAP//AAAEAAAAAAADAAAAAAAIAAEAAAADAAEAAAAEAAAAAAADAAIAAAAEAAAAAAADAAMAAAAIAAEAAAAEAPz/AAAIAAEAAAAEAP3/AAAIAAEAAAAEAP7/AAAIAAEAAAAEAP//AAAEAAAAAAAEAAAAAAAHAAAAAAAEAAEAAAAHAAAAAAAEAAIAAAAEAAAAAAAEAAMAAAAIAAEAAAAFAP3/AAAIAAEAAAAFAP//AAAHAAAAAAAFAAEAAAAHAAAAAAAFAAMAAAAEAAAAAAAGAPz/AAAHAAAAAAAGAP7/AAAFAAAAAAAGAAAAAAAEAAAAAAAGAAIAAAAEAAAAAAAHAP3/AAAHAAAAAAAHAP//AAAHAAAAAAAHAAEAAAAGAAAAAAAHAAMAAAAHAAAAAAD0//j/AAAEAAAAAAD0//n/AAAIAAEAAAD0//r/AAAEAAAAAAD0//v/AAAHAAAAAAD0//z/AAAIAAEAAAD0//3/AAAIAAEAAAD0//7/AAAHAAAAAAD0////AAAEAAAAAAD0/wAAAAAHAAAAAAD0/wEAAAAEAAAAAAD0/wIAAAAEAAAAAAD0/wMAAAAEAAAAAAD0/wQAAAAEAAAAAAD0/wUAAAAHAAAAAAD0/wYAAAAIAAEAAAD0/wcAAAAEAAAAAAD1//j/AAAHAAAAAAD1//n/AAAIAAEAAAD1//r/AAAHAAAAAAD1//v/AAAIAAEAAAD1//z/AAAEAAAAAAD1//3/AAAHAAAAAAD1//7/AAAEAAAAAAD1////AAAIAAEAAAD1/wAAAAAHAAAAAAD1/wEAAAAHAAAAAAD1/wIAAAAIAAEAAAD1/wMAAAAHAAAAAAD1/wQAAAAHAAAAAAD1/wUAAAAHAAAAAAD1/wYAAAAHAAAAAAD1/wcAAAAIAAEAAAD2//j/AAAIAAEAAAD2//n/AAAIAAEAAAD2//r/AAAHAAAAAAD2//v/AAAIAAEAAAD2//z/AAAIAAEAAAD2//3/AAAEAAAAAAD2//7/AAAEAAAAAAD2////AAAIAAEAAAD2/wAAAAAIAAEAAAD2/wEAAAAEAAAAAAD2/wIAAAAHAAAAAAD2/wMAAAAIAAEAAAD2/wQAAAAHAAAAAAD2/wUAAAAHAAAAAAD2/wYAAAAHAAAAAAD2/wcAAAAHAAAAAAD3//j/AAAIAAEAAAD3//n/AAAEAAAAAAD3//r/AAAIAAEAAAD3//v/AAAHAAAAAAD3//z/AAAIAAEAAAD3//3/AAAEAAAAAAD3//7/AAAEAAAAAAD3////AAAEAAAAAAD3/wAAAAAHAAAAAAD3/wEAAAAIAAEAAAD3/wIAAAAEAAAAAAD3/wMAAAAEAAAAAAD3/wQAAAAIAAEAAAD3/wUAAAAIAAEAAAD3/wYAAAAIAAEAAAD3/wcAAAAIAAEAAAD4//j/AAAEAAAAAAD4//n/AAAHAAAAAAD4//r/AAAIAAEAAAD4//v/AAAIAAEAAAD4/wQAAAAHAAAAAAD4/wUAAAAIAAEAAAD4/wYAAAAEAAAAAAD4/wcAAAAHAAAAAAD5//j/AAAHAAAAAAD5//n/AAAEAAAAAAD5//r/AAAIAAEAAAD5//v/AAAEAAAAAAD5/wQAAAAHAAAAAAD5/wUAAAAEAAAAAAD5/wYAAAAHAAAAAAD5/wcAAAAIAAEAAAD6//j/AAAHAAAAAAD6//n/AAAEAAAAAAD6//r/AAAEAAAAAAD6//v/AAAIAAEAAAD6/wQAAAAEAAAAAAD6/wUAAAAHAAAAAAD6/wYAAAAHAAAAAAD6/wcAAAAIAAEAAAD7//j/AAAIAAEAAAD7//n/AAAIAAEAAAD7//r/AAAEAAAAAAD7//v/AAAIAAEAAAD7/wQAAAAHAAAAAAD7/wUAAAAEAAAAAAD7/wYAAAAHAAAAAAD7/wcAAAAIAAEAAAD8//j/AAAEAAAAAAD8//n/AAAIAAEAAAD8//r/AAAEAAAAAAD8//v/AAAEAAAAAAD8/wQAAAAHAAAAAAD8/wUAAAAHAAAAAAD8/wYAAAAIAAEAAAD8/wcAAAAIAAEAAAD9//j/AAAHAAAAAAD9//n/AAAEAAAAAAD9//r/AAAGAAAAAAD9//v/AAAHAAAAAAD9/wQAAAAEAAAAAAD9/wUAAAAHAAAAAAD9/wYAAAAIAAEAAAD9/wcAAAAHAAAAAAD+//j/AAAIAAEAAAD+//n/AAAEAAAAAAD+//r/AAAEAAAAAAD+//v/AAAHAAAAAAD+/wQAAAAIAAEAAAD+/wUAAAAHAAAAAAD+/wYAAAAIAAEAAAD+/wcAAAAEAAAAAAD///j/AAAHAAAAAAD///n/AAAHAAAAAAD///r/AAAHAAAAAAD///v/AAAEAAAAAAD//wQAAAAEAAAAAAD//wUAAAAHAAAAAAD//wYAAAAHAAAAAAD//wcAAAAEAAAAAAAAAPj/AAAIAAEAAAAAAPn/AAAHAAAAAAAAAPr/AAAEAAAAAAAAAPv/AAAHAAAAAAAAAAQAAAAHAAAAAAAAAAUAAAAHAAAAAAAAAAYAAAAIAAEAAAAAAAcAAAAHAAAAAAABAPj/AAAHAAAAAAABAPn/AAAHAAAAAAABAPr/AAAHAAAAAAABAPv/AAAHAAAAAAABAAQAAAAGAAAAAAABAAUAAAAIAAEAAAABAAYAAAAIAAEAAAABAAcAAAAIAAEAAAACAPj/AAAIAAEAAAACAPn/AAAIAAEAAAACAPr/AAAEAAAAAAACAPv/AAAIAAEAAAACAAQAAAAIAAEAAAACAAUAAAAIAAEAAAACAAYAAAAIAAEAAAACAAcAAAAHAAAAAAADAPj/AAAEAAAAAAADAPn/AAAEAAAAAAADAPr/AAAEAAAAAAADAPv/AAAIAAEAAAADAAQAAAAIAAEAAAADAAUAAAAHAAAAAAADAAYAAAAHAAAAAAADAAcAAAAHAAAAAAAEAPj/AAAHAAAAAAAEAPn/AAAEAAAAAAAEAPr/AAAIAAEAAAAEAPv/AAAHAAAAAAAEAAQAAAAHAAAAAAAEAAUAAAAIAAEAAAAEAAYAAAAIAAEAAAAEAAcAAAAIAAEAAAAFAPj/AAAEAAAAAAAFAPn/AAAEAAAAAAAFAPr/AAAHAAAAAAAFAPv/AAAEAAAAAAAFAAQAAAAEAAAAAAAFAAUAAAAIAAEAAAAFAAYAAAAEAAAAAAAFAAcAAAAHAAAAAAAGAPj/AAAEAAAAAAAGAPn/AAAEAAAAAAAGAPr/AAAHAAAAAAAGAPv/AAAEAAAAAAAGAAQAAAAEAAAAAAAGAAUAAAAIAAEAAAAGAAYAAAAIAAEAAAAGAAcAAAAIAAEAAAAHAPj/AAAHAAAAAAAHAPn/AAAHAAAAAAAHAPr/AAAEAAAAAAAHAPv/AAAEAAAAAAAHAAQAAAAIAAEAAAAHAAUAAAAHAAAAAAAHAAYAAAAEAAAAAAAHAAcAAAAEAAAAAAAIAPj/AAAEAAAAAAAIAPn/AAAIAAEAAAAIAPr/AAAEAAAAAAAIAPv/AAAIAAEAAAAIAPz/AAAHAAAAAAAIAP3/AAAHAAAAAAAIAP7/AAAHAAAAAAAIAP//AAAHAAAAAAAIAAAAAAAIAAEAAAAIAAEAAAAIAAEAAAAIAAIAAAAEAAAAAAAIAAMAAAAEAAAAAAAIAAQAAAAIAAEAAAAIAAUAAAAHAAAAAAAIAAYAAAAIAAEAAAAIAAcAAAAEAAAAAAAJAPj/AAAIAAEAAAAJAPn/AAAIAAEAAAAJAPr/AAAEAAAAAAAJAPv/AAAEAAAAAAAJAPz/AAAEAAAAAAAJAP3/AAAEAAAAAAAJAP7/AAAHAAAAAAAJAP//AAAEAAAAAAAJAAAAAAAEAAAAAAAJAAEAAAAIAAEAAAAJAAIAAAAIAAEAAAAJAAMAAAAIAAEAAAAJAAQAAAAHAAAAAAAJAAUAAAAIAAEAAAAJAAYAAAAEAAAAAAAJAAcAAAAHAAAAAAAKAPj/AAAIAAEAAAAKAPn/AAAHAAAAAAAKAPr/AAAHAAAAAAAKAPv/AAAEAAAAAAAKAPz/AAAIAAEAAAAKAP3/AAAEAAAAAAAKAP7/AAAHAAAAAAAKAP//AAAEAAAAAAAKAAAAAAAHAAAAAAAKAAEAAAAEAAAAAAAKAAIAAAAIAAEAAAAKAAMAAAAHAAAAAAAKAAQAAAAHAAAAAAAKAAUAAAAIAAEAAAAKAAYAAAAIAAEAAAAKAAcAAAAHAAAAAAALAPj/AAAEAAAAAAALAPn/AAAEAAAAAAALAPr/AAAHAAAAAAALAPv/AAAHAAAAAAALAPz/AAAIAAEAAAALAP3/AAAEAAAAAAALAP7/AAAEAAAAAAALAP//AAAIAAEAAAALAAAAAAAIAAEAAAALAAEAAAAIAAEAAAALAAIAAAAHAAAAAAALAAMAAAAHAAAAAAALAAQAAAAHAAAAAAALAAUAAAAEAAAAAAALAAYAAAAHAAAAAAALAAcAAAAEAAAAAAAMAPj/AAAHAAAAAAAMAPn/AAAHAAAAAAAMAPr/AAAEAAAAAAAMAPv/AAAHAAAAAAAMAPz/AAAHAAAAAAAMAP3/AAAIAAEAAAAMAP7/AAAEAAAAAAAMAP//AAAIAAEAAAAMAAAAAAAIAAEAAAAMAAEAAAAIAAEAAAAMAAIAAAAEAAAAAAAMAAMAAAAIAAEAAAAMAAQAAAAHAAAAAAAMAAUAAAAIAAEAAAAMAAYAAAAIAAEAAAAMAAcAAAAHAAAAAAANAAgAAAADAAAAAAAMAAgAAAADAAAAAAALAAgAAAADAAAAAAAKAAgAAAADAAAAAAAJAAgAAAADAAAAAAAIAAgAAAADAAAAAAAHAAgAAAADAAAAAAAGAAgAAAADAAAAAAAFAAgAAAADAAAAAAAEAAgAAAADAAAAAAADAAgAAAADAAAAAAACAAgAAAADAAAAAAABAAgAAAADAAAAAAAAAAgAAAADAAAAAAD//wgAAAADAAAAAAD+/wgAAAADAAAAAAD9/wgAAAADAAAAAAD8/wgAAAADAAAAAAD7/wgAAAADAAAAAAD6/wgAAAADAAAAAAD5/wgAAAADAAAAAAD4/wgAAAADAAAAAAD3/wgAAAADAAAAAAD2/wgAAAADAAAAAAD1/wgAAAADAAAAAAD0/wgAAAADAAAAAADz/wgAAAADAAAAAADz/wcAAAADAAAAAADz/wYAAAADAAAAAADz/wUAAAADAAAAAADz/wQAAAADAAAAAADz/wMAAAADAAAAAADz/wIAAAADAAAAAADz/wEAAAADAAAAAADz/wAAAAADAAAAAADz////AAADAAAAAADz//7/AAADAAAAAADz//3/AAADAAAAAADz//z/AAADAAAAAADz//v/AAADAAAAAADz//r/AAADAAAAAADz//n/AAADAAAAAADz//j/AAADAAAAAADz//f/AAADAAAAAAD0//f/AAADAAAAAAD1//f/AAADAAAAAAD2//f/AAADAAAAAAD3//f/AAADAAAAAAD4//f/AAADAAAAAAD5//f/AAADAAAAAAD6//f/AAADAAAAAAD7//f/AAADAAAAAAD8//f/AAADAAAAAAD9//f/AAADAAAAAAD+//f/AAADAAAAAAD///f/AAADAAAAAAAAAPf/AAADAAAAAAABAPf/AAADAAAAAAACAPf/AAADAAAAAAADAPf/AAADAAAAAAAEAPf/AAADAAAAAAAFAPf/AAADAAAAAAAGAPf/AAADAAAAAAAHAPf/AAADAAAAAAAIAPf/AAADAAAAAAAJAPf/AAADAAAAAAAKAPf/AAADAAAAAAALAPf/AAADAAAAAAAMAPf/AAADAAAAAAANAPf/AAADAAAAAAANAPj/AAADAAAAAAANAPn/AAADAAAAAAANAPr/AAADAAAAAAANAPv/AAADAAAAAAANAPz/AAADAAAAAAANAP3/AAADAAAAAAANAP7/AAADAAAAAAANAP//AAADAAAAAAANAAAAAAADAAAAAAANAAEAAAADAAAAAAANAAIAAAADAAAAAAANAAMAAAADAAAAAAANAAQAAAADAAAAAAANAAUAAAADAAAAAAANAAYAAAADAAAAAAANAAcAAAADAAAAAAAOAPf/AAADAAAAAAAOAPj/AAADAAAAAAAOAPn/AAADAAAAAAAOAPr/AAADAAAAAAAOAPv/AAADAAAAAAAOAPz/AAADAAAAAAAOAP3/AAADAAAAAAAOAP7/AAADAAAAAAAOAP//AAADAAAAAAAOAAAAAAADAAAAAAAOAAEAAAADAAAAAAAOAAIAAAADAAAAAAAOAAMAAAADAAAAAAAOAAQAAAADAAAAAAAOAAUAAAADAAAAAAAOAAYAAAADAAAAAAAOAAcAAAADAAAAAAAOAAgAAAADAAAAAAAPAPf/AAADAAAAAAAPAPj/AAADAAAAAAAPAPn/AAADAAAAAAAPAPr/AAADAAAAAAAPAPv/AAADAAAAAAAPAPz/AAADAAAAAAAPAP3/AAADAAAAAAAPAP7/AAADAAAAAAAPAP//AAADAAAAAAAPAAAAAAADAAAAAAAPAAEAAAADAAAAAAAPAAIAAAADAAAAAAAPAAMAAAADAAAAAAAPAAQAAAADAAAAAAAPAAUAAAADAAAAAAAPAAYAAAADAAAAAAAPAAcAAAADAAAAAAAPAAgAAAADAAAAAAAQAPf/AAADAAAAAAAQAPj/AAADAAAAAAAQAPn/AAADAAAAAAAQAPr/AAADAAAAAAAQAPv/AAADAAAAAAAQAPz/AAADAAAAAAAQAP3/AAADAAAAAAAQAP7/AAADAAAAAAAQAP//AAADAAAAAAAQAAAAAAADAAAAAAAQAAEAAAADAAAAAAAQAAIAAAADAAAAAAAQAAMAAAADAAAAAAAQAAQAAAADAAAAAAAQAAUAAAADAAAAAAAQAAYAAAADAAAAAAAQAAcAAAADAAAAAAAQAAgAAAADAAAAAADz//T/AAADAAAAAADz//X/AAADAAAAAADz//b/AAADAAAAAAD0//T/AAADAAAAAAD0//X/AAADAAAAAAD0//b/AAADAAAAAAD1//T/AAADAAAAAAD1//X/AAADAAAAAAD1//b/AAADAAAAAAD2//T/AAADAAAAAAD2//X/AAADAAAAAAD2//b/AAADAAAAAAD3//T/AAADAAAAAAD3//X/AAADAAAAAAD3//b/AAADAAAAAAD4//T/AAADAAAAAAD4//X/AAADAAAAAAD4//b/AAADAAAAAAD5//T/AAADAAAAAAD5//X/AAADAAAAAAD5//b/AAADAAAAAAD6//T/AAADAAAAAAD6//X/AAADAAAAAAD6//b/AAADAAAAAAD7//T/AAADAAAAAAD7//X/AAADAAAAAAD7//b/AAADAAAAAAD8//T/AAADAAAAAAD8//X/AAADAAAAAAD8//b/AAADAAAAAAD9//T/AAADAAAAAAD9//X/AAADAAAAAAD9//b/AAADAAAAAAD+//T/AAADAAAAAAD+//X/AAADAAAAAAD+//b/AAADAAAAAAD///T/AAADAAAAAAD///X/AAADAAAAAAD///b/AAADAAAAAAAAAPT/AAADAAAAAAAAAPX/AAADAAAAAAAAAPb/AAADAAAAAAABAPT/AAADAAAAAAABAPX/AAADAAAAAAABAPb/AAADAAAAAAACAPT/AAADAAAAAAACAPX/AAADAAAAAAACAPb/AAADAAAAAAADAPT/AAADAAAAAAADAPX/AAADAAAAAAADAPb/AAADAAAAAAAEAPT/AAADAAAAAAAEAPX/AAADAAAAAAAEAPb/AAADAAAAAAAFAPT/AAADAAAAAAAFAPX/AAADAAAAAAAFAPb/AAADAAAAAAAGAPT/AAADAAAAAAAGAPX/AAADAAAAAAAGAPb/AAADAAAAAAAHAPT/AAADAAAAAAAHAPX/AAADAAAAAAAHAPb/AAADAAAAAAAIAPT/AAADAAAAAAAIAPX/AAADAAAAAAAIAPb/AAADAAAAAAAJAPT/AAADAAAAAAAJAPX/AAADAAAAAAAJAPb/AAADAAAAAAAKAPT/AAADAAAAAAAKAPX/AAADAAAAAAAKAPb/AAADAAAAAAALAPT/AAADAAAAAAALAPX/AAADAAAAAAALAPb/AAADAAAAAAAMAPT/AAADAAAAAAAMAPX/AAADAAAAAAAMAPb/AAADAAAAAADw//f/AAADAAAAAADw//j/AAADAAAAAADw//n/AAADAAAAAADw//r/AAADAAAAAADw//v/AAADAAAAAADw//z/AAADAAAAAADw//3/AAADAAAAAADw//7/AAADAAAAAADw////AAADAAAAAADw/wAAAAADAAAAAADw/wEAAAADAAAAAADw/wIAAAADAAAAAADw/wMAAAADAAAAAADw/wQAAAADAAAAAADw/wUAAAADAAAAAADw/wYAAAADAAAAAADw/wcAAAADAAAAAADw/wgAAAADAAAAAADx//f/AAADAAAAAADx//j/AAADAAAAAADx//n/AAADAAAAAADx//r/AAADAAAAAADx//v/AAADAAAAAADx//z/AAADAAAAAADx//3/AAADAAAAAADx//7/AAADAAAAAADx////AAADAAAAAADx/wAAAAADAAAAAADx/wEAAAADAAAAAADx/wIAAAADAAAAAADx/wMAAAADAAAAAADx/wQAAAADAAAAAADx/wUAAAADAAAAAADx/wYAAAADAAAAAADx/wcAAAADAAAAAADx/wgAAAADAAAAAADy//f/AAADAAAAAADy//j/AAADAAAAAADy//n/AAADAAAAAADy//r/AAADAAAAAADy//v/AAADAAAAAADy//z/AAADAAAAAADy//3/AAADAAAAAADy//7/AAADAAAAAADy////AAADAAAAAADy/wAAAAADAAAAAADy/wEAAAADAAAAAADy/wIAAAADAAAAAADy/wMAAAADAAAAAADy/wQAAAADAAAAAADy/wUAAAADAAAAAADy/wYAAAADAAAAAADy/wcAAAADAAAAAADy/wgAAAADAAAAAAD0/wkAAAADAAAAAAD0/woAAAADAAAAAAD0/wsAAAADAAAAAAD1/wkAAAADAAAAAAD1/woAAAADAAAAAAD1/wsAAAADAAAAAAD2/wkAAAADAAAAAAD2/woAAAADAAAAAAD2/wsAAAADAAAAAAD3/wkAAAADAAAAAAD3/woAAAADAAAAAAD3/wsAAAADAAAAAAD4/wkAAAADAAAAAAD4/woAAAADAAAAAAD4/wsAAAADAAAAAAD5/wkAAAADAAAAAAD5/woAAAADAAAAAAD5/wsAAAADAAAAAAD6/wkAAAADAAAAAAD6/woAAAADAAAAAAD6/wsAAAADAAAAAAD7/wkAAAADAAAAAAD7/woAAAADAAAAAAD7/wsAAAADAAAAAAD8/wkAAAADAAAAAAD8/woAAAADAAAAAAD8/wsAAAADAAAAAAD9/wkAAAADAAAAAAD9/woAAAADAAAAAAD9/wsAAAADAAAAAAD+/wkAAAADAAAAAAD+/woAAAADAAAAAAD+/wsAAAADAAAAAAD//wkAAAADAAAAAAD//woAAAADAAAAAAD//wsAAAADAAAAAAAAAAkAAAADAAAAAAAAAAoAAAADAAAAAAAAAAsAAAADAAAAAAABAAkAAAADAAAAAAABAAoAAAADAAAAAAABAAsAAAADAAAAAAACAAkAAAADAAAAAAACAAoAAAADAAAAAAACAAsAAAADAAAAAAADAAkAAAADAAAAAAADAAoAAAADAAAAAAADAAsAAAADAAAAAAAEAAkAAAADAAAAAAAEAAoAAAADAAAAAAAEAAsAAAADAAAAAAAFAAkAAAADAAAAAAAFAAoAAAADAAAAAAAFAAsAAAADAAAAAAAGAAkAAAADAAAAAAAGAAoAAAADAAAAAAAGAAsAAAADAAAAAAAHAAkAAAADAAAAAAAHAAoAAAADAAAAAAAHAAsAAAADAAAAAAAIAAkAAAADAAAAAAAIAAoAAAADAAAAAAAIAAsAAAADAAAAAAAJAAkAAAADAAAAAAAJAAoAAAADAAAAAAAJAAsAAAADAAAAAAAKAAkAAAADAAAAAAAKAAoAAAADAAAAAAAKAAsAAAADAAAAAAALAAkAAAADAAAAAAALAAoAAAADAAAAAAALAAsAAAADAAAAAAAMAAkAAAADAAAAAAAMAAoAAAADAAAAAAAMAAsAAAADAAAAAAANAAkAAAADAAAAAAANAAoAAAADAAAAAAANAAsAAAADAAAAAAAOAAkAAAADAAAAAAAOAAoAAAADAAAAAAAOAAsAAAADAAAAAAAPAAkAAAADAAAAAAAPAAoAAAADAAAAAAAPAAsAAAADAAAAAAAQAAkAAAADAAAAAAAQAAoAAAADAAAAAAAQAAsAAAADAAAAAAANAPT/AAADAAAAAAANAPX/AAADAAAAAAANAPb/AAADAAAAAAAOAPT/AAADAAAAAAAOAPX/AAADAAAAAAAOAPb/AAADAAAAAAAPAPT/AAADAAAAAAAPAPX/AAADAAAAAAAPAPb/AAADAAAAAAAQAPT/AAADAAAAAAAQAPX/AAADAAAAAAAQAPb/AAADAAAAAADw//T/AAADAAAAAADw//X/AAADAAAAAADw//b/AAADAAAAAADx//T/AAADAAAAAADx//X/AAADAAAAAADx//b/AAADAAAAAADy//T/AAADAAAAAADy//X/AAADAAAAAADy//b/AAADAAAAAADw/wkAAAADAAAAAADw/woAAAADAAAAAADw/wsAAAADAAAAAADx/wkAAAADAAAAAADx/woAAAADAAAAAADx/wsAAAADAAAAAADy/wkAAAADAAAAAADy/woAAAADAAAAAADy/wsAAAADAAAAAADz/wkAAAADAAAAAADz/woAAAADAAAAAADz/wsAAAADAAAAAAA=")
+tile_set = SubResource("TileSet_jk1qb")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -45,10 +159,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -612.5
-offset_top = 24.0
-offset_right = 84.5
-offset_bottom = 115.0
+offset_left = -603.0
+offset_top = 32.0
+offset_right = 187.0
+offset_bottom = 134.0
 grow_horizontal = 2
 text = "Myrkwood: Offshoot"
 label_settings = SubResource("LabelSettings_wu84c")
@@ -58,10 +172,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -608.0
-offset_top = 105.0
-offset_right = -160.0
-offset_bottom = 161.0
+offset_left = -592.0
+offset_top = 136.0
+offset_right = -144.0
+offset_bottom = 192.0
 grow_horizontal = 2
 text = "by Juan Pichardo"
 label_settings = SubResource("LabelSettings_bqqt6")
@@ -69,14 +183,14 @@ label_settings = SubResource("LabelSettings_bqqt6")
 [node name="Mode" type="Label" parent="UI/Main"]
 visible = false
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -616.0
-offset_top = 672.0
-offset_right = -152.0
-offset_bottom = 728.0
-grow_horizontal = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -424.0
+offset_right = 488.0
+offset_bottom = -368.0
+grow_vertical = 0
 text = "-- select your mode--"
 label_settings = SubResource("LabelSettings_8ln24")
 horizontal_alignment = 1
@@ -111,12 +225,17 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -184.0
-offset_right = 488.0
-offset_bottom = -112.0
+offset_left = 40.0
+offset_top = -400.0
+offset_right = 504.0
+offset_bottom = -312.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5dd4i")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Singleplayer"
 
 [node name="LAN" type="Button" parent="UI/Main/Buttons"]
@@ -124,75 +243,132 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -96.0
-offset_right = 488.0
+offset_left = 40.0
+offset_top = -304.0
+offset_right = 504.0
+offset_bottom = -216.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_j7ex8")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "LAN"
+
+[node name="Options" type="Button" parent="UI/Main/Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -210.0
+offset_right = 504.0
+offset_bottom = -120.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_lgwnu")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Options"
+
+[node name="Quit" type="Button" parent="UI/Main/Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -114.0
+offset_right = 504.0
 offset_bottom = -24.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
-text = "LAN"
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Quit"
 
 [node name="LAN Buttons" type="Control" parent="UI/Main"]
 visible = false
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Host" type="Button" parent="UI/Main/LAN Buttons"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 388.0
-offset_top = 393.0
-offset_right = 852.0
-offset_bottom = 465.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -290.0
+offset_right = 504.0
+offset_bottom = -200.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Host"
 
 [node name="Join" type="Button" parent="UI/Main/LAN Buttons"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 388.0
-offset_top = 480.0
-offset_right = 852.0
-offset_bottom = 552.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -194.0
+offset_right = 504.0
+offset_bottom = -104.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Join"
 
 [node name="Back" type="Button" parent="UI/Main/LAN Buttons"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 388.0
-offset_top = 568.0
-offset_right = 852.0
-offset_bottom = 618.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -98.0
+offset_right = 504.0
+offset_bottom = -24.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Back"
 
 [node name="LineEdit" type="LineEdit" parent="UI/Main/LAN Buttons"]
-layout_mode = 0
-offset_left = 408.0
-offset_top = 336.0
-offset_right = 872.0
-offset_bottom = 400.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -370.0
+offset_right = 504.0
+offset_bottom = -296.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
+theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
 placeholder_text = "Username"
 alignment = 1
 max_length = 16
@@ -208,64 +384,63 @@ grow_vertical = 2
 
 [node name="Back" type="Button" parent="UI/Main/Players"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -232.0
-offset_top = 215.0
-offset_right = 232.0
-offset_bottom = 265.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -92.0
+offset_right = 384.0
+offset_bottom = -18.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_1ajci")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Back"
 
 [node name="Panel" type="Panel" parent="UI/Main/Players"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -320.0
-offset_top = -28.0
-offset_right = 320.0
-offset_bottom = 204.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -160.0
+offset_right = 384.0
+offset_bottom = -96.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
 
 [node name="Count" type="Label" parent="UI/Main/Players"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -232.0
-offset_top = 344.0
-offset_right = 232.0
-offset_bottom = 400.0
-grow_horizontal = 2
-text = "Players (0/4)"
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+offset_top = -144.0
+offset_right = 360.0
+offset_bottom = -112.0
+grow_vertical = 0
+text = "Players (0/6)"
 label_settings = SubResource("LabelSettings_rtw2f")
 horizontal_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Players"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 4
 anchor_top = 0.5
-anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -296.0
-offset_top = 24.0
-offset_right = 8.0
-offset_bottom = 192.0
-grow_horizontal = 2
+offset_left = 40.0
+offset_top = -144.0
+offset_right = 560.0
+offset_bottom = 208.0
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Players/ScrollContainer"]
 layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
 
 [node name="Player" parent="UI/Main/Players/ScrollContainer/VBoxContainer" instance=ExtResource("3_bqqt6")]
 layout_mode = 2
@@ -275,13 +450,18 @@ layout_mode = 2
 
 [node name="Start" type="Button" parent="UI/Main/Players"]
 layout_mode = 2
-offset_left = 664.0
-offset_top = 504.0
-offset_right = 944.0
-offset_bottom = 554.0
+offset_left = 400.0
+offset_top = 628.0
+offset_right = 744.0
+offset_bottom = 702.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7b55j")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Start"
 
 [node name="Join" type="Control" parent="UI/Main"]
@@ -294,52 +474,69 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Address" type="LineEdit" parent="UI/Main/Join"]
-layout_mode = 0
-offset_left = 408.0
-offset_top = 336.0
-offset_right = 872.0
-offset_bottom = 400.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -258.0
+offset_right = 504.0
+offset_bottom = -184.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5pajh")
+theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
 placeholder_text = "IP Address"
 alignment = 1
 
 [node name="Join" type="Button" parent="UI/Main/Join"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -232.0
-offset_top = 59.0
-offset_right = 232.0
-offset_bottom = 131.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -178.0
+offset_right = 504.0
+offset_bottom = -104.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_a8gd2")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Join"
 
 [node name="Back" type="Button" parent="UI/Main/Join"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -232.0
-offset_top = 151.0
-offset_right = 232.0
-offset_bottom = 201.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -74.0
+offset_right = 504.0
+offset_bottom = -24.0
+grow_vertical = 0
 theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Back"
+
+[node name="Demoman" parent="." instance=ExtResource("6_rtw2f")]
+
+[node name="MultiplayerDemo" type="Node2D" parent="."]
 
 [connection signal="pressed" from="UI/Main/Buttons/Singleplayer" to="." method="_on_singleplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/LAN" to="." method="_on_lan_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/Quit" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Join" to="." method="_on_lan_join_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Back" to="." method="_on_back_pressed"]
+[connection signal="text_changed" from="UI/Main/LAN Buttons/LineEdit" to="." method="_on_username_text_changed"]
 [connection signal="pressed" from="UI/Main/Players/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Players/Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="UI/Main/Join/Join" to="." method="_on_join_pressed"]

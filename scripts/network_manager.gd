@@ -2,6 +2,7 @@ extends Node
 
 var PORT: int = 1213
 const DEFAULT_SERVER_IP: String = "127.0.0.1"
+const MAX_PLAYERS: int = 5
 
 var players = []
 var player_name: String
@@ -45,10 +46,20 @@ func join_server(address: String, username: String = "Player") -> bool:
 	multiplayer.connection_failed.connect(connection_failed)
 
 	# Wait a moment for connection to establish
-	while not multiplayer.multiplayer_peer.get_connection_status() == 2 or multiplayer.get_unique_id() == 1:
+	var ticks = 0
+	var max_ticks = 100 # 10 seconds 
+	while multiplayer.multiplayer_peer != null and (not multiplayer.multiplayer_peer.get_connection_status() == 2 or multiplayer.get_unique_id() == 1):
+		if ticks >= max_ticks:
+			Toast.add("Timed out.")
+			print("Timed out, reached maximum ticks.")
+			return false
 		print("Stalling...")
+		ticks += 1
 		await get_tree().create_timer(0.1).timeout
 
+	if multiplayer.multiplayer_peer == null:
+		return false
+	
 	# Tell the server our username
 	send_info.rpc(multiplayer.get_unique_id(), username)
 
@@ -58,7 +69,7 @@ func join_server(address: String, username: String = "Player") -> bool:
 
 func host_server(port: int) -> bool:
 	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(port)
+	var error = peer.create_server(port, MAX_PLAYERS)
 	if error != OK:
 		print("Error while starting server: " + str(error))
 		if get_tree().current_scene.get_node("Game") != null:
@@ -95,9 +106,17 @@ func _player_joined(id: int) -> void:
 
 func _player_quit(id: int) -> void:
 	print("[server] Player quit with ID " + str(id))
+	for player in players:
+		if str(player["id"]) == str(id):
+			Toast.add.rpc(player["username"] + " left the server!")
 	players = players.filter(func(p): return p["id"] != id)
 	broadcast_players.rpc(players)
 	player_quit.emit(id)
+
+@rpc("any_peer", "call_local", "reliable")
+func send_message(message: String, player_name: String) -> void:
+	for player in get_tree().get_nodes_in_group("players"):
+		player.add_message(message, player_name)
 
 @rpc("any_peer", "call_local", "reliable")
 func send_info(id: int, username: String) -> void:
