@@ -10,6 +10,68 @@ var player_name: String
 signal player_joined(peer_id)
 signal update_players(players)
 signal player_quit(peer_id)
+signal eos_initialized()
+
+# EOSG Setup
+func _ready() -> void:
+	HLog.log_level = HLog.LogLevel.DEBUG
+
+	var init_opts = EOS.Platform.InitializeOptions.new()
+	init_opts.product_name = "Myrkwood: Offshoot"
+	init_opts.product_version = ProjectSettings.get_setting("application/config/version")
+
+	var create_opts = EOS.Platform.CreateOptions.new()
+	create_opts.product_id = "63a9c00ce38d4464a882852da063d7c6"
+	create_opts.sandbox_id = "941ad0e8d9d0466db96408d76d1c4b30"
+	create_opts.deployment_id = "70b48dd2b5fe4a6e9a1d578b39e04c9e"
+	create_opts.client_id = "xyza7891b4a4I1ezxh8bW3DEzjIz8QNx"
+	create_opts.client_secret = "D0V9SSeiYeEfsfePfz5sxPmG+cQBURZ2Ym0otyy7suA"
+
+	# openssl rand -hex 64
+	create_opts.encryption_key = "471971b30a7e708cb2284a16524a3d34da6ea3d4af33ebd4c46dfb7f7d7d6c62fe5cc7e6f2934301623adf1b44d3a4d8f506a06188839d4e51b781f60b0dbf40"
+
+	# enable overlay on windows only for some reason??
+	if OS.get_name() == "Windows":
+		HAuth.auth_login_flags = EOS.Auth.LoginFlags.None
+		create_opts.flags = EOS.Platform.PlatformFlags.WindowsEnableOverlayOpengl
+
+	# set up SDK
+	var init_res := await HPlatform.initialize_async(init_opts)
+	if not EOS.is_success(init_res):
+		printerr("Failed to initialize EOS SDK: ", EOS.result_str(init_res))
+		# TODO: consequences
+		return
+	
+	var create_success := await HPlatform.create_platform_async(create_opts)
+	if not create_success:
+		printerr("Failed to create EOS Platform")
+		# TODO: consequences
+		return
+
+	# Setup Logs from EOS
+	HPlatform.log_msg.connect(_on_eos_log_msg)
+	# This will control which logs you get from EOS SDK
+	var log_res := HPlatform.set_eos_log_level(EOS.Logging.LogCategory.AllCategories, EOS.Logging.LogLevel.Verbose)
+	if not EOS.is_success(log_res):
+		printerr("Failed to set logging level")
+		# TODO: consequences
+		return
+
+	HAuth.logged_in.connect(_on_eos_logged_in)
+
+	eos_initialized.emit()
+
+	# During development use the devauth tool to login
+	#HAuth.login_devtool_async("localhost:4545", "CREDENTIAL_NAME_HERE")
+
+	# Only on mobile device (Login without any credentials)
+	# await HAuth.login_anonymous_async()
+
+func _on_eos_logged_in():
+	print("EOS logged in successfully: product_user_id=%s" % HAuth.product_user_id)
+
+func _on_eos_log_msg(msg: EOS.Logging.LogMessage) -> void:
+	print("SDK %s | %s" % [msg.category, msg.message])
 
 # -----------------------
 # Connection Functions
