@@ -1,9 +1,10 @@
 extends Node
 
-var PORT: int = 1213
+var PORT: int = 6466
 const DEFAULT_SERVER_IP: String = "127.0.0.1"
 const MAX_PLAYERS: int = 5
 
+var dev_mode: bool = false
 var players = []
 var player_name: String
 
@@ -14,6 +15,11 @@ signal eos_initialized()
 
 # EOSG Setup
 func _ready() -> void:
+	var arguments = OS.get_cmdline_args()
+	for arg in arguments:
+		if arg == "--dev":
+			dev_mode = true
+			print("Dev mode detected.")
 	HLog.log_level = HLog.LogLevel.DEBUG
 
 	var init_opts = EOS.Platform.InitializeOptions.new()

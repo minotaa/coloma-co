@@ -3,15 +3,23 @@ extends Node2D
 func _ready() -> void:
 	$UI/Main/Title.text = ProjectSettings.get_setting("application/config/name")
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
+	if NetworkManager.dev_mode:
+		$"UI/Main/Multiplayer Buttons/Online2".visible = true
+		$"UI/Main/Multiplayer Buttons/Name".visible = true
+		$"UI/Main/Multiplayer Buttons/Address".visible = true
 
 func _on_lan_pressed() -> void:
 	$UI/Main/Buttons.visible = false
+	$"UI/Main/Multiplayer Buttons".visible = false
 	$"UI/Main/LAN Buttons".visible = true
 	$UI/Main/Mode.text = "-- select your multiplayer mode --"
-	if $"UI/Main/LAN Buttons/LineEdit".text != "":
+	if $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
 		$Demoman/Username.visible = true
-		$Demoman/Username.text = $"UI/Main/LAN Buttons/LineEdit".text
-		
+		$Demoman/Username.text = $"UI/Main/Multiplayer Buttons/LineEdit".text
+
+func _on_multiplayer_pressed() -> void:
+	$UI/Main/Buttons.visible = false
+	$"UI/Main/Multiplayer Buttons".visible = true
 
 func _on_back_pressed() -> void:
 	$UI/Main/Mode.text = "-- select your mode --"
@@ -20,6 +28,7 @@ func _on_back_pressed() -> void:
 	$"UI/Main/LAN Buttons".visible = false
 	$UI/Main/Players.visible = false
 	$Demoman/Username.visible = false
+	$"UI/Main/Multiplayer Buttons".visible = false
 	$Demoman/Username.text = "Player" 	
 	if multiplayer != null and multiplayer.has_multiplayer_peer():
 		NetworkManager.update_players.disconnect(_on_update_players)
@@ -31,8 +40,8 @@ func _on_back_pressed() -> void:
 		NetworkManager.players = []
 
 func _on_host_pressed() -> void:
-	if $"UI/Main/LAN Buttons/LineEdit".text != null and $"UI/Main/LAN Buttons/LineEdit".text != "":
-		NetworkManager.player_name = $"UI/Main/LAN Buttons/LineEdit".text
+	if $"UI/Main/Multiplayer Buttons/LineEdit".text != null and $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
+		NetworkManager.player_name = $"UI/Main/Multiplayer Buttons/LineEdit".text
 	else:
 		NetworkManager.player_name = "Player"
 		$Demoman/Username.visible = true
@@ -66,8 +75,8 @@ func _on_update_players(players: Array) -> void:
 	$UI/Main/Players/Count.text = "Players (" + str(players.size()) + "/6)"
 
 func _on_join_pressed() -> void:
-	if $"UI/Main/LAN Buttons/LineEdit".text != null and $"UI/Main/LAN Buttons/LineEdit".text != "":
-		NetworkManager.player_name = $"UI/Main/LAN Buttons/LineEdit".text
+	if $"UI/Main/Multiplayer Buttons/LineEdit".text != null and $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
+		NetworkManager.player_name = $"UI/Main/Multiplayer Buttons/LineEdit".text
 	else:
 		NetworkManager.player_name = "Player"
 	Toast.add("Connecting to " + $UI/Main/Join/Address.text + "...")
@@ -102,3 +111,9 @@ func _on_username_text_changed(new_text: String) -> void:
 	else:
 		$Demoman/Username.text = new_text
 		$Demoman/Username.visible = true
+
+func _on_dev_online_pressed() -> void:
+	HAuth.login_devtool_async($"UI/Main/Multiplayer Buttons/Address".text, $"UI/Main/Multiplayer Buttons/Name".text)
+
+func _on_online_pressed() -> void:
+	HAuth.login_anonymous_async($"UI/Main/Multiplayer Buttons/LineEdit".text)

@@ -238,7 +238,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Singleplayer"
 
-[node name="LAN" type="Button" parent="UI/Main/Buttons"]
+[node name="Multiplayer" type="Button" parent="UI/Main/Buttons"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -254,7 +254,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
-text = "LAN"
+text = "Multiplayer"
 
 [node name="Options" type="Button" parent="UI/Main/Buttons"]
 layout_mode = 1
@@ -355,7 +355,16 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Back"
 
-[node name="LineEdit" type="LineEdit" parent="UI/Main/LAN Buttons"]
+[node name="Multiplayer Buttons" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LineEdit" type="LineEdit" parent="UI/Main/Multiplayer Buttons"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -372,6 +381,115 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
 placeholder_text = "Username"
 alignment = 1
 max_length = 16
+
+[node name="Address" type="LineEdit" parent="UI/Main/Multiplayer Buttons"]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 512.0
+offset_top = -370.0
+offset_right = 736.0
+offset_bottom = -296.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
+theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
+placeholder_text = "Addr."
+alignment = 1
+
+[node name="Name" type="LineEdit" parent="UI/Main/Multiplayer Buttons"]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 512.0
+offset_top = -450.0
+offset_right = 736.0
+offset_bottom = -376.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
+theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
+placeholder_text = "Name"
+alignment = 1
+
+[node name="Online" type="Button" parent="UI/Main/Multiplayer Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -290.0
+offset_right = 504.0
+offset_bottom = -200.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Online"
+
+[node name="Online2" type="Button" parent="UI/Main/Multiplayer Buttons"]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 512.0
+offset_top = -290.0
+offset_right = 656.0
+offset_bottom = -200.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Dev"
+
+[node name="Local" type="Button" parent="UI/Main/Multiplayer Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -194.0
+offset_right = 504.0
+offset_bottom = -104.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Local"
+
+[node name="Back" type="Button" parent="UI/Main/Multiplayer Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -98.0
+offset_right = 504.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Back"
 
 [node name="Players" type="Control" parent="UI/Main"]
 visible = false
@@ -531,12 +649,16 @@ text = "Back"
 [node name="MultiplayerDemo" type="Node2D" parent="."]
 
 [connection signal="pressed" from="UI/Main/Buttons/Singleplayer" to="." method="_on_singleplayer_pressed"]
-[connection signal="pressed" from="UI/Main/Buttons/LAN" to="." method="_on_lan_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/Multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/Quit" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Join" to="." method="_on_lan_join_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Back" to="." method="_on_back_pressed"]
-[connection signal="text_changed" from="UI/Main/LAN Buttons/LineEdit" to="." method="_on_username_text_changed"]
+[connection signal="text_changed" from="UI/Main/Multiplayer Buttons/LineEdit" to="." method="_on_username_text_changed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Buttons/Online" to="." method="_on_online_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Buttons/Online2" to="." method="_on_dev_online_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Buttons/Local" to="." method="_on_lan_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Buttons/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Players/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Players/Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="UI/Main/Join/Join" to="." method="_on_join_pressed"]
