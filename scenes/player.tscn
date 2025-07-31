@@ -1295,6 +1295,8 @@ vertical_alignment = 1
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]
 [connection signal="body_shape_exited" from="Area2D" to="." method="_on_body_shape_exited"]
 [connection signal="pressed" from="UI/Main/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
+[connection signal="focus_entered" from="UI/Main/ChatBar" to="." method="_on_chat_bar_focus_entered"]
+[connection signal="focus_exited" from="UI/Main/ChatBar" to="." method="_on_chat_bar_focus_exited"]
 [connection signal="text_submitted" from="UI/Main/ChatBar" to="." method="_on_chat_bar_submitted"]
 
 [editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]

@@ -306,7 +306,7 @@ func press_inventory_slot(index: int) -> void:
 		button.emit_signal("pressed")
 
 func _unhandled_input(event: InputEvent) -> void:
-	if !is_multiplayer_authority():
+	if multiplayer.has_multiplayer_peer() and !is_multiplayer_authority():
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
@@ -318,17 +318,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				press_inventory_slot(2)
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
 		$UI/Main/ChatBar.grab_focus()
-		for child in $UI/Main/Chat/VBoxContainer.get_children():
-			child.visible = true
-			child.modulate = Color(1, 1, 1, 1)
-			for node in child.get_children():
-				if node is Timer:
-					node.stop()
 	if event is InputEventKey and event.pressed and $UI/Main/ChatBar.has_focus() and event.keycode == KEY_ESCAPE:
 		$UI/Main/ChatBar.text = ""
 		$UI/Main/ChatBar.release_focus()
-		for child in $UI/Main/Chat/VBoxContainer.get_children():
-			child.visible = false
 
 func _enable_sword_hitbox(direction: String) -> void:
 	var hitbox = $SwordHbox
@@ -649,28 +641,6 @@ func add_message(message: String, player_name: String) -> void:
 func _on_chat_bar_submitted(new_text: String) -> void:
 	$UI/Main/ChatBar.text = ""
 	$UI/Main/ChatBar.release_focus()
-
-	var resume_fadeout := false
-
-	for child in $UI/Main/Chat/VBoxContainer.get_children():
-		for node in child.get_children():
-			if node is Timer and node.time_left > 0:
-				resume_fadeout = true
-				break
-		if resume_fadeout:
-			break
-
-
-	for child in $UI/Main/Chat/VBoxContainer.get_children():
-		if resume_fadeout:
-			child.visible = true
-			child.modulate = Color(1, 1, 1, 1)
-			for node in child.get_children():
-				if node is Timer:
-					node.start()
-		else:
-			child.visible = false
-
 	if new_text == "":
 		return
 
@@ -679,3 +649,22 @@ func _on_chat_bar_submitted(new_text: String) -> void:
 		NetworkManager.send_message.rpc(new_text, player_name)
 	else:
 		add_message(new_text, player_name)
+
+func _on_chat_bar_focus_entered() -> void:
+	for child in $UI/Main/Chat/VBoxContainer.get_children():
+		child.visible = true
+		child.modulate = Color(1, 1, 1, 1)
+		for node in child.get_children():
+			if node is Timer:
+				node.stop()
+
+func _on_chat_bar_focus_exited() -> void:
+	for child in $UI/Main/Chat/VBoxContainer.get_children():
+		if child.should_fade:
+			child.visible = true
+			child.modulate = Color(1, 1, 1, 1)
+			for node in child.get_children():
+				if node is Timer:
+					node.start()
+		else:
+			child.visible = false
