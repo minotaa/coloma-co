@@ -18,7 +18,7 @@ func _ready() -> void:
 	entity.max_health = 550.0
 	entity.defense = 0.0
 	entity.name = "Big Bombrat"
-	entity.id = 3
+	entity.id = 4
 	Entities.add_entity(entity)
 	sprite.play("bombrat-down")
 
@@ -107,11 +107,11 @@ func take_damage(amount: float, from_position: Vector2, name: String) -> void:
 		die()
 		alive = false
 		if multiplayer.has_multiplayer_peer():
-			Toast.add.rpc_id(int(name), "+10 Gold")
-			get_parent().add_gold.rpc(name, 10)
+			Toast.add.rpc_id(int(name), "+20 Gold")
+			get_parent().add_gold.rpc(name, 20)
 		else:
-			Toast.add("+10 Gold")
-			get_parent().add_gold(name, 10)
+			Toast.add("+20 Gold")
+			get_parent().add_gold(name, 20)
 		get_parent().add_kill(name, "big_bombrat")
 
 	sprite.material = shock_material

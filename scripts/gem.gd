@@ -26,10 +26,11 @@ func die() -> void:
 		player.send_title("GAME OVER!", 3.0)
 	get_parent().started = false 
 	await get_tree().create_timer(3.0).timeout
-	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-		Man.end_game.rpc()
-	else:
-		Man.end_game()
+	get_parent().end()
+	#if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		#Man.end_game.rpc()
+	#else:
+		#Man.end_game()
 
 func _process(delta):
 	if entity != null:

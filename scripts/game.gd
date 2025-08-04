@@ -2,7 +2,6 @@ extends Node2D
 
 var rng = RandomNumberGenerator.new()
 var wave: int = 0
-var gold: int = 0
 var bombrats_left: int = 0
 var started: bool = false
 var spawning_wave: bool = false
@@ -27,6 +26,25 @@ func add_kill(player_id: String, enemy_type: String) -> void:
 	if multiplayer.has_multiplayer_peer():
 		update_kills.rpc(kills)
 
+func end() -> void:
+	for player in get_tree().get_nodes_in_group("players"):
+		player.end_game()
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		enemy.die()
+	started = false
+	wave = 0
+	kills = {}
+
+@rpc("authority", "call_local")
+func reset() -> void:
+	for player in get_tree().get_nodes_in_group("players"):
+		player.reset_game()
+
+	spawn_wave()
+	Toast.add("Wave started!")
+	started = true
+	$Gem.entity.health = $Gem.entity.max_health
+	
 func _ready() -> void:
 	if not multiplayer.has_multiplayer_peer():
 		# Singleplayer: spawn one player normally
@@ -77,7 +95,7 @@ func _process(delta: float) -> void:
 
 	var bombrats_left := 0
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1 or enemy.entity.id == 3:
+		if enemy.entity.id == 1 or enemy.entity.id == 4:
 			bombrats_left += 1
 
 	if bombrats_left <= 0:

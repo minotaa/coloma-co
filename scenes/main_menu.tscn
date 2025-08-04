@@ -381,6 +381,7 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
 placeholder_text = "Username"
 alignment = 1
 max_length = 16
+caret_blink = true
 
 [node name="Address" type="LineEdit" parent="UI/Main/Multiplayer Buttons"]
 visible = false

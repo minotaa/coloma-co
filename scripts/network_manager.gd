@@ -254,4 +254,3 @@ func connection_failed() -> void:
 		if get_tree().current_scene.get_node("Main Menu") != null:
 			get_tree().current_scene.get_node("Main Menu").queue_free()
 		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
-		

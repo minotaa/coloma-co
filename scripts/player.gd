@@ -50,20 +50,65 @@ var kills: int = 0
 
 @onready var hitting_particles_instance = preload("res://scenes/hitting_particles.tscn")
 @onready var bombrat_counter := $UI/Main/HBoxContainer/Bombrats/HBoxContainer/Label
+@onready var camera := get_viewport().get_camera_2d()
+@onready var marker_container := $UI/Main/Markers
+@onready var marker_scene := preload("res://scenes/marker.tscn")
+
+var active_markers := {}
 
 func get_bombrats_to_track():
 	var bombrats = []
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1 or enemy.entity.id == 3:
+		if enemy.entity.id == 1 or enemy.entity.id == 4:
 			bombrats.append(enemy)
 	return bombrats
 	
 func get_big_bombrats_to_track():
 	var bombrats = []
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 3:
+		if enemy.entity.id == 4:
 			bombrats.append(enemy)
 	return bombrats
+
+func reset_game() -> void:
+	kills = 0
+	total_kills = 0
+	damage_dealt = 0.0
+	total_damage_dealt = 0.0
+	damage_healed = 0.0
+	total_damage_healed = 0.0
+	damage_taken = 0.0
+	total_damage_taken = 0.0
+	gold_collected = 0
+	total_gold_collected = 0
+	health = max_health
+	revival_time = 0.0
+	gold = 0
+	sprint = 220
+	alive = true
+	global_position = Vector2(0, 0)
+	play_idle_animation()
+	$"UI/Main/Game Over".visible = false
+	$UI/Main/Death.visible = false
+	show_ui()
+
+func end_game() -> void:
+	hide_ui()
+	var stats_text := "Your final stats:\n"
+	stats_text += "Final wave:\t " + str(get_parent().wave)
+	stats_text += "\nGold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
+	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
+	stats_text += "Damage Dealt:\t " + str(roundi(damage_dealt)) + " (" + percent(damage_dealt, total_damage_dealt) + ")\n"
+	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
+	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
+	$"UI/Main/Game Over".visible = true
+	$"UI/Main/Game Over/Panel/Meta".text = stats_text
+	if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
+		$"UI/Main/Game Over/Panel/Play Again".visible = true
+		$"UI/Main/Game Over/Panel/Main Menu".visible = true
+	else:
+		$"UI/Main/Game Over/Panel/Play Again".visible = false
+		$"UI/Main/Game Over/Panel/Main Menu".visible = false
 
 func _enter_tree() -> void:
 	if multiplayer.has_multiplayer_peer():
@@ -116,7 +161,7 @@ func die() -> void:
 	revival_time = MAX_REVIVAL_TIME
 	alive = false
 	hide_ui()
-	$"UI/Main/Game Over".visible = true	
+	$"UI/Main/Death".visible = true	
 	var stats_text := "This life:\n"
 	stats_text += "Gold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
 	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
@@ -124,7 +169,7 @@ func die() -> void:
 	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
 
-	$"UI/Main/Game Over/Panel/Meta".text = stats_text
+	$"UI/Main/Death/Panel/Meta".text = stats_text
 	
 	#health = max_health
 	#gold = max(roundi(gold / 2), 0)
@@ -166,7 +211,7 @@ func _process_input(delta) -> void:
 		return
 	if $UI/Main/ChatBar.has_focus():
 		play_idle_animation()
-	if not alive or $UI/Main/ChatBar.has_focus():
+	if not alive or $UI/Main/ChatBar.has_focus() or $"UI/Main/Game Over".visible:
 		return
 	if Input.is_action_just_pressed("interact"):
 		if not $UI/Main/Shop.visible:
@@ -373,20 +418,6 @@ func _disable_all_sword_hitboxes() -> void:
 		if child is CollisionShape2D:
 			child.disabled = true
 
-#func clamp_player_position(player_pos: Vector2) -> Vector2:
-	#var half_width = get_parent().map_size.x / 2 * 16.0
-	#var half_height = get_parent().map_size.y / 2 * 16.0
-	#
-	#player_pos.x = clamp(player_pos.x, -half_width, half_width)
-	#player_pos.y = clamp(player_pos.y, -half_height, half_height)
-	#return player_pos
-
-@onready var camera := get_viewport().get_camera_2d()
-@onready var marker_container := $UI/Main/Markers
-@onready var marker_scene := preload("res://scenes/marker.tscn")
-
-var active_markers := {}
-
 func show_ui() -> void:
 	$UI/Main/Markers.visible = true
 	$UI/Main/HealthBar.visible = true
@@ -430,8 +461,8 @@ func _physics_process(delta: float) -> void:
 			$UI/Main/SprintBar.visible = true
 		$UI/Main/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
-	if $"UI/Main/Game Over".visible:
-		$"UI/Main/Game Over/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
+	if $"UI/Main/Death".visible:
+		$"UI/Main/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
 	if not alive:
 		revival_time -= delta
 		if revival_time <= 0.0:
@@ -441,7 +472,7 @@ func _physics_process(delta: float) -> void:
 			damage_taken = 0.0
 			gold_collected = 0.0
 			kills = 0
-			$"UI/Main/Game Over".visible = false
+			$"UI/Main/Death".visible = false
 			health = max_health
 			gold = max(roundi(gold / 2), 0)
 			Toast.add("You respawned! You lost half your gold.")
@@ -483,7 +514,7 @@ func _physics_process(delta: float) -> void:
 			_disable_all_sword_hitboxes()
 	var count := 0
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1 or enemy.entity.id == 3:
+		if enemy.entity.id == 1 or enemy.entity.id == 4:
 			count += 1
 	if count > 0:
 		bombrat_counter.text = "%d" % count
@@ -630,13 +661,13 @@ func _on_shop_close_button_pressed() -> void:
 	$UI/Main/Shop.visible = false
 
 func add_message(message: String, player_name: String) -> void:
-	print("[" + str(multiplayer.get_unique_id()) + "] Received message: ", message)
+	if multiplayer.has_multiplayer_peer():
+		print("[" + str(multiplayer.get_unique_id()) + "] Received message: ", message)
 	var chat_message = load("res://scenes/chat_message.tscn").instantiate()
 	chat_message.text = player_name + ": " + message
 	chat_message.visible = true
 	chat_message.modulate = Color(1, 1, 1, 1)
 	$UI/Main/Chat/VBoxContainer.add_child(chat_message, true)
-	print("[" + str(multiplayer.get_unique_id()) + "] added message to client")
 
 func _on_chat_bar_submitted(new_text: String) -> void:
 	$UI/Main/ChatBar.text = ""
@@ -668,3 +699,15 @@ func _on_chat_bar_focus_exited() -> void:
 					node.start()
 		else:
 			child.visible = false
+
+func _on_play_again_pressed() -> void:
+	if multiplayer.is_server():
+		get_parent().reset.rpc()
+	elif not multiplayer.has_multiplayer_peer():
+		get_parent().reset()
+
+func _on_main_menu_pressed() -> void:
+	if multiplayer.has_multiplayer_peer():
+		Man.end_game.rpc()
+	else:
+		Man.end_game()

@@ -24,7 +24,7 @@ func _ready() -> void:
 	entity.max_health = 175.0
 	entity.defense = 0.0
 	entity.name = "Bauble"
-	entity.id = 2
+	entity.id = 3
 	Entities.add_entity(entity)
 	sprite.play("bauble-down")
 
