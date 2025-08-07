@@ -24,7 +24,6 @@ config/icon="uid://d2y6s14kl8obi"
 [autoload]
 
 Toast="*res://scripts/toastmanager.gd"
-Tiles="*res://scripts/types/tiles.gd"
 Entities="*res://scripts/types/entities.gd"
 Items="*res://scripts/types/items.gd"
 NetworkManager="*res://scripts/network_manager.gd"
@@ -38,6 +37,7 @@ HStats="*res://addons/epic-online-services-godot/heos/hstats.gd"
 HLeaderboards="*res://addons/epic-online-services-godot/heos/hleaderboards.gd"
 HLobbies="*res://addons/epic-online-services-godot/heos/hlobbies.gd"
 HP2P="*res://addons/epic-online-services-godot/heos/hp2p.gd"
+Core="*res://scripts/core.gd"
 
 [display]
 

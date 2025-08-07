@@ -1,4 +1,4 @@
-[gd_scene load_steps=125 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=122 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -23,7 +23,6 @@
 [ext_resource type="PackedScene" uid="uid://dicfu5afqotfu" path="res://scenes/catalog_item.tscn" id="17_fulsm"]
 [ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="17_qfm1y"]
 [ext_resource type="FontFile" uid="uid://cxii8uarl0lvi" path="res://assets/fonts/BitPotion.ttf" id="19_4r5pv"]
-[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="22_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="23_ke2ow"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="24_ujl30"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
@@ -594,32 +593,6 @@ func _on_button_pressed() -> void:
 	else:
 		Toast.add(\"You can't afford this!\")
 "
-
-[sub_resource type="GDScript" id="GDScript_wqfne"]
-resource_name = "bombrat_shell"
-script/source = "extends Control
-
-var cost = 200
-var item_id = 1
-
-func _on_button_pressed() -> void:
-	#print(\"uhhh... healing potion... bought?\")
-	#print(Man.get_player().gold)
-	if Man.get_player().gold >= cost:
-		if Man.get_player().bag.list.size() < 3:
-			Man.get_player().gold -= cost
-			Man.get_player().bag.add_item(ItemStack.new(Items.get_by_id(1), 1))
-			Toast.add(\"You purchased: \" + str(ItemStack.new(Items.get_by_id(1), 1)))
-			Toast.add(\"-\" + str(cost) + \" Gold\")
-		else:
-			Toast.add(\"You don't have the inventory space!\")
-	else:
-		Toast.add(\"You can't afford this!\")
-"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_md1ol"]
-atlas = ExtResource("22_dt7fs")
-region = Rect2(80, 16, 16, 16)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fulsm"]
 
@@ -1230,22 +1203,6 @@ script = SubResource("GDScript_fulsm")
 tooltip_text = "A nice helpful healing potion to heal +50 HP. 
 Has a 10 second cooldown."
 
-[node name="Catalog Item2" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
-layout_mode = 2
-script = SubResource("GDScript_wqfne")
-
-[node name="Button" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="0"]
-tooltip_text = "A shell gathered from a bombrats, explodes causing 75 DMG to anything nearby."
-
-[node name="Label" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="1"]
-text = "Bombrat Shell"
-
-[node name="TextureRect" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="2"]
-texture = SubResource("AtlasTexture_md1ol")
-
-[node name="Gold" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2/HBoxContainer" index="1"]
-text = "200"
-
 [node name="Close" type="Button" parent="UI/Main/Shop/Panel"]
 layout_mode = 1
 anchors_preset = 7
@@ -1473,4 +1430,3 @@ vertical_alignment = 1
 [connection signal="pressed" from="UI/Main/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
 
 [editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
-[editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]

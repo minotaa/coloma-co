@@ -20,8 +20,8 @@ var shoot_timer := 0.0
 var entity = Entity.new()
 
 func _ready() -> void:
-	entity.health = 175.0
-	entity.max_health = 175.0
+	entity.health = 100.0
+	entity.max_health = 100.0
 	entity.defense = 0.0
 	entity.name = "Bauble"
 	entity.id = 3

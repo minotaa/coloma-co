@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-const SPEED = 5.0
+const SPEED = 4.8
 
 @onready var agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -14,8 +14,8 @@ var explosion_scene = preload("res://scenes/explosion.tscn")
 var entity = Entity.new()
 
 func _ready() -> void:
-	entity.health = 550.0
-	entity.max_health = 550.0
+	entity.health = 500.0
+	entity.max_health = 500.0
 	entity.defense = 0.0
 	entity.name = "Big Bombrat"
 	entity.id = 4
@@ -37,7 +37,7 @@ func explode() -> void:
 	$"..".add_child(explosion, true)
 	for area in $Hurtbox.get_overlapping_areas():
 		if area.is_in_group("gem"):
-			area.take_damage(20.0)  # 10% damage
+			area.take_damage(20.0) # 20% damage
 	die()
 
 func _physics_process(delta: float) -> void:

@@ -86,6 +86,7 @@ func reset_game() -> void:
 	gold = 0
 	sprint = 220
 	alive = true
+	bag = Bag.new()
 	global_position = Vector2(0, 0)
 	play_idle_animation()
 	$"UI/Main/Game Over".visible = false
@@ -157,7 +158,7 @@ func percent(current: float, total: float) -> String:
 func die() -> void:
 	$AnimatedSprite2D.play("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
-	Toast.add("You're dead... you will respawn in 10 seconds.")
+	Toast.add.rpc_id(int(name), "You're dead... you will respawn in 10 seconds.")
 	revival_time = MAX_REVIVAL_TIME
 	alive = false
 	hide_ui()
@@ -209,7 +210,7 @@ func _process_input(delta) -> void:
 	# Handle movement input
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
-	if $UI/Main/ChatBar.has_focus():
+	if $UI/Main/ChatBar.has_focus() and alive:
 		play_idle_animation()
 	if not alive or $UI/Main/ChatBar.has_focus() or $"UI/Main/Game Over".visible:
 		return
@@ -298,17 +299,6 @@ func _process_input(delta) -> void:
 		velocity *= SPRINT_MULTIPLIER
 		if velocity.length() > 0:
 			sprint -= 1
-	if sprint <= 0:
-		exhausted = true
-	if exhausted:
-		velocity *= 0.55
-	if (velocity.length() == 0 and sprint < 220) or (exhausted and sprint < 220):
-		if not exhausted:
-			sprint += 1
-		else:
-			sprint += 0.5
-	if velocity.length() == SPEED and sprint < 220:
-		sprint += 0.45
 	
 	if Input.is_action_pressed("info") and not $UI/Main/Shop.visible:
 		$UI/Main/Tab.visible = true
@@ -444,6 +434,8 @@ func _is_mouse_over_chat_bar() -> bool:
 
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		return
 	var focused = $UI/Main/ChatBar.has_focus()
 	var hovered = _is_mouse_over_chat_bar()
 	if focused or hovered:
@@ -475,13 +467,24 @@ func _physics_process(delta: float) -> void:
 			$"UI/Main/Death".visible = false
 			health = max_health
 			gold = max(roundi(gold / 2), 0)
-			Toast.add("You respawned! You lost half your gold.")
+			Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
 			play_idle_animation()
 			$AnimatedSprite2D.material = null
 			global_position = Vector2.ZERO
 			alive = true
 			show_ui()
 	_process_input(delta)
+	if sprint <= 0:
+		exhausted = true
+	if exhausted:
+		velocity *= 0.55
+	if (velocity.length() == 0 and sprint < 220) or (exhausted and sprint < 220):
+		if not exhausted:
+			sprint += 1
+		else:
+			sprint += 0.5
+	if velocity.length() == SPEED and sprint < 220:
+		sprint += 0.45
 	var slots = $UI/Main/Inventory.get_children()
 
 	for i in slots.size():
@@ -688,6 +691,8 @@ func _on_chat_bar_focus_entered() -> void:
 		for node in child.get_children():
 			if node is Timer:
 				node.stop()
+	await get_tree().process_frame
+	$UI/Main/Chat.scroll_vertical = $UI/Main/Chat.get_v_scroll_bar().max_value
 
 func _on_chat_bar_focus_exited() -> void:
 	for child in $UI/Main/Chat/VBoxContainer.get_children():
