@@ -74,13 +74,9 @@ func reset_game() -> void:
 	kills = 0
 	total_kills = 0
 	damage_dealt = 0.0
-	total_damage_dealt = 0.0
 	damage_healed = 0.0
-	total_damage_healed = 0.0
 	damage_taken = 0.0
-	total_damage_taken = 0.0
 	gold_collected = 0
-	total_gold_collected = 0
 	health = max_health
 	revival_time = 0.0
 	gold = 0
