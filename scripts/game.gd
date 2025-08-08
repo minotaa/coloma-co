@@ -145,18 +145,7 @@ func spawn_wave() -> void:
 
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.health < player.max_health and player.alive:
-			var old_health = player.health
-			player.health = min(player.health + 10, player.max_health)
-			var healed = roundi(player.health - old_health)
-			player.damage_healed += healed
-			player.total_damage_healed += healed
-
-			if healed > 0:
-				var text = "+" + str(healed) + " HP"
-				if multiplayer.has_multiplayer_peer():
-					Toast.add.rpc_id(int(player.name), text)
-				else:
-					Toast.add(text)
+			player.heal(10)
 
 	match wave:
 		1:

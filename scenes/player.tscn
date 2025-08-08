@@ -1,7 +1,8 @@
-[gd_scene load_steps=122 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=124 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
+[ext_resource type="Texture2D" uid="uid://cf86avoe2v4ef" path="res://assets/sprites/healing.png" id="2_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://clf1l0ona4m7k" path="res://assets/sprites/player-down.png" id="2_py00a"]
 [ext_resource type="Texture2D" uid="uid://dyhdb2iwitv0o" path="res://assets/sprites/player-left.png" id="3_dmfgu"]
 [ext_resource type="Texture2D" uid="uid://jlrmv517akl5" path="res://assets/sprites/dead.png" id="3_f1ej7"]
@@ -28,6 +29,17 @@
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="26_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="27_wqfne"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wqfne"]
+particle_flag_disable_z = true
+direction = Vector3(0, -1, -1)
+flatness = 1.0
+initial_velocity_min = 25.0
+initial_velocity_max = 100.0
+gravity = Vector3(0, 98, 0)
+scale_min = 0.25
+scale_max = 0.5
+color = Color(1, 1, 1, 0.360784)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wnwbv"]
 atlas = ExtResource("3_f1ej7")
@@ -717,6 +729,15 @@ texture_filter = 1
 collision_mask = 11
 motion_mode = 1
 script = ExtResource("1_oxdyo")
+
+[node name="Healing" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 16
+texture = ExtResource("2_dt7fs")
+one_shot = true
+explosiveness = 0.5
+randomness = 0.5
+process_material = SubResource("ParticleProcessMaterial_wqfne")
 
 [node name="Shadow" type="Sprite2D" parent="."]
 position = Vector2(0, 3)

@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+var current_log_path: String
 var directions = {
 	"left": Vector2.LEFT,
 	"right": Vector2.RIGHT,
@@ -116,7 +117,7 @@ func send_title(title: String, delay: float) -> void:
 	$UI/Main/Title.text = title
 	await get_tree().create_timer(delay).timeout
 	$UI/Main/Title.text = ""
-
+	
 func _ready() -> void:	
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
@@ -129,7 +130,35 @@ func _ready() -> void:
 		$PointLight2D.visible = false
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		$Camera2D.make_current()
+	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
+		if not DirAccess.dir_exists_absolute("user://chats"):
+			DirAccess.make_dir_absolute("user://chats")
+			
+		var timestamp = Time.get_datetime_string_from_system().replace(":", "-")
+		current_log_path = "user://chats/%s.log" % timestamp
+		
+		var file = FileAccess.open(current_log_path, FileAccess.WRITE)
+		if file:
+			file.store_line("--- Chat session started at %s ---" % timestamp)
+		file.close()
+		
+func heal(amount: float) -> void:	
+	if alive:
+		var old_health = health
+		health = min(health + amount, max_health)
+		var healed = roundi(health - old_health)
+		damage_healed += healed
+		total_damage_healed += healed
+		
+		if healed > 0:
+			var text = "+" + str(healed) + " HP"
+			if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+				Toast.add.rpc_id(int(name), text)
+			else:
+				Toast.add(text)
+		$Healing.emitting = true
 
+	
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0 or not alive:
 		return
@@ -667,7 +696,21 @@ func add_message(message: String, player_name: String) -> void:
 	chat_message.visible = true
 	chat_message.modulate = Color(1, 1, 1, 1)
 	$UI/Main/Chat/VBoxContainer.add_child(chat_message, true)
+	_write_chat_log(player_name, message)
 
+
+func _write_chat_log(player_name: String, message: String) -> void:
+	var log_line = "[%s] %s: %s" % [
+		Time.get_datetime_string_from_system(),
+		player_name,
+		message
+	]
+	var file = FileAccess.open(current_log_path, FileAccess.READ_WRITE)
+	if file:
+		file.seek_end()
+		file.store_line(log_line)
+		file.close()
+		
 func _on_chat_bar_submitted(new_text: String) -> void:
 	$UI/Main/ChatBar.text = ""
 	$UI/Main/ChatBar.release_focus()

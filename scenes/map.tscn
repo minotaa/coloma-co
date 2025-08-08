@@ -1,10 +1,11 @@
-[gd_scene load_steps=14 format=4 uid="uid://dfydxhpofisbq"]
+[gd_scene load_steps=15 format=4 uid="uid://dfydxhpofisbq"]
 
 [ext_resource type="Script" uid="uid://b7yd3o6t1kpi" path="res://scripts/game.gd" id="1_gldc4"]
 [ext_resource type="Texture2D" uid="uid://b602snonljd6m" path="res://assets/sprites/tiles.png" id="1_wya76"]
 [ext_resource type="Texture2D" uid="uid://3ao2wavj2p38" path="res://assets/sprites/spawner.png" id="3_2klcf"]
 [ext_resource type="Script" uid="uid://0u6di6k2ccp2" path="res://scripts/ground.gd" id="3_2lpho"]
 [ext_resource type="PackedScene" uid="uid://m0qejj1h83sm" path="res://scenes/gem.tscn" id="5_2klcf"]
+[ext_resource type="PackedScene" uid="uid://bhb5vspn4i4fd" path="res://scenes/multiplayer_spawner.tscn" id="6_2lpho"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_0cso3"]
 vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
@@ -127,6 +128,4 @@ y_sort_origin = 2
 [node name="Gem" parent="." instance=ExtResource("5_2klcf")]
 position = Vector2(0, -25)
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://bma6r3uqptx6d", "uid://dkm4wygcrnihe", "uid://bfnnju2fwq13d", "uid://ccfj8glgxc0w7", "uid://bje8wcryrixir", "uid://cghjeqjnh6r7j", "uid://dcy0t5qh6b33u", "uid://dqoqkud0rwv3l", "uid://dboj2ky7bvpgd", "uid://8l2rb5w08s7r")
-spawn_path = NodePath("..")
+[node name="MultiplayerSpawner" parent="." instance=ExtResource("6_2lpho")]

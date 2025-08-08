@@ -42,11 +42,7 @@ func _init() -> void:
 	healing_potion.on_consume = func():
 		var player = Man.get_player()
 		if player != null:
-			var heal_amount = min(50, player.max_health - player.health)
-			player.health += heal_amount
-			player.damage_healed += heal_amount
-			player.total_damage_healed += heal_amount
-			Toast.add("Healed +" + str(roundi(heal_amount)) + " HP!")
+			player.heal(50)
 
 	items.append(healing_potion)
 	
