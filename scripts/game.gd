@@ -197,7 +197,7 @@ func spawn_wave() -> void:
 			await spawn_crabmen(1)
 		_:
 			if wave % 10 == 0:
-				await spawn_crabmen(1)
+				spawn_crabman("north")
 			await spawn_bombrats(4 + wave)
 			await spawn_slimes(4 + int(wave / 2))
 

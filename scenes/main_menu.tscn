@@ -435,6 +435,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+disabled = true
 text = "Online"
 
 [node name="Online2" type="Button" parent="UI/Main/Multiplayer Buttons"]
