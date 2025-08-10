@@ -355,6 +355,69 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Back"
 
+[node name="Online Buttons" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Host" type="Button" parent="UI/Main/Online Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -290.0
+offset_right = 504.0
+offset_bottom = -200.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Host"
+
+[node name="Join" type="Button" parent="UI/Main/Online Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -194.0
+offset_right = 504.0
+offset_bottom = -104.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Join"
+
+[node name="Back" type="Button" parent="UI/Main/Online Buttons"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -98.0
+offset_right = 504.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Back"
+
 [node name="Multiplayer Buttons" type="Control" parent="UI/Main"]
 visible = false
 layout_mode = 1
@@ -554,7 +617,7 @@ anchor_bottom = 0.5
 offset_left = 40.0
 offset_top = -144.0
 offset_right = 560.0
-offset_bottom = 208.0
+offset_bottom = 193.0
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Players/ScrollContainer"]
@@ -585,6 +648,24 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Start"
+
+[node name="Copy UserID" type="Button" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 856.0
+offset_top = -92.0
+offset_right = 1172.0
+offset_bottom = -18.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7b55j")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Copy User ID"
 
 [node name="Join" type="Control" parent="UI/Main"]
 visible = false
@@ -648,6 +729,68 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Back"
 
+[node name="Online Join" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UserID" type="LineEdit" parent="UI/Main/Online Join"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -258.0
+offset_right = 504.0
+offset_bottom = -184.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5pajh")
+theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
+placeholder_text = "User ID"
+alignment = 1
+
+[node name="Join" type="Button" parent="UI/Main/Online Join"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -178.0
+offset_right = 504.0
+offset_bottom = -104.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_a8gd2")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Join"
+
+[node name="Back" type="Button" parent="UI/Main/Online Join"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -74.0
+offset_right = 504.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Back"
+
 [node name="Demoman" parent="." instance=ExtResource("6_rtw2f")]
 
 [node name="MultiplayerDemo" type="Node2D" parent="."]
@@ -658,6 +801,9 @@ text = "Back"
 [connection signal="pressed" from="UI/Main/LAN Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Join" to="." method="_on_lan_join_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="UI/Main/Online Buttons/Host" to="." method="_on_online_host_pressed"]
+[connection signal="pressed" from="UI/Main/Online Buttons/Join" to="." method="_on_online_join_pressed"]
+[connection signal="pressed" from="UI/Main/Online Buttons/Back" to="." method="_on_back_pressed"]
 [connection signal="text_changed" from="UI/Main/Multiplayer Buttons/LineEdit" to="." method="_on_username_text_changed"]
 [connection signal="pressed" from="UI/Main/Multiplayer Buttons/Online" to="." method="_on_online_pressed"]
 [connection signal="pressed" from="UI/Main/Multiplayer Buttons/Online2" to="." method="_on_dev_online_pressed"]
@@ -665,6 +811,10 @@ text = "Back"
 [connection signal="pressed" from="UI/Main/Multiplayer Buttons/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Players/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Players/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="UI/Main/Players/Copy UserID" to="." method="_on_copy_userid_pressed"]
 [connection signal="text_submitted" from="UI/Main/Join/Address" to="." method="_on_address_text_submitted"]
 [connection signal="pressed" from="UI/Main/Join/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="UI/Main/Join/Back" to="." method="_on_back_pressed"]
+[connection signal="text_submitted" from="UI/Main/Online Join/UserID" to="." method="_on_userid_text_submitted"]
+[connection signal="pressed" from="UI/Main/Online Join/Join" to="." method="_on_online_join_join_pressed"]
+[connection signal="pressed" from="UI/Main/Online Join/Back" to="." method="_on_back_pressed"]

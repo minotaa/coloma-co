@@ -7,11 +7,11 @@ const MAX_PLAYERS: int = 5
 var dev_mode: bool = false
 var players = []
 var player_name: String
+var eos_is_initialized: bool = false
 
 signal player_joined(peer_id)
 signal update_players(players)
 signal player_quit(peer_id)
-signal eos_initialized()
 
 # EOSG Setup
 func _ready() -> void:
@@ -35,6 +35,8 @@ func _ready() -> void:
 
 	# openssl rand -hex 64
 	create_opts.encryption_key = "471971b30a7e708cb2284a16524a3d34da6ea3d4af33ebd4c46dfb7f7d7d6c62fe5cc7e6f2934301623adf1b44d3a4d8f506a06188839d4e51b781f60b0dbf40"
+
+	HAuth.auth_login_flags = EOS.Auth.LoginFlags.None
 
 	# enable overlay on windows only for some reason??
 	if OS.get_name() == "Windows":
@@ -64,14 +66,21 @@ func _ready() -> void:
 		return
 
 	HAuth.logged_in.connect(_on_eos_logged_in)
+	HAuth.logged_in_connect.connect(_on_eos_logged_in)
 
-	eos_initialized.emit()
+	print('HEY APRIL WERE EMITTING')
+	eos_is_initialized = true
+
+	HAuth.display_name_changed.connect(_eos_display_name_changed)
 
 	# During development use the devauth tool to login
 	#HAuth.login_devtool_async("localhost:4545", "CREDENTIAL_NAME_HERE")
 
 	# Only on mobile device (Login without any credentials)
 	# await HAuth.login_anonymous_async()
+
+func _eos_display_name_changed():
+	print("HEY APRIL WERE NOW CALLED " + HAuth.display_name + ".")
 
 func _on_eos_logged_in():
 	print("EOS logged in successfully: product_user_id=%s" % HAuth.product_user_id)
@@ -82,6 +91,40 @@ func _on_eos_log_msg(msg: EOS.Logging.LogMessage) -> void:
 # -----------------------
 # Connection Functions
 # -----------------------
+
+func join_online_server(userid: String) -> bool:
+	player_name = HAuth.display_name
+
+	var peer = EOSGMultiplayerPeer.new()
+	var error = peer.create_client("myrkwood", userid)
+	print("Connecting to user ID " + userid)
+	if error != OK:
+		print("Error occured while connecting: " + str(error))
+
+	multiplayer.multiplayer_peer = peer
+	multiplayer.server_disconnected.connect(server_disconnected)
+	multiplayer.connection_failed.connect(connection_failed)
+
+	# Wait a moment for connection to establish
+	var ticks = 0
+	var max_ticks = 100 # 10 seconds 
+	while multiplayer.multiplayer_peer != null and (not multiplayer.multiplayer_peer.get_connection_status() == 2 or multiplayer.get_unique_id() == 1):
+		if ticks >= max_ticks:
+			Toast.add("Timed out.")
+			print("Timed out, reached maximum ticks.")
+			return false
+		print("Stalling...")
+		ticks += 1
+		await get_tree().create_timer(0.1).timeout
+
+	if multiplayer.multiplayer_peer == null:
+		return false
+	
+	# Tell the server our username
+	send_info.rpc(multiplayer.get_unique_id(), player_name)
+
+	print("[" + str(multiplayer.get_unique_id()) + "] Connected to the server")
+	return true
 
 func join_server(address: String, username: String = "Player") -> bool:
 	if not username.is_valid_identifier():
@@ -134,6 +177,36 @@ func join_server(address: String, username: String = "Player") -> bool:
 	print("[" + str(multiplayer.get_unique_id()) + "] Connected to the server")
 	return true
 
+func host_online_server() -> bool:
+	player_name = HAuth.display_name
+
+	var peer = EOSGMultiplayerPeer.new()
+	var error = peer.create_server("myrkwood")
+	if error != OK:
+		print("Error while starting server: " + str(error))
+		if get_tree().current_scene.get_node("Game") != null:
+			get_tree().current_scene.get_node("Game").queue_free()
+			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		else:
+			if get_tree().current_scene.get_node("Main Menu") != null:
+				get_tree().current_scene.get_node("Main Menu").queue_free()
+			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		Toast.add("An error occurred while starting server.")
+		return false
+
+	print("Created EOS server")
+	multiplayer.multiplayer_peer = peer
+	multiplayer.peer_connected.connect(_player_joined)
+	multiplayer.peer_disconnected.connect(_player_quit)
+
+	# Host joins as ID 1
+	players.append({
+		"id": 1,
+		"username": player_name
+	})
+	update_players.emit(players)
+
+	return true
 
 func host_server(port: int) -> bool:
 	var peer = ENetMultiplayerPeer.new()

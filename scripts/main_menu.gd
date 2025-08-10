@@ -3,10 +3,41 @@ extends Node2D
 func _ready() -> void:
 	$UI/Main/Title.text = ProjectSettings.get_setting("application/config/name")
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
+
 	if NetworkManager.dev_mode:
 		$"UI/Main/Multiplayer Buttons/Online2".visible = true
 		$"UI/Main/Multiplayer Buttons/Name".visible = true
 		$"UI/Main/Multiplayer Buttons/Address".visible = true
+
+	print('HEY APRIL WERE CONNECTING')
+	if NetworkManager.eos_is_initialized:
+		_eos_initialized()
+	else:
+		HPlatform.platform_created.connect(_eos_initialized)
+
+func init_online_buttons() -> void:
+	$"UI/Main/Online Buttons".visible = true
+
+func _eos_initialized() -> void:
+	print('HEY APRIL WERE _eos_initialized')
+	HAuth.logged_in.connect(_eos_on_logged_in)
+	$"UI/Main/Multiplayer Buttons/Online".disabled = false
+
+func _eos_on_logged_in() -> void:
+	print('HEY APRIL WERE _eos_on_logged_in -> ' + HAuth.product_user_id)
+	if $"UI/Main/Multiplayer Buttons".visible == true:
+		$"UI/Main/Multiplayer Buttons".visible = false
+		init_online_buttons()
+
+func _on_online_host_pressed() -> void:
+	NetworkManager.host_online_server()
+	NetworkManager.update_players.connect(_on_update_players)
+	Toast.add("Players can now connect to your game by joining it!")
+	
+	$"UI/Main/Online Buttons".visible = false
+	$UI/Main/Players.visible = true
+	$UI/Main/Mode.text = "-- multiplayer game (host) --"
+	_on_update_players(NetworkManager.players)
 
 func _on_lan_pressed() -> void:
 	$UI/Main/Buttons.visible = false
@@ -29,6 +60,8 @@ func _on_back_pressed() -> void:
 	$UI/Main/Players.visible = false
 	$Demoman/Username.visible = false
 	$"UI/Main/Multiplayer Buttons".visible = false
+	$"UI/Main/Online Join".visible = false
+	$"UI/Main/Online Buttons".visible = false
 	$Demoman/Username.text = "Player" 	
 	if multiplayer != null and multiplayer.has_multiplayer_peer():
 		NetworkManager.update_players.disconnect(_on_update_players)
@@ -74,6 +107,21 @@ func _on_update_players(players: Array) -> void:
 		container.add_child(entry, true)
 	$UI/Main/Players/Count.text = "Players (" + str(players.size()) + "/6)"
 
+func _on_online_join_join_pressed() -> void:
+	Toast.add("Connecting to " + $"UI/Main/Online Join/UserID".text + "...")
+
+	var result = await NetworkManager.join_online_server($"UI/Main/Online Join/UserID".text)
+	if result == false:
+		Toast.add("Couldn't connect to the server")
+	else:
+		NetworkManager.update_players.connect(_on_update_players)
+		Toast.add("Successfully connected to the server!")
+		$UI/Main/Join.visible = false
+		$UI/Main/Players.visible = true
+		_on_update_players(NetworkManager.players)
+		$UI/Main/Mode.text = "-- multiplayer game --"
+		$UI/Main/Players/Start.visible = false
+
 func _on_join_pressed() -> void:
 	if $"UI/Main/Multiplayer Buttons/LineEdit".text != null and $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
 		NetworkManager.player_name = $"UI/Main/Multiplayer Buttons/LineEdit".text
@@ -98,6 +146,10 @@ func _on_lan_join_pressed() -> void:
 	$UI/Main/Join.visible = true
 	$UI/Main/Mode.text = "-- enter server details --"
 
+func _on_online_join_pressed() -> void:
+	$"UI/Main/Online Buttons".visible = false
+	$"UI/Main/Online Join".visible = true
+
 func _on_start_pressed() -> void:
 	if multiplayer.is_server():
 		Man.start_game.rpc()
@@ -116,7 +168,17 @@ func _on_dev_online_pressed() -> void:
 	HAuth.login_devtool_async($"UI/Main/Multiplayer Buttons/Address".text, $"UI/Main/Multiplayer Buttons/Name".text)
 
 func _on_online_pressed() -> void:
-	HAuth.login_anonymous_async($"UI/Main/Multiplayer Buttons/LineEdit".text)
+	if HAuth.product_user_id == "":
+		HAuth.login_anonymous_async($"UI/Main/Multiplayer Buttons/LineEdit".text)
+	else:
+		$"UI/Main/Multiplayer Buttons".visible = false
+		init_online_buttons()
 
 func _on_address_text_submitted(new_text:String) -> void:
 	$UI/Main/Join/Join.emit_signal("pressed")
+
+func _on_userid_text_submitted(new_text:String) -> void:
+	$"UI/Main/Online Join/Join".emit_signal("pressed")
+
+func _on_copy_userid_pressed() -> void:
+	DisplayServer.clipboard_set(HAuth.product_user_id)
