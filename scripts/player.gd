@@ -1,31 +1,33 @@
 extends CharacterBody2D
 
 var current_log_path: String
-var directions = {
+var original_zoom := Vector2(5.0, 5.0)
+var zoom_multiplier := 1.0
+var directions := {
 	"left": Vector2.LEFT,
 	"right": Vector2.RIGHT,
 	"up": Vector2.UP,
 	"down": Vector2.DOWN
 }
-var last_direction = "down"
+var last_direction := "down"
 const SWORD_HITBOX_TIME := 0.15
 var sword_hitbox_timer := 0.0
 var sword_hitbox_active := false
-var hit_enemies = []
+var hit_enemies := []
 var knockback_velocity := Vector2.ZERO
 var knockback_friction := 800.0
-var hit_cooldown = 0.0
-var max_hit_cooldown = 0.35
+var hit_cooldown := 0.0
+var max_hit_cooldown := 0.35
 
-const SPEED = 120.0
-const SPRINT_MULTIPLIER = 1.45
-var exhausted = false # When you deplete your sprint completely you will become exhausted
-var sprint = 220
+const SPEED := 120.0
+const SPRINT_MULTIPLIER := 1.45
+var exhausted := false # When you deplete your sprint completely you will become exhausted
+var sprint := 220.0
 var alive: bool = true
-var max_health = 100.0
-var health = 100.0
-var damage = 25
-var strength = 0
+var max_health := 100.0
+var health := 100.0
+var damage := 25.0
+var strength := 0
 var sword_reach := 1.55  # Base reach
 var gold: int = 0
 
@@ -36,18 +38,31 @@ var bag = Bag.new()
 # stats and stuff
 var total_damage_taken: float = 0.0
 var damage_taken: float = 0.0
-
 var total_damage_dealt: float = 0.0
 var damage_dealt: float = 0.0
-
 var total_gold_collected: int = 0
 var gold_collected: int = 0
-
 var total_damage_healed: float = 0.0
 var damage_healed: float = 0.0
-
 var total_kills: int = 0
 var kills: int = 0
+
+var active_effects: Array = []
+
+func add_status_effect(effect: Effect) -> void:
+	effect.on_apply.call(self)
+	active_effects.append(effect)
+
+func has_effect(effect_name: String) -> bool:
+	for effect in active_effects:
+		if effect.name == effect_name:
+			return true
+	return false
+
+func reset_status_effects() -> void:
+	for effect in active_effects:
+		effect.on_end.call(self)
+	active_effects.clear()
 
 @onready var hitting_particles_instance = preload("res://scenes/hitting_particles.tscn")
 @onready var bombrat_counter := $UI/Main/HBoxContainer/Bombrats/HBoxContainer/Label
@@ -180,6 +195,8 @@ func percent(current: float, total: float) -> String:
 		return str(roundi((current / total) * 100)) + "%"
 	return "0%"
 
+
+
 func die() -> void:
 	$AnimatedSprite2D.play("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
@@ -196,6 +213,7 @@ func die() -> void:
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
 
 	$"UI/Main/Death/Panel/Meta".text = stats_text
+	reset_status_effects()
 	
 	#health = max_health
 	#gold = max(roundi(gold / 2), 0)
@@ -361,10 +379,45 @@ func _process_input(delta) -> void:
 
 func press_inventory_slot(index: int) -> void:
 	var slots = $UI/Main/Inventory.get_children()
-	if index >= 0 and index < slots.size():
-		var button = slots[index].get_node("Button")
-		button.emit_signal("pressed")
+	if index < 0 or index >= slots.size():
+		return
 
+	var slot = slots[index]
+	var button = slot.get_node("Button")
+	var timer = slot.get_node("Timer")
+	var item = slot.item
+
+	var cooldown_active = item and item.cooldown and timer.time_left > 0.0
+
+	if alive and not cooldown_active:
+		button.emit_signal("pressed")
+		
+func change_zoom(delta: float) -> void:
+	zoom_multiplier = clamp(zoom_multiplier + delta, 0.50, 2.0)
+	_update_camera_zoom()
+
+	$UI/Main/Zoom/Label.text = "x%.2f" % zoom_multiplier
+	$UI/Main/Zoom.visible = true
+	$UI/Main/Zoom/Timer.start()
+	
+func _update_camera_zoom() -> void:
+	$Camera2D.zoom = original_zoom * zoom_multiplier
+
+func _on_zoom_timeout() -> void:
+	$UI/Main/Zoom.visible = false
+	
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		match event.button_index:
+			MOUSE_BUTTON_WHEEL_UP:
+				change_zoom(0.25)
+			MOUSE_BUTTON_WHEEL_DOWN:
+				change_zoom(-0.25) 
+	if event.is_action_pressed("zoom_in"):
+		change_zoom(0.25)
+	elif event.is_action_pressed("zoom_out"):
+		change_zoom(-0.25)
+	
 func _unhandled_input(event: InputEvent) -> void:
 	if multiplayer.has_multiplayer_peer() and !is_multiplayer_authority():
 		return
@@ -394,7 +447,7 @@ func _enable_sword_hitbox(direction: String) -> void:
 		if shape_node is CollisionShape2D:
 			shape_node.disabled = false
 
-			var shape = shape_node.shape
+			var shape: Shape2D =  shape_node.shape
 			var reach_factor := sword_reach / 2.0
 
 			if shape is RectangleShape2D:
@@ -457,12 +510,40 @@ func _is_mouse_over_chat_bar() -> bool:
 	var local_mouse_pos = $UI/Main/ChatBar.get_local_mouse_position()
 	return $UI/Main/ChatBar.get_rect().has_point(local_mouse_pos)
 
+func update_particle_color() -> void:
+	if active_effects.size() == 0:
+		$Potion.emitting = false
+		return
+
+	$Potion.emitting = true
+
+	var r_sum := 0.0
+	var g_sum := 0.0
+	var b_sum := 0.0
+
+	for effect in active_effects:
+		var c = effect.color
+		r_sum += c.r
+		g_sum += c.g
+		b_sum += c.b
+
+	var count = active_effects.size()
+	var blended_color = Color(r_sum / count, g_sum / count, b_sum / count)
+
+	# Set the particle color
+	$Potion.process_material.color = blended_color
+
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+	update_particle_color()
+	if alive:
+		for effect in active_effects.duplicate():
+			if effect.update(delta, self):
+				active_effects.erase(effect)
 	var focused = $UI/Main/ChatBar.has_focus()
-	var hovered = _is_mouse_over_chat_bar()
+	var hovered := _is_mouse_over_chat_bar()
 	if focused or hovered:
 		$UI/Main/ChatBar.modulate.a = lerp($UI/Main/ChatBar.modulate.a, 1.0, FADE_SPEED * delta)
 	else:
@@ -667,17 +748,29 @@ func add_hit_particles(position: Vector2, angle: float):
 	particles.emitting = true
 
 func _process_hit(body):
-	#print("processed hit")
 	if body.is_in_group("enemies"):
-		var damage_before_defense = damage * (1.0 + strength / 100.0)
+		# Apply separate Strength buff multiplier if active
+		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
+
+		# Damage before defense, using normal strength stat scaling
+		var damage_before_defense = (damage * (1.0 + strength / 100.0)) * strength_multiplier
+
+		# Defense reduction formula
 		var defense = body.entity.defense
 		var defense_factor = 1.0 - (defense / (defense + 100.0))
+
+		# Final damage after defense
 		var total_damage = damage_before_defense * defense_factor
+
+		# Positioning and visuals
 		var direction = body.global_position - global_position
 		var midpoint = global_position + direction * 0.5
 		var angle = direction.angle()
-		damage_dealt += total_damage 
+
+		damage_dealt += total_damage
 		total_damage_dealt += total_damage
+
+		# Multiplayer-safe damage + particles
 		if multiplayer.has_multiplayer_peer():
 			body.take_damage.rpc(total_damage, global_position, name)
 			add_hit_particles.rpc(midpoint, angle)

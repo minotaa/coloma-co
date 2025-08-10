@@ -101,3 +101,19 @@ func _init() -> void:
 		"reach": 1.0
 	}
 	items.append(generic_boomerang)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(48.0, 16.0, 16.0, 16.0)
+	var strength_potion = Consumable.new(3, "Strength Potion", atlas)
+	strength_potion.description = "Multiplies your damage by 2.5x for 30 seconds. 60 second cooldown."
+	strength_potion.cooldown = true
+	strength_potion.cooldown_seconds = 60.0
+	strength_potion.infinite = false
+	strength_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var strength = Effect.new("Strength", Color(255, 69, 69), 30.0)
+			player.add_status_effect(strength)
+			Toast.add("You have Strength for 30 seconds.")
+	items.append(strength_potion)

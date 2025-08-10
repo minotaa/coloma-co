@@ -18,14 +18,19 @@ func _process(delta: float) -> void:
 	if item == null:
 		return
 
-	$Button.disabled = !Man.get_player().alive
-	var stack = Man.get_player().bag.get_item_stack(item)
+	var player = Man.get_player()
+	var stack = player.bag.get_item_stack(item)
+	
+	var cooldown_active = item.cooldown and $Timer.time_left > 0.0
+	$Button.disabled = (not player.alive) or cooldown_active
+
 	if stack != null:
 		$Label.text = str(stack.amount) + "x"
 		if item.cooldown:
 			$ProgressBar.value = ($Timer.time_left / $Timer.wait_time) * 100.0
 	else:
 		set_item(null)
+
 
 func _on_pressed() -> void:
 	if item == null:

@@ -20,9 +20,9 @@ func load_game():
 		if data.has("bag"):
 			bag.set_list_from_save(data["bag"])
 			if bag.list.is_empty():
-				var wooden_sword = ItemStack.new(Items.get_item_by_id(0), 1)
+				var wooden_sword = ItemStack.new(Items.get_by_id(0), 1)
 		if data.has("equipped_weapon"):
-			equipped_weapon = Items.get_item_by_id(data["equipped_weapon"])
+			equipped_weapon = Items.get_by_id(data["equipped_weapon"])
 	print("Loaded save data.")
 	
 func get_save_data() -> Dictionary:

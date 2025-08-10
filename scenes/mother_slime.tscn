@@ -1,0 +1,136 @@
+[gd_scene load_steps=17 format=3 uid="uid://c0gs7v7xago8i"]
+
+[ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_w2wqr"]
+[ext_resource type="Script" uid="uid://d2wymk13nl4br" path="res://scripts/mother_slime.gd" id="2_012ps"]
+[ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_nyttg"]
+[ext_resource type="Texture2D" uid="uid://dp4tnog3gpp70" path="res://assets/sprites/new-slime2.png" id="4_f08g5"]
+[ext_resource type="Texture2D" uid="uid://b4ifcnh4bwsck" path="res://assets/sprites/target.png" id="5_ocoec"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
+shader = ExtResource("1_w2wqr")
+shader_parameter/shock_color = Color(1, 0, 0, 1)
+shader_parameter/amplitude = 30.0
+shader_parameter/frequency = 10.0
+shader_parameter/shock_time = 0.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_80lbp"]
+atlas = ExtResource("4_f08g5")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iy6cv"]
+atlas = ExtResource("4_f08g5")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vt8gp"]
+atlas = ExtResource("4_f08g5")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6aqo2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_80lbp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iy6cv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vt8gp")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mph3m"]
+radius = 11.0
+
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_0l8pv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4fx5r"]
+radius = 13.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_pjw23"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("AnimatedSprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("AnimatedSprite2D:frame")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:modulate:a")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath("ProgressBar:visible")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath("ProgressBar:min_value")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+properties/6/path = NodePath("ProgressBar:max_value")
+properties/6/spawn = true
+properties/6/replication_mode = 1
+properties/7/path = NodePath("ProgressBar:value")
+properties/7/spawn = true
+properties/7/replication_mode = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pjw23"]
+bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2npkn"]
+bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
+
+[node name="Mother Slime" type="CharacterBody2D" groups=["enemies"]]
+material = SubResource("ShaderMaterial_pjw23")
+collision_layer = 6
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("2_012ps")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, 6)
+scale = Vector2(2.2, 2.2)
+texture = ExtResource("3_nyttg")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -6)
+scale = Vector2(2.2, 2.2)
+sprite_frames = SubResource("SpriteFrames_6aqo2")
+frame_progress = 0.642847
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_mph3m")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamPolyphonic_0l8pv")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_4fx5r")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_pjw23")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -15.0
+offset_top = -19.0
+offset_right = 15.0
+offset_bottom = -15.0
+theme_override_styles/background = SubResource("StyleBoxFlat_pjw23")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2npkn")
+show_percentage = false
+
+[node name="Target" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.592157)
+top_level = true
+z_index = -1
+scale = Vector2(2.2, 2.2)
+texture = ExtResource("5_ocoec")

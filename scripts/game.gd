@@ -10,7 +10,9 @@ var kills = {}
 var bombrat = preload("res://scenes/bombrat.tscn")
 var big_bombrat = preload("res://scenes/big_bombrat.tscn")
 var slime = preload("res://scenes/slime.tscn")
+var mother_slime = preload("res://scenes/mother_slime.tscn")
 var bauble = preload("res://scenes/bauble.tscn")
+var crabman = preload("res://scenes/crabman.tscn")
 var player_scene = preload("res://scenes/player.tscn")
 
 @onready var spawner_layer = $Spawner
@@ -192,7 +194,10 @@ func spawn_wave() -> void:
 			await spawn_bombrats(5)
 			await spawn_slimes(5)
 			await spawn_baubles(4)
+			await spawn_crabmen(1)
 		_:
+			if wave % 10 == 0:
+				await spawn_crabmen(1)
 			await spawn_bombrats(4 + wave)
 			await spawn_slimes(4 + int(wave / 2))
 
@@ -205,8 +210,6 @@ func spawn_wave() -> void:
 					
 			if baubles_to_spawn > 0:
 				await spawn_baubles(baubles_to_spawn)
-
-
 	spawning_wave = false
 
 func spawn_bombrats(count: int) -> void:
@@ -215,6 +218,13 @@ func spawn_bombrats(count: int) -> void:
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_bombrat(directions.pick_random())
+
+func spawn_crabmen(count: int) -> void:
+	for i in count:
+		var delay = randf_range(0.75, 2.25)
+		await get_tree().create_timer(delay).timeout
+		var directions = ["north", "south", "west", "east"]
+		spawn_crabman(directions.pick_random())
 
 func spawn_slimes(count: int) -> void:
 	for i in count:
@@ -229,6 +239,38 @@ func spawn_baubles(count: int) -> void:
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_bauble(directions.pick_random())
+
+func spawn_crabman(direction: String) -> void:
+	var matching_cells: Array[Vector2i] = []
+	var cells = spawner_layer.get_used_cells()
+
+	for cell_loc in cells:
+		var data = spawner_layer.get_cell_tile_data(cell_loc)
+		if not data:
+			continue
+		if data.get_custom_data("type") != "corner":
+			continue
+
+		match direction:
+			"north":
+				if cell_loc.y < 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"south":
+				if cell_loc.y > 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"west":
+				if cell_loc.x < 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+			"east":
+				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+
+	if matching_cells:
+		var selected_cell = matching_cells.pick_random()
+		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		var crabthing = crabman.instantiate()
+		crabthing.global_position = spawn_pos
+		add_child(crabthing, true)
 
 func spawn_slime(direction: String) -> void:
 	var matching_cells: Array[Vector2i] = []
@@ -258,7 +300,11 @@ func spawn_slime(direction: String) -> void:
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
-		var s = slime.instantiate()
+		var s: CharacterBody2D
+		if wave >= 15 and randf() <= 0.1: 
+			s = mother_slime.instantiate()
+		else: 
+			s = slime.instantiate()
 		s.global_position = spawn_pos
 		add_child(s, true)
 

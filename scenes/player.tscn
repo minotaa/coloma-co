@@ -1,9 +1,10 @@
-[gd_scene load_steps=124 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=134 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
 [ext_resource type="Texture2D" uid="uid://cf86avoe2v4ef" path="res://assets/sprites/healing.png" id="2_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://clf1l0ona4m7k" path="res://assets/sprites/player-down.png" id="2_py00a"]
+[ext_resource type="Texture2D" uid="uid://dg10u7211mx3c" path="res://assets/sprites/swirly.png" id="2_wnwbv"]
 [ext_resource type="Texture2D" uid="uid://dyhdb2iwitv0o" path="res://assets/sprites/player-left.png" id="3_dmfgu"]
 [ext_resource type="Texture2D" uid="uid://jlrmv517akl5" path="res://assets/sprites/dead.png" id="3_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://cckamhtmtr2h7" path="res://assets/sprites/player-right.png" id="4_6qbqg"]
@@ -24,11 +25,43 @@
 [ext_resource type="PackedScene" uid="uid://dicfu5afqotfu" path="res://scenes/catalog_item.tscn" id="17_fulsm"]
 [ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="17_qfm1y"]
 [ext_resource type="FontFile" uid="uid://cxii8uarl0lvi" path="res://assets/fonts/BitPotion.ttf" id="19_4r5pv"]
+[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="22_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="23_ke2ow"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="24_ujl30"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="26_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="27_wqfne"]
+
+[sub_resource type="Curve" id="Curve_gl8cc"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_487ah"]
+curve = SubResource("Curve_gl8cc")
+
+[sub_resource type="Curve" id="Curve_md1ol"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_bj30b"]
+width = 512
+curve = SubResource("Curve_md1ol")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jc3p3"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 1.0
+angle_min = -360.0
+angle_max = 360.0
+angle_curve = SubResource("CurveTexture_bj30b")
+direction = Vector3(0, 1, 0)
+initial_velocity_min = -120.0
+initial_velocity_max = 120.0
+gravity = Vector3(0, -5, 0)
+scale_min = 0.25
+scale_max = 0.4
+color = Color(1, 1, 1, 0.945098)
+alpha_curve = SubResource("CurveTexture_487ah")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wqfne"]
 particle_flag_disable_z = true
@@ -606,6 +639,32 @@ func _on_button_pressed() -> void:
 		Toast.add(\"You can't afford this!\")
 "
 
+[sub_resource type="GDScript" id="GDScript_wqfne"]
+resource_name = "strength_potion"
+script/source = "extends Control
+
+var cost = 500
+var item_id = 3
+
+func _on_button_pressed() -> void:
+	#print(\"uhhh... healing potion... bought?\")
+	#print(Man.get_player().gold)
+	if Man.get_player().gold >= cost:
+		if Man.get_player().bag.list.size() < 3:
+			Man.get_player().gold -= cost
+			Man.get_player().bag.add_item(ItemStack.new(Items.get_by_id(3), 1))
+			Toast.add(\"You purchased: \" + str(ItemStack.new(Items.get_by_id(3), 1)))
+			Toast.add(\"-\" + str(cost) + \" Gold\")
+		else:
+			Toast.add(\"You don't have the inventory space!\")
+	else:
+		Toast.add(\"You can't afford this!\")
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_md1ol"]
+atlas = ExtResource("22_dt7fs")
+region = Rect2(48, 16, 16, 16)
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fulsm"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wqfne"]
@@ -705,10 +764,13 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
+[sub_resource type="LabelSettings" id="LabelSettings_dt7fs"]
+font_size = 22
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3v2ag"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
-properties/0/replication_mode = 1
+properties/0/replication_mode = 2
 properties/1/path = NodePath("AnimatedSprite2D:animation")
 properties/1/spawn = true
 properties/1/replication_mode = 1
@@ -718,6 +780,9 @@ properties/2/replication_mode = 1
 properties/3/path = NodePath(".:gold")
 properties/3/spawn = true
 properties/3/replication_mode = 1
+properties/4/path = NodePath("Healing:emitting")
+properties/4/spawn = true
+properties/4/replication_mode = 1
 
 [sub_resource type="LabelSettings" id="LabelSettings_a8ls1"]
 font = ExtResource("19_4r5pv")
@@ -729,6 +794,13 @@ texture_filter = 1
 collision_mask = 11
 motion_mode = 1
 script = ExtResource("1_oxdyo")
+
+[node name="Potion" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+texture = ExtResource("2_wnwbv")
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_jc3p3")
 
 [node name="Healing" type="GPUParticles2D" parent="."]
 emitting = false
@@ -914,9 +986,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -176.0
+offset_left = -172.0
 offset_top = -216.0
-offset_right = 176.0
+offset_right = 172.0
 offset_bottom = -184.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -1224,6 +1296,23 @@ script = SubResource("GDScript_fulsm")
 tooltip_text = "A nice helpful healing potion to heal +50 HP. 
 Has a 10 second cooldown."
 
+[node name="Catalog Item2" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
+layout_mode = 2
+script = SubResource("GDScript_wqfne")
+
+[node name="Button" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="0"]
+tooltip_text = "Multiplies your damage by 2.5x for 10 seconds.
+60 second cooldown."
+
+[node name="Label" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="1"]
+text = "Strength Potion"
+
+[node name="TextureRect" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="2"]
+texture = SubResource("AtlasTexture_md1ol")
+
+[node name="Gold" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2/HBoxContainer" index="1"]
+text = "500"
+
 [node name="Close" type="Button" parent="UI/Main/Shop/Panel"]
 layout_mode = 1
 anchors_preset = 7
@@ -1421,6 +1510,53 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
 theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
 text = "Main Menu"
 
+[node name="Zoom" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -256.0
+offset_top = -80.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Panel" type="Panel" parent="UI/Main/Zoom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.552
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -0.0640106
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
+
+[node name="Label" type="Label" parent="UI/Main/Zoom"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 28.0
+offset_top = -13.0
+offset_right = 100.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "x1"
+label_settings = SubResource("LabelSettings_dt7fs")
+horizontal_alignment = 1
+
+[node name="Timer" type="Timer" parent="UI/Main/Zoom"]
+wait_time = 5.0
+one_shot = true
+
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
 
@@ -1449,5 +1585,7 @@ vertical_alignment = 1
 [connection signal="text_submitted" from="UI/Main/ChatBar" to="." method="_on_chat_bar_submitted"]
 [connection signal="pressed" from="UI/Main/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Main/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
+[connection signal="timeout" from="UI/Main/Zoom/Timer" to="." method="_on_zoom_timeout"]
 
 [editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
+[editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]

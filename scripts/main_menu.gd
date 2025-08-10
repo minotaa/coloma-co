@@ -117,3 +117,6 @@ func _on_dev_online_pressed() -> void:
 
 func _on_online_pressed() -> void:
 	HAuth.login_anonymous_async($"UI/Main/Multiplayer Buttons/LineEdit".text)
+
+func _on_address_text_submitted(new_text:String) -> void:
+	$UI/Main/Join/Join.emit_signal("pressed")

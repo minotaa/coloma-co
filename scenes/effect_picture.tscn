@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://chyvq1q3orqp"]
+
+[ext_resource type="Texture2D" uid="uid://lajt6ibqaxup" path="res://assets/sprites/strength.png" id="1_telhy"]
+
+[node name="Effect" type="TextureRect"]
+texture = ExtResource("1_telhy")
+expand_mode = 2
