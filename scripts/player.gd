@@ -407,15 +407,15 @@ func _on_zoom_timeout() -> void:
 	$UI/Main/Zoom.visible = false
 	
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and not $UI/Main/ChatBar.visible:
+	if event is InputEventMouseButton and event.pressed and not $UI/Main/ChatBar.has_focus():
 		match event.button_index:
 			MOUSE_BUTTON_WHEEL_UP:
 				change_zoom(0.25)
 			MOUSE_BUTTON_WHEEL_DOWN:
 				change_zoom(-0.25) 
-	if event.is_action_pressed("zoom_in") and not $UI/Main/ChatBar.visible:
+	if event.is_action_pressed("zoom_in") and not $UI/Main/ChatBar.has_focus():
 		change_zoom(0.25)
-	elif event.is_action_pressed("zoom_out") and not $UI/Main/ChatBar.visible:
+	elif event.is_action_pressed("zoom_out") and not $UI/Main/ChatBar.has_focus():
 		change_zoom(-0.25)
 	
 func _unhandled_input(event: InputEvent) -> void:
