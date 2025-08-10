@@ -184,9 +184,6 @@ properties/6/replication_mode = 1
 properties/7/path = NodePath("ProgressBar:max_value")
 properties/7/spawn = true
 properties/7/replication_mode = 1
-properties/8/path = NodePath("Line2D:points")
-properties/8/spawn = true
-properties/8/replication_mode = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hebxe"]
 bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)

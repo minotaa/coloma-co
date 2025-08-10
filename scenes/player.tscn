@@ -1585,6 +1585,7 @@ vertical_alignment = 1
 [connection signal="pressed" from="UI/Main/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
 [connection signal="focus_entered" from="UI/Main/ChatBar" to="." method="_on_chat_bar_focus_entered"]
 [connection signal="focus_exited" from="UI/Main/ChatBar" to="." method="_on_chat_bar_focus_exited"]
+[connection signal="gui_input" from="UI/Main/ChatBar" to="." method="_on_chatbar_gui_input"]
 [connection signal="text_submitted" from="UI/Main/ChatBar" to="." method="_on_chat_bar_submitted"]
 [connection signal="pressed" from="UI/Main/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Main/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]

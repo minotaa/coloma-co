@@ -1,7 +1,7 @@
 extends Node
 
 var bag = Bag.new()
-var equipped_weapon: Weapon = Items.get_by_id(2)
+var equipped_weapon: Weapon = Items.get_by_id(1)
 var game_loaded: bool = false
 
 func load_game():
@@ -20,7 +20,7 @@ func load_game():
 		if data.has("bag"):
 			bag.set_list_from_save(data["bag"])
 			if bag.list.is_empty():
-				var wooden_sword = ItemStack.new(Items.get_by_id(0), 1)
+				var wooden_sword = ItemStack.new(Items.get_by_id(1), 1)
 		if data.has("equipped_weapon"):
 			equipped_weapon = Items.get_by_id(data["equipped_weapon"])
 	print("Loaded save data.")

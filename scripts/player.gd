@@ -407,15 +407,15 @@ func _on_zoom_timeout() -> void:
 	$UI/Main/Zoom.visible = false
 	
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseButton and event.pressed and not $UI/Main/ChatBar.visible:
 		match event.button_index:
 			MOUSE_BUTTON_WHEEL_UP:
 				change_zoom(0.25)
 			MOUSE_BUTTON_WHEEL_DOWN:
 				change_zoom(-0.25) 
-	if event.is_action_pressed("zoom_in"):
+	if event.is_action_pressed("zoom_in") and not $UI/Main/ChatBar.visible:
 		change_zoom(0.25)
-	elif event.is_action_pressed("zoom_out"):
+	elif event.is_action_pressed("zoom_out") and not $UI/Main/ChatBar.visible:
 		change_zoom(-0.25)
 	
 func _unhandled_input(event: InputEvent) -> void:
@@ -431,9 +431,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				press_inventory_slot(2)
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
 		$UI/Main/ChatBar.grab_focus()
-	if event is InputEventKey and event.pressed and $UI/Main/ChatBar.has_focus() and event.keycode == KEY_ESCAPE:
-		$UI/Main/ChatBar.text = ""
-		$UI/Main/ChatBar.release_focus()
 
 func _enable_sword_hitbox(direction: String) -> void:
 	var hitbox = $SwordHbox
@@ -790,7 +787,8 @@ func add_message(message: String, player_name: String) -> void:
 	chat_message.modulate = Color(1, 1, 1, 1)
 	$UI/Main/Chat/VBoxContainer.add_child(chat_message, true)
 	_write_chat_log(player_name, message)
-
+	await get_tree().process_frame
+	$UI/Main/Chat.scroll_vertical = $UI/Main/Chat.get_v_scroll_bar().max_value
 
 func _write_chat_log(player_name: String, message: String) -> void:
 	var log_line = "[%s] %s: %s" % [
@@ -848,3 +846,9 @@ func _on_main_menu_pressed() -> void:
 		Man.end_game.rpc()
 	else:
 		Man.end_game()
+
+func _on_chatbar_gui_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		$UI/Main/ChatBar.text = ""
+		$UI/Main/ChatBar.release_focus()
+		get_viewport().set_input_as_handled()

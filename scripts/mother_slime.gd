@@ -95,7 +95,7 @@ func die() -> void:
 		var slime_scene = preload("res://scenes/slime.tscn")
 		var new_slime = slime_scene.instantiate()
 		new_slime.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
-		get_parent().add_child(new_slime)
+		get_parent().add_child(new_slime, true)
 	collision.disabled = true
 	Entities.remove_entity(entity)
 	sprite.play("default")
