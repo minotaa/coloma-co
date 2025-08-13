@@ -27,7 +27,27 @@ var windup_timer = 0.0
 
 var entity = Entity.new()
 
+@rpc("any_peer", "call_local")
+func play_sfx(stream_name: String, position: Vector2, volume: float = 0.0, pitch_scale: float = 1.0) -> void:
+	var sfx = AudioStreamPlayer2D.new()
+	var path = "res://assets/sounds/" + stream_name + ".wav"
+	sfx.stream = load(path)
+	sfx.volume_db = volume
+	sfx.pitch_scale = pitch_scale
+	sfx.bus = "SFX"
+	sfx.global_position = position
+	add_child(sfx)
+
+	sfx.play()
+	sfx.finished.connect(func():
+		sfx.queue_free()
+	)
+
 func _ready() -> void:
+	if multiplayer.has_multiplayer_peer():
+		play_sfx("appear", global_position)
+	else:
+		play_sfx.rpc("appear", global_position)
 	entity.health = 75.0
 	entity.max_health = 75.0
 	entity.defense = 0.0
@@ -143,6 +163,7 @@ func _physics_process(delta: float) -> void:
 			is_winding_up = false
 			is_hopping = true
 			hop_progress = 0.0
+			play_sfx("jump", global_position, -10.0)
 
 	elif is_hopping:
 		hop_progress += delta / HOP_DURATION

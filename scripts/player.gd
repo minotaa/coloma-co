@@ -23,6 +23,8 @@ const SPEED := 120.0
 const SPRINT_MULTIPLIER := 1.45
 var exhausted := false # When you deplete your sprint completely you will become exhausted
 var sprint := 220.0
+var step_timer := 0.0
+var step_interval := 0.4
 var alive: bool = true
 var max_health := 100.0
 var health := 100.0
@@ -69,6 +71,8 @@ func reset_status_effects() -> void:
 @onready var camera := get_viewport().get_camera_2d()
 @onready var marker_container := $UI/Main/Markers
 @onready var marker_scene := preload("res://scenes/marker.tscn")
+@onready var hit_sound := preload("res://assets/sounds/better3.wav")
+@onready var heal_sound := preload("res://assets/sounds/maybeheal.wav")
 
 var active_markers := {}
 
@@ -143,6 +147,7 @@ func _ready() -> void:
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		$UI.visible = false
 		$PointLight2D.visible = false
+		$AudioListener2D.clear_current()
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		$Camera2D.make_current()
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
@@ -172,7 +177,10 @@ func heal(amount: float) -> void:
 			else:
 				Toast.add(text)
 		$Healing.emitting = true
-
+		if multiplayer.has_multiplayer_peer():
+			play_sfx.rpc("maybeheal", global_position)
+		else:
+			play_sfx("maybeheal", global_position)
 	
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0 or not alive:
@@ -182,6 +190,10 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	health = health - amount
 	damage_taken += amount
 	total_damage_taken += amount
+	if multiplayer.has_multiplayer_peer():
+		play_sfx.rpc("hit", global_position, 10.0)
+	else:
+		play_sfx("hit", global_position, 10.0)
 	apply_knockback(location, 220.0)
 	show_floating_text(amount, global_position)
 	if health <= 0:
@@ -194,8 +206,6 @@ func percent(current: float, total: float) -> String:
 	if total > 0.0:
 		return str(roundi((current / total) * 100)) + "%"
 	return "0%"
-
-
 
 func die() -> void:
 	$AnimatedSprite2D.play("death")
@@ -222,6 +232,23 @@ func die() -> void:
 	#$AnimatedSprite2D.material = null
 	#global_position = Vector2.ZERO
 	#alive = true
+
+@rpc("any_peer", "call_local")
+func play_sfx(stream_name: String, position: Vector2, volume: float = 0.0, pitch_scale: float = 1.0) -> void:
+	var sfx = AudioStreamPlayer2D.new()
+	var path = "res://assets/sounds/" + stream_name + ".wav"
+	sfx.stream = load(path)
+	sfx.volume_db = volume
+	sfx.pitch_scale = pitch_scale
+	sfx.bus = "SFX"
+	sfx.global_position = position
+	add_child(sfx)
+
+	sfx.play()
+	sfx.finished.connect(func():
+		sfx.queue_free()
+	)
+
 
 func play_animation(name: String, backwards: bool = false, speed: float = 1) -> void:
 	if backwards == false:
@@ -273,6 +300,7 @@ func _process_input(delta) -> void:
 	var velocity_length = velocity.length_squared()
 	var is_moving = velocity_length > 0
 
+	var walking_sounds = ["walk1", "walk2", "walk3", "walk4"]
 	if is_moving:
 		velocity_length = min(1, 0.5 + velocity_length)
 
@@ -292,7 +320,6 @@ func _process_input(delta) -> void:
 		if not $AnimatedSprite2D.animation.begins_with("sword_"):
 			play_animation("walk_" + last_direction, false, velocity_length)
 	else:
-		# If idle and not attacking, play idle animation
 		if $AnimatedSprite2D.animation.begins_with("walk_"):
 			play_idle_animation()
 
@@ -324,14 +351,18 @@ func _process_input(delta) -> void:
 
 	# Perform attack if a direction was determined
 	if attack_dir != "":
+		if multiplayer.has_multiplayer_peer():
+			play_sfx.rpc("swoosh", global_position)
+		else:
+			play_sfx("swoosh", global_position)
 		play_animation("sword_" + attack_dir)
 		_enable_sword_hitbox(attack_dir)
 		sword_hitbox_timer = SWORD_HITBOX_TIME
 		sword_hitbox_active = true
 
-
 	# Apply velocity and move
 	velocity *= SPEED
+	#play_sfx(walking_sounds.pick_random(), randf_range(-5.0, 5.0))
 	if knockback_velocity.length() > 0.1:
 		velocity += knockback_velocity
 		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
@@ -342,6 +373,19 @@ func _process_input(delta) -> void:
 		velocity *= SPRINT_MULTIPLIER
 		if velocity.length() > 0:
 			sprint -= 1
+			
+	if velocity.length() > 0:
+		step_timer -= delta
+		if step_timer <= 0.0:
+			if multiplayer.has_multiplayer_peer():
+				play_sfx.rpc(walking_sounds.pick_random(), global_position, randf_range(-15.0, -10.0))
+			else:
+				play_sfx(walking_sounds.pick_random(), global_position, randf_range(-15.0, -10.0))
+			step_timer = step_interval + randf_range(0.02, 0.08)
+			if Input.is_action_pressed("sprint"):
+				step_timer /= 2
+	else:
+		step_timer = 0.0
 	
 	if Input.is_action_pressed("info") and not $UI/Main/Shop.visible:
 		$UI/Main/Tab.visible = true
@@ -532,6 +576,7 @@ func update_particle_color() -> void:
 
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
+	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
 	update_particle_color()
@@ -560,12 +605,13 @@ func _physics_process(delta: float) -> void:
 		$"UI/Main/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
 	if not alive:
 		revival_time -= delta
+		
 		if revival_time <= 0.0:
 			revival_time = 0.0
 			damage_dealt = 0.0
 			damage_healed = 0.0
 			damage_taken = 0.0
-			gold_collected = 0.0
+			gold_collected = 0
 			kills = 0
 			$"UI/Main/Death".visible = false
 			health = max_health
@@ -746,6 +792,10 @@ func add_hit_particles(position: Vector2, angle: float):
 
 func _process_hit(body):
 	if body.is_in_group("enemies"):
+		if multiplayer.has_multiplayer_peer():
+			play_sfx.rpc("better3", global_position, -8.0)
+		else:
+			play_sfx("better3", global_position, -8.0)
 		# Apply separate Strength buff multiplier if active
 		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
 

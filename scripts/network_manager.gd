@@ -40,7 +40,6 @@ func _ready() -> void:
 
 	# enable overlay on windows only for some reason??
 	if OS.get_name() == "Windows":
-		HAuth.auth_login_flags = EOS.Auth.LoginFlags.None
 		create_opts.flags = EOS.Platform.PlatformFlags.WindowsEnableOverlayOpengl
 
 	# set up SDK
@@ -158,7 +157,7 @@ func join_server(address: String, username: String = "Player") -> bool:
 
 	# Wait a moment for connection to establish
 	var ticks = 0
-	var max_ticks = 100 # 10 seconds 
+	var max_ticks = 50 # 5 seconds 
 	while multiplayer.multiplayer_peer != null and (not multiplayer.multiplayer_peer.get_connection_status() == 2 or multiplayer.get_unique_id() == 1):
 		if ticks >= max_ticks:
 			Toast.add("Timed out.")
@@ -184,13 +183,7 @@ func host_online_server() -> bool:
 	var error = peer.create_server("myrkwood")
 	if error != OK:
 		print("Error while starting server: " + str(error))
-		if get_tree().current_scene.get_node("Game") != null:
-			get_tree().current_scene.get_node("Game").queue_free()
-			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
-		else:
-			if get_tree().current_scene.get_node("Main Menu") != null:
-				get_tree().current_scene.get_node("Main Menu").queue_free()
-			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		Man.end_game()
 		Toast.add("An error occurred while starting server.")
 		return false
 
@@ -213,13 +206,7 @@ func host_server(port: int) -> bool:
 	var error = peer.create_server(port, MAX_PLAYERS)
 	if error != OK:
 		print("Error while starting server: " + str(error))
-		if get_tree().current_scene.get_node("Game") != null:
-			get_tree().current_scene.get_node("Game").queue_free()
-			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
-		else:
-			if get_tree().current_scene.get_node("Main Menu") != null:
-				get_tree().current_scene.get_node("Main Menu").queue_free()
-			get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+		Man.end_game()
 		Toast.add("An error occurred while starting server.")
 		return false
 
@@ -306,13 +293,7 @@ func server_disconnected() -> void:
 	multiplayer.server_disconnected.disconnect(server_disconnected)
 	multiplayer.connection_failed.disconnect(connection_failed)
 	multiplayer.multiplayer_peer = null
-	if get_tree().current_scene.get_node("Game") != null:
-		get_tree().current_scene.get_node("Game").queue_free()
-		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
-	else:
-		if get_tree().current_scene.get_node("Main Menu") != null:
-			get_tree().current_scene.get_node("Main Menu").queue_free()
-		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+	Man.end_game()
 		
 func connection_failed() -> void:
 	print("Connection failed")
@@ -320,10 +301,4 @@ func connection_failed() -> void:
 	multiplayer.server_disconnected.disconnect(server_disconnected)
 	multiplayer.connection_failed.disconnect(connection_failed)
 	multiplayer.multiplayer_peer = null
-	if get_tree().current_scene.get_node("Game") != null:
-		get_tree().current_scene.get_node("Game").queue_free()
-		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
-	else:
-		if get_tree().current_scene.get_node("Main Menu") != null:
-			get_tree().current_scene.get_node("Main Menu").queue_free()
-		get_tree().current_scene.add_child(preload("res://scenes/main_menu.tscn").instantiate(), true)
+	Man.end_game()

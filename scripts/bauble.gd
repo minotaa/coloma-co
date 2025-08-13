@@ -19,7 +19,22 @@ var shoot_timer := 0.0
 
 var entity = Entity.new()
 
+func play_sfx(stream: AudioStream, position: Vector2, volume: float = 0.0) -> void:
+	var sfx = AudioStreamPlayer2D.new()
+	sfx.stream = stream
+	sfx.global_position = position
+	sfx.volume_db = volume
+	sfx.bus = "SFX"
+	add_child(sfx)
+
+	sfx.play()
+	
+	sfx.finished.connect(func():
+		sfx.queue_free()
+	)
+
 func _ready() -> void:
+	play_sfx(preload("res://assets/sounds/appear.wav"), global_position)
 	entity.health = 100.0
 	entity.max_health = 100.0
 	entity.defense = 0.0
@@ -122,6 +137,7 @@ func _physics_process(delta: float) -> void:
 		# Shooting logic
 			shoot_timer -= delta
 			if shoot_timer <= 0.0:
+				play_sfx(preload("res://assets/sounds/explosionbutlikemorepixelly.wav"), global_position)
 				shoot_at_player(player.global_position)
 				shoot_timer = SHOOT_INTERVAL
 

@@ -13,7 +13,27 @@ var explosion_scene = preload("res://scenes/explosion.tscn")
 
 var entity = Entity.new()
 
+@rpc("any_peer", "call_local")
+func play_sfx(stream_name: String, position: Vector2, volume: float = 0.0, pitch_scale: float = 1.0) -> void:
+	var sfx = AudioStreamPlayer2D.new()
+	var path = "res://assets/sounds/" + stream_name + ".wav"
+	sfx.stream = load(path)
+	sfx.volume_db = volume
+	sfx.pitch_scale = pitch_scale
+	sfx.bus = "SFX"
+	sfx.global_position = position
+	add_child(sfx)
+
+	sfx.play()
+	sfx.finished.connect(func():
+		sfx.queue_free()
+	)
+
 func _ready() -> void:
+	if multiplayer.has_multiplayer_peer():
+		play_sfx("appear", global_position)
+	else:
+		play_sfx.rpc("appear", global_position)
 	entity.health = 125.0
 	entity.max_health = 125.0
 	entity.defense = 0.0
@@ -38,6 +58,10 @@ func explode() -> void:
 	for area in $Hurtbox.get_overlapping_areas():
 		if area.is_in_group("gem"):
 			area.take_damage(10.0)  # 10% damage
+	if multiplayer.has_multiplayer_peer():
+		play_sfx.rpc("better5", global_position)
+	else:
+		play_sfx("better5", global_position)
 	die()
 
 func _physics_process(delta: float) -> void:

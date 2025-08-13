@@ -103,9 +103,26 @@ func _process(delta: float) -> void:
 	if bombrats_left <= 0:
 		if multiplayer.has_multiplayer_peer():
 			Toast.add.rpc("Wave complete!")
+			play_sfx.rpc("wavefinished")
 		else:
 			Toast.add("Wave complete!")
+			play_sfx("wavefinished")
 		spawn_wave()
+
+@rpc("authority", "call_local")
+func play_sfx(stream_name: String, volume: float = 0.0, pitch_scale: float = 1.0) -> void:
+	var sfx = AudioStreamPlayer.new()
+	var path = "res://assets/sounds/" + stream_name + ".wav"
+	sfx.stream = load(path)
+	sfx.volume_db = volume
+	sfx.pitch_scale = pitch_scale
+	sfx.bus = "SFX"
+	add_child(sfx)
+
+	sfx.play()
+	sfx.finished.connect(func():
+		sfx.queue_free()
+	)
 
 @rpc("authority", "call_remote")
 func update_kills(kills: Dictionary) -> void:
@@ -194,7 +211,7 @@ func spawn_wave() -> void:
 			await spawn_bombrats(5)
 			await spawn_slimes(5)
 			await spawn_baubles(4)
-			await spawn_crabmen(1)
+			spawn_crabman("north")
 		_:
 			if wave % 10 == 0:
 				spawn_crabman("north")

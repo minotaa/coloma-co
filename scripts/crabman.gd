@@ -14,7 +14,27 @@ var stun_time: float = 0.0
 var entity = Entity.new()
 var current_target: Node2D = null
 
+@rpc("any_peer", "call_local")
+func play_sfx(stream_name: String, position: Vector2, volume: float = 0.0, pitch_scale: float = 1.0) -> void:
+	var sfx = AudioStreamPlayer2D.new()
+	var path = "res://assets/sounds/" + stream_name + ".wav"
+	sfx.stream = load(path)
+	sfx.volume_db = volume
+	sfx.pitch_scale = pitch_scale
+	sfx.bus = "SFX"
+	sfx.global_position = position
+	add_child(sfx)
+
+	sfx.play()
+	sfx.finished.connect(func():
+		sfx.queue_free()
+	)
+
 func _ready() -> void:
+	if multiplayer.has_multiplayer_peer():
+		play_sfx("appear", global_position)
+	else:
+		play_sfx.rpc("appear", global_position)
 	entity.health = 1250.0
 	entity.max_health = 1250.0
 	entity.defense = 0.0
