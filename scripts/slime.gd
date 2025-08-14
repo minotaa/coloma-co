@@ -45,9 +45,9 @@ func play_sfx(stream_name: String, position: Vector2, volume: float = 0.0, pitch
 
 func _ready() -> void:
 	if multiplayer.has_multiplayer_peer():
-		play_sfx("appear", global_position)
-	else:
 		play_sfx.rpc("appear", global_position)
+	else:
+		play_sfx("appear", global_position)
 	entity.health = 75.0
 	entity.max_health = 75.0
 	entity.defense = 0.0

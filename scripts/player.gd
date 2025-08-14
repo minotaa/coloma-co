@@ -137,7 +137,32 @@ func send_title(title: String, delay: float) -> void:
 	await get_tree().create_timer(delay).timeout
 	$UI/Main/Title.text = ""
 	
+func play_ui_sfx(stream: AudioStream) -> void:
+	var sfx = AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = "SFX" # Optional: route through your SFX bus
+	sfx.volume_db = -10.0
+	add_child(sfx)
+
+	sfx.play()
+
+	sfx.finished.connect(func():
+		sfx.queue_free()
+	)
+	
+func _connect_button_sfx(button: Button):
+	button.mouse_entered.connect(func():
+		play_ui_sfx(preload("res://assets/sounds/click.wav"))
+	)
+	button.pressed.connect(func():
+		play_ui_sfx(preload("res://assets/sounds/click1.wav"))
+	)
+	
 func _ready() -> void:	
+	for button in find_children("", "Button", true):
+		if button is Button:
+			_connect_button_sfx(button)
+
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
 		for player in NetworkManager.players:
@@ -352,9 +377,9 @@ func _process_input(delta) -> void:
 	# Perform attack if a direction was determined
 	if attack_dir != "":
 		if multiplayer.has_multiplayer_peer():
-			play_sfx.rpc("swoosh", global_position)
+			play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
 		else:
-			play_sfx("swoosh", global_position)
+			play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
 		play_animation("sword_" + attack_dir)
 		_enable_sword_hitbox(attack_dir)
 		sword_hitbox_timer = SWORD_HITBOX_TIME
@@ -793,9 +818,9 @@ func add_hit_particles(position: Vector2, angle: float):
 func _process_hit(body):
 	if body.is_in_group("enemies"):
 		if multiplayer.has_multiplayer_peer():
-			play_sfx.rpc("better3", global_position, -8.0)
+			play_sfx.rpc("f_slash", global_position, -8.0, randf_range(0.95, 1.15))
 		else:
-			play_sfx("better3", global_position, -8.0)
+			play_sfx("f_slash", global_position, -8.0, randf_range(0.95, 1.15))
 		# Apply separate Strength buff multiplier if active
 		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
 
