@@ -145,6 +145,7 @@ func player_joined(id) -> void:
 	var player = player_scene.instantiate()
 	player.name = str(id)
 	call_deferred("add_child", player, true)
+	Man.start_game.rpc_id(id)
 
 func player_quit(id) -> void:
 	if not multiplayer.is_server():

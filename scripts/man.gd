@@ -115,21 +115,18 @@ func _ready() -> void:
 	
 @rpc("authority", "call_local", "reliable")
 func start_game() -> void:
-	get_tree().current_scene.add_child(game_scene.instantiate(), true)
-
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Main Menu"):
+		if child.name.begins_with("Main Menu") or child.name.begins_with("Game"):
 			child.queue_free()
-
+	get_tree().current_scene.add_child(game_scene.instantiate(), true)
 	
 @rpc("authority", "call_local", "reliable")
-func end_game() -> void:
-	get_tree().current_scene.add_child(main_menu_scene.instantiate(), true)
-	
+func end_game() -> void:	
 	for child in get_tree().current_scene.get_children():
 		if child.name.begins_with("Game") or child.name.begins_with("Main Menu"):
 			child.queue_free()
-
+	get_tree().current_scene.add_child(main_menu_scene.instantiate(), true)
+	
 func get_player() -> Node2D:
 	for player in get_tree().get_nodes_in_group("players"):
 		if multiplayer.has_multiplayer_peer():
