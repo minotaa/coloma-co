@@ -28,9 +28,23 @@ var sfx_volume: float = 100.0
 var bag = Bag.new()
 var equipped_weapon: Weapon = Items.get_by_id(1)
 var game_loaded: bool = false
+var cooldowns = {}
+
+func start_cooldown(item: Consumable, seconds: float) -> void:
+	cooldowns[item.id] = {
+		"end_time": Time.get_ticks_msec() / 1000.0 + seconds
+	}
+
+func get_cooldown_left(item: Consumable) -> float:
+	if not cooldowns.has(item.id):
+		return 0.0
+	var time_left = cooldowns[item.id]["end_time"] - Time.get_ticks_msec() / 1000.0
+	return max(time_left, 0.0)
+
+func is_on_cooldown(item: Consumable) -> bool:
+	return get_cooldown_left(item) > 0.0
 
 func take_screenshot() -> void:
-	await RenderingServer.frame_post_draw
 	var img: Image = get_viewport().get_texture().get_image()
 	var dir = "user://screenshots/"
 	var dir_obj = DirAccess.open(dir)
@@ -41,7 +55,7 @@ func take_screenshot() -> void:
 	print("Screenshot saved to: ", filename)
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == Key.KEY_F2:
+	if event is InputEventKey and event.pressed and event.keycode == Key.KEY_BACKSLASH:
 		take_screenshot()
 
 func load_game():

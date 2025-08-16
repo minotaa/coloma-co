@@ -452,14 +452,12 @@ func press_inventory_slot(index: int) -> void:
 		return
 
 	var slot = slots[index]
-	var button = slot.get_node("Button")
-	var timer = slot.get_node("Timer")
 	var item = slot.item
 
-	var cooldown_active = item and item.cooldown and timer.time_left > 0.0
+	var cooldown_active = item and item.cooldown and Man.is_on_cooldown(item)
 
 	if alive and not cooldown_active:
-		button.emit_signal("pressed")
+		slot.get_node("Button").emit_signal("pressed")
 		
 func change_zoom(delta: float) -> void:
 	zoom_multiplier = clamp(zoom_multiplier + delta, 0.50, 2.0)
@@ -674,6 +672,7 @@ func _physics_process(delta: float) -> void:
 			amount_label.visible = stack.amount > 1
 			progress_bar.visible = stack.type.cooldown
 		else:
+			slot.set_item(null)
 			icon.visible = false
 			amount_label.visible = false
 			progress_bar.visible = false
