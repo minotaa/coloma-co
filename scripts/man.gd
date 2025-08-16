@@ -3,9 +3,46 @@ extends Node
 @onready var main_menu_scene = preload("res://scenes/main_menu.tscn")
 @onready var game_scene = preload("res://scenes/map.tscn")
 
+var controls = {
+	KEY_W: "Move forward",
+	KEY_A: "Move left",
+	KEY_S: "Move backward",
+	KEY_D: "Move right",
+	KEY_E: "Interact",
+	"MOUSE_BUTTON_LEFT": "Attack",
+	KEY_UP: "Attack up",
+	KEY_LEFT: "Attack left",
+	KEY_DOWN: "Attack down",
+	KEY_RIGHT: "Attack right",
+	KEY_TAB: "View info",
+	KEY_SHIFT: "Sprint",
+	KEY_1: "1st Inventory Slot",
+	KEY_2: "2nd Inventory Slot",
+	KEY_3: "3rd Inventory Slot",
+	KEY_COMMA: "Zoom out",
+	KEY_PERIOD: "Zoom in"
+}
+
+var fullscreen: bool = false
+var sfx_volume: float = 100.0
 var bag = Bag.new()
 var equipped_weapon: Weapon = Items.get_by_id(1)
 var game_loaded: bool = false
+
+func take_screenshot() -> void:
+	await RenderingServer.frame_post_draw
+	var img: Image = get_viewport().get_texture().get_image()
+	var dir = "user://screenshots/"
+	var dir_obj = DirAccess.open(dir)
+	if dir_obj == null:
+		DirAccess.make_dir_recursive_absolute(dir)
+	var filename = Time.get_datetime_string_from_system().replace(":", "-")
+	img.save_png(dir + filename + ".png")
+	print("Screenshot saved to: ", filename)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == Key.KEY_F2:
+		take_screenshot()
 
 func load_game():
 	game_loaded = true
@@ -24,6 +61,20 @@ func load_game():
 			bag.set_list_from_save(data["bag"])
 			if bag.list.is_empty():
 				var wooden_sword = ItemStack.new(Items.get_by_id(1), 1)
+		if data.has("fullscreen"):
+			var mode: int = 0
+			if data["fullscreen"]:
+				mode = 3
+			fullscreen = data["fullscreen"]
+			DisplayServer.window_set_mode(mode)
+		if data.has("sfx_volume"):
+			sfx_volume = data["sfx_volume"]
+			if sfx_volume <= 0.0:
+				AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), true)
+			else:
+				AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), false)
+				var db_value = lerp(-80.0, 0.0, sfx_volume / 100.0)
+				AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
 		if data.has("equipped_weapon"):
 			equipped_weapon = Items.get_by_id(data["equipped_weapon"])
 	print("Loaded save data.")
@@ -31,7 +82,8 @@ func load_game():
 func get_save_data() -> Dictionary:
 	return {
 		"bag": bag.to_list(),
-		"equipped_weapon": equipped_weapon.id
+		"equipped_weapon": equipped_weapon.id,
+		"fullscreen": fullscreen
 	}
 
 func _notification(what: int) -> void:

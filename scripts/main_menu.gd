@@ -6,7 +6,7 @@ var click2 = preload("res://assets/sounds/click.wav")
 func play_ui_sfx(stream: AudioStream) -> void:
 	var sfx = AudioStreamPlayer.new()
 	sfx.stream = stream
-	sfx.bus = "SFX" # Optional: route through your SFX bus
+	sfx.bus = "SFX"
 	sfx.volume_db = -10.0
 	add_child(sfx)
 
@@ -42,6 +42,8 @@ func _ready() -> void:
 		_eos_initialized()
 	else:
 		HPlatform.platform_created.connect(_eos_initialized)
+	$UI/Main/Options/General/CheckBox.button_pressed = Man.fullscreen
+	$UI/Main/Options/General/HSlider.value = Man.sfx_volume
 
 func init_online_buttons() -> void:
 	$"UI/Main/Online Buttons".visible = true
@@ -81,16 +83,21 @@ func _on_multiplayer_pressed() -> void:
 	$"UI/Main/Multiplayer Buttons".visible = true
 
 func _on_back_pressed() -> void:
-	$UI/Main/Mode.text = "-- select your mode --"
-	$UI/Main/Buttons.visible = true
-	$UI/Main/Join.visible = false
-	$"UI/Main/LAN Buttons".visible = false
-	$UI/Main/Players.visible = false
-	$Demoman/Username.visible = false
-	$"UI/Main/Multiplayer Buttons".visible = false
-	$"UI/Main/Online Join".visible = false
-	$"UI/Main/Online Buttons".visible = false
-	$Demoman/Username.text = "Player"
+	if $UI/Main/Options.visible and not $UI/Main/Options/General.visible: # doing this instead of adding something that'd make this way more easier for me in the future.
+		$UI/Main/Options/Controls.visible = false
+		$UI/Main/Options/General.visible = true
+	else:
+		$UI/Main/Mode.text = "-- select your mode --"
+		$UI/Main/Buttons.visible = true
+		$UI/Main/Join.visible = false
+		$"UI/Main/LAN Buttons".visible = false
+		$UI/Main/Players.visible = false
+		$UI/Main/Options.visible = false
+		$Demoman/Username.visible = false
+		$"UI/Main/Multiplayer Buttons".visible = false
+		$"UI/Main/Online Join".visible = false
+		$"UI/Main/Online Buttons".visible = false
+		$Demoman/Username.text = "Player"
 
 	if multiplayer != null and multiplayer.has_multiplayer_peer():
 		if NetworkManager.update_players.is_connected(_on_update_players):
@@ -244,3 +251,38 @@ func _on_userid_text_submitted(new_text:String) -> void:
 func _on_copy_userid_pressed() -> void:
 	DisplayServer.clipboard_set(HAuth.product_user_id)
 	Toast.add("Copied your user ID to your clipboard. Send it to friends so they can join your game.")
+
+func _on_options_pressed() -> void:
+	$UI/Main/Buttons.visible = false
+	$UI/Main/Options.visible = true
+
+func _on_fullscreen_check_box_toggled(toggled_on: bool) -> void:
+	var mode: int = 0
+	if toggled_on:
+		mode = 3
+	DisplayServer.window_set_mode(mode)
+	Man.fullscreen = toggled_on
+
+func _on_volume_slider_drag_ended(value_changed: bool) -> void:
+	play_ui_sfx(preload("res://assets/sounds/f_slash.wav"))
+	
+func _on_volume_slider_value_changed(value: float) -> void:
+	Man.sfx_volume = value
+	if value <= 0.0:
+		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), true)
+	else:
+		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), false)
+		var db_value = lerp(-55.0, 0.0, value / 100.0)
+		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
+
+func _on_controls_pressed() -> void:
+	$UI/Main/Options/General.visible = false
+	$UI/Main/Options/Controls.visible = true
+	var keybind_scene = preload("res://scenes/keybind.tscn")
+	for children in $UI/Main/Options/Controls/ScrollContainer/VBoxContainer.get_children():
+		children.queue_free()
+	for control in Man.controls.keys():
+		var key = keybind_scene.instantiate()
+		key.get_node("HBoxContainer/Label").text = Man.controls[control]
+		key.get_node("HBoxContainer/Key").keycode = str(control)
+		$UI/Main/Options/Controls/ScrollContainer/VBoxContainer.add_child(key)
