@@ -29,7 +29,7 @@ func _ready() -> void:
 		if button is Button:
 			_connect_button_sfx(button)
 
-	$UI/Main/Title.text = "Myrkwood: Offshoot" #ProjectSettings.get_setting("application/config/name")
+	#$UI/Main/Title.text = "Myrkwood: Offshoot" #ProjectSettings.get_setting("application/config/name")
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
 
 	if NetworkManager.dev_mode:
