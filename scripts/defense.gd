@@ -52,6 +52,7 @@ func _ready() -> void:
 		# Singleplayer: spawn one player normally
 		var p = player_scene.instantiate()
 		p.name = "Player"
+		p.type = "Defense"
 		call_deferred("add_child", p, true)
 		spawn_wave()
 		Toast.add("Wave started!")
@@ -68,6 +69,7 @@ func _ready() -> void:
 			var peer_id = player_data["id"]
 			var p = player_scene.instantiate()
 			p.name = str(peer_id)
+			p.type = "Defense"
 			p.get_node("Username").text = player_data["username"]
 
 			# Random angle around the circle
@@ -77,7 +79,6 @@ func _ready() -> void:
 
 			p.set_multiplayer_authority(peer_id)
 			call_deferred("add_child", p, true)
-
 
 		# Connect signals for player joins and quits
 		NetworkManager.player_joined.connect(player_joined)

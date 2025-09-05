@@ -22,7 +22,8 @@ const SPECIAL_KEYS = {
 	KEY_RIGHT: "→",
 	KEY_COMMA: ",",
 	KEY_PERIOD: ".",
-	KEY_SHIFT: "⇧"
+	KEY_SHIFT: "⇧",
+	KEY_ENTER: "⏎"
 }
 
 func _ready() -> void:

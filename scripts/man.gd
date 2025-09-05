@@ -1,7 +1,16 @@
 extends Node
 
 @onready var main_menu_scene = preload("res://scenes/main_menu.tscn")
-@onready var game_scene = preload("res://scenes/map.tscn")
+@onready var d_plains = preload("res://scenes/levels/defense/Plains.tscn")
+
+var modes = ["Defense", "Dungeon"]
+var maps = {
+	"defense": ["Plains", "Plains2"],
+	"dungeon": ["Test", "Test2"]
+}
+
+var selected_mode = "Defense"
+var selected_map = "Plains"
 
 var controls = {
 	KEY_W: "Move forward",
@@ -19,6 +28,7 @@ var controls = {
 	KEY_1: "1st Inventory Slot",
 	KEY_2: "2nd Inventory Slot",
 	KEY_3: "3rd Inventory Slot",
+	KEY_ENTER: "Open chat",
 	KEY_COMMA: "Zoom out",
 	KEY_PERIOD: "Zoom in"
 }
@@ -116,14 +126,14 @@ func _ready() -> void:
 @rpc("authority", "call_local", "reliable")
 func start_game() -> void:
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Main Menu") or child.name.begins_with("Game"):
+		if child.name.begins_with("Main Menu") or child.name.begins_with("Defense"):
 			child.queue_free()
-	get_tree().current_scene.add_child(game_scene.instantiate(), true)
+	get_tree().current_scene.add_child(d_plains.instantiate(), true)
 	
 @rpc("authority", "call_local", "reliable")
 func end_game() -> void:	
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Game") or child.name.begins_with("Main Menu"):
+		if child.name.begins_with("Defense") or child.name.begins_with("Main Menu"):
 			child.queue_free()
 	get_tree().current_scene.add_child(main_menu_scene.instantiate(), true)
 	

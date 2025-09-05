@@ -89,6 +89,7 @@ func _on_back_pressed() -> void:
 	else:
 		$UI/Main/Mode.text = "-- select your mode --"
 		$UI/Main/Buttons.visible = true
+		$"UI/Main/Mode Selector".visible = false
 		$UI/Main/Join.visible = false
 		$"UI/Main/LAN Buttons".visible = false
 		$UI/Main/Players.visible = false
@@ -143,7 +144,14 @@ func _on_singleplayer_pressed() -> void:
 			multiplayer.multiplayer_peer = null
 		NetworkManager.players = []
 	play_ui_sfx(preload("res://assets/sounds/success.wav"))
-	Man.start_game()
+	#Man.start_game()
+	update_mode_selector()
+	$"UI/Main/Mode Selector".visible = true
+	$"UI/Main/Buttons".visible = false
+	
+func update_mode_selector() -> void:
+	$"UI/Main/Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode 
+	$"UI/Main/Mode Selector/Panel/Map Selector/Label".text = Man.selected_map 
 
 func _on_update_players(players: Array) -> void:
 	var container = $UI/Main/Players/ScrollContainer/VBoxContainer
@@ -286,3 +294,43 @@ func _on_controls_pressed() -> void:
 		key.get_node("HBoxContainer/Label").text = Man.controls[control]
 		key.get_node("HBoxContainer/Key").keycode = str(control)
 		$UI/Main/Options/Controls/ScrollContainer/VBoxContainer.add_child(key)
+
+func _on_mode_selector_left_pressed() -> void:
+	var index = Man.modes.find(Man.selected_mode)
+	if index == -1:
+		index = 0
+	index = (index - 1 + Man.modes.size()) % Man.modes.size()
+	Man.selected_mode = Man.modes[index]
+	var mode_key = Man.selected_mode.to_lower()
+	Man.selected_map = Man.maps[mode_key][0]
+	update_mode_selector()
+
+func _on_mode_selector_right_pressed() -> void:
+	var index = Man.modes.find(Man.selected_mode)
+	if index == -1:
+		index = 0
+	index = (index + 1) % Man.modes.size()
+	Man.selected_mode = Man.modes[index]
+	var mode_key = Man.selected_mode.to_lower()
+	Man.selected_map = Man.maps[mode_key][0]
+	update_mode_selector()
+	
+func _on_map_selector_left_pressed() -> void:
+	var mode_key = Man.selected_mode.to_lower()
+	var maps_for_mode = Man.maps[mode_key]
+	var index = maps_for_mode.find(Man.selected_map)
+	if index == -1:
+		index = 0
+	index = (index - 1 + maps_for_mode.size()) % maps_for_mode.size()
+	Man.selected_map = maps_for_mode[index]
+	update_mode_selector()
+	
+func _on_map_selector_right_pressed() -> void:
+	var mode_key = Man.selected_mode.to_lower()
+	var maps_for_mode = Man.maps[mode_key]
+	var index = maps_for_mode.find(Man.selected_map)
+	if index == -1:
+		index = 0
+	index = (index + 1) % maps_for_mode.size()
+	Man.selected_map = maps_for_mode[index]
+	update_mode_selector()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=4 uid="uid://dej207wipn6fc"]
+[gd_scene load_steps=43 format=4 uid="uid://dej207wipn6fc"]
 
 [ext_resource type="Script" uid="uid://bdf37d301uotm" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_bqqt6"]
@@ -121,6 +121,20 @@ texture_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flqon"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_flqon"]
+font_size = 33
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_rcqid"]
+font_size = 33
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gw5y6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hstxw"]
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rcqid"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1ajci"]
@@ -135,14 +149,7 @@ font_size = 22
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a8gd2"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hstxw"]
-
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8egab"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_flqon"]
-font_size = 33
-outline_size = 12
-outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_flqon"]
 bg_color = Color(0.219501, 0.219501, 0.219501, 1)
@@ -292,7 +299,7 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 40.0
-offset_top = -210.0
+offset_top = -208.0
 offset_right = 504.0
 offset_bottom = -120.0
 grow_vertical = 0
@@ -310,7 +317,7 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 40.0
-offset_top = -114.0
+offset_top = -112.0
 offset_right = 504.0
 offset_bottom = -24.0
 grow_vertical = 0
@@ -321,6 +328,186 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Quit"
+
+[node name="Mode Selector" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="UI/Main/Mode Selector"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.3
+anchor_right = 0.394
+anchor_bottom = 0.856
+offset_left = 0.32
+offset_top = -16.0
+offset_right = -0.320038
+offset_bottom = -80.3201
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="Title" type="Label" parent="UI/Main/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -168.0
+offset_top = 24.0
+offset_right = 168.0
+offset_bottom = 66.0
+grow_horizontal = 2
+text = "Select your mode"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="Mode" type="Label" parent="UI/Main/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -168.0
+offset_top = 80.0
+offset_right = 168.0
+offset_bottom = 122.0
+grow_horizontal = 2
+text = "Mode:"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Mode Selector" type="HBoxContainer" parent="UI/Main/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -210.0
+offset_top = 120.0
+offset_right = 210.0
+offset_bottom = 180.0
+grow_horizontal = 2
+
+[node name="Left" type="Button" parent="UI/Main/Mode Selector/Panel/Mode Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "<"
+
+[node name="Label" type="Label" parent="UI/Main/Mode Selector/Panel/Mode Selector"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+text = "Mode"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Right" type="Button" parent="UI/Main/Mode Selector/Panel/Mode Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = ">"
+
+[node name="Map" type="Label" parent="UI/Main/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -168.0
+offset_top = 200.0
+offset_right = 168.0
+offset_bottom = 242.0
+grow_horizontal = 2
+text = "Map:"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Map Selector" type="HBoxContainer" parent="UI/Main/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -210.0
+offset_top = 248.0
+offset_right = 210.0
+offset_bottom = 308.0
+grow_horizontal = 2
+
+[node name="Left" type="Button" parent="UI/Main/Mode Selector/Panel/Map Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "<"
+
+[node name="Label" type="Label" parent="UI/Main/Mode Selector/Panel/Map Selector"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+text = "Map"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Right" type="Button" parent="UI/Main/Mode Selector/Panel/Map Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = ">"
+
+[node name="Back" type="Button" parent="UI/Main/Mode Selector"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.864
+anchor_right = 0.394
+anchor_bottom = 0.967
+offset_left = 0.32
+offset_top = 23.92
+offset_right = -0.320038
+offset_bottom = -0.240051
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Back"
+
+[node name="Start" type="Button" parent="UI/Main/Mode Selector"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.864
+anchor_right = 0.394
+anchor_bottom = 0.967
+offset_left = 0.32
+offset_top = -80.08
+offset_right = -0.320038
+offset_bottom = -80.2401
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Start"
 
 [node name="LAN Buttons" type="Control" parent="UI/Main"]
 visible = false
@@ -948,6 +1135,7 @@ offset_bottom = -3.05176e-05
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Options/Controls/ScrollContainer"]
 layout_mode = 2
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="Back" type="Button" parent="UI/Main/Options"]
@@ -978,6 +1166,11 @@ text = "Back"
 [connection signal="pressed" from="UI/Main/Buttons/Multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Mode Selector/Left" to="." method="_on_mode_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Mode Selector/Right" to="." method="_on_mode_selector_right_pressed"]
+[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Map Selector/Left" to="." method="_on_map_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Map Selector/Right" to="." method="_on_map_selector_right_pressed"]
+[connection signal="pressed" from="UI/Main/Mode Selector/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Join" to="." method="_on_lan_join_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Back" to="." method="_on_back_pressed"]

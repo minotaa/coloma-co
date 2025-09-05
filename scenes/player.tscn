@@ -717,23 +717,6 @@ shadow_size = 4
 shadow_color = Color(0, 0, 0, 0.796078)
 shadow_offset = Vector2(4, 4)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_31cv2"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pf23h"]
-texture = ExtResource("23_ke2ow")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dt7fs"]
-texture = ExtResource("24_ujl30")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-modulate_color = Color(1, 1, 1, 0.792157)
-
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wnwbv"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gl8cc"]
@@ -763,6 +746,23 @@ texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_31cv2"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pf23h"]
+texture = ExtResource("23_ke2ow")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dt7fs"]
+texture = ExtResource("24_ujl30")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+modulate_color = Color(1, 1, 1, 0.792157)
 
 [sub_resource type="LabelSettings" id="LabelSettings_dt7fs"]
 font_size = 22
@@ -881,7 +881,7 @@ volume_db = -12.5
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Main" type="Control" parent="UI"]
+[node name="Defense" type="Control" parent="UI"]
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
@@ -890,7 +890,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Markers" type="Control" parent="UI/Main"]
+[node name="Markers" type="Control" parent="UI/Defense"]
 layout_mode = 1
 anchor_left = -0.006
 anchor_right = 1.0
@@ -900,7 +900,7 @@ offset_right = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Left" type="Control" parent="UI/Main/Markers"]
+[node name="Left" type="Control" parent="UI/Defense/Markers"]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -911,7 +911,7 @@ offset_right = 64.0
 offset_bottom = 352.0
 grow_vertical = 2
 
-[node name="Right" type="Control" parent="UI/Main/Markers"]
+[node name="Right" type="Control" parent="UI/Defense/Markers"]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -925,7 +925,7 @@ offset_bottom = 352.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Up" type="Control" parent="UI/Main/Markers"]
+[node name="Up" type="Control" parent="UI/Defense/Markers"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -936,7 +936,7 @@ offset_right = 632.0
 offset_bottom = 64.0
 grow_horizontal = 2
 
-[node name="Down" type="Control" parent="UI/Main/Markers"]
+[node name="Down" type="Control" parent="UI/Defense/Markers"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -950,7 +950,7 @@ offset_bottom = -216.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="HealthBar" type="ProgressBar" parent="UI/Main"]
+[node name="HealthBar" type="ProgressBar" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -967,7 +967,7 @@ theme_override_styles/background = SubResource("StyleBoxTexture_ujl30")
 theme_override_styles/fill = SubResource("StyleBoxTexture_31cv2")
 show_percentage = false
 
-[node name="Label" type="Label" parent="UI/Main/HealthBar"]
+[node name="Label" type="Label" parent="UI/Defense/HealthBar"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -985,7 +985,7 @@ label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SprintBar" type="ProgressBar" parent="UI/Main"]
+[node name="SprintBar" type="ProgressBar" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1003,7 +1003,7 @@ theme_override_styles/fill = SubResource("StyleBoxTexture_l71n6")
 max_value = 220.0
 show_percentage = false
 
-[node name="Inventory" type="HBoxContainer" parent="UI/Main"]
+[node name="Inventory" type="HBoxContainer" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1019,16 +1019,16 @@ grow_vertical = 0
 theme_override_constants/separation = 12
 alignment = 2
 
-[node name="Slot1" parent="UI/Main/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot1" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot2" parent="UI/Main/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot2" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot3" parent="UI/Main/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot3" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 16.0
@@ -1037,61 +1037,61 @@ offset_bottom = 56.0
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Wave" type="PanelContainer" parent="UI/Main/HBoxContainer"]
+[node name="Wave" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="Label" type="Label" parent="UI/Main/HBoxContainer/Wave"]
+[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Wave"]
 layout_mode = 2
 text = "Wave: 0"
 label_settings = SubResource("LabelSettings_oprun")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Bombrats" type="PanelContainer" parent="UI/Main/HBoxContainer"]
+[node name="Bombrats" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main/HBoxContainer/Bombrats"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Bombrats"]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Main/HBoxContainer/Bombrats/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Bombrats/HBoxContainer"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_487ah")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="UI/Main/HBoxContainer/Bombrats/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Bombrats/HBoxContainer"]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Gold" type="PanelContainer" parent="UI/Main/HBoxContainer"]
+[node name="Gold" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main/HBoxContainer/Gold"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Gold"]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Main/HBoxContainer/Gold/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Gold/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("14_a8ls1")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UI/Main/HBoxContainer/Gold/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Gold/HBoxContainer"]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Title" type="Label" parent="UI/Main"]
+[node name="Title" type="Label" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -1108,7 +1108,7 @@ label_settings = SubResource("LabelSettings_4r5pv")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Tab" type="Control" parent="UI/Main"]
+[node name="Tab" type="Control" parent="UI/Defense"]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -1123,7 +1123,7 @@ offset_bottom = 224.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Main/Tab"]
+[node name="Panel" type="Panel" parent="UI/Defense/Tab"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1132,7 +1132,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
 
-[node name="Title" type="Label" parent="UI/Main/Tab"]
+[node name="Title" type="Label" parent="UI/Defense/Tab"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1148,7 +1148,7 @@ label_settings = SubResource("LabelSettings_fulsm")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Kills" type="Label" parent="UI/Main/Tab"]
+[node name="Kills" type="Label" parent="UI/Defense/Tab"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1164,7 +1164,7 @@ label_settings = SubResource("LabelSettings_qfm1y")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Gold" type="Label" parent="UI/Main/Tab"]
+[node name="Gold" type="Label" parent="UI/Defense/Tab"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1180,7 +1180,7 @@ label_settings = SubResource("LabelSettings_qfm1y")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Players" type="Label" parent="UI/Main/Tab"]
+[node name="Players" type="Label" parent="UI/Defense/Tab"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1195,7 +1195,7 @@ text = "Player"
 label_settings = SubResource("LabelSettings_qfm1y")
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Tab"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Defense/Tab"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -1210,14 +1210,14 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Tab/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Defense/Tab/ScrollContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="Tab Entry" parent="UI/Main/Tab/ScrollContainer/VBoxContainer" instance=ExtResource("16_a8ls1")]
+[node name="Tab Entry" parent="UI/Defense/Tab/ScrollContainer/VBoxContainer" instance=ExtResource("16_a8ls1")]
 layout_mode = 2
 
-[node name="Shop" type="Control" parent="UI/Main"]
+[node name="Shop" type="Control" parent="UI/Defense"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1226,7 +1226,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Main/Shop"]
+[node name="Panel" type="Panel" parent="UI/Defense/Shop"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1239,7 +1239,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
 
-[node name="Title" type="Label" parent="UI/Main/Shop/Panel"]
+[node name="Title" type="Label" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
 offset_left = 32.0
 offset_top = 24.0
@@ -1250,7 +1250,7 @@ text = "Shop"
 label_settings = SubResource("LabelSettings_60mlk")
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Main/Shop/Panel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -1262,12 +1262,12 @@ offset_bottom = 64.0
 grow_horizontal = 0
 alignment = 2
 
-[node name="TextureRect" type="TextureRect" parent="UI/Main/Shop/Panel/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/Shop/Panel/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("14_a8ls1")
 expand_mode = 2
 
-[node name="Gold" type="Label" parent="UI/Main/Shop/Panel/HBoxContainer"]
+[node name="Gold" type="Label" parent="UI/Defense/Shop/Panel/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
 text = "000"
@@ -1275,7 +1275,7 @@ label_settings = SubResource("LabelSettings_60mlk")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Shop/Panel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.026
@@ -1289,37 +1289,37 @@ offset_bottom = -0.11203
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="GridContainer" parent="UI/Main/Shop/Panel/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="UI/Defense/Shop/Panel/ScrollContainer"]
 layout_mode = 2
 theme_override_constants/h_separation = 12
 columns = 6
 
-[node name="Catalog Item" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
+[node name="Catalog Item" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
 layout_mode = 2
 script = SubResource("GDScript_fulsm")
 
-[node name="Button" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item" index="0"]
+[node name="Button" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item" index="0"]
 tooltip_text = "A nice helpful healing potion to heal +50 HP. 
 Has a 10 second cooldown."
 
-[node name="Catalog Item2" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
+[node name="Catalog Item2" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
 layout_mode = 2
 script = SubResource("GDScript_wqfne")
 
-[node name="Button" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="0"]
+[node name="Button" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="0"]
 tooltip_text = "Multiplies your damage by 2.5x for 10 seconds.
 60 second cooldown."
 
-[node name="Label" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="1"]
+[node name="Label" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="1"]
 text = "Strength Potion"
 
-[node name="TextureRect" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="2"]
+[node name="TextureRect" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="2"]
 texture = SubResource("AtlasTexture_md1ol")
 
-[node name="Gold" parent="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2/HBoxContainer" index="1"]
+[node name="Gold" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2/HBoxContainer" index="1"]
 text = "500"
 
-[node name="Close" type="Button" parent="UI/Main/Shop/Panel"]
+[node name="Close" type="Button" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1340,7 +1340,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
 theme_override_styles/normal = SubResource("StyleBoxTexture_hax0n")
 text = "Close"
 
-[node name="Death" type="Control" parent="UI/Main"]
+[node name="Death" type="Control" parent="UI/Defense"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1349,7 +1349,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Main/Death"]
+[node name="Panel" type="Panel" parent="UI/Defense/Death"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1358,7 +1358,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 
-[node name="You Dead" type="Label" parent="UI/Main/Death/Panel"]
+[node name="You Dead" type="Label" parent="UI/Defense/Death/Panel"]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 64.0
@@ -1367,7 +1367,7 @@ offset_bottom = 125.0
 text = "You're dead!"
 label_settings = SubResource("LabelSettings_l71n6")
 
-[node name="Respawn Timer" type="Label" parent="UI/Main/Death/Panel"]
+[node name="Respawn Timer" type="Label" parent="UI/Defense/Death/Panel"]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -1377,7 +1377,7 @@ text = "You will respawn in 10 seconds..."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Meta" type="Label" parent="UI/Main/Death/Panel"]
+[node name="Meta" type="Label" parent="UI/Defense/Death/Panel"]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 200.0
@@ -1387,46 +1387,7 @@ text = "You will respawn in 10 seconds..."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Chat" type="ScrollContainer" parent="UI/Main"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.012
-anchor_top = 0.122
-anchor_right = 0.35
-anchor_bottom = 0.878
-offset_left = 0.639999
-offset_top = 0.159996
-offset_right = -3.05176e-05
-offset_bottom = -0.160034
-grow_vertical = 0
-mouse_filter = 2
-horizontal_scroll_mode = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Chat"]
-layout_mode = 2
-alignment = 2
-
-[node name="ChatBar" type="LineEdit" parent="UI/Main"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -84.0
-offset_right = 448.0
-offset_bottom = -24.0
-grow_vertical = 0
-theme_override_font_sizes/font_size = 22
-theme_override_styles/focus = SubResource("StyleBoxEmpty_31cv2")
-theme_override_styles/read_only = SubResource("StyleBoxTexture_pf23h")
-theme_override_styles/normal = SubResource("StyleBoxTexture_dt7fs")
-placeholder_text = "Press Enter to chat"
-alignment = 1
-max_length = 500
-clear_button_enabled = true
-caret_blink = true
-
-[node name="Game Over" type="Control" parent="UI/Main"]
+[node name="Game Over" type="Control" parent="UI/Defense"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1435,7 +1396,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Main/Game Over"]
+[node name="Panel" type="Panel" parent="UI/Defense/Game Over"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1444,7 +1405,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 
-[node name="You Lose" type="Label" parent="UI/Main/Game Over/Panel"]
+[node name="You Lose" type="Label" parent="UI/Defense/Game Over/Panel"]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 64.0
@@ -1453,7 +1414,7 @@ offset_bottom = 125.0
 text = "Game Over!"
 label_settings = SubResource("LabelSettings_l71n6")
 
-[node name="Subtitle" type="Label" parent="UI/Main/Game Over/Panel"]
+[node name="Subtitle" type="Label" parent="UI/Defense/Game Over/Panel"]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -1463,7 +1424,7 @@ text = "The gem has broken."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Meta" type="Label" parent="UI/Main/Game Over/Panel"]
+[node name="Meta" type="Label" parent="UI/Defense/Game Over/Panel"]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 200.0
@@ -1472,7 +1433,7 @@ offset_bottom = 688.0
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Play Again" type="Button" parent="UI/Main/Game Over/Panel"]
+[node name="Play Again" type="Button" parent="UI/Defense/Game Over/Panel"]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1494,7 +1455,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
 theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
 text = "Play Again"
 
-[node name="Main Menu" type="Button" parent="UI/Main/Game Over/Panel"]
+[node name="Main Menu" type="Button" parent="UI/Defense/Game Over/Panel"]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1516,7 +1477,36 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
 theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
 text = "Main Menu"
 
-[node name="Zoom" type="Control" parent="UI/Main"]
+[node name="Global" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ChatBar" type="LineEdit" parent="UI/Global"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -84.0
+offset_right = 448.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_31cv2")
+theme_override_styles/read_only = SubResource("StyleBoxTexture_pf23h")
+theme_override_styles/normal = SubResource("StyleBoxTexture_dt7fs")
+placeholder_text = "Press Enter to chat"
+alignment = 1
+max_length = 500
+clear_button_enabled = true
+caret_blink = true
+
+[node name="Zoom" type="Control" parent="UI/Global"]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1531,7 +1521,7 @@ offset_bottom = -24.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Panel" type="Panel" parent="UI/Main/Zoom"]
+[node name="Panel" type="Panel" parent="UI/Global/Zoom"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.552
@@ -1542,7 +1532,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
 
-[node name="Label" type="Label" parent="UI/Main/Zoom"]
+[node name="Label" type="Label" parent="UI/Global/Zoom"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -1559,9 +1549,28 @@ text = "x1"
 label_settings = SubResource("LabelSettings_dt7fs")
 horizontal_alignment = 1
 
-[node name="Timer" type="Timer" parent="UI/Main/Zoom"]
+[node name="Timer" type="Timer" parent="UI/Global/Zoom"]
 wait_time = 5.0
 one_shot = true
+
+[node name="Chat" type="ScrollContainer" parent="UI/Global"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.012
+anchor_top = 0.122
+anchor_right = 0.35
+anchor_bottom = 0.878
+offset_left = 0.639999
+offset_top = 0.159996
+offset_right = -3.05176e-05
+offset_bottom = -0.160034
+grow_vertical = 0
+mouse_filter = 2
+horizontal_scroll_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Global/Chat"]
+layout_mode = 2
+alignment = 2
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
@@ -1585,14 +1594,14 @@ vertical_alignment = 1
 [connection signal="body_exited" from="Area2D" to="." method="_on_body_exited"]
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]
 [connection signal="body_shape_exited" from="Area2D" to="." method="_on_body_shape_exited"]
-[connection signal="pressed" from="UI/Main/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
-[connection signal="focus_entered" from="UI/Main/ChatBar" to="." method="_on_chat_bar_focus_entered"]
-[connection signal="focus_exited" from="UI/Main/ChatBar" to="." method="_on_chat_bar_focus_exited"]
-[connection signal="gui_input" from="UI/Main/ChatBar" to="." method="_on_chatbar_gui_input"]
-[connection signal="text_submitted" from="UI/Main/ChatBar" to="." method="_on_chat_bar_submitted"]
-[connection signal="pressed" from="UI/Main/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
-[connection signal="pressed" from="UI/Main/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
-[connection signal="timeout" from="UI/Main/Zoom/Timer" to="." method="_on_zoom_timeout"]
+[connection signal="pressed" from="UI/Defense/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
+[connection signal="pressed" from="UI/Defense/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
+[connection signal="pressed" from="UI/Defense/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
+[connection signal="focus_entered" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_entered"]
+[connection signal="focus_exited" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_exited"]
+[connection signal="gui_input" from="UI/Global/ChatBar" to="." method="_on_chatbar_gui_input"]
+[connection signal="text_submitted" from="UI/Global/ChatBar" to="." method="_on_chat_bar_submitted"]
+[connection signal="timeout" from="UI/Global/Zoom/Timer" to="." method="_on_zoom_timeout"]
 
-[editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
-[editable path="UI/Main/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]
+[editable path="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
+[editable path="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]

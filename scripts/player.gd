@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+var type: String = "Defense"
 var current_log_path: String
 var original_zoom := Vector2(5.0, 5.0)
 var zoom_multiplier := 1.0
@@ -19,6 +20,7 @@ var knockback_friction := 800.0
 var hit_cooldown := 0.0
 var max_hit_cooldown := 0.35
 
+const FADE_SPEED := 5.0
 const SPEED := 120.0
 const SPRINT_MULTIPLIER := 1.45
 var exhausted := false # When you deplete your sprint completely you will become exhausted
@@ -67,9 +69,9 @@ func reset_status_effects() -> void:
 	active_effects.clear()
 
 @onready var hitting_particles_instance = preload("res://scenes/hitting_particles.tscn")
-@onready var bombrat_counter := $UI/Main/HBoxContainer/Bombrats/HBoxContainer/Label
+@onready var bombrat_counter := $UI/Defense/HBoxContainer/Bombrats/HBoxContainer/Label
 @onready var camera := get_viewport().get_camera_2d()
-@onready var marker_container := $UI/Main/Markers
+@onready var marker_container := $UI/Defense/Markers
 @onready var marker_scene := preload("res://scenes/marker.tscn")
 @onready var hit_sound := preload("res://assets/sounds/better3.wav")
 @onready var heal_sound := preload("res://assets/sounds/maybeheal.wav")
@@ -105,8 +107,8 @@ func reset_game() -> void:
 	bag = Bag.new()
 	global_position = Vector2(0, 0)
 	play_idle_animation()
-	$"UI/Main/Game Over".visible = false
-	$UI/Main/Death.visible = false
+	$"UI/Defense/Game Over".visible = false
+	$UI/Defense/Death.visible = false
 	show_ui()
 
 func end_game() -> void:
@@ -118,14 +120,14 @@ func end_game() -> void:
 	stats_text += "Damage Dealt:\t " + str(roundi(damage_dealt)) + " (" + percent(damage_dealt, total_damage_dealt) + ")\n"
 	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
-	$"UI/Main/Game Over".visible = true
-	$"UI/Main/Game Over/Panel/Meta".text = stats_text
+	$"UI/Defense/Game Over".visible = true
+	$"UI/Defense/Game Over/Panel/Meta".text = stats_text
 	if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
-		$"UI/Main/Game Over/Panel/Play Again".visible = true
-		$"UI/Main/Game Over/Panel/Main Menu".visible = true
+		$"UI/Defense/Game Over/Panel/Play Again".visible = true
+		$"UI/Defense/Game Over/Panel/Main Menu".visible = true
 	else:
-		$"UI/Main/Game Over/Panel/Play Again".visible = false
-		$"UI/Main/Game Over/Panel/Main Menu".visible = false
+		$"UI/Defense/Game Over/Panel/Play Again".visible = false
+		$"UI/Defense/Game Over/Panel/Main Menu".visible = false
 
 func _enter_tree() -> void:
 	if multiplayer.has_multiplayer_peer():
@@ -133,9 +135,9 @@ func _enter_tree() -> void:
 
 func send_title(title: String, delay: float) -> void:
 	print("Showing title \"" + title + "\" to player.")
-	$UI/Main/Title.text = title
+	$UI/Defense/Title.text = title
 	await get_tree().create_timer(delay).timeout
-	$UI/Main/Title.text = ""
+	$UI/Defense/Title.text = ""
 	
 func play_ui_sfx(stream: AudioStream) -> void:
 	var sfx = AudioStreamPlayer.new()
@@ -162,13 +164,13 @@ func _ready() -> void:
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
-
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
 		for player in NetworkManager.players:
 			if player["id"] == name.to_int():
 				$Username.text = player["username"]
 		$Username.visible = true
+	
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		$UI.visible = false
 		$PointLight2D.visible = false
@@ -186,6 +188,10 @@ func _ready() -> void:
 		if file:
 			file.store_line("--- Chat session started at %s ---" % timestamp)
 		file.close()
+	for children in $UI.get_children():
+		children.visible = false
+	$UI.get_node(str(type)).visible = true
+	$UI/Global.visible = true
 		
 func heal(amount: float) -> void:	
 	if alive:
@@ -239,7 +245,7 @@ func die() -> void:
 	revival_time = MAX_REVIVAL_TIME
 	alive = false
 	hide_ui()
-	$"UI/Main/Death".visible = true	
+	$"UI/Defense/Death".visible = true	
 	var stats_text := "This life:\n"
 	stats_text += "Gold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
 	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
@@ -247,7 +253,7 @@ func die() -> void:
 	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
 
-	$"UI/Main/Death/Panel/Meta".text = stats_text
+	$"UI/Defense/Death/Panel/Meta".text = stats_text
 	reset_status_effects()
 	
 	#health = max_health
@@ -305,21 +311,21 @@ func _process_input(delta) -> void:
 	# Handle movement input
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
-	if $UI/Main/ChatBar.has_focus() and alive:
+	if $UI/Global/ChatBar.has_focus() and alive:
 		play_idle_animation()
-	if not alive or $UI/Main/ChatBar.has_focus() or $"UI/Main/Game Over".visible:
+	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible:
 		return
 	if Input.is_action_just_pressed("interact"):
-		if not $UI/Main/Shop.visible:
+		if not $UI/Defense/Shop.visible:
 			for area in $Area2D.get_overlapping_areas():
 				if (area as Area2D).is_in_group("gem"):
-					$UI/Main/Shop.visible = true
+					$UI/Defense/Shop.visible = true
 					play_idle_animation()
-					$UI/Main/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+					$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 		else:
-			$UI/Main/Shop.visible = false
+			$UI/Defense/Shop.visible = false
 			
-	if $UI/Main/Shop.visible:
+	if $UI/Defense/Shop.visible:
 		return
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 	var velocity_length = velocity.length_squared()
@@ -412,13 +418,13 @@ func _process_input(delta) -> void:
 	else:
 		step_timer = 0.0
 	
-	if Input.is_action_pressed("info") and not $UI/Main/Shop.visible:
-		$UI/Main/Tab.visible = true
-		for children in $UI/Main/Tab/ScrollContainer/VBoxContainer.get_children():
+	if Input.is_action_pressed("info") and not $UI/Defense/Shop.visible:
+		$UI/Defense/Tab.visible = true
+		for children in $UI/Defense/Tab/ScrollContainer/VBoxContainer.get_children():
 			children.queue_free()
 		
 		if multiplayer.has_multiplayer_peer():
-			$UI/Main/Tab/Title.text = "Players (" + str(NetworkManager.players.size()) + ")"
+			$UI/Defense/Tab/Title.text = "Players (" + str(NetworkManager.players.size()) + ")"
 			for player in NetworkManager.players:
 				var kills = 0
 				if get_parent().kills.has(str(player["id"])) and get_parent().kills[str(player["id"])].has("bombrat"):
@@ -427,9 +433,9 @@ func _process_input(delta) -> void:
 				tab_entry.get_node("Name").text = player["username"]
 				tab_entry.get_node("Kills").text = str(kills)
 				tab_entry.get_node("Gold").text = str(get_parent().get_node(str(player["id"])).gold)
-				$UI/Main/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
+				$UI/Defense/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
 		else:
-			$UI/Main/Tab/Title.text = "Player"
+			$UI/Defense/Tab/Title.text = "Player"
 			var tab_entry = preload("res://scenes/tab_entry.tscn").instantiate()
 			tab_entry.get_node("Name").text = "Player"
 			tab_entry.get_node("Gold").text = str(gold)
@@ -440,14 +446,14 @@ func _process_input(delta) -> void:
 					big_bombrat = get_parent().kills["Player"]["big_bombrat"]
 				kills = get_parent().kills["Player"]["bombrat"] + big_bombrat
 			tab_entry.get_node("Kills").text = str(kills)
-			$UI/Main/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
+			$UI/Defense/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
 	else:
-		$UI/Main/Tab.visible = false
+		$UI/Defense/Tab.visible = false
 	
 	move_and_slide()
 
 func press_inventory_slot(index: int) -> void:
-	var slots = $UI/Main/Inventory.get_children()
+	var slots = $UI/Defense/Inventory.get_children()
 	if index < 0 or index >= slots.size():
 		return
 
@@ -463,26 +469,26 @@ func change_zoom(delta: float) -> void:
 	zoom_multiplier = clamp(zoom_multiplier + delta, 0.50, 2.0)
 	_update_camera_zoom()
 
-	$UI/Main/Zoom/Label.text = "x%.2f" % zoom_multiplier
-	$UI/Main/Zoom.visible = true
-	$UI/Main/Zoom/Timer.start()
+	$UI/Global/Zoom/Label.text = "x%.2f" % zoom_multiplier
+	$UI/Global/Zoom.visible = true
+	$UI/Global/Zoom/Timer.start()
 	
 func _update_camera_zoom() -> void:
 	$Camera2D.zoom = original_zoom * zoom_multiplier
 
 func _on_zoom_timeout() -> void:
-	$UI/Main/Zoom.visible = false
+	$UI/Global/Zoom.visible = false
 	
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and not $UI/Main/ChatBar.has_focus():
+	if event is InputEventMouseButton and event.pressed and not $UI/Global/ChatBar.has_focus():
 		match event.button_index:
 			MOUSE_BUTTON_WHEEL_UP:
 				change_zoom(0.25)
 			MOUSE_BUTTON_WHEEL_DOWN:
 				change_zoom(-0.25) 
-	if event.is_action_pressed("zoom_in") and not $UI/Main/ChatBar.has_focus():
+	if event.is_action_pressed("zoom_in") and not $UI/Global/ChatBar.has_focus():
 		change_zoom(0.25)
-	elif event.is_action_pressed("zoom_out") and not $UI/Main/ChatBar.has_focus():
+	elif event.is_action_pressed("zoom_out") and not $UI/Global/ChatBar.has_focus():
 		change_zoom(-0.25)
 	
 func _unhandled_input(event: InputEvent) -> void:
@@ -497,7 +503,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			51:
 				press_inventory_slot(2)
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
-		$UI/Main/ChatBar.grab_focus()
+		$UI/Global/ChatBar.grab_focus()
 
 func _enable_sword_hitbox(direction: String) -> void:
 	var hitbox = $SwordHbox
@@ -551,81 +557,55 @@ func _disable_all_sword_hitboxes() -> void:
 			child.disabled = true
 
 func show_ui() -> void:
-	$UI/Main/Markers.visible = true
-	$UI/Main/HealthBar.visible = true
-	$UI/Main/SprintBar.visible = true
-	$UI/Main/Inventory.visible = true
-	$UI/Main/HBoxContainer.visible = true
+	$UI/Defense/Markers.visible = true
+	$UI/Defense/HealthBar.visible = true
+	$UI/Defense/SprintBar.visible = true
+	$UI/Defense/Inventory.visible = true
+	$UI/Defense/HBoxContainer.visible = true
 
 func hide_ui() -> void:
-	$UI/Main/Markers.visible = false
-	$UI/Main/HealthBar.visible = false
-	$UI/Main/SprintBar.visible = false
-	$UI/Main/Inventory.visible = false
-	$UI/Main/HBoxContainer.visible = false
-	$UI/Main/Tab.visible = false
-	$UI/Main/Shop.visible = false
-
-const FADE_SPEED := 5.0
+	$UI/Defense/Markers.visible = false
+	$UI/Defense/HealthBar.visible = false
+	$UI/Defense/SprintBar.visible = false
+	$UI/Defense/Inventory.visible = false
+	$UI/Defense/HBoxContainer.visible = false
+	$UI/Defense/Tab.visible = false
+	$UI/Defense/Shop.visible = false
 
 func _is_mouse_over_chat_bar() -> bool:
-	if not $UI/Main/ChatBar.visible:
+	if not $UI/Global/ChatBar.visible:
 		return false
-	var local_mouse_pos = $UI/Main/ChatBar.get_local_mouse_position()
-	return $UI/Main/ChatBar.get_rect().has_point(local_mouse_pos)
-
-func update_particle_color() -> void:
-	if active_effects.size() == 0:
-		$Potion.emitting = false
-		return
-
-	$Potion.emitting = true
-
-	var r_sum := 0.0
-	var g_sum := 0.0
-	var b_sum := 0.0
-
-	for effect in active_effects:
-		var c = effect.color
-		r_sum += c.r
-		g_sum += c.g
-		b_sum += c.b
-
-	var count = active_effects.size()
-	var blended_color = Color(r_sum / count, g_sum / count, b_sum / count)
-
-	# Set the particle color
-	$Potion.process_material.color = blended_color
+	var local_mouse_pos = $UI/Global/ChatBar.get_local_mouse_position()
+	return $UI/Global/ChatBar.get_rect().has_point(local_mouse_pos)
 
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
 	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
-	update_particle_color()
 	if alive:
 		for effect in active_effects.duplicate():
 			if effect.update(delta, self):
 				active_effects.erase(effect)
-	var focused = $UI/Main/ChatBar.has_focus()
+	var focused = $UI/Global/ChatBar.has_focus()
 	var hovered := _is_mouse_over_chat_bar()
 	if focused or hovered:
-		$UI/Main/ChatBar.modulate.a = lerp($UI/Main/ChatBar.modulate.a, 1.0, FADE_SPEED * delta)
+		$UI/Global/ChatBar.modulate.a = lerp($UI/Global/ChatBar.modulate.a, 1.0, FADE_SPEED * delta)
 	else:
-		$UI/Main/ChatBar.modulate.a = lerp($UI/Main/ChatBar.modulate.a, 0.0, FADE_SPEED * delta)
+		$UI/Global/ChatBar.modulate.a = lerp($UI/Global/ChatBar.modulate.a, 0.0, FADE_SPEED * delta)
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
-		$UI/Main/HealthBar.max_value = max_health
-		$UI/Main/HealthBar.value = health
-		$UI/Main/SprintBar.value = sprint
+		$UI/Defense/HealthBar.max_value = max_health
+		$UI/Defense/HealthBar.value = health
+		$UI/Defense/SprintBar.value = sprint
 		if sprint >= 220:
 			exhausted = false
-			$UI/Main/SprintBar.visible = false
+			$UI/Defense/SprintBar.visible = false
 		else:
-			$UI/Main/SprintBar.visible = true
-		$UI/Main/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
+			$UI/Defense/SprintBar.visible = true
+		$UI/Defense/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
-	if $"UI/Main/Death".visible:
-		$"UI/Main/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
+	if $"UI/Defense/Death".visible:
+		$"UI/Defense/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
 	if not alive:
 		revival_time -= delta
 		
@@ -636,7 +616,7 @@ func _physics_process(delta: float) -> void:
 			damage_taken = 0.0
 			gold_collected = 0
 			kills = 0
-			$"UI/Main/Death".visible = false
+			$"UI/Defense/Death".visible = false
 			health = max_health
 			gold = max(roundi(gold / 2), 0)
 			Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
@@ -657,7 +637,7 @@ func _physics_process(delta: float) -> void:
 			sprint += 0.5
 	if velocity.length() == SPEED and sprint < 220:
 		sprint += 0.45
-	var slots = $UI/Main/Inventory.get_children()
+	var slots = $UI/Defense/Inventory.get_children()
 
 	for i in slots.size():
 		var slot = slots[i]
@@ -695,9 +675,9 @@ func _physics_process(delta: float) -> void:
 	if count > 0:
 		bombrat_counter.text = "%d" % count
 
-	if $UI/Main.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
-		$UI/Main/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
-		$UI/Main/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+	if $UI/Defense.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
+		$UI/Defense/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
+		$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 
 	for bombrat in get_bombrats_to_track():
 		if not is_instance_valid(bombrat):
@@ -850,7 +830,7 @@ func _process_hit(body):
 			add_hit_particles(midpoint, angle)
 
 func _on_shop_close_button_pressed() -> void:
-	$UI/Main/Shop.visible = false
+	$UI/Defense/Shop.visible = false
 
 func add_message(message: String, player_name: String) -> void:
 	if multiplayer.has_multiplayer_peer():
@@ -859,10 +839,10 @@ func add_message(message: String, player_name: String) -> void:
 	chat_message.text = player_name + ": " + message
 	chat_message.visible = true
 	chat_message.modulate = Color(1, 1, 1, 1)
-	$UI/Main/Chat/VBoxContainer.add_child(chat_message, true)
+	$UI/Global/Chat/VBoxContainer.add_child(chat_message, true)
 	_write_chat_log(player_name, message)
 	await get_tree().process_frame
-	$UI/Main/Chat.scroll_vertical = $UI/Main/Chat.get_v_scroll_bar().max_value
+	$UI/Global/Chat.scroll_vertical = $UI/Global/Chat.get_v_scroll_bar().max_value
 
 func _write_chat_log(player_name: String, message: String) -> void:
 	var log_line = "[%s] %s: %s" % [
@@ -877,8 +857,8 @@ func _write_chat_log(player_name: String, message: String) -> void:
 		file.close()
 		
 func _on_chat_bar_submitted(new_text: String) -> void:
-	$UI/Main/ChatBar.text = ""
-	$UI/Main/ChatBar.release_focus()
+	$UI/Global/ChatBar.text = ""
+	$UI/Global/ChatBar.release_focus()
 	if new_text == "":
 		return
 
@@ -889,17 +869,17 @@ func _on_chat_bar_submitted(new_text: String) -> void:
 		add_message(new_text, player_name)
 
 func _on_chat_bar_focus_entered() -> void:
-	for child in $UI/Main/Chat/VBoxContainer.get_children():
+	for child in $UI/Global/Chat/VBoxContainer.get_children():
 		child.visible = true
 		child.modulate = Color(1, 1, 1, 1)
 		for node in child.get_children():
 			if node is Timer:
 				node.stop()
 	await get_tree().process_frame
-	$UI/Main/Chat.scroll_vertical = $UI/Main/Chat.get_v_scroll_bar().max_value
+	$UI/Global/Chat.scroll_vertical = $UI/Global/Chat.get_v_scroll_bar().max_value
 
 func _on_chat_bar_focus_exited() -> void:
-	for child in $UI/Main/Chat/VBoxContainer.get_children():
+	for child in $UI/Global/Chat/VBoxContainer.get_children():
 		if child.should_fade:
 			child.visible = true
 			child.modulate = Color(1, 1, 1, 1)
@@ -923,6 +903,6 @@ func _on_main_menu_pressed() -> void:
 
 func _on_chatbar_gui_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		$UI/Main/ChatBar.text = ""
-		$UI/Main/ChatBar.release_focus()
+		$UI/Global/ChatBar.text = ""
+		$UI/Global/ChatBar.release_focus()
 		get_viewport().set_input_as_handled()
