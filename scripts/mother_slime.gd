@@ -122,6 +122,10 @@ func die() -> void:
 	var tween = create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(Callable(self, "queue_free"))
+	if multiplayer.has_multiplayer_peer():
+		play_sfx.rpc("appear", global_position, 0.0, 0.45)
+	else:
+		play_sfx("appear", global_position, 0.0, 0.45)
 
 func _physics_process(delta: float) -> void:
 	if (multiplayer.has_multiplayer_peer() and multiplayer.is_server()) or not multiplayer.has_multiplayer_peer():

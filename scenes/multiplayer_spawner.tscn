@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bhb5vspn4i4fd"]
+[gd_scene load_steps=0 format=3 uid="uid://bhb5vspn4i4fd"]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner"]
 _spawnable_scenes = PackedStringArray("uid://bma6r3uqptx6d", "uid://dkm4wygcrnihe", "uid://bfnnju2fwq13d", "uid://ccfj8glgxc0w7", "uid://bje8wcryrixir", "uid://cghjeqjnh6r7j", "uid://dcy0t5qh6b33u", "uid://dqoqkud0rwv3l", "uid://dboj2ky7bvpgd", "uid://8l2rb5w08s7r", "uid://cuycs5b6h1yuu", "uid://c0gs7v7xago8i")

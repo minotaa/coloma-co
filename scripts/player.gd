@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 var type: String = "Defense"
 var current_log_path: String
-var original_zoom := Vector2(5.0, 5.0)
+var original_zoom := Vector2(3.75, 3.75)
 var zoom_multiplier := 1.0
 var directions := {
 	"left": Vector2.LEFT,
@@ -797,9 +797,9 @@ func add_hit_particles(position: Vector2, angle: float):
 func _process_hit(body):
 	if body.is_in_group("enemies"):
 		if multiplayer.has_multiplayer_peer():
-			play_sfx.rpc("f_slash", global_position, -8.0, randf_range(0.95, 1.15))
+			play_sfx.rpc("swoosh2louder", global_position, -8.0, randf_range(0.95, 1.15))
 		else:
-			play_sfx("f_slash", global_position, -8.0, randf_range(0.95, 1.15))
+			play_sfx("swoosh2louder", global_position, -8.0, randf_range(0.95, 1.15))
 		# Apply separate Strength buff multiplier if active
 		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
 

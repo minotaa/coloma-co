@@ -284,6 +284,12 @@ func spawn_crabman(direction: String) -> void:
 				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
 					matching_cells.append(cell_loc)
 
+	if matching_cells.is_empty():
+		matching_cells = cells.filter(func(c):
+			var d = spawner_layer.get_cell_tile_data(c)
+			return d and d.get_custom_data("type") == "main"
+		)
+
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
@@ -316,6 +322,12 @@ func spawn_slime(direction: String) -> void:
 				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
 					matching_cells.append(cell_loc)
 
+	if matching_cells.is_empty():
+		matching_cells = cells.filter(func(c):
+			var d = spawner_layer.get_cell_tile_data(c)
+			return d and d.get_custom_data("type") == "main"
+		)		
+		
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
@@ -352,6 +364,12 @@ func spawn_bombrat(direction: String) -> void:
 				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
 					matching_cells.append(cell_loc)
 
+	if matching_cells.is_empty():
+		matching_cells = cells.filter(func(c):
+			var d = spawner_layer.get_cell_tile_data(c)
+			return d and d.get_custom_data("type") == "main"
+		)
+		
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
@@ -388,6 +406,12 @@ func spawn_bauble(direction: String) -> void:
 			"east":
 				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
 					matching_cells.append(cell_loc)
+
+	if matching_cells.is_empty():
+		matching_cells = cells.filter(func(c):
+			var d = spawner_layer.get_cell_tile_data(c)
+			return d and d.get_custom_data("type") == "main"
+		)
 
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()

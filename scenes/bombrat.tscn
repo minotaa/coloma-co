@@ -213,6 +213,8 @@ shape = SubResource("CircleShape2D_v5wyi")
 stream = SubResource("AudioStreamPolyphonic_0l8pv")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_postprocessing = 1
+avoidance_enabled = true
 
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 2
@@ -235,3 +237,5 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_svhan")
 show_percentage = false
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(0, -1.5)
+scale = Vector2(1, 1.35)

@@ -143,7 +143,6 @@ func _on_singleplayer_pressed() -> void:
 			multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
 			multiplayer.multiplayer_peer = null
 		NetworkManager.players = []
-	play_ui_sfx(preload("res://assets/sounds/success.wav"))
 	#Man.start_game()
 	update_mode_selector()
 	$"UI/Main/Mode Selector".visible = true
@@ -334,3 +333,7 @@ func _on_map_selector_right_pressed() -> void:
 	index = (index + 1) % maps_for_mode.size()
 	Man.selected_map = maps_for_mode[index]
 	update_mode_selector()
+	
+func _on_mode_selector_start_pressed() -> void:
+	play_ui_sfx(preload("res://assets/sounds/success.wav"))
+	Man.start_game(Man.selected_mode, Man.selected_map)

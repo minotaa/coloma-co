@@ -48,6 +48,10 @@ func die() -> void:
 	var tween = create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(Callable(self, "queue_free"))
+	if multiplayer.has_multiplayer_peer():
+		play_sfx.rpc("appear", global_position, 0.0, 0.45)
+	else:
+		play_sfx("appear", global_position, 0.0, 0.45)
 
 func explode() -> void:
 	print("exploded")
@@ -59,9 +63,9 @@ func explode() -> void:
 		if area.is_in_group("gem"):
 			area.take_damage(20.0) # 20% damage
 	if multiplayer.has_multiplayer_peer():
-		play_sfx("better6", global_position)
-	else:
 		play_sfx.rpc("better6", global_position)
+	else:
+		play_sfx("better6", global_position)
 	die()
 
 func _physics_process(delta: float) -> void:

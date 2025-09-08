@@ -1,18 +1,22 @@
 extends Node
 
-@onready var main_menu_scene = preload("res://scenes/main_menu.tscn")
-@onready var d_plains = preload("res://scenes/levels/defense/Plains.tscn")
+@onready var main_menu_scene: PackedScene = preload("res://scenes/main_menu.tscn")
 
-var modes = ["Defense", "Dungeon"]
-var maps = {
-	"defense": ["Plains", "Plains2"],
-	"dungeon": ["Test", "Test2"]
+var modes: Array[Variant] = ["Defense", "Dungeon"]
+var maps: Dictionary[Variant, Variant] = {
+	"defense": ["Plains", "Desert"],
+	"dungeon": []
 }
 
-var selected_mode = "Defense"
-var selected_map = "Plains"
+var map_paths: Dictionary[Variant, Variant] = {
+	"Defense_Plains": "res://scenes/levels/defense/Plains.tscn",
+	"Defense_Desert": "res://scenes/levels/defense/Desert.tscn"
+}
 
-var controls = {
+var selected_mode: String = "Defense"
+var selected_map: String  = "Plains"
+
+var controls: Dictionary[Variant, Variant] = {
 	KEY_W: "Move forward",
 	KEY_A: "Move left",
 	KEY_S: "Move backward",
@@ -36,9 +40,9 @@ var controls = {
 var fullscreen: bool = false
 var sfx_volume: float = 100.0
 var bag = Bag.new()
-var equipped_weapon: Weapon = Items.get_by_id(1)
-var game_loaded: bool = false
-var cooldowns = {}
+var equipped_weapon: Weapon                 = Items.get_by_id(1)
+var game_loaded: bool                       = false
+var cooldowns: Dictionary[Variant, Variant] = {}
 
 func start_cooldown(item: Consumable, seconds: float) -> void:
 	cooldowns[item.id] = {
@@ -55,12 +59,12 @@ func is_on_cooldown(item: Consumable) -> bool:
 	return get_cooldown_left(item) > 0.0
 
 func take_screenshot() -> void:
-	var img: Image = get_viewport().get_texture().get_image()
-	var dir = "user://screenshots/"
-	var dir_obj = DirAccess.open(dir)
+	var img: Image  = get_viewport().get_texture().get_image()
+	var dir: String        = "user://screenshots/"
+	var dir_obj: DirAccess = DirAccess.open(dir)
 	if dir_obj == null:
 		DirAccess.make_dir_recursive_absolute(dir)
-	var filename = Time.get_datetime_string_from_system().replace(":", "-")
+	var filename: String = Time.get_datetime_string_from_system().replace(":", "-")
 	img.save_png(dir + filename + ".png")
 	print("Screenshot saved to: ", filename)
 
@@ -72,7 +76,7 @@ func load_game():
 	game_loaded = true
 	if not FileAccess.file_exists("user://game.mewo"):
 		return
-	var save_file = FileAccess.open("user://game.mewo", FileAccess.READ)
+	var save_file: FileAccess = FileAccess.open("user://game.mewo", FileAccess.READ)
 	while save_file.get_position() < save_file.get_length():
 		var json_string = save_file.get_line()
 		var json = JSON.new()
@@ -116,7 +120,7 @@ func _notification(what: int) -> void:
 			save_game("went to background")
 
 func save_game(reason: String) -> void:
-	var save_file = FileAccess.open("user://game.mewo", FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open("user://game.mewo", FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(get_save_data()))
 	print("Saved the game. " + "(" + reason + ")")
 
@@ -124,11 +128,11 @@ func _ready() -> void:
 	load_game()
 	
 @rpc("authority", "call_local", "reliable")
-func start_game() -> void:
+func start_game(mode: String, map: String) -> void:
 	for child in get_tree().current_scene.get_children():
 		if child.name.begins_with("Main Menu") or child.name.begins_with("Defense"):
 			child.queue_free()
-	get_tree().current_scene.add_child(d_plains.instantiate(), true)
+	get_tree().current_scene.add_child(load(map_paths[mode + "_" + map]).instantiate(), true)
 	
 @rpc("authority", "call_local", "reliable")
 func end_game() -> void:	

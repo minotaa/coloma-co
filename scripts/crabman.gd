@@ -141,6 +141,10 @@ func die() -> void:
 	var tween = create_tween()
 	tween.tween_property($AnimatedSprite2D, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(Callable(self, "queue_free"))
+	if multiplayer.has_multiplayer_peer():
+		play_sfx.rpc("appear", global_position, 0.0, 0.45)
+	else:
+		play_sfx("appear", global_position, 0.0, 0.45)
 
 func update_sprite_direction(dir: Vector2) -> void:
 	if abs(dir.x) > abs(dir.y):

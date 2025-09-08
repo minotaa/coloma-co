@@ -1171,6 +1171,7 @@ text = "Back"
 [connection signal="pressed" from="UI/Main/Mode Selector/Panel/Map Selector/Left" to="." method="_on_map_selector_left_pressed"]
 [connection signal="pressed" from="UI/Main/Mode Selector/Panel/Map Selector/Right" to="." method="_on_map_selector_right_pressed"]
 [connection signal="pressed" from="UI/Main/Mode Selector/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="UI/Main/Mode Selector/Start" to="." method="_on_mode_selector_start_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Join" to="." method="_on_lan_join_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Back" to="." method="_on_back_pressed"]
