@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=4 uid="uid://dej207wipn6fc"]
+[gd_scene load_steps=44 format=4 uid="uid://dej207wipn6fc"]
 
 [ext_resource type="Script" uid="uid://bdf37d301uotm" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_bqqt6"]
@@ -142,6 +142,10 @@ outline_color = Color(0, 0, 0, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]
 font = ExtResource("2_bqqt6")
 font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_1ajci"]
+font = ExtResource("2_bqqt6")
+font_size = 33
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7b55j"]
 
@@ -329,7 +333,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Quit"
 
-[node name="Mode Selector" type="Control" parent="UI/Main"]
+[node name="Singleplayer Mode Selector" type="Control" parent="UI/Main"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -338,7 +342,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Main/Mode Selector"]
+[node name="Panel" type="Panel" parent="UI/Main/Singleplayer Mode Selector"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.031
@@ -352,7 +356,7 @@ offset_bottom = -80.3201
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
 
-[node name="Title" type="Label" parent="UI/Main/Mode Selector/Panel"]
+[node name="Title" type="Label" parent="UI/Main/Singleplayer Mode Selector/Panel"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -365,7 +369,7 @@ grow_horizontal = 2
 text = "Select your mode"
 label_settings = SubResource("LabelSettings_flqon")
 
-[node name="Mode" type="Label" parent="UI/Main/Mode Selector/Panel"]
+[node name="Mode" type="Label" parent="UI/Main/Singleplayer Mode Selector/Panel"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -379,7 +383,7 @@ text = "Mode:"
 label_settings = SubResource("LabelSettings_rcqid")
 horizontal_alignment = 1
 
-[node name="Mode Selector" type="HBoxContainer" parent="UI/Main/Mode Selector/Panel"]
+[node name="Mode Selector" type="HBoxContainer" parent="UI/Main/Singleplayer Mode Selector/Panel"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -390,7 +394,7 @@ offset_right = 210.0
 offset_bottom = 180.0
 grow_horizontal = 2
 
-[node name="Left" type="Button" parent="UI/Main/Mode Selector/Panel/Mode Selector"]
+[node name="Left" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Mode Selector"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
@@ -400,14 +404,14 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "<"
 
-[node name="Label" type="Label" parent="UI/Main/Mode Selector/Panel/Mode Selector"]
+[node name="Label" type="Label" parent="UI/Main/Singleplayer Mode Selector/Panel/Mode Selector"]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 text = "Mode"
 label_settings = SubResource("LabelSettings_rcqid")
 horizontal_alignment = 1
 
-[node name="Right" type="Button" parent="UI/Main/Mode Selector/Panel/Mode Selector"]
+[node name="Right" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Mode Selector"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
@@ -417,7 +421,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = ">"
 
-[node name="Map" type="Label" parent="UI/Main/Mode Selector/Panel"]
+[node name="Map" type="Label" parent="UI/Main/Singleplayer Mode Selector/Panel"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -431,7 +435,7 @@ text = "Map:"
 label_settings = SubResource("LabelSettings_rcqid")
 horizontal_alignment = 1
 
-[node name="Map Selector" type="HBoxContainer" parent="UI/Main/Mode Selector/Panel"]
+[node name="Map Selector" type="HBoxContainer" parent="UI/Main/Singleplayer Mode Selector/Panel"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -442,7 +446,7 @@ offset_right = 210.0
 offset_bottom = 308.0
 grow_horizontal = 2
 
-[node name="Left" type="Button" parent="UI/Main/Mode Selector/Panel/Map Selector"]
+[node name="Left" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Map Selector"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
@@ -452,14 +456,14 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "<"
 
-[node name="Label" type="Label" parent="UI/Main/Mode Selector/Panel/Map Selector"]
+[node name="Label" type="Label" parent="UI/Main/Singleplayer Mode Selector/Panel/Map Selector"]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 text = "Map"
 label_settings = SubResource("LabelSettings_rcqid")
 horizontal_alignment = 1
 
-[node name="Right" type="Button" parent="UI/Main/Mode Selector/Panel/Map Selector"]
+[node name="Right" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Map Selector"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
@@ -469,7 +473,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = ">"
 
-[node name="Back" type="Button" parent="UI/Main/Mode Selector"]
+[node name="Back" type="Button" parent="UI/Main/Singleplayer Mode Selector"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.031
@@ -489,7 +493,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Back"
 
-[node name="Start" type="Button" parent="UI/Main/Mode Selector"]
+[node name="Start" type="Button" parent="UI/Main/Singleplayer Mode Selector"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.031
@@ -508,6 +512,186 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Start"
+
+[node name="Multiplayer Mode Selector" type="Control" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="UI/Main/Multiplayer Mode Selector"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.3
+anchor_right = 0.394
+anchor_bottom = 0.856
+offset_left = 0.32
+offset_top = -16.0
+offset_right = -0.320038
+offset_bottom = -80.3201
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="Title" type="Label" parent="UI/Main/Multiplayer Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -168.0
+offset_top = 24.0
+offset_right = 168.0
+offset_bottom = 66.0
+grow_horizontal = 2
+text = "Select your mode"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="Mode" type="Label" parent="UI/Main/Multiplayer Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -168.0
+offset_top = 80.0
+offset_right = 168.0
+offset_bottom = 122.0
+grow_horizontal = 2
+text = "Mode:"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Mode Selector" type="HBoxContainer" parent="UI/Main/Multiplayer Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -210.0
+offset_top = 120.0
+offset_right = 210.0
+offset_bottom = 180.0
+grow_horizontal = 2
+
+[node name="Left" type="Button" parent="UI/Main/Multiplayer Mode Selector/Panel/Mode Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "<"
+
+[node name="Label" type="Label" parent="UI/Main/Multiplayer Mode Selector/Panel/Mode Selector"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+text = "Mode"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Right" type="Button" parent="UI/Main/Multiplayer Mode Selector/Panel/Mode Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = ">"
+
+[node name="Map" type="Label" parent="UI/Main/Multiplayer Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -168.0
+offset_top = 200.0
+offset_right = 168.0
+offset_bottom = 242.0
+grow_horizontal = 2
+text = "Map:"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Map Selector" type="HBoxContainer" parent="UI/Main/Multiplayer Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -210.0
+offset_top = 248.0
+offset_right = 210.0
+offset_bottom = 308.0
+grow_horizontal = 2
+
+[node name="Left" type="Button" parent="UI/Main/Multiplayer Mode Selector/Panel/Map Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "<"
+
+[node name="Label" type="Label" parent="UI/Main/Multiplayer Mode Selector/Panel/Map Selector"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+text = "Map"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Right" type="Button" parent="UI/Main/Multiplayer Mode Selector/Panel/Map Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = ">"
+
+[node name="Back" type="Button" parent="UI/Main/Multiplayer Mode Selector"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.864
+anchor_right = 0.394
+anchor_bottom = 0.967
+offset_left = 0.32
+offset_top = 23.92
+offset_right = -0.320038
+offset_bottom = -0.240051
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Back"
+
+[node name="Continue" type="Button" parent="UI/Main/Multiplayer Mode Selector"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.864
+anchor_right = 0.394
+anchor_bottom = 0.967
+offset_left = 0.32
+offset_top = -80.08
+offset_right = -0.320038
+offset_bottom = -80.2401
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "Continue"
 
 [node name="LAN Buttons" type="Control" parent="UI/Main"]
 visible = false
@@ -812,6 +996,21 @@ offset_bottom = -96.0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
 
+[node name="Panel2" type="Panel" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -72.0
+offset_right = -16.0
+offset_bottom = 72.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
 [node name="Count" type="Label" parent="UI/Main/Players"]
 layout_mode = 1
 anchors_preset = 2
@@ -825,6 +1024,23 @@ grow_vertical = 0
 text = "Players (0/6)"
 label_settings = SubResource("LabelSettings_rtw2f")
 horizontal_alignment = 1
+
+[node name="Details" type="Label" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -336.0
+offset_top = -48.0
+offset_right = -32.0
+offset_bottom = 48.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "Mode: Defense
+Map: Plains"
+label_settings = SubResource("LabelSettings_1ajci")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Players"]
 layout_mode = 1
@@ -883,6 +1099,150 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 text = "Copy User ID"
+
+[node name="Mode Selector" type="Control" parent="UI/Main/Players"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="UI/Main/Players/Mode Selector"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.3
+anchor_right = 0.394
+anchor_bottom = 0.856
+offset_left = 880.32
+offset_top = -16.0
+offset_right = 759.68
+offset_bottom = -80.32
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="Title" type="Label" parent="UI/Main/Players/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -156.0
+offset_top = 24.0
+offset_right = 156.0
+offset_bottom = 66.0
+grow_horizontal = 2
+text = "Change mode"
+label_settings = SubResource("LabelSettings_flqon")
+horizontal_alignment = 1
+
+[node name="Mode" type="Label" parent="UI/Main/Players/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -156.0
+offset_top = 80.0
+offset_right = 156.0
+offset_bottom = 122.0
+grow_horizontal = 2
+text = "Mode:"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Mode Selector" type="HBoxContainer" parent="UI/Main/Players/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -156.0
+offset_top = 120.0
+offset_right = 156.0
+offset_bottom = 180.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="Left" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Mode Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "<"
+
+[node name="Label" type="Label" parent="UI/Main/Players/Mode Selector/Panel/Mode Selector"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+text = "Mode"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Right" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Mode Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = ">"
+
+[node name="Map" type="Label" parent="UI/Main/Players/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -156.0
+offset_top = 200.0
+offset_right = 156.0
+offset_bottom = 242.0
+grow_horizontal = 2
+text = "Map:"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Map Selector" type="HBoxContainer" parent="UI/Main/Players/Mode Selector/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -156.0
+offset_top = 248.0
+offset_right = 156.0
+offset_bottom = 308.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="Left" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Map Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = "<"
+
+[node name="Label" type="Label" parent="UI/Main/Players/Mode Selector/Panel/Map Selector"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+text = "Map"
+label_settings = SubResource("LabelSettings_rcqid")
+horizontal_alignment = 1
+
+[node name="Right" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Map Selector"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+text = ">"
 
 [node name="Join" type="Control" parent="UI/Main"]
 visible = false
@@ -1166,12 +1526,18 @@ text = "Back"
 [connection signal="pressed" from="UI/Main/Buttons/Multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Mode Selector/Left" to="." method="_on_mode_selector_left_pressed"]
-[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Mode Selector/Right" to="." method="_on_mode_selector_right_pressed"]
-[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Map Selector/Left" to="." method="_on_map_selector_left_pressed"]
-[connection signal="pressed" from="UI/Main/Mode Selector/Panel/Map Selector/Right" to="." method="_on_map_selector_right_pressed"]
-[connection signal="pressed" from="UI/Main/Mode Selector/Back" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="UI/Main/Mode Selector/Start" to="." method="_on_mode_selector_start_pressed"]
+[connection signal="pressed" from="UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Left" to="." method="_on_mode_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Right" to="." method="_on_mode_selector_right_pressed"]
+[connection signal="pressed" from="UI/Main/Singleplayer Mode Selector/Panel/Map Selector/Left" to="." method="_on_map_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Singleplayer Mode Selector/Panel/Map Selector/Right" to="." method="_on_map_selector_right_pressed"]
+[connection signal="pressed" from="UI/Main/Singleplayer Mode Selector/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="UI/Main/Singleplayer Mode Selector/Start" to="." method="_on_mode_selector_start_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Mode Selector/Panel/Mode Selector/Left" to="." method="_on_mode_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Mode Selector/Panel/Mode Selector/Right" to="." method="_on_mode_selector_right_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Mode Selector/Panel/Map Selector/Left" to="." method="_on_map_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Mode Selector/Panel/Map Selector/Right" to="." method="_on_map_selector_right_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Mode Selector/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="UI/Main/Multiplayer Mode Selector/Continue" to="." method="_on_mode_selector_continue_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Join" to="." method="_on_lan_join_pressed"]
 [connection signal="pressed" from="UI/Main/LAN Buttons/Back" to="." method="_on_back_pressed"]
@@ -1186,6 +1552,10 @@ text = "Back"
 [connection signal="pressed" from="UI/Main/Players/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Players/Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="UI/Main/Players/Copy UserID" to="." method="_on_copy_userid_pressed"]
+[connection signal="pressed" from="UI/Main/Players/Mode Selector/Panel/Mode Selector/Left" to="." method="_on_mode_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Players/Mode Selector/Panel/Mode Selector/Right" to="." method="_on_mode_selector_right_pressed"]
+[connection signal="pressed" from="UI/Main/Players/Mode Selector/Panel/Map Selector/Left" to="." method="_on_map_selector_left_pressed"]
+[connection signal="pressed" from="UI/Main/Players/Mode Selector/Panel/Map Selector/Right" to="." method="_on_map_selector_right_pressed"]
 [connection signal="text_submitted" from="UI/Main/Join/Address" to="." method="_on_address_text_submitted"]
 [connection signal="pressed" from="UI/Main/Join/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="UI/Main/Join/Back" to="." method="_on_back_pressed"]

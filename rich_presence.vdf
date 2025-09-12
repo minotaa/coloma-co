@@ -1,0 +1,11 @@
+"lang" 
+{
+    "Language"  "english" 
+    "Tokens" 
+    {
+        "#In_MainMenu"	"In main menu"
+        "#Singleplayer"	"Playing singleplayer on %map%"
+        "#Multiplayer"	"Playing multiplayer on %map%"
+        "#In_Lobby"	"In lobby with %players% other people"
+    }
+}

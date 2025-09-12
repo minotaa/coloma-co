@@ -612,14 +612,14 @@ class CustomInvites:
 		var custom_invite_id: String
 		var local_user_id = EOSGRuntime.local_product_user_id
 		var processing_result: Result
-		var target_user_id = EOSGRuntime.local_product_user_id
+		var target_user_id: String
 
 	class SendRequestToJoinOptions extends BaseClass:
 		func _init():
 			super._init("SendRequestToJoinOptions")
 
 		var local_user_id = EOSGRuntime.local_product_user_id
-		var target_user_id = EOSGRuntime.local_product_user_id
+		var target_user_id: String
 
 		var client_data = null
 
@@ -628,7 +628,7 @@ class CustomInvites:
 			super._init("AcceptRequestToJoinOptions")
 
 		var local_user_id = EOSGRuntime.local_product_user_id
-		var target_user_id = EOSGRuntime.local_product_user_id
+		var target_user_id: String
 
 		var client_data = null
 
@@ -637,7 +637,7 @@ class CustomInvites:
 			super._init("RejectRequestToJoinOptions")
 
 		var local_user_id = EOSGRuntime.local_product_user_id
-		var target_user_id = EOSGRuntime.local_product_user_id
+		var target_user_id: String
 
 		var client_data = null
 
@@ -779,7 +779,7 @@ class Platform:
 		func _init():
 			super._init("RTCOptions")
 
-		var background_mode = null # # See [enum EOS.Platform.RTCBackgroundMode]
+		var background_mode = null ## See [enum EOS.Platform.RTCBackgroundMode]
 
 	class CreateOptions extends BaseClass:
 		func _init():
@@ -793,7 +793,7 @@ class Platform:
 		var sandbox_id: String
 
 		var cache_directory = ProjectSettings.globalize_path("user://eosg-cache")
-		var flags: int = -1
+		var flags: int = 0 ## See [enum EOS.Platform.PlatformFlags]
 		var is_server: bool
 		var override_country_code: String
 		var override_locale_code: String
@@ -2595,6 +2595,7 @@ class Logging:
 		Rtc = 29,
 		RTCAdmin = 30,
 		CustomInvites = 31,
+		Http = 41,
 		AllCategories = 0x7fffffff
 	}
 
@@ -4206,6 +4207,8 @@ enum Result {
 	ReconnectionTimegateExpired = 13005,
 	ShutdownInvoked = 13006,
 	UserIsInBlocklist = 13007,
+	AllocationFailed = 13009,
+	VoiceModerationModeMismatch = 13010,
 	ProgressionSnapshotSnapshotIdUnavailable = 14000,
 	ParentEmailMissing = 15000,
 	UserGraduated = 15001,
@@ -4309,7 +4312,14 @@ enum ComparisonOp {
 	NotAnyOf = 8,
 	OneOf = 9,
 	NotOneOf = 10,
-	Contains = 11
+	Contains = 11,
+	RegexMatch = 12,
+	Size = 13
+}
+
+enum LogicalCombineOp {
+	And = 0,
+	Or = 1
 }
 
 enum AntiCheatCommonClientType {

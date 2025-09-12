@@ -44,6 +44,20 @@ var equipped_weapon: Weapon                 = Items.get_by_id(1)
 var game_loaded: bool                       = false
 var cooldowns: Dictionary[Variant, Variant] = {}
 
+func set_rich_presence(token: String) -> void:
+	if NetworkManager.steam_enabled:
+		var setting_presence = Steam.setRichPresence("steam_display", token)
+		print("Setting rich presence to "+str(token)+": "+str(setting_presence))
+	else:
+		print("Steam is not enabled, not running this.")
+		
+func set_rich_presence_value(key: String, token: String) -> void:
+	if NetworkManager.steam_enabled:
+		var setting_presence = Steam.setRichPresence(key, token)
+		print("Setting rich presence value " + key + " to "+str(token)+": "+str(setting_presence))
+	else:
+		print("Steam is not enabled, not running this.")	
+
 func start_cooldown(item: Consumable, seconds: float) -> void:
 	cooldowns[item.id] = {
 		"end_time": Time.get_ticks_msec() / 1000.0 + seconds

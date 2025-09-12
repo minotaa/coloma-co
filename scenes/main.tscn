@@ -7,6 +7,6 @@
 [node name="Main Menu" parent="." instance=ExtResource("1_o5qli")]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://scenes/map.tscn", "uid://dej207wipn6fc")
+_spawnable_scenes = PackedStringArray("uid://dej207wipn6fc")
 spawn_path = NodePath("..")
 spawn_limit = 1

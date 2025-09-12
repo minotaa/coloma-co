@@ -26,7 +26,7 @@
 		</data>
 		<key>Headers/eos_anticheatclient_types.h</key>
 		<data>
-		u01wrOAb8Qzsu1EFQTDzO2Z1Pao=
+		NtkY/GY2QARxdSvdfcPOM++Ucwk=
 		</data>
 		<key>Headers/eos_anticheatclient_types_deprecated.inl</key>
 		<data>
@@ -34,7 +34,7 @@
 		</data>
 		<key>Headers/eos_anticheatcommon_types.h</key>
 		<data>
-		k4kbHIx2S9klgS2hmRYcPUcdvEY=
+		vQrE1+o4WgZlGBNtZFRXEKEiOk4=
 		</data>
 		<key>Headers/eos_anticheatserver.h</key>
 		<data>
@@ -62,11 +62,11 @@
 		</data>
 		<key>Headers/eos_common.h</key>
 		<data>
-		5rzo1wFUtpnssTHdREdWTy+cI4U=
+		5ddGV8W4iYCnmouyGsKj76RUM74=
 		</data>
 		<key>Headers/eos_connect.h</key>
 		<data>
-		CPi8RhwGU5+Q+0yYvfetrSppjb4=
+		MHh/7j4U+5+RgTN5uh/QJdOify4=
 		</data>
 		<key>Headers/eos_connect_types.h</key>
 		<data>
@@ -82,7 +82,7 @@
 		</data>
 		<key>Headers/eos_ecom.h</key>
 		<data>
-		tBYH3con5YPrDAlRScPWHUZbbcE=
+		CsvFZIyiHnAY8yyG6kOUxLViKJI=
 		</data>
 		<key>Headers/eos_ecom_types.h</key>
 		<data>
@@ -106,7 +106,7 @@
 		</data>
 		<key>Headers/eos_integratedplatform_types.h</key>
 		<data>
-		4C7B01zVyqzCro9TBrN3vJ3adrA=
+		JHc0UOvK6n+g7Tqn0QZ352R4grU=
 		</data>
 		<key>Headers/eos_ios.h</key>
 		<data>
@@ -138,11 +138,15 @@
 		</data>
 		<key>Headers/eos_lobby_types.h</key>
 		<data>
-		/pLY9erjDu+F1JJgJU76y/cCN/c=
+		KEbV9pssda2lig46il0iAI7auqI=
 		</data>
 		<key>Headers/eos_logging.h</key>
 		<data>
-		DrrVZuxKEGLnYxV2I1j5ef2Yo/U=
+		TVjnf3xPIj53RRPrPJfwGUKUYTA=
+		</data>
+		<key>Headers/eos_logging_categories.h</key>
+		<data>
+		WaC7q28C2u8wOkJ2PK6ZvprPMQM=
 		</data>
 		<key>Headers/eos_metrics.h</key>
 		<data>
@@ -162,11 +166,11 @@
 		</data>
 		<key>Headers/eos_p2p.h</key>
 		<data>
-		eYIYUl5skXquuMu5aVrjWC/iNfk=
+		nkKnhNCwbE/UKr7K0+wXdnUzqMM=
 		</data>
 		<key>Headers/eos_p2p_types.h</key>
 		<data>
-		835l4zyowoLBGNWBSBQbt4QYgpI=
+		IRw+emKo3IPRwEf49hxycc/7JEs=
 		</data>
 		<key>Headers/eos_platform_prereqs.h</key>
 		<data>
@@ -186,7 +190,7 @@
 		</data>
 		<key>Headers/eos_presence_types.h</key>
 		<data>
-		WMebHVaE8jFL+KT4piubeoU6un0=
+		OhLSawAUiI87Cv+BnpnS1Mlg8ao=
 		</data>
 		<key>Headers/eos_progressionsnapshot.h</key>
 		<data>
@@ -206,7 +210,7 @@
 		</data>
 		<key>Headers/eos_result.h</key>
 		<data>
-		0OPLfZkCNh6q2M9Li/8iIUnQ1KQ=
+		I0XFy8G+TlfhfV3iae0twdod1kU=
 		</data>
 		<key>Headers/eos_rtc.h</key>
 		<data>
@@ -222,7 +226,7 @@
 		</data>
 		<key>Headers/eos_rtc_audio.h</key>
 		<data>
-		/J3eocQwtevWvpdk6dLDOJINszc=
+		WYfxYDuPFneNVROdBQOrA1qTFec=
 		</data>
 		<key>Headers/eos_rtc_audio_types.h</key>
 		<data>
@@ -242,7 +246,7 @@
 		</data>
 		<key>Headers/eos_rtc_types.h</key>
 		<data>
-		HnecqfNOBWQoNvlprsBPuVYAAlo=
+		bTM0XBFGzT16XbwOXdbleFa5+1w=
 		</data>
 		<key>Headers/eos_sanctions.h</key>
 		<data>
@@ -258,11 +262,11 @@
 		</data>
 		<key>Headers/eos_sessions.h</key>
 		<data>
-		EDtMVhee8juhwh0/5+n2biBfjI0=
+		baWFAMaSIX3MmVQAqWacy7OT4po=
 		</data>
 		<key>Headers/eos_sessions_types.h</key>
 		<data>
-		4mzTAkk4k8hvfJO4Qly+R2j4xGQ=
+		zTsr/wtRaWskD3yYGab2l87byHg=
 		</data>
 		<key>Headers/eos_stats.h</key>
 		<data>
@@ -270,7 +274,7 @@
 		</data>
 		<key>Headers/eos_stats_types.h</key>
 		<data>
-		k4V96O5s7WFg6gOeCrqMxBEw85Q=
+		EgBdlLjBZZLzDPwEV98CWsfcmno=
 		</data>
 		<key>Headers/eos_titlestorage.h</key>
 		<data>
@@ -310,11 +314,11 @@
 		</data>
 		<key>Headers/eos_version.h</key>
 		<data>
-		ytcnMwc754VVgdUqwyBROHu5lZs=
+		APnZpXfuLUVoaqsa/bOZ9sjWC10=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		myarHj8Gak9AuhW2zhhxU6CpRls=
+		ovENT/49GeVhPB/AON16lPSQBCA=
 		</data>
 		<key>PrivacyInfo.xcprivacy</key>
 		<data>
@@ -362,7 +366,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			1lCe6SCmAgBHut2s4IXN1SK6AXB+cOHfqcB4xEiDeaI=
+			o8uHYo71ipMtUlzIpmD0PPsm7ipWq4czA0c4ITrx7p0=
 			</data>
 		</dict>
 		<key>Headers/eos_anticheatclient_types_deprecated.inl</key>
@@ -376,7 +380,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			vquDSS0exTP/44wJEbUClzR5iSAAJPYLZN6sdKZ96RM=
+			V59s3BPNWRLgGPIvaV35FN7V8gkb3/B8t6de0CjuMJY=
 			</data>
 		</dict>
 		<key>Headers/eos_anticheatserver.h</key>
@@ -425,14 +429,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			u1p2bP1bWk5phzCdN9fT/to+D3h8QBbykv6WLd86KPc=
+			LTogVzK5s3ouX4RIhL7cNc32BBNF5nGQMgdF69u1KQQ=
 			</data>
 		</dict>
 		<key>Headers/eos_connect.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			1UKswyfTKTsfNhJ94sHCYJybqiyWDKkozbrRnKSgYp4=
+			vO0rFPWtxCgx9gBj8Cx/QaUEjTtBRKXDzibhmuyHRy0=
 			</data>
 		</dict>
 		<key>Headers/eos_connect_types.h</key>
@@ -460,7 +464,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			UCYW6VfvHty8JUSR1AHVEoDldiHsdtPNbot8Mlrtt3s=
+			g6RDn9VmTuhvaXbByirY5YJiyZiXJn5DQrM6ShnFnYc=
 			</data>
 		</dict>
 		<key>Headers/eos_ecom_types.h</key>
@@ -502,7 +506,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			D7391VwVcNKjHHXDQByq24tHEWVsWtXggHAtPR7dtdc=
+			+e6BPyveYoOBTSmDA5zyg/AdYveU1JiDxLYfMWteuq0=
 			</data>
 		</dict>
 		<key>Headers/eos_ios.h</key>
@@ -558,14 +562,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			a6D7oSWIIlEsOaFX5WLMkGSUAElV5ftReFTsUOTJiHM=
+			B1lU42AYwE33znw6p+baQnm9GXMeyol0I/4zFNIeOuo=
 			</data>
 		</dict>
 		<key>Headers/eos_logging.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			FZOke756AhonAjcBN1k6hddLwgCmqycnPwRD1gBG/V4=
+			1edUtJXZRaBrfHPOB7pM1coTB9ik036/BQbJMBppLt4=
+			</data>
+		</dict>
+		<key>Headers/eos_logging_categories.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			5T+vGl/BpAevYS4Z851StBwCsAp/sqEZJAyyADP5WAA=
 			</data>
 		</dict>
 		<key>Headers/eos_metrics.h</key>
@@ -600,14 +611,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+GuDbBgEaODiuFmMW1+fSxkz6UTuFXPMNGv0DgYILes=
+			Ovg+dhrieA7lnmL89sj3YAforpjz7BvEmSusN7xvlFo=
 			</data>
 		</dict>
 		<key>Headers/eos_p2p_types.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			nGmTH4nHSAoKkhwqCh1RpUsveDzFg8xctvc33Fmd0mk=
+			zWC0lLz/2I6q1YH0BpiV9DMeEHJbQcSn6Dz6A79pfEE=
 			</data>
 		</dict>
 		<key>Headers/eos_platform_prereqs.h</key>
@@ -642,7 +653,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			qFMWbYkDzNcFf5Mbr4KAuR7s+AFhU8UYfSy+Otdq2Js=
+			LaxP58XbJO8rwgrgZjLQHxEv4lF93c4bLd5S9atNCug=
 			</data>
 		</dict>
 		<key>Headers/eos_progressionsnapshot.h</key>
@@ -677,7 +688,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			v9qTcfkrJgSIt2PF3/q94hIh/9jppZKOBD7B+ui+6yY=
+			y2/SvNIc0LX+J5gSq8Npdn3LS11kVDm00ZN0jzHP5PE=
 			</data>
 		</dict>
 		<key>Headers/eos_rtc.h</key>
@@ -705,7 +716,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			qp5tgWK8QRJYt6x7ScpdqrOmxbz0Ww+cN6uTDaaPMDk=
+			a2mQD9ERZ4N+OSJdXTJUbRHEWYbyXIsZII4yXNspE7M=
 			</data>
 		</dict>
 		<key>Headers/eos_rtc_audio_types.h</key>
@@ -740,7 +751,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			j+rFIvGpCdlDtWYlQCagH6eSebDMRTwZYedTmW27yyE=
+			rsidYCLrCmqETW9w0JVUGqwcW6c+gWegpy/8tlLgfFM=
 			</data>
 		</dict>
 		<key>Headers/eos_sanctions.h</key>
@@ -768,14 +779,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			KmQtqyWS+G6PMf9nWopF8CouuWvLgG/VfgOBtHMZDyk=
+			i3sxY4Zbu67UXlYt6ZdaHpeTYno8+BoEqFpUqbwH7dw=
 			</data>
 		</dict>
 		<key>Headers/eos_sessions_types.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			zLMty9CLu1epPaOh09V8ry3DSjtKqDdMqKFqcIxKxD4=
+			Vc0DclEr9tWq7g5LpPxFJbP/vf6fHO8LtNBdVw2i06g=
 			</data>
 		</dict>
 		<key>Headers/eos_stats.h</key>
@@ -789,7 +800,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			dcEJHGgi+aYlKMtcl5WTipKg9xk4Jg4UjsUFzjLwzeA=
+			mlkMMneTHO2Kc4DNjg6oUL2IJoUOv4Qz5XlWr4XYaFk=
 			</data>
 		</dict>
 		<key>Headers/eos_titlestorage.h</key>
@@ -859,7 +870,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			wVzcITHjmUy4es8pEy7lOkdpLX/qqPSnDzg3nUSWbBA=
+			sASqHwTaN5cPavO/COVHpHnPkPmC2v1JQ3VOglyfl7k=
 			</data>
 		</dict>
 		<key>PrivacyInfo.xcprivacy</key>

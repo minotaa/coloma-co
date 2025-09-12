@@ -25,6 +25,7 @@ func _connect_button_sfx(button: Button):
 	)
 
 func _ready() -> void:
+	Man.set_rich_presence("#In_MainMenu")
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
@@ -89,7 +90,7 @@ func _on_back_pressed() -> void:
 	else:
 		$UI/Main/Mode.text = "-- select your mode --"
 		$UI/Main/Buttons.visible = true
-		$"UI/Main/Mode Selector".visible = false
+		$"UI/Main/Singleplayer Mode Selector".visible = false
 		$UI/Main/Join.visible = false
 		$"UI/Main/LAN Buttons".visible = false
 		$UI/Main/Players.visible = false
@@ -145,14 +146,22 @@ func _on_singleplayer_pressed() -> void:
 		NetworkManager.players = []
 	#Man.start_game()
 	update_mode_selector()
-	$"UI/Main/Mode Selector".visible = true
+	$"UI/Main/Singleplayer Mode Selector".visible = true
 	$"UI/Main/Buttons".visible = false
 	
 func update_mode_selector() -> void:
-	$"UI/Main/Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode 
-	$"UI/Main/Mode Selector/Panel/Map Selector/Label".text = Man.selected_map 
+	$"UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode 
+	$"UI/Main/Singleplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map 
+	$"UI/Main/Multiplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode 
+	$"UI/Main/Multiplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map 
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		NetworkManager.send_mode.rpc(Man.selected_mode, Man.selected_map)
+		NetworkManager.update_players.emit(NetworkManager.players)
 
 func _on_update_players(players: Array) -> void:
+	print("updating players")
+	Man.set_rich_presence("#In_Lobby")
+	Man.set_rich_presence_value("players", str(NetworkManager.players.size()))
 	var container = $UI/Main/Players/ScrollContainer/VBoxContainer
 	for children in container.get_children():
 		children.queue_free()
@@ -162,7 +171,10 @@ func _on_update_players(players: Array) -> void:
 		entry.get_node("Label").text = player["username"]
 		container.add_child(entry, true)
 	$UI/Main/Players/Count.text = "Players (" + str(players.size()) + "/6)"
-
+	$"UI/Main/Players/Details".text = "Mode: " + Man.selected_mode + "\nMap: " + Man.selected_map
+	$"UI/Main/Players/Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
+	$"UI/Main/Players/Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
+ 	
 func _on_online_join_join_pressed() -> void:
 	Toast.add("Connecting to " + $"UI/Main/Online Join/UserID".text + "...")
 	$"UI/Main/Online Join/Join".disabled = true
@@ -183,6 +195,7 @@ func _on_online_join_join_pressed() -> void:
 		_on_update_players(NetworkManager.players)
 		$UI/Main/Mode.text = "-- multiplayer game --"
 		$UI/Main/Players/Start.visible = false
+		$"UI/Main/Players/Mode Selector".visible = false
 		$"UI/Main/Players/Copy UserID".visible = false
 
 func _on_join_pressed() -> void:
@@ -210,6 +223,7 @@ func _on_join_pressed() -> void:
 		_on_update_players(NetworkManager.players)
 		$UI/Main/Mode.text = "-- multiplayer game --"
 		$UI/Main/Players/Start.visible = false
+		$"UI/Main/Players/Mode Selector".visible = false
 		$"UI/Main/Players/Copy UserID".visible = false
 	
 func _on_lan_join_pressed() -> void:
@@ -224,7 +238,9 @@ func _on_online_join_pressed() -> void:
 func _on_start_pressed() -> void:
 	if multiplayer.is_server():
 		play_ui_sfx(preload("res://assets/sounds/success.wav"))
-		Man.start_game.rpc()
+		Man.start_game.rpc(Man.selected_mode, Man.selected_map)
+		Man.set_rich_presence("#Multiplayer")
+		Man.set_rich_presence_value("map", Man.selected_map)
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
@@ -240,14 +256,30 @@ func _on_dev_online_pressed() -> void:
 	HAuth.login_devtool_async($"UI/Main/Multiplayer Buttons/Address".text, $"UI/Main/Multiplayer Buttons/Name".text)
 
 func _on_online_pressed() -> void:
-	if HAuth.product_user_id == "":
-		var result = await HAuth.login_anonymous_async($"UI/Main/Multiplayer Buttons/LineEdit".text)
+	if not NetworkManager.steam_enabled:
+		if HAuth.product_user_id == "":
+			var result = await HAuth.login_anonymous_async($"UI/Main/Multiplayer Buttons/LineEdit".text)
+			if result == false:
+				Toast.add("An error occurred while attempting to sign in.")
+				play_ui_sfx(preload("res://assets/sounds/deny.wav"))
+		else:
+			$"UI/Main/Multiplayer Buttons".visible = false
+			init_online_buttons()
+	else:
+		var params = EOS.Connect.LoginOptions.new()
+		var creds = EOS.Connect.Credentials.new()
+		creds.type = EOS.ExternalCredentialType.SteamSessionTicket
+		var ticket = Steam.getAuthSessionTicket()
+		var buffer = ticket["buffer"]
+		
+		creds.token = buffer.hex_encode()
+		
+		params.credentials = creds
+		var result = await HAuth.login_game_services_async(params)
 		if result == false:
 			Toast.add("An error occurred while attempting to sign in.")
 			play_ui_sfx(preload("res://assets/sounds/deny.wav"))
-	else:
-		$"UI/Main/Multiplayer Buttons".visible = false
-		init_online_buttons()
+		print("sure, this works, why not?")
 
 func _on_address_text_submitted(new_text:String) -> void:
 	$UI/Main/Join/Join.emit_signal("pressed")
@@ -337,3 +369,5 @@ func _on_map_selector_right_pressed() -> void:
 func _on_mode_selector_start_pressed() -> void:
 	play_ui_sfx(preload("res://assets/sounds/success.wav"))
 	Man.start_game(Man.selected_mode, Man.selected_map)
+	Man.set_rich_presence("#Singleplayer")
+	Man.set_rich_presence_value("map", Man.selected_map)

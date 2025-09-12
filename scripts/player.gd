@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
-var type: String = "Defense"
+var type: String = ""
 var current_log_path: String
-var original_zoom := Vector2(3.75, 3.75)
+var original_zoom := Vector2(4.0, 4.0)
 var zoom_multiplier := 1.0
 var directions := {
 	"left": Vector2.LEFT,
@@ -129,10 +129,6 @@ func end_game() -> void:
 		$"UI/Defense/Game Over/Panel/Play Again".visible = false
 		$"UI/Defense/Game Over/Panel/Main Menu".visible = false
 
-func _enter_tree() -> void:
-	if multiplayer.has_multiplayer_peer():
-		set_multiplayer_authority(name.to_int())
-
 func send_title(title: String, delay: float) -> void:
 	print("Showing title \"" + title + "\" to player.")
 	$UI/Defense/Title.text = title
@@ -161,6 +157,8 @@ func _connect_button_sfx(button: Button):
 	)
 	
 func _ready() -> void:	
+	if multiplayer.has_multiplayer_peer():
+		set_multiplayer_authority(name.to_int())
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
@@ -190,7 +188,8 @@ func _ready() -> void:
 		file.close()
 	for children in $UI.get_children():
 		children.visible = false
-	$UI.get_node(str(type)).visible = true
+	if type != "":
+		$UI.get_node(str(type)).visible = true
 	$UI/Global.visible = true
 		
 func heal(amount: float) -> void:	

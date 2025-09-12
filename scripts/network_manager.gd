@@ -8,6 +8,8 @@ var dev_mode: bool = false
 var players = []
 var player_name: String
 var eos_is_initialized: bool = false
+var steam_enabled: bool = true
+var app_ticket: Dictionary = {}
 
 signal player_joined(peer_id)
 signal update_players(players)
@@ -77,9 +79,29 @@ func _ready() -> void:
 
 	# Only on mobile device (Login without any credentials)
 	# await HAuth.login_anonymous_async()
-
+	
+	var initialize_response = Steam.steamInitEx(ProjectSettings.get_setting("steam/initialization/app_id"), true)
+	if initialize_response['status'] > Steam.STEAM_API_INIT_RESULT_OK:
+		print("Failed to initialize Steam, disabling Steam functionality: " + initialize_response)
+		steam_enabled = false
+	if steam_enabled:
+		print("Steam name: " + Steam.getPersonaName())
+		Steam.encrypted_app_ticket_response.connect(_steam_encrypted_app_ticket_request)
+		Steam.getAuthSessionTicket()
+		var join_param = Steam.getLaunchQueryParam("join")
+		print("Join param: " + join_param)
+	
+func _steam_encrypted_app_ticket_request(result):
+	if result != "ok":
+		print("result isn't ok, might be inaccurate")
+		print(result)
+	
+	app_ticket = Steam.getEncryptedAppTicket()
+	print("Encrypted app ticket: " + str(app_ticket))
+		
 func _eos_display_name_changed():
 	print("HEY APRIL WERE NOW CALLED " + HAuth.display_name + ".")
+	Toast.add("Your username has been changed to: " + HAuth.display_name)
 
 func _on_eos_logged_in():
 	print("EOS logged in successfully: product_user_id=%s" % HAuth.product_user_id)
@@ -198,7 +220,9 @@ func host_online_server() -> bool:
 		"username": player_name
 	})
 	update_players.emit(players)
-
+	# Value is HAuth.product_user_id
+	Man.set_rich_presence_value("connect", str(HAuth.product_user_id))
+	
 	return true
 
 func host_server(port: int) -> bool:
@@ -231,6 +255,7 @@ func host_server(port: int) -> bool:
 func _player_joined(id: int) -> void:
 	print("[server] Player joined with ID " + str(id))
 	server_player_joined.rpc(id)
+	send_mode.rpc(Man.selected_mode, Man.selected_map)
 
 func _player_quit(id: int) -> void:
 	print("[server] Player quit with ID " + str(id))
@@ -245,6 +270,12 @@ func _player_quit(id: int) -> void:
 func send_message(message: String, player_name: String) -> void:
 	for player in get_tree().get_nodes_in_group("players"):
 		player.add_message(message, player_name)
+
+@rpc("authority", "call_local", "reliable")
+func send_mode(mode: String, map: String) -> void:
+	Man.selected_mode = mode
+	Man.selected_map = map
+	update_players.emit(players)
 
 @rpc("any_peer", "call_local", "reliable")
 func send_info(id: int, username: String) -> void:
