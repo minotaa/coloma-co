@@ -1,113 +1,160 @@
 @tool
 extends Node2D
 
-@export var all_rooms: Array = [
-	preload("res://scenes/levels/dungeon/plains_long_hallway.tscn"),
-	preload("res://scenes/levels/dungeon/plains_tall_hallway.tscn"),
-	preload("res://scenes/levels/dungeon/plains_start_room.tscn")
-]
+@export var all_rooms: Array = []
+@export var start_room: PackedScene
+@export var max_rooms: int = 10
 
-var room_data: Array = []
+const CELL_SIZE = 16
+
+var rng = RandomNumberGenerator.new()
 var placed_rooms: Array = []
-var open_exits: Array = []
+var dungeon_grid: Dictionary = {}
 
-func _ready() -> void:
-	_init_room_data()
+var _started: bool = false
+@export var started: bool:
+	set(value):
+		if value:
+			generate_dungeon()
+			_started = false
+	get:
+		return _started
 
-func _init_room_data() -> void:
-	room_data.clear()
-	for room_scene in all_rooms:
-		if not room_scene: 
-			continue
-		var inst = room_scene.instantiate()
-		room_data.append({
-			"scene": room_scene,
-			"type": inst.type,
-			"weight": inst.weight
-		})
-		inst.queue_free()
+func _ready():
+	if Engine.is_editor_hint():
+		print("[GENERATOR] Editor ready, you can toggle 'started' to test")
 
-# Merge tiles from a room's TileMapLayer into the dungeon TileMapLayer
-func merge_room(room_tilemap: TileMapLayer, offset: Vector2i, dungeon_tilemap: TileMapLayer):
-	for cell in room_tilemap.get_used_cells():
-		var tile_id = room_tilemap.get_cell(cell)
-		if tile_id == -1:
-			continue
-		dungeon_tilemap.set_cell(cell + offset, tile_id)
+func generate_dungeon() -> void:
+	print("[GENERATOR] Starting dungeon generation")
+	clear_previous()
+	if not start_room:
+		print("[GENERATOR] No start room provided, aborting")
+		return
+	var start_instance = start_room.instantiate()
+	merge_room_into_dungeon(start_instance, Vector2i.ZERO)
+	placed_rooms.append(start_instance)
+	update_dungeon_grid(start_instance, Vector2i.ZERO)
+	print("[GENERATOR] Placed start room at position %s" % str(start_instance.position))
 
-# Place a room instance and merge its tiles
-func place_room(room_scene: PackedScene, offset: Vector2i):
-	var room_instance = room_scene.instantiate()
-	add_child(room_instance)
+	var open_exits = get_exits(start_instance)
+	var room_count = 1
 
-	var room_layer = room_instance.get_node("TileMapLayer")
+	while open_exits.size() > 0 and room_count < max_rooms:
+		var exit_data = open_exits.pop_front()
+		var placed = false
+		var attempt_count = 0
+		while not placed and attempt_count < 20:
+			attempt_count += 1
+			var new_room_scene = pick_random_room()
+			if not new_room_scene:
+				print("[GENERATOR] No candidate room found, skipping exit")
+				break
+			var new_room_instance = new_room_scene.instantiate()
+			print("[GENERATOR] Attempting to place room: %s" % new_room_instance.name)
+			print("  Type: %s" % str(new_room_instance.type if new_room_instance.type != null else "unknown"))
+			var exit_dirs = []
+			for e in new_room_instance.exits:
+				exit_dirs.append(e.dir)
+			print("  Exits: %s" % str(exit_dirs))
+
+			for new_exit in get_exits(new_room_instance):
+				if are_exits_compatible(exit_data.dir, new_exit.dir):
+					var line_offset = compute_line_offset(exit_data.pos, exit_data.dir, new_exit.pos)
+					print("  Calculated placement offset along exit line: %s" % str(line_offset))
+
+					if room_fits_on_grid(new_room_instance, line_offset):
+						merge_room_into_dungeon(new_room_instance, line_offset)
+						update_dungeon_grid(new_room_instance, line_offset)
+						placed_rooms.append(new_room_instance)
+						room_count += 1
+						for e in get_exits(new_room_instance):
+							if e.index != new_exit.index:
+								open_exits.append(e)
+						placed = true
+						break
+			new_room_instance.queue_free()
+
+			if not placed:
+				print("[GENERATOR] Attempt %d failed at exit %s" % [attempt_count, str(exit_data.pos)])
+
+			await get_tree().create_timer(0.1).timeout
+
+		if not placed:
+			print("[GENERATOR] Could not place any room at exit %s after 20 attempts" % str(exit_data.pos))
+
+	print("[GENERATOR] Finished generation with %d rooms" % room_count)
+
+func compute_line_offset(existing_exit_pos: Vector2i, existing_exit_dir: String, new_exit_pos: Vector2i) -> Vector2i:
+	# Treat exits as central points, move the new room so the new_exit aligns with existing_exit + direction vector
+	var target_cell = existing_exit_pos + get_exit_direction_vector(existing_exit_dir)
+	return target_cell - new_exit_pos
+
+func get_exits(room: Node) -> Array:
+	if room.exits.size() == 0:
+		print("[GENERATOR] Room has no exits array, skipping")
+		return []
+	var exits_array = []
+	for i in range(room.exits.size()):
+		var exit = room.exits[i]
+		exits_array.append({"pos": exit.pos, "dir": exit.dir, "room": room, "index": i})
+	return exits_array
+
+func merge_room_into_dungeon(room: Node, offset: Vector2i) -> void:
+	var room_layer = room.get_node_or_null("TileMapLayer")
+	if not room_layer:
+		print("[GENERATOR] Room has no TileMapLayer, skipping")
+		return
 	for cell in room_layer.get_used_cells():
-		var tile_id = room_layer.get_cell(cell)
-		if tile_id == -1:
+		var source_id = room_layer.get_cell_source_id(cell)
+		var atlas_coords = room_layer.get_cell_atlas_coords(cell)
+		if source_id == -1:
 			continue
-		$TileMapLayer.set_cell(cell + offset, tile_id)
+		$TileMapLayer.set_cell(cell + offset, source_id, atlas_coords)
+	room.queue_free()
 
-	room_layer.visible = false
-	return room_instance
+func room_fits_on_grid(room: Node, offset: Vector2i) -> bool:
+	var room_layer = room.get_node_or_null("TileMapLayer")
+	if not room_layer:
+		return false
+	for cell in room_layer.get_used_cells():
+		var target_cell = cell + offset
+		if dungeon_grid.has(target_cell):
+			print("[GENERATOR] Overlap detected at %s" % str(target_cell))
+			return false
+	return true
 
-# Track open exits in a room
-func add_open_exits(room_instance):
-	for i in room_instance.exits.size():
-		open_exits.append({"room": room_instance, "exit_index": i})
+func update_dungeon_grid(room: Node, offset: Vector2i) -> void:
+	var room_layer = room.get_node_or_null("TileMapLayer")
+	if not room_layer:
+		return
+	for cell in room_layer.get_used_cells():
+		dungeon_grid[cell + offset] = true
 
-# Pick a random room weighted by its 'weight' property, ignoring start rooms
-func pick_room_weighted() -> PackedScene:
-	var total_weight = 0
-	for r in room_data:
-		if r.type != "start":
-			total_weight += r.weight
+func are_exits_compatible(dir1: String, dir2: String) -> bool:
+	match dir1:
+		"north": return dir2 == "south"
+		"south": return dir2 == "north"
+		"east": return dir2 == "west"
+		"west": return dir2 == "east"
+		_: return false
 
-	var pick = randi() % total_weight
-
-	for r in room_data:
-		if r.type != "start":
-			pick -= r.weight
-			if pick < 0:
-				return r.scene
-
-	# fallback
-	for r in room_data:
-		if r.type != "start":
-			return r.scene
-
-	return all_rooms[0]  # should never reach
-
-func get_opposite_dir(dir: String) -> String:
+func get_exit_direction_vector(dir: String) -> Vector2i:
 	match dir:
-		"north": return "south"
-		"south": return "north"
-		"east": return "west"
-		"west": return "east"
-		_: return ""
+		"north": return Vector2i(0, -1)
+		"south": return Vector2i(0, 1)
+		"east": return Vector2i(1, 0)
+		"west": return Vector2i(-1, 0)
+		_: return Vector2i.ZERO
 
-# Compute the tile offset to align new room exit with existing exit
-func compute_offset(existing_exit, new_exit, existing_room_pos: Vector2i) -> Vector2i:
-	var existing_exit_global = existing_room_pos + existing_exit.pos
-	return existing_exit_global - new_exit.pos
+func clear_previous():
+	$TileMapLayer.clear()
+	placed_rooms.clear()
+	dungeon_grid.clear()
+	print("[GENERATOR] Cleared previous dungeon")
 
-# Place a room connected to an open exit
-func place_room_at_exit(exit_data):
-	var existing_room = exit_data["room"]
-	var exit_idx = exit_data["exit_index"]
-	var existing_exit = existing_room.exits[exit_idx]
-
-	var new_room_scene = pick_room_weighted()
-	var new_room_instance = new_room_scene.instantiate()
-
-	for i in new_room_instance.exits.size():
-		var new_exit = new_room_instance.exits[i]
-		if get_opposite_dir(new_exit.dir) == existing_exit.dir:
-			var existing_exit_global = existing_room.position + existing_exit.pos
-			var offset = existing_exit_global - new_exit.pos
-			var placed = place_room(new_room_scene, offset)
-			for j in placed.exits.size():
-				if j != i: 
-					open_exits.append({"room": placed, "exit_index": j})
-			open_exits.erase(exit_data)
-			return
-	open_exits.erase(exit_data)
+func pick_random_room() -> PackedScene:
+	if all_rooms.is_empty():
+		return null
+	var idx = rng.randi_range(0, all_rooms.size() - 1)
+	print("[GENERATOR] Picked candidate room index %d" % idx)
+	return all_rooms[idx]

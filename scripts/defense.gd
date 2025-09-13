@@ -267,7 +267,7 @@ func spawn_crabman(direction: String) -> void:
 		var data = spawner_layer.get_cell_tile_data(cell_loc)
 		if not data:
 			continue
-		if data.get_custom_data("type") != "corner":
+		if data.get_custom_data("spawner_type") != "corner":
 			continue
 
 		match direction:
@@ -287,7 +287,7 @@ func spawn_crabman(direction: String) -> void:
 	if matching_cells.is_empty():
 		matching_cells = cells.filter(func(c):
 			var d = spawner_layer.get_cell_tile_data(c)
-			return d and d.get_custom_data("type") == "main"
+			return d and d.get_custom_data("spawner_type") == "main"
 		)
 
 	if matching_cells:
@@ -305,7 +305,7 @@ func spawn_slime(direction: String) -> void:
 		var data = spawner_layer.get_cell_tile_data(cell_loc)
 		if not data:
 			continue
-		if data.get_custom_data("type") != "corner":
+		if data.get_custom_data("spawner_type") != "corner":
 			continue
 
 		match direction:
@@ -325,7 +325,7 @@ func spawn_slime(direction: String) -> void:
 	if matching_cells.is_empty():
 		matching_cells = cells.filter(func(c):
 			var d = spawner_layer.get_cell_tile_data(c)
-			return d and d.get_custom_data("type") == "main"
+			return d and d.get_custom_data("spawner_type") == "main"
 		)		
 		
 	if matching_cells:
@@ -347,7 +347,7 @@ func spawn_bombrat(direction: String) -> void:
 		var data = spawner_layer.get_cell_tile_data(cell_loc)
 		if not data:
 			continue
-		if data.get_custom_data("type") != "main":
+		if data.get_custom_data("spawner_type") != "main":
 			continue
 
 		match direction:
@@ -367,7 +367,7 @@ func spawn_bombrat(direction: String) -> void:
 	if matching_cells.is_empty():
 		matching_cells = cells.filter(func(c):
 			var d = spawner_layer.get_cell_tile_data(c)
-			return d and d.get_custom_data("type") == "main"
+			return d and d.get_custom_data("spawner_type") == "main"
 		)
 		
 	if matching_cells:
@@ -390,7 +390,7 @@ func spawn_bauble(direction: String) -> void:
 		var data = spawner_layer.get_cell_tile_data(cell_loc)
 		if not data:
 			continue
-		if data.get_custom_data("type") != "corner":
+		if data.get_custom_data("spawner_type") != "corner":
 			continue
 
 		match direction:
@@ -410,7 +410,7 @@ func spawn_bauble(direction: String) -> void:
 	if matching_cells.is_empty():
 		matching_cells = cells.filter(func(c):
 			var d = spawner_layer.get_cell_tile_data(c)
-			return d and d.get_custom_data("type") == "main"
+			return d and d.get_custom_data("spawner_type") == "main"
 		)
 
 	if matching_cells:

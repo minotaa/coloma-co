@@ -1,6 +1,7 @@
-[gd_resource type="TileSet" load_steps=32 format=3 uid="uid://d08fetvoicslv"]
+[gd_resource type="TileSet" load_steps=34 format=3 uid="uid://d08fetvoicslv"]
 
 [ext_resource type="Texture2D" uid="uid://b602snonljd6m" path="res://assets/sprites/tiles.png" id="1_0ied8"]
+[ext_resource type="Texture2D" uid="uid://3ao2wavj2p38" path="res://assets/sprites/spawner.png" id="2_4wlla"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_0cso3"]
 vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
@@ -482,6 +483,19 @@ texture = ExtResource("1_0ied8")
 1:7/0 = 0
 1:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(3.99918, 3.99918, 3.97708, 3.00491, 4.99345, 3.027, 5.01554, 2.03273, 5.98772, 2.03273, 6.00982, 1.01637, 8, 1.01637, 8, 8, 1.01637, 8, 1.01637, 6.05401, 2.01064, 6.00982, 2.03273, 5.03764, 3.00491, 5.01554, 3.00491, 4.02127)
 1:7/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_yhlqm")
+8:7/0 = 0
+8:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-5.01287, -1.07036, -4.10011, -1.10079, -3.97841, -2.01355, -3.06565, -2.01355, -3.0048, -3.04801, 1.95452, -2.95673, 2.1675, -2.10482, 4.11472, -2.13525, 4.08429, -0.979085, 5.02748, -1.00951, 5.08833, 0.0249496, 6.15321, -0.00547552, 6.09236, 4.86257, 5.1796, 5.07555, 5.14918, 7.05319, 4.02344, 6.96192, 3.96434, 8, -3.97841, 8, -3.94799, 7.17489, -4.95202, 7.11404, -5.01287, 6.04916, -5.98648, 5.98831, -5.98648, -0.00547552, -4.98245, 0.0249496)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-2.95142, -6.01859, 2.06694, -6.03996, 2.36968, -5.06644, 3.97242, -4.9774, 4.26922, -4.23539, 5.04091, -3.99794, 5.27836, -3.10753, 6.05005, -2.95913, 6.13909, -0.139495, 6.99982, 0.186989, 7.07105, 4.03119, 5.9432, 4.12023, 6.06192, 4.98096, 5.05279, 5.07, 4.99343, 5.99009, 3.98429, 6.10882, 3.95461, 7.05859, -5.03854, 7.14763, -5.05041, 6.09338, -6.11891, 6.03402, -6.17827, 4.01576, -6.94996, 3.86736, -6.97964, -0.139495, -5.9705, -0.109815, -5.88146, -3.10753, -4.84265, -3.01849, -4.90201, -3.9089, -3.90119, -4.05968, -3.90119, -5.21722, -3.04046, -5.09849)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n18ro"]
+texture = ExtResource("2_4wlla")
+0:0/0 = 0
+0:0/0/custom_data_2 = "main"
+1:0/0 = 0
+1:0/0/custom_data_2 = "corner"
+2:0/0 = 0
+2:0/0/custom_data_2 = "sewer"
 
 [resource]
 physics_layer_0/collision_layer = 1
@@ -489,4 +503,11 @@ terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Grass"
 terrain_set_0/terrain_0/color = Color(0.41476, 0.75504, 0.21062, 1)
 navigation_layer_0/layers = 1
+custom_data_layer_0/name = "harmful"
+custom_data_layer_0/type = 1
+custom_data_layer_1/name = "damage"
+custom_data_layer_1/type = 3
+custom_data_layer_2/name = "spawner_type"
+custom_data_layer_2/type = 4
 sources/0 = SubResource("TileSetAtlasSource_d35nw")
+sources/1 = SubResource("TileSetAtlasSource_n18ro")

@@ -1,63 +1,10 @@
-[gd_scene load_steps=12 format=4 uid="uid://df42bu2vmx5ig"]
+[gd_scene load_steps=6 format=4 uid="uid://df42bu2vmx5ig"]
 
 [ext_resource type="Script" uid="uid://b03jeu0kqf14q" path="res://scripts/defense.gd" id="1_alp7n"]
-[ext_resource type="Texture2D" uid="uid://b602snonljd6m" path="res://assets/sprites/tiles.png" id="2_e86h3"]
 [ext_resource type="TileSet" uid="uid://d08fetvoicslv" path="res://assets/tilemaps/main.tres" id="2_fl73d"]
 [ext_resource type="Script" uid="uid://0u6di6k2ccp2" path="res://scripts/ground.gd" id="3_fl73d"]
-[ext_resource type="Texture2D" uid="uid://3ao2wavj2p38" path="res://assets/sprites/spawner.png" id="4_4gn83"]
 [ext_resource type="PackedScene" uid="uid://m0qejj1h83sm" path="res://scenes/gem.tscn" id="5_h2qkw"]
 [ext_resource type="PackedScene" uid="uid://bhb5vspn4i4fd" path="res://scenes/multiplayer_spawner.tscn" id="6_yhlqm"]
-
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_xmomj"]
-polygon = PackedVector2Array(-4.375, -4.375, -3.88909, -4.86136, -2.91682, -4.94975, -3.18198, -6.01041, 1.94454, -6.18719, 2.03293, -5.03814, 3.95538, -5.01604, 3.97748, -4.15425, 4.86136, -3.88909, 5.21491, -2.91682, 6.01041, -2.91682, 5.92202, -0.441942, 6.0546, 0, 6.96058, 0.0441942, 7.04897, 4.02167, 6.01041, 4.06586, 5.92202, 5.03814, 5.03814, 5.12652, 4.99394, 6.03251, 4.04377, 6.01041, 4.02167, 7.00478, -5.01604, 6.98268, -5.01604, 6.03251, -6.01041, 5.96621, -6.0546, 4.13216, -6.16509, 4.04377, -7.02687, 3.95538, -7.00478, 0, -6.01041, -0.0883884, -5.96621, -3.0273, -5.08233, -3.0273, -5.12652, -3.88909)
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_f6f2x"]
-texture = ExtResource("2_e86h3")
-0:0/0 = 0
-1:0/0 = 0
-1:0/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_xmomj")
-1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4.875, -3.625, -3.09359, -5.21491, -2.03293, -5.92202, 1.76777, -5.92202, 2.47487, -4.59619, 3.71231, -4.77297, 4.75, -4.125, 5.39169, -2.74004, 6.36396, 0.353553, 6.45235, 3.44715, 5.5, 5.125, 4.50781, 5.56847, 3.71231, 6.8059, -4.68458, 6.62913, -6.01041, 5.39169, -6.36396, 3.62392, -6.45235, 0.0883884, -5.65685, -1.5026)
-2:0/0 = 0
-2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-3.0625, -3.8125, -2.0625, -4, -2.03125, -6.03125, -0.21875, -6, 0.09375, -5.15625, 0.8125, -5.03125, 1.0625, -4.125, 2.03125, -4.0625, 2.09375, 0.90625, 2.875, 1.03125, 3.09375, 0.25, 3.875, 0.03125, 4.09375, -0.96875, 7.09375, -1.03125, 6.875, 1.75, 6.125, 2, 6, 2.9375, 5.125, 2.96875, 5.0625, 4.03125, 4.21875, 4, 4.09375, 4.84375, 3.25, 5, 2.9375, 5.9375, 2.0625, 6.375, 1.96875, 6.96875, -3.78125, 6.96875, -4.125, 6.15625, -4.96875, 6.03125, -5.09375, 5.15625, -6, 5.03125, -5.96875, 4.1875, -7.03125, 3.90625, -6.90625, 1, -5.09375, 0.90625, -4.78125, 1.90625, -4.15625, 1.84375, -4.03125, -1.9375, -3.0625, -2.0625)
-3:0/0 = 0
-3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-0:1/0 = 0
-1:1/0 = 0
-2:1/0 = 0
-3:1/0 = 0
-4:1/0 = 0
-4:0/0 = 0
-5:0/0 = 0
-6:0/0 = 0
-7:0/0 = 0
-8:0/0 = 0
-8:7/0 = 0
-8:7/0/physics_layer_0/polygon_0/points = PackedVector2Array(-3.08578, -2.98176, 3.08578, -2.91242, 3.84855, -2.91242, 4.05658, -1.17884, 4.95805, -0.901463, 5.09673, -0.0693436, 6.20623, 0.20803, 6.27557, 4.71534, 5.09673, 6.7263, 3.9179, 8, -3.98724, 8, -5.02739, 6.37958, -5.85951, 5.82484, -5.99819, -0.0693436, -4.61133, -1.5949)
-8:7/0/custom_data_1 = true
-8:7/0/custom_data_2 = 10.0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pcp22"]
-texture = ExtResource("4_4gn83")
-0:0/0 = 0
-0:0/0/custom_data_0 = "main"
-1:0/0 = 0
-1:0/0/custom_data_0 = "corner"
-2:0/0 = 0
-2:0/0/custom_data_0 = "sewers"
-
-[sub_resource type="TileSet" id="TileSet_ljhf3"]
-occlusion_layer_0/light_mask = 1
-physics_layer_0/collision_layer = 9
-physics_layer_0/collision_mask = 8
-navigation_layer_0/layers = 1
-custom_data_layer_0/name = "type"
-custom_data_layer_0/type = 4
-custom_data_layer_1/name = "harmful"
-custom_data_layer_1/type = 1
-custom_data_layer_2/name = "damage"
-custom_data_layer_2/type = 3
-sources/0 = SubResource("TileSetAtlasSource_f6f2x")
-sources/1 = SubResource("TileSetAtlasSource_pcp22")
 
 [node name="Defense Desert" type="Node2D"]
 script = ExtResource("1_alp7n")
@@ -71,14 +18,14 @@ script = ExtResource("3_fl73d")
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
 tile_map_data = PackedByteArray("AAD5/wUAAAAIAAcAAAAEAAEAAAAIAAcAAAAEAPr/AAAIAAcAAAD6//z/AAAIAAcAAAD8/wIAAAAIAAcAAAANAAEAAAAIAAcAAAAUAP7/AAAIAAcAAAAeAPf/AAAIAAcAAAAgAP7/AAAIAAcAAAAkAAIAAAAIAAcAAAApAP7/AAAIAAcAAAAiAAYAAAAIAAcAAAAkAA0AAAAIAAcAAAAhABAAAAAIAAcAAADz/wEAAAAIAAcAAADu//7/AAAIAAcAAADi/wEAAAAIAAcAAADm//7/AAAIAAcAAADb//z/AAAIAAcAAADd//H/AAAIAAcAAADp/wMAAAAIAAcAAADr/woAAAAIAAcAAADn/wwAAAAIAAcAAAA=")
-tile_set = SubResource("TileSet_ljhf3")
+tile_set = ExtResource("2_fl73d")
 y_sort_origin = 1
 
 [node name="Spawner" type="TileMapLayer" parent="."]
 modulate = Color(1, 1, 1, 0)
 z_index = -1
 tile_map_data = PackedByteArray("AADp/wQAAQABAAAAAADp/wcAAQABAAAAAADp/woAAQABAAAAAADp/w0AAQAAAAAAAADq/w0AAQAAAAAAAADr/wQAAQABAAAAAADr/wcAAQABAAAAAADr/woAAQABAAAAAADr/w0AAQAAAAAAAADX//7/AQAAAAAAAADX////AQAAAAAAAADX/wAAAQAAAAAAAADX/wEAAQAAAAAAAADZ//7/AQABAAAAAADZ/wEAAQABAAAAAADa//H/AQABAAAAAADb/+//AQAAAAAAAADb//T/AQABAAAAAADb//b/AQABAAAAAADb//n/AQABAAAAAADb//z/AQABAAAAAADc/+//AQAAAAAAAADc//T/AQABAAAAAADc//b/AQABAAAAAADc//n/AQABAAAAAADc//z/AQABAAAAAADd//H/AQABAAAAAAAbAPn/AQABAAAAAAAcAPf/AQAAAAAAAAAcAPv/AQABAAAAAAAcAPz/AQABAAAAAAAdAPf/AQAAAAAAAAAdAPv/AQABAAAAAAAdAPz/AQABAAAAAAAeAPn/AQABAAAAAAAiAAMAAQABAAAAAAAiAAUAAQABAAAAAAAiAAcAAQABAAAAAAAiAAkAAQABAAAAAAAiAAsAAQABAAAAAAAiAA0AAQABAAAAAAAiABAAAQAAAAAAAAAjABAAAQAAAAAAAAAkAAMAAQABAAAAAAAkAAUAAQABAAAAAAAkAAcAAQABAAAAAAAkAAkAAQABAAAAAAAkAAsAAQABAAAAAAAkAA0AAQABAAAAAAAkABAAAQAAAAAAAAApAP//AQAAAAAAAAApAAAAAQAAAAAAAAAIAPr/AQACAAAAAAAIAAUAAQACAAAAAAAJAPv/AQACAAAAAAAJAAQAAQACAAAAAAAKAPz/AQACAAAAAAAKAAMAAQACAAAAAAD2//z/AQACAAAAAAD2/wMAAQACAAAAAAD3//v/AQACAAAAAAD3/wQAAQACAAAAAAD4//r/AQACAAAAAAD4/wUAAQACAAAAAAA=")
-tile_set = SubResource("TileSet_ljhf3")
+tile_set = ExtResource("2_fl73d")
 y_sort_origin = 2
 
 [node name="Gem" parent="." instance=ExtResource("5_h2qkw")]
