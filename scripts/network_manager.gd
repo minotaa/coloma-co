@@ -221,7 +221,7 @@ func host_online_server() -> bool:
 	})
 	update_players.emit(players)
 	# Value is HAuth.product_user_id
-	Man.set_rich_presence_value("connect", str(HAuth.product_user_id))
+	#Man.set_rich_presence_value("connect", str(HAuth.product_user_id)) # Set this later when I figure out what it actually does
 	
 	return true
 
