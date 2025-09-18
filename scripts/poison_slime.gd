@@ -1,9 +1,9 @@
 extends CharacterBody2D
 
 const SPEED = 40
-const HOP_INTERVAL = 1.2
-const HOP_DURATION = 0.8
-const HOP_HEIGHT = 12.0
+const HOP_INTERVAL = 1.0
+const HOP_DURATION = 0.2
+const HOP_HEIGHT = 6.0
 const KNOCKBACK_DURATION := 0.1
 const KNOCKBACK_SPEED := 200.0
 const HOP_WINDUP_TIME = 0.3
@@ -48,14 +48,13 @@ func _ready() -> void:
 		play_sfx.rpc("appear", global_position)
 	else:
 		play_sfx("appear", global_position)
-	entity.health = 250.0
-	entity.max_health = 250.0
-	entity.defense = 0.0
-	entity.name = "Mother Slime"
-	entity.id = 6
+	entity.health = 275.0
+	entity.max_health = 275.0
+	entity.defense = 1.0
+	entity.name = "Poison Slime"
+	entity.id = 7
 	Entities.add_entity(entity)
 	sprite.play("default")
-
 
 @rpc("call_local")
 func _show_damage_feedback(amount: int, center_position: Vector2):
@@ -100,29 +99,20 @@ func take_damage(amount: float, from_position: Vector2, name: String) -> void:
 		alive = false
 		if multiplayer.has_multiplayer_peer():
 			Toast.add.rpc_id(int(name), "+20 Gold")
-			get_parent().add_gold.rpc(name, 20)
+			get_parent().add_gold.rpc(name, 12)
 		else:
 			Toast.add("+20 Gold")
 			get_parent().add_gold(name, 20)
-		get_parent().add_kill(name, "mother_slime")
+		get_parent().add_kill(name, "poison_slime")
 
 	sprite.material = shock_material
 	await get_tree().create_timer(0.1).timeout
 	sprite.material = normal_material
 
 func die() -> void:
-	for i in range(randi_range(2, 6)):
-		var slime_scene: PackedScene 
-		if randf() <= 0.3:
-			slime_scene = preload("res://scenes/poison_slime.tscn")
-		else:
-			slime_scene = preload("res://scenes/slime.tscn")
-		var new_slime = slime_scene.instantiate()
-		new_slime.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
-		get_parent().add_child(new_slime, true)
 	collision.disabled = true
 	Entities.remove_entity(entity)
-	sprite.play("default")
+	sprite.play("default") 
 	var tween = create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(Callable(self, "queue_free"))
@@ -135,14 +125,24 @@ func _physics_process(delta: float) -> void:
 	if (multiplayer.has_multiplayer_peer() and multiplayer.is_server()) or not multiplayer.has_multiplayer_peer():
 		if entity != null:
 			$ProgressBar.value = entity.health
-			$ProgressBar.max_value = entity.max_health
+			$ProgressBar.max_value = entity.max_health 
 			if entity.health == entity.max_health:
 				$ProgressBar.visible = false
 			else:
 				$ProgressBar.visible = true
 	for body in $Hurtbox.get_overlapping_bodies():
-		if body.is_in_group("players") and alive:
-			body.take_damage(20, global_position)
+		if body != null and body.is_in_group("players") and alive:
+			if randf() < 0.1 and body.alive and not body.has_effect("Poison"):
+				var poison = Effect.new("Poison", Color.from_rgba8(255, 69, 69), 10.0, 0, 2)
+				var enemy_pos = global_position
+				poison.on_effect = func(target):
+					target.take_damage(2, enemy_pos)
+				body.add_status_effect(poison)
+				if multiplayer.has_multiplayer_peer():
+					Toast.add.rpc_id(int(body.name), "You've been Poisoned for 10 seconds!")
+				else:
+					Toast.add("You've been Poisoned for 10 seconds!")
+			body.take_damage(12, global_position)
 			pass
 	if knockback_timer > 0.0:
 		global_position += knockback_velocity * delta
@@ -158,7 +158,9 @@ func _physics_process(delta: float) -> void:
 		if hop_timer <= 0.0:
 			var target = get_nearest_player()
 			if target:
-				agent.target_position = target.global_position
+				var offset = Vector2(randf_range(-8, 8), randf_range(-8, 8))
+
+				agent.target_position = target.global_position + offset
 				hop_start_pos = global_position
 				hop_target_pos = agent.get_next_path_position()
 				$Target.global_position = hop_target_pos
@@ -167,16 +169,14 @@ func _physics_process(delta: float) -> void:
 				is_winding_up = true
 				windup_timer = HOP_WINDUP_TIME
 
+
 	elif is_winding_up:
 		windup_timer -= delta
 		if windup_timer <= 0.0:
 			is_winding_up = false
 			is_hopping = true
 			hop_progress = 0.0
-			if multiplayer.has_multiplayer_peer():
-				play_sfx.rpc("bigjump", global_position)
-			else:
-				play_sfx("bigjump", global_position)
+			play_sfx("jump", global_position, -10.0)
 
 	elif is_hopping:
 		hop_progress += delta / HOP_DURATION

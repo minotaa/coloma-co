@@ -1,0 +1,135 @@
+[gd_scene load_steps=17 format=3 uid="uid://ctlmmarbw45jg"]
+
+[ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_ad2k7"]
+[ext_resource type="Script" uid="uid://cmq1r38fuxky1" path="res://scripts/poison_slime.gd" id="2_jgoq5"]
+[ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_b2m7e"]
+[ext_resource type="Texture2D" uid="uid://dpdgureg2t3ti" path="res://assets/sprites/poison-slime.png" id="4_63nwn"]
+[ext_resource type="Texture2D" uid="uid://b4ifcnh4bwsck" path="res://assets/sprites/target.png" id="5_yahew"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
+shader = ExtResource("1_ad2k7")
+shader_parameter/shock_color = Color(1, 0, 0, 1)
+shader_parameter/amplitude = 30.0
+shader_parameter/frequency = 10.0
+shader_parameter/shock_time = 0.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c5t28"]
+atlas = ExtResource("4_63nwn")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6th5u"]
+atlas = ExtResource("4_63nwn")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tenbi"]
+atlas = ExtResource("4_63nwn")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mndb4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c5t28")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6th5u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tenbi")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_v5wyi"]
+radius = 6.0
+
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_0l8pv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_n6pvg"]
+radius = 6.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_pjw23"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("AnimatedSprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("AnimatedSprite2D:frame")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:modulate:a")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath("ProgressBar:visible")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath("ProgressBar:min_value")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+properties/6/path = NodePath("ProgressBar:max_value")
+properties/6/spawn = true
+properties/6/replication_mode = 1
+properties/7/path = NodePath("ProgressBar:value")
+properties/7/spawn = true
+properties/7/replication_mode = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pjw23"]
+bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2npkn"]
+bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
+
+[node name="Poison Slime" type="CharacterBody2D" groups=["enemies"]]
+material = SubResource("ShaderMaterial_pjw23")
+collision_layer = 6
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("2_jgoq5")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, 3)
+texture = ExtResource("3_b2m7e")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_mndb4")
+frame = 1
+frame_progress = 0.43603
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_v5wyi")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamPolyphonic_0l8pv")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_n6pvg")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_pjw23")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 9.0
+offset_bottom = -5.0
+theme_override_styles/background = SubResource("StyleBoxFlat_pjw23")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2npkn")
+show_percentage = false
+
+[node name="Target" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.592157)
+top_level = true
+z_index = -1
+texture = ExtResource("5_yahew")
