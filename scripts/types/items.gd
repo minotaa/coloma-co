@@ -113,7 +113,7 @@ func _init() -> void:
 	strength_potion.on_consume = func():
 		var player = Man.get_player()
 		if player != null:
-			var strength = Effect.new("Strength", Color(255, 69, 69), 30.0)
+			var strength = Effect.new("Strength", Color.from_rgba8(255, 69, 69), 30.0)
 			player.add_status_effect(strength)
 			Toast.add("You have Strength for 30 seconds.")
 	items.append(strength_potion)
