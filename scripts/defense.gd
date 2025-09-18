@@ -11,6 +11,7 @@ var bombrat = preload("res://scenes/bombrat.tscn")
 var big_bombrat = preload("res://scenes/big_bombrat.tscn")
 var slime = preload("res://scenes/slime.tscn")
 var mother_slime = preload("res://scenes/mother_slime.tscn")
+var poison_slime = preload("res://scenes/poison_slime.tscn")
 var bauble = preload("res://scenes/bauble.tscn")
 var crabman = preload("res://scenes/crabman.tscn")
 var player_scene = preload("res://scenes/player.tscn")
@@ -41,10 +42,10 @@ func end() -> void:
 func reset() -> void:
 	for player in get_tree().get_nodes_in_group("players"):
 		player.reset_game()
-
 	spawn_wave()
 	Toast.add("Wave started!")
 	started = true
+	$Gem.alive = true
 	$Gem.entity.health = $Gem.entity.max_health
 	
 func _ready() -> void:
@@ -333,7 +334,10 @@ func spawn_slime(direction: String) -> void:
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
 		var s: CharacterBody2D
 		if wave >= 15 and randf() <= 0.1: 
-			s = mother_slime.instantiate()
+			if randf() <= 5:
+				s = mother_slime.instantiate()
+			else:
+				s = poison_slime.instantiate()
 		else: 
 			s = slime.instantiate()
 		s.global_position = spawn_pos
