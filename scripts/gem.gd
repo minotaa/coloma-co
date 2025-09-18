@@ -4,6 +4,7 @@ const FLOAT_AMPLITUDE := 8.0  # How far up/down it floats (pixels)
 const FLOAT_SPEED := 2.0      # How fast it floats
 var float_timer := 0.0
 
+var alive: bool = true
 var entity = Entity.new()
 
 func _ready() -> void:
@@ -17,10 +18,11 @@ func _ready() -> void:
 func take_damage(amount: float) -> void:
 	entity.health -= amount
 	Toast.add("The Gem cracked! It has " + str(roundi(entity.health)) + " HP left!" )
-	if entity.health <= 0.0:
+	if entity.health <= 0.0 and alive:
 		die()
 		
 func die() -> void:
+	alive = false
 	Toast.add("The Gem has been broken!")
 	for player in get_tree().get_nodes_in_group("players"):
 		player.send_title("GAME OVER!", 3.0)
