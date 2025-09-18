@@ -240,7 +240,10 @@ func percent(current: float, total: float) -> String:
 func die() -> void:
 	$AnimatedSprite2D.play("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
-	Toast.add.rpc_id(int(name), "You're dead... you will respawn in 10 seconds.")
+	if multiplayer.has_multiplayer_peer():
+		Toast.add.rpc_id(int(name), "You're dead... you will respawn in 10 seconds.")
+	else:
+		Toast.add("You're dead... you will respawn in 10 seconds.")
 	revival_time = MAX_REVIVAL_TIME
 	alive = false
 	hide_ui()
@@ -584,7 +587,10 @@ func _physics_process(delta: float) -> void:
 		return
 	if alive:
 		for effect in active_effects.duplicate():
-			if effect.update(delta, self):
+			if effect != null and is_instance_valid(effect):
+				if effect.update(delta, self):
+					active_effects.erase(effect)
+			else:
 				active_effects.erase(effect)
 	var focused = $UI/Global/ChatBar.has_focus()
 	var hovered := _is_mouse_over_chat_bar()
@@ -618,7 +624,11 @@ func _physics_process(delta: float) -> void:
 			$"UI/Defense/Death".visible = false
 			health = max_health
 			gold = max(roundi(gold / 2), 0)
-			Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
+			hit_cooldown = max_hit_cooldown
+			if multiplayer.has_multiplayer_peer():
+				Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
+			else:
+				Toast.add("You respawned! You lost half your gold.")
 			play_idle_animation()
 			$AnimatedSprite2D.material = null
 			global_position = Vector2.ZERO
