@@ -75,7 +75,7 @@ var auth_login_scope_flags: int = EOS.Auth.ScopeFlags.BasicProfile | EOS.Auth.Sc
 
 ## Default login flags used when logging in with Epic Account Services.[br]
 ## Flags from [enum EOS.Auth.LoginFlags]
-var auth_login_flags: int = EOS.Auth.LoginFlags.NoUserInterface
+var auth_login_flags: int = EOS.Auth.LoginFlags.None
 
 #endregion
 
@@ -269,7 +269,7 @@ func login_game_services_async(opts: EOS.Connect.LoginOptions) -> bool:
 	
 	if product_user_id:
 		_log.info("Logged into Epic Games Services with Product User Id: %s" % product_user_id)
-		if auto_fetch_external_account:
+		if auto_fetch_external_account and EOS.ExternalCredentialType.DeviceidAccessToken != opts.credentials.type:
 			get_product_user_info_async()
 
 	logged_in_connect.emit()
