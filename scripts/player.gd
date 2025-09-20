@@ -10,6 +10,9 @@ var directions := {
 	"up": Vector2.UP,
 	"down": Vector2.DOWN
 }
+var has_boomerang: bool = true
+var clip: int = 0
+var reload_time: float = 0.0
 var last_direction := "down"
 const SWORD_HITBOX_TIME := 0.15
 var sword_hitbox_timer := 0.0
@@ -68,6 +71,8 @@ func reset_status_effects() -> void:
 		effect.on_end.call(self)
 	active_effects.clear()
 
+@onready var boomerang_scene = preload("res://scenes/boomerang.tscn")
+@onready var throwable_scene = preload("res://scenes/throwable.tscn")
 @onready var hitting_particles_instance = preload("res://scenes/hitting_particles.tscn")
 @onready var bombrat_counter := $UI/Defense/HBoxContainer/Bombrats/HBoxContainer/Label
 @onready var camera := get_viewport().get_camera_2d()
@@ -156,7 +161,16 @@ func _connect_button_sfx(button: Button):
 		play_ui_sfx(preload("res://assets/sounds/click1.wav"))
 	)
 	
+func _enter_tree() -> void:
+	if multiplayer.has_multiplayer_peer():
+		set_multiplayer_authority(name.to_int())
+	
 func _ready() -> void:	
+	if Man.equipped_weapon.type == "THROWABLE":
+		play_ui_sfx(preload("res://assets/sounds/click1.wav"))
+		Toast.add("Reloaded your throwable.")
+		clip = Man.equipped_weapon.data["clip"]
+		$Clip.visible = true 
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
 	for button in find_children("", "Button", true):
@@ -171,6 +185,7 @@ func _ready() -> void:
 	
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		$UI.visible = false
+		$Clip.visible = false
 		$PointLight2D.visible = false
 		$AudioListener2D.clear_current()
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
@@ -186,11 +201,38 @@ func _ready() -> void:
 		if file:
 			file.store_line("--- Chat session started at %s ---" % timestamp)
 		file.close()
-	for children in $UI.get_children():
-		children.visible = false
+		await get_tree().create_timer(0.1).timeout
+		print("this is running " + str(multiplayer.get_unique_id()) + " " + name + " " + str(is_multiplayer_authority()))
+		print(type)
+		wait_for_type_sync()
+
+func wait_for_type_sync():
+	var ticks = 0
+	var max_ticks = 30  # 3 seconds at 60fps should be more than enough
+
+	while type == "" and ticks < max_ticks:
+		await get_tree().create_timer(0.5).timeout
+		ticks += 1
+		print("Waiting for type sync... tick %d, type: '%s'" % [ticks, type])
+
 	if type != "":
-		$UI.get_node(str(type)).visible = true
-	$UI/Global.visible = true
+		print("Type synced after %d ticks: %s" % [ticks, type])
+		setup_ui()
+	else:
+		print("Type sync timed out after %d ticks" % ticks)
+		
+func setup_ui() -> void:
+	print("Setting up UI - type: '%s'" % type)
+
+	if is_multiplayer_authority():
+		for children in $UI.get_children():
+			children.visible = false
+		if type != "":
+			print("Showing UI for type: %s" % type)
+			$UI.get_node(str(type)).visible = true
+		else:
+			print("Type is empty, no specific UI shown")
+		$UI/Global.visible = true
 		
 func heal(amount: float) -> void:	
 	if alive:
@@ -247,7 +289,8 @@ func die() -> void:
 	revival_time = MAX_REVIVAL_TIME
 	alive = false
 	hide_ui()
-	$"UI/Defense/Death".visible = true	
+	if get_parent().started:
+		$"UI/Defense/Death".visible = true	
 	var stats_text := "This life:\n"
 	stats_text += "Gold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
 	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
@@ -357,41 +400,109 @@ func _process_input(delta) -> void:
 			play_idle_animation()
 
 	# Determine attack direction
-	var attack_dir := ""
+	if Man.equipped_weapon.type == "SWORD":
+		var attack_dir := ""
 
-	if Input.is_action_just_pressed("attack_up"):
-		attack_dir = "up"
-	elif Input.is_action_just_pressed("attack_down"):
-		attack_dir = "down"
-	elif Input.is_action_just_pressed("attack_left"):
-		attack_dir = "left"
-	elif Input.is_action_just_pressed("attack_right"):
-		attack_dir = "right"
-	elif Input.is_action_just_pressed("attack"):
-		var mouse_pos = get_global_mouse_position()
-		var direction_vec = (mouse_pos - global_position).normalized()
+		if Input.is_action_just_pressed("attack_up"):
+			attack_dir = "up"
+		elif Input.is_action_just_pressed("attack_down"):
+			attack_dir = "down"
+		elif Input.is_action_just_pressed("attack_left"):
+			attack_dir = "left"
+		elif Input.is_action_just_pressed("attack_right"):
+			attack_dir = "right"
+		elif Input.is_action_just_pressed("attack"):
+			var mouse_pos = get_global_mouse_position()
+			var direction_vec = (mouse_pos - global_position).normalized()
 
-		if abs(direction_vec.x) > abs(direction_vec.y):
-			if direction_vec.x > 0.0:
-				attack_dir = "right"
+			if abs(direction_vec.x) > abs(direction_vec.y):
+				if direction_vec.x > 0.0:
+					attack_dir = "right"
+				else:
+					attack_dir = "left"
 			else:
-				attack_dir = "left"
-		else:
-			if direction_vec.y > 0.0:
-				attack_dir = "down"
-			else:
-				attack_dir = "up"
+				if direction_vec.y > 0.0:
+					attack_dir = "down"
+				else:
+					attack_dir = "up"
 
-	# Perform attack if a direction was determined
-	if attack_dir != "":
-		if multiplayer.has_multiplayer_peer():
-			play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
-		else:
-			play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
-		play_animation("sword_" + attack_dir)
-		_enable_sword_hitbox(attack_dir)
-		sword_hitbox_timer = SWORD_HITBOX_TIME
-		sword_hitbox_active = true
+		# Perform attack if a direction was determined
+		if attack_dir != "":
+			if multiplayer.has_multiplayer_peer():
+				play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
+			else:
+				play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
+			play_animation("sword_" + attack_dir)
+			_enable_sword_hitbox(attack_dir)
+			sword_hitbox_timer = SWORD_HITBOX_TIME
+			sword_hitbox_active = true
+		
+	elif Man.equipped_weapon.type == "BOOMERANG":
+		if Input.is_action_just_pressed("attack") and has_boomerang:
+			var mouse_pos = get_global_mouse_position()
+			var direction = (mouse_pos - global_position).normalized()
+			
+			if multiplayer.has_multiplayer_peer():
+				create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
+			else:
+				create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
+			has_boomerang = false
+		
+		# Handle directional keyboard controls
+		elif has_boomerang and (Input.is_action_pressed("attack_up") or Input.is_action_pressed("attack_down") or Input.is_action_pressed("attack_left") or Input.is_action_pressed("attack_right")):
+			# Calculate direction based on pressed keys
+			var direction = Vector2.ZERO
+			if Input.is_action_pressed("attack_up"):
+				direction.y -= 1
+			if Input.is_action_pressed("attack_down"):
+				direction.y += 1
+			if Input.is_action_pressed("attack_left"):
+				direction.x -= 1
+			if Input.is_action_pressed("attack_right"):
+				direction.x += 1
+			
+			direction = direction.normalized()
+			
+			if multiplayer.has_multiplayer_peer():
+				create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
+			else:
+				create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
+			has_boomerang = false
+	elif Man.equipped_weapon.type == "THROWABLE":
+		if clip > 0:
+			if Input.is_action_just_pressed("attack"):
+				var mouse_pos = get_global_mouse_position()
+				var direction = (mouse_pos - global_position).normalized()
+				if multiplayer.has_multiplayer_peer():
+					create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
+				else:
+					create_throwable(Man.equipped_weapon.id, global_position, direction, name)
+				clip -= 1
+				if clip <= 0:
+					reload_time = Man.equipped_weapon.data["reload_time"]
+				play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
+			if (Input.is_action_just_pressed("attack_up") or Input.is_action_just_pressed("attack_down") or Input.is_action_just_pressed("attack_left") or Input.is_action_just_pressed("attack_right")):
+				var direction = Vector2.ZERO
+				if Input.is_action_just_pressed("attack_up"):
+					direction.y -= 1
+				if Input.is_action_just_pressed("attack_down"):
+					direction.y += 1
+				if Input.is_action_just_pressed("attack_left"):
+					direction.x -= 1
+				if Input.is_action_just_pressed("attack_right"):
+					direction.x += 1
+				
+				direction = direction.normalized()
+				
+				if multiplayer.has_multiplayer_peer():
+					create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
+				else:
+					create_throwable(Man.equipped_weapon.id, global_position, direction, name)
+			
+				clip -= 1
+				if clip <= 0:
+					reload_time = Man.equipped_weapon.data["reload_time"]
+				play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
 
 	# Apply velocity and move
 	velocity *= SPEED
@@ -453,6 +564,28 @@ func _process_input(delta) -> void:
 		$UI/Defense/Tab.visible = false
 	
 	move_and_slide()
+
+@rpc("any_peer", "call_local", "reliable")
+func create_boomerang(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_path: String):
+	var boomerang = boomerang_scene.instantiate()
+	boomerang.weapon_id = w_id
+	boomerang.global_position = spawn_pos
+	boomerang.direction = throw_dir
+	boomerang.SOURCE = source_path
+	
+	get_parent().add_child(boomerang, true)
+	play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), spawn_pos)
+	
+@rpc("any_peer", "call_local", "reliable")
+func create_throwable(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_path: String):
+	var throwable = throwable_scene.instantiate()  # Make sure you have this scene reference
+	throwable.weapon_id = w_id
+	throwable.global_position = spawn_pos
+	throwable.direction = throw_dir
+	throwable.SOURCE = source_path
+	
+	get_parent().add_child(throwable, true)
+	play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), spawn_pos)
 
 func press_inventory_slot(index: int) -> void:
 	var slots = $UI/Defense/Inventory.get_children()
@@ -559,11 +692,12 @@ func _disable_all_sword_hitboxes() -> void:
 			child.disabled = true
 
 func show_ui() -> void:
-	$UI/Defense/Markers.visible = true
-	$UI/Defense/HealthBar.visible = true
-	$UI/Defense/SprintBar.visible = true
-	$UI/Defense/Inventory.visible = true
-	$UI/Defense/HBoxContainer.visible = true
+	if get_parent().started:
+		$UI/Defense/Markers.visible = true
+		$UI/Defense/HealthBar.visible = true
+		$UI/Defense/SprintBar.visible = true
+		$UI/Defense/Inventory.visible = true
+		$UI/Defense/HBoxContainer.visible = true
 
 func hide_ui() -> void:
 	$UI/Defense/Markers.visible = false
@@ -585,6 +719,14 @@ func _physics_process(delta: float) -> void:
 	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+	if Man.equipped_weapon.type == "THROWABLE":
+		$Clip.value = float(clip) / float(Man.equipped_weapon.data["clip"]) * 100.0
+		if clip <= 0:
+			reload_time -= delta
+			$Clip.value = float(reload_time) / Man.equipped_weapon.data["reload_time"] * 100.0
+			if reload_time <= 0.0:
+				clip = Man.equipped_weapon.data["clip"]
+				Toast.add("Reloaded your " + Man.equipped_weapon.name + ".")
 	if alive:
 		for effect in active_effects.duplicate():
 			if effect != null and is_instance_valid(effect):
@@ -621,7 +763,8 @@ func _physics_process(delta: float) -> void:
 			damage_taken = 0.0
 			gold_collected = 0
 			kills = 0
-			$"UI/Defense/Death".visible = false
+			if type == "Defense":
+				$"UI/Defense/Death".visible = false
 			health = max_health
 			gold = max(roundi(gold / 2), 0)
 			hit_cooldown = max_hit_cooldown
@@ -669,7 +812,7 @@ func _physics_process(delta: float) -> void:
 	if sword_hitbox_active:
 		for body in $SwordHbox.get_overlapping_bodies():
 			if body.is_in_group("enemies") and body not in hit_enemies:
-				_process_hit(body)
+				_process_hit(body, Man.equipped_weapon.damage)
 				hit_enemies.append(body)
 		
 		sword_hitbox_timer -= delta
@@ -794,6 +937,9 @@ func _animation_finished() -> void:
 	if $AnimatedSprite2D.animation.begins_with("sword_"):
 		play_idle_animation()
 
+func get_boomerang_back() -> void:
+	has_boomerang = true
+
 @rpc("any_peer", "call_local")
 func add_hit_particles(position: Vector2, angle: float):
 	var hitting_particles = hitting_particles_instance
@@ -803,7 +949,7 @@ func add_hit_particles(position: Vector2, angle: float):
 	particles.rotation = angle
 	particles.emitting = true
 
-func _process_hit(body):
+func _process_hit(body, damage: float):
 	if body.is_in_group("enemies"):
 		if multiplayer.has_multiplayer_peer():
 			play_sfx.rpc("swoosh2louder", global_position, -8.0, randf_range(0.95, 1.15))

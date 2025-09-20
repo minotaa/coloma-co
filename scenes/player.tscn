@@ -1,4 +1,4 @@
-[gd_scene load_steps=134 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=137 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -31,6 +31,9 @@
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="26_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="27_wqfne"]
+[ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="32_md1ol"]
+[ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="33_bj30b"]
+[ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="34_jc3p3"]
 
 [sub_resource type="Curve" id="Curve_gl8cc"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -665,17 +668,8 @@ func _on_button_pressed() -> void:
 atlas = ExtResource("22_dt7fs")
 region = Rect2(48, 16, 16, 16)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fulsm"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wqfne"]
-texture = ExtResource("23_ke2ow")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wnwbv"]
-texture = ExtResource("25_pf23h")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hax0n"]
+texture = ExtResource("27_wqfne")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
@@ -688,12 +682,21 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hax0n"]
-texture = ExtResource("27_wqfne")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wnwbv"]
+texture = ExtResource("25_pf23h")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wqfne"]
+texture = ExtResource("23_ke2ow")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fulsm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4ni07"]
 bg_color = Color(0.0784314, 0.0784314, 0.0784314, 0.576471)
@@ -717,17 +720,8 @@ shadow_size = 4
 shadow_color = Color(0, 0, 0, 0.796078)
 shadow_offset = Vector2(4, 4)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wnwbv"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gl8cc"]
-texture = ExtResource("23_ke2ow")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_487ah"]
-texture = ExtResource("25_pf23h")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bj30b"]
+texture = ExtResource("27_wqfne")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
@@ -740,21 +734,21 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bj30b"]
-texture = ExtResource("27_wqfne")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_487ah"]
+texture = ExtResource("25_pf23h")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_31cv2"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pf23h"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gl8cc"]
 texture = ExtResource("23_ke2ow")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wnwbv"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dt7fs"]
 texture = ExtResource("24_ujl30")
@@ -763,6 +757,15 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 modulate_color = Color(1, 1, 1, 0.792157)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pf23h"]
+texture = ExtResource("23_ke2ow")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_31cv2"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_dt7fs"]
 font_size = 22
@@ -786,15 +789,21 @@ properties/4/replication_mode = 1
 properties/5/path = NodePath("Potion:emitting")
 properties/5/spawn = true
 properties/5/replication_mode = 1
+properties/6/path = NodePath(".:type")
+properties/6/spawn = true
+properties/6/replication_mode = 1
 
 [sub_resource type="LabelSettings" id="LabelSettings_a8ls1"]
 font = ExtResource("19_4r5pv")
 font_size = 48
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 z_index = 2
 texture_filter = 1
-collision_mask = 11
+collision_layer = 17
+collision_mask = 27
 motion_mode = 1
 script = ExtResource("1_oxdyo")
 
@@ -1333,11 +1342,11 @@ offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
-theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
-theme_override_styles/hover = SubResource("StyleBoxTexture_wnwbv")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
 theme_override_styles/normal = SubResource("StyleBoxTexture_hax0n")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
+theme_override_styles/hover = SubResource("StyleBoxTexture_wnwbv")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
 text = "Close"
 
 [node name="Death" type="Control" parent="UI/Defense"]
@@ -1448,11 +1457,11 @@ offset_bottom = -120.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
-theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
 theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Play Again"
 
 [node name="Main Menu" type="Button" parent="UI/Defense/Game Over/Panel"]
@@ -1470,11 +1479,11 @@ offset_bottom = -32.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
-theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
 theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Main Menu"
 
 [node name="Global" type="Control" parent="UI"]
@@ -1497,9 +1506,9 @@ offset_right = 448.0
 offset_bottom = -24.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
-theme_override_styles/focus = SubResource("StyleBoxEmpty_31cv2")
-theme_override_styles/read_only = SubResource("StyleBoxTexture_pf23h")
 theme_override_styles/normal = SubResource("StyleBoxTexture_dt7fs")
+theme_override_styles/read_only = SubResource("StyleBoxTexture_pf23h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_31cv2")
 placeholder_text = "Press Enter to chat"
 alignment = 1
 max_length = 500
@@ -1587,6 +1596,18 @@ text = "Minota"
 label_settings = SubResource("LabelSettings_a8ls1")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Clip" type="TextureProgressBar" parent="."]
+visible = false
+offset_left = -12.0
+offset_top = -19.000002
+offset_right = 4.0
+offset_bottom = -3.000002
+scale = Vector2(0.45, 0.45)
+fill_mode = 4
+texture_under = ExtResource("32_md1ol")
+texture_over = ExtResource("33_bj30b")
+texture_progress = ExtResource("34_jc3p3")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
 [connection signal="body_entered" from="SwordHbox" to="." method="_on_sword_hbox_entered"]

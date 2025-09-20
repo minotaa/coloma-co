@@ -7,6 +7,10 @@ var started: bool = false
 var spawning_wave: bool = false
 var kills = {}
 
+var smoke_scene = preload("res://scenes/smoke.tscn")
+
+var rapid_bauble = preload("res://scenes/rapid_bauble.tscn")
+var angry_bauble = preload("res://scenes/angry_bauble.tscn")
 var bombrat = preload("res://scenes/bombrat.tscn")
 var big_bombrat = preload("res://scenes/big_bombrat.tscn")
 var slime = preload("res://scenes/slime.tscn")
@@ -33,7 +37,7 @@ func end() -> void:
 	for player in get_tree().get_nodes_in_group("players"):
 		player.end_game()
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		enemy.die()
+		enemy.queue_free()
 	started = false
 	wave = 0
 	kills = {}
@@ -58,6 +62,10 @@ func _ready() -> void:
 		spawn_wave()
 		Toast.add("Wave started!")
 		started = true
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = p.global_position
+		smoke.emitting = true
+		add_child(smoke, true)
 		return
 
 	# Multiplayer: spawn players from the current list
@@ -77,9 +85,12 @@ func _ready() -> void:
 			var angle = rng.randf_range(0.0, TAU)
 			var offset = Vector2(cos(angle), sin(angle)) * radius
 			p.global_position = offset  # Spawn relative to (0,0); adjust if needed
-
-			p.set_multiplayer_authority(peer_id)
 			call_deferred("add_child", p, true)
+			
+			var smoke = smoke_scene.instantiate()
+			smoke.global_position = p.global_position
+			smoke.emitting = true
+			add_child(smoke, true)
 
 		# Connect signals for player joins and quits
 		NetworkManager.player_joined.connect(player_joined)
@@ -146,6 +157,7 @@ func player_joined(id) -> void:
 
 	var player = player_scene.instantiate()
 	player.name = str(id)
+	player.type = "Defense"
 	call_deferred("add_child", player, true)
 	Man.start_game.rpc_id(id)
 
@@ -216,8 +228,11 @@ func spawn_wave() -> void:
 			await spawn_baubles(4)
 			spawn_crabman("north")
 		_:
-			if wave % 10 == 0:
-				spawn_crabman("north")
+			if wave % 5 == 0:
+				var num_crabmen = 1 + wave / 5
+				for i in range(num_crabmen):
+					spawn_crabman("north")
+
 			await spawn_bombrats(4 + wave)
 			await spawn_slimes(4 + int(wave / 2))
 
@@ -297,6 +312,10 @@ func spawn_crabman(direction: String) -> void:
 		var crabthing = crabman.instantiate()
 		crabthing.global_position = spawn_pos
 		add_child(crabthing, true)
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = spawn_pos
+		smoke.emitting = true
+		add_child(smoke, true)
 
 func spawn_slime(direction: String) -> void:
 	var matching_cells: Array[Vector2i] = []
@@ -334,7 +353,7 @@ func spawn_slime(direction: String) -> void:
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
 		var s: CharacterBody2D
 		if wave >= 15 and randf() <= 0.1: 
-			if randf() <= 5:
+			if randf() <= .5:
 				s = mother_slime.instantiate()
 			else:
 				s = poison_slime.instantiate()
@@ -342,6 +361,10 @@ func spawn_slime(direction: String) -> void:
 			s = slime.instantiate()
 		s.global_position = spawn_pos
 		add_child(s, true)
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = spawn_pos
+		smoke.emitting = true
+		add_child(smoke, true)
 
 func spawn_bombrat(direction: String) -> void:
 	var matching_cells: Array[Vector2i] = []
@@ -385,6 +408,10 @@ func spawn_bombrat(direction: String) -> void:
 			var bomb = bombrat.instantiate()
 			bomb.global_position = spawn_pos
 			add_child(bomb, true)
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = spawn_pos
+		smoke.emitting = true
+		add_child(smoke, true)
 
 func spawn_bauble(direction: String) -> void:
 	var matching_cells: Array[Vector2i] = []
@@ -420,6 +447,17 @@ func spawn_bauble(direction: String) -> void:
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
-		var baub = bauble.instantiate()
+		var baub: Node
+		if wave >= 20 and randf() <= 0.1: 
+			if randf() <= 0.5:
+				baub = angry_bauble.instantiate()
+			else:
+				baub = rapid_bauble.instantiate()
+		else: 
+			baub = bauble.instantiate()
 		baub.global_position = spawn_pos
 		add_child(baub, true)
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = spawn_pos
+		smoke.emitting = true
+		add_child(smoke, true)

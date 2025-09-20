@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://dy0nedcqykalw"]
+
+[ext_resource type="Script" uid="uid://ce4vwpt7kb46y" path="res://scripts/boomerang.gd" id="1_q1dmq"]
+[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="2_6uhra"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lfx52"]
+radius = 9.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_452nj"]
+atlas = ExtResource("2_6uhra")
+region = Rect2(96, 16, 16, 16)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_x01h3"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("Sprite2D:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="Boomerang" type="Area2D"]
+collision_layer = 4
+collision_mask = 6
+script = ExtResource("1_q1dmq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lfx52")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_452nj")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_x01h3")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

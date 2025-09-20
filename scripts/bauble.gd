@@ -87,7 +87,15 @@ func get_retreat_position_away_from(player_pos: Vector2) -> Vector2:
 
 	return best_pos
 
+const FLOAT_AMPLITUDE := 1.0  # How far up/down it floats (pixels)
+const FLOAT_SPEED := 2.0      # How fast it floats
+var float_timer := 0.0
+
 func _physics_process(delta: float) -> void:
+	float_timer += delta * FLOAT_SPEED
+	var offset_y = FLOAT_AMPLITUDE * sin(float_timer)
+	$AnimatedSprite2D.position.y = -8 + offset_y
+	$CollisionShape2D.position.y = -8 + offset_y
 	if (multiplayer.has_multiplayer_peer() and multiplayer.is_server()) or not multiplayer.has_multiplayer_peer():
 		if entity != null:
 			$ProgressBar.value = entity.health

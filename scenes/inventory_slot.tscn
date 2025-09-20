@@ -1,35 +1,12 @@
 [gd_scene load_steps=17 format=3 uid="uid://ob7qtnaqlwp2"]
 
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_bxqf6"]
-[ext_resource type="Script" uid="uid://cdrjmmn8sndql" path="res://scripts/inventory_slot.gd" id="1_hddt5"]
+[ext_resource type="Script" path="res://scripts/inventory_slot.gd" id="1_hddt5"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="2_bbig2"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_hddt5"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="2_t1mo2"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="3_st3ap"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="4_6eu8d"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bbig2"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nn13w"]
-texture = ExtResource("2_t1mo2")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_68j0h"]
-texture = ExtResource("3_st3ap")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_54d7y"]
-texture = ExtResource("4_6eu8d")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_c13kb"]
 texture = ExtResource("2_bbig2")
@@ -37,6 +14,33 @@ texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
+modulate_color = Color(1, 1, 1, 0.5686275)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_54d7y"]
+texture = ExtResource("4_6eu8d")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+modulate_color = Color(1, 1, 1, 0.5686275)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_68j0h"]
+texture = ExtResource("3_st3ap")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+modulate_color = Color(1, 1, 1, 0.5686275)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nn13w"]
+texture = ExtResource("2_t1mo2")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+modulate_color = Color(1, 1, 1, 0.5686275)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bbig2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6eu8d"]
 atlas = ExtResource("1_bxqf6")
@@ -75,11 +79,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_bbig2")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_nn13w")
-theme_override_styles/hover = SubResource("StyleBoxTexture_68j0h")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_54d7y")
 theme_override_styles/normal = SubResource("StyleBoxTexture_c13kb")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_54d7y")
+theme_override_styles/hover = SubResource("StyleBoxTexture_68j0h")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_nn13w")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bbig2")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3 uid="uid://bj012ermk1riu"]
+
+[ext_resource type="Texture2D" uid="uid://p0poxd6lwncg" path="res://assets/sprites/smoke.png" id="1_acmqr"]
+
+[sub_resource type="Curve" id="Curve_17npe"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.80292, 0.98374), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_nfeox"]
+curve = SubResource("Curve_17npe")
+
+[sub_resource type="Curve" id="Curve_nfeox"]
+_data = [Vector2(0, 0.247967), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_aw4cw"]
+curve = SubResource("Curve_nfeox")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_acmqr"]
+particle_flag_disable_z = true
+angle_min = -45.0
+angle_max = 45.0
+angular_velocity_min = -45.0
+angular_velocity_max = 45.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -45.0
+radial_accel_max = 45.0
+scale_min = 2.0
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_aw4cw")
+scale_over_velocity_max = 45.0
+alpha_curve = SubResource("CurveTexture_nfeox")
+
+[node name="Smoke" type="GPUParticles2D"]
+scale = Vector2(2, 2)
+emitting = false
+amount = 1
+texture = ExtResource("1_acmqr")
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_acmqr")

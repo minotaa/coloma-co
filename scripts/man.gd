@@ -40,8 +40,9 @@ var controls: Dictionary[Variant, Variant] = {
 var fullscreen: bool = false
 var sfx_volume: float = 100.0
 var bag = Bag.new()
-var equipped_weapon: Weapon                 = Items.get_by_id(1)
-var game_loaded: bool                       = false
+var equipped_weapon: Weapon = Items.get_by_id(1)
+var equipped_armor: Armor = Items.get_by_id(2)
+var game_loaded: bool = false
 var cooldowns: Dictionary[Variant, Variant] = {}
 
 func set_rich_presence(token: String) -> void:
@@ -101,8 +102,19 @@ func load_game():
 		var data = json.get_data()
 		if data.has("bag"):
 			bag.set_list_from_save(data["bag"])
+			var wooden_sword = ItemStack.new(Items.get_by_id(1), 1)
+			var t_shirt = ItemStack.new(Items.get_by_id(2), 1)
 			if bag.list.is_empty():
-				var wooden_sword = ItemStack.new(Items.get_by_id(1), 1)
+				bag.add_item(wooden_sword)
+				bag.add_item(t_shirt)
+				Toast.add("Gave you a Wooden Sword & T-Shirt.")
+			if not bag.has_item(Items.get_by_id(1)):
+				bag.add_item(wooden_sword)
+				Toast.add("Gave you a Wooden Sword.")
+			if not bag.has_item(Items.get_by_id(2)):
+				bag.add_item(t_shirt)
+				Toast.add("Gave you a T-Shirt.")
+				
 		if data.has("fullscreen"):
 			var mode: int = 0
 			if data["fullscreen"]:
@@ -119,12 +131,15 @@ func load_game():
 				AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
 		if data.has("equipped_weapon"):
 			equipped_weapon = Items.get_by_id(data["equipped_weapon"])
+		if data.has("equipped_armor"):
+			equipped_armor = Items.get_by_id(data["equipped_armor"])
 	print("Loaded save data.")
 
 func get_save_data() -> Dictionary:
 	return {
 		"bag": bag.to_list(),
 		"equipped_weapon": equipped_weapon.id,
+		"equipped_armor": equipped_armor.id,
 		"fullscreen": fullscreen
 	}
 

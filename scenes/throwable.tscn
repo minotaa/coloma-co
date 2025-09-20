@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://d1v82b631h5jt"]
+
+[ext_resource type="Script" uid="uid://cx66ldcightui" path="res://scripts/throwable.gd" id="1_ef5ia"]
+[ext_resource type="Texture2D" uid="uid://dho54oiyawykq" path="res://assets/sprites/dagger.png" id="2_ef5ia"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nputv"]
+radius = 8.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_x01h3"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("Sprite2D:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="Throwable" type="Area2D"]
+collision_layer = 4
+collision_mask = 6
+script = ExtResource("1_ef5ia")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_nputv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_ef5ia")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_x01h3")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

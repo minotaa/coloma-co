@@ -69,6 +69,8 @@ func _on_online_host_pressed() -> void:
 	$UI/Main/Players.visible = true
 	$UI/Main/Mode.text = "-- multiplayer game (host) --"
 	_on_update_players(NetworkManager.players)
+	$UI/Main/Players/Details.visible = false
+	$UI/Main/Players/Panel2.visible = false 
 
 func _on_lan_pressed() -> void:
 	$UI/Main/Buttons.visible = false
@@ -80,14 +82,26 @@ func _on_lan_pressed() -> void:
 		$Demoman/Username.text = $"UI/Main/Multiplayer Buttons/LineEdit".text
 
 func _on_multiplayer_pressed() -> void:
-	$UI/Main/Buttons.visible = false
+	$"UI/Main/Play Buttons".visible = false
 	$"UI/Main/Multiplayer Buttons".visible = true
 
 func _on_back_pressed() -> void:
+	if $UI/Main/Loadout/Panel/Grid.visible:
+		$UI/Main/Loadout/Panel/Grid.visible = false
+		$UI/Main/Loadout/Panel/Main.visible = true 
+		update_loadout()
+		return
 	if $UI/Main/Options.visible and not $UI/Main/Options/General.visible: # doing this instead of adding something that'd make this way more easier for me in the future.
 		$UI/Main/Options/Controls.visible = false
 		$UI/Main/Options/General.visible = true
+	elif $UI/Main/Loadout.visible:
+		$UI/Main/Loadout.visible = false 
+		$UI/Main/Buttons.visible = true
+		$UI/Main/Title.visible = true
+		$UI/Main/Subtitle.visible = true
+		$UI/Main/Version.visible = true
 	else:
+		$"UI/Main/Play Buttons".visible = false
 		$UI/Main/Mode.text = "-- select your mode --"
 		$UI/Main/Buttons.visible = true
 		$"UI/Main/Singleplayer Mode Selector".visible = false
@@ -134,6 +148,8 @@ func _on_host_pressed() -> void:
 	$UI/Main/Players.visible = true
 	$"UI/Main/Players/Copy UserID".visible = false
 	$UI/Main/Mode.text = "-- multiplayer game (host) --"
+	$UI/Main/Players/Details.visible = false
+	$UI/Main/Players/Panel2.visible = false 
 	_on_update_players(NetworkManager.players)
 
 func _on_singleplayer_pressed() -> void:
@@ -147,7 +163,7 @@ func _on_singleplayer_pressed() -> void:
 	#Man.start_game()
 	update_mode_selector()
 	$"UI/Main/Singleplayer Mode Selector".visible = true
-	$"UI/Main/Buttons".visible = false
+	$"UI/Main/Play Buttons".visible = false
 	
 func update_mode_selector() -> void:
 	$"UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode 
@@ -197,6 +213,8 @@ func _on_online_join_join_pressed() -> void:
 		$UI/Main/Players/Start.visible = false
 		$"UI/Main/Players/Mode Selector".visible = false
 		$"UI/Main/Players/Copy UserID".visible = false
+		$UI/Main/Players/Details.visible = true
+		$UI/Main/Players/Panel2.visible = true 
 
 func _on_join_pressed() -> void:
 	if $"UI/Main/Multiplayer Buttons/LineEdit".text != null and $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
@@ -225,6 +243,8 @@ func _on_join_pressed() -> void:
 		$UI/Main/Players/Start.visible = false
 		$"UI/Main/Players/Mode Selector".visible = false
 		$"UI/Main/Players/Copy UserID".visible = false
+		$UI/Main/Players/Details.visible = true
+		$UI/Main/Players/Panel2.visible = true
 	
 func _on_lan_join_pressed() -> void:
 	$"UI/Main/LAN Buttons".visible = false
@@ -371,3 +391,66 @@ func _on_mode_selector_start_pressed() -> void:
 	Man.start_game(Man.selected_mode, Man.selected_map)
 	Man.set_rich_presence("#Singleplayer")
 	Man.set_rich_presence_value("map", Man.selected_map)
+
+func _on_play_pressed() -> void:
+	$UI/Main/Buttons.visible = false 
+	$"UI/Main/Play Buttons".visible = true
+
+func _on_loadout_pressed() -> void:
+	$UI/Main/Buttons.visible = false 
+	$UI/Main/Title.visible = false
+	$UI/Main/Subtitle.visible = false
+	$UI/Main/Version.visible = false
+	$UI/Main/Loadout.visible = true
+	update_loadout()
+
+func update_loadout() -> void:
+	$UI/Main/Loadout/Panel/Main/ArmorIcon.texture = Man.equipped_armor.texture
+	$UI/Main/Loadout/Panel/Main/WeaponIcon.texture = Man.equipped_weapon.texture
+	
+	$UI/Main/Loadout/Panel/Main/ArmorMeta.text = Man.equipped_armor.name + "\n" + Man.equipped_armor.description
+	$UI/Main/Loadout/Panel/Main/WeaponMeta.text = Man.equipped_weapon.name + "\n" + Man.equipped_weapon.description
+	$UI/Main/Loadout/Panel/Main/Meta.text = "+" + str(roundi(Man.equipped_weapon.damage)) + " damage\n+" + str(roundi(Man.equipped_armor.defense)) + " defense" 
+
+func _on_armor_button_pressed() -> void:
+	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
+	$UI/Main/Loadout/Panel/Grid.visible = true
+	$UI/Main/Loadout/Panel/Main.visible = false 
+	$UI/Main/Loadout/Panel/Grid/Title.text = "Armor"
+	for children in $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.get_children():
+		children.queue_free()
+	for item in Man.bag.list:
+		print(item.type)
+		if item.type is Armor:
+			var loadout_button = loadout_button_scene.instantiate()
+			loadout_button.get_node("TextureRect").texture = item.type.texture
+			$UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.add_child(loadout_button, true)
+			loadout_button.connect("pressed", func():
+				select_armor(item.type)
+			)
+
+func _on_weapon_button_pressed() -> void:
+	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
+	$UI/Main/Loadout/Panel/Grid.visible = true
+	$UI/Main/Loadout/Panel/Main.visible = false 
+	$UI/Main/Loadout/Panel/Grid/Title.text = "Weapons"
+	for children in $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.get_children():
+		children.queue_free()
+	for item in Man.bag.list:
+		if item.type is Weapon:
+			var loadout_button = loadout_button_scene.instantiate()
+			loadout_button.get_node("TextureRect").texture = item.type.texture
+			$UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.add_child(loadout_button, true)
+			loadout_button.connect("pressed", func():
+				select_weapon(item.type)
+			)
+
+func select_weapon(item: Weapon) -> void:
+	Man.equipped_weapon = item
+	Toast.add("Set your weapon to: " + item.name) 
+	Man.save_game("set weapon")
+	
+func select_armor(item: Armor) -> void:
+	Man.equipped_armor = item
+	Toast.add("Set your armor to: " + item.name) 
+	Man.save_game("set armor")

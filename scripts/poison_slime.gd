@@ -48,9 +48,9 @@ func _ready() -> void:
 		play_sfx.rpc("appear", global_position)
 	else:
 		play_sfx("appear", global_position)
-	entity.health = 275.0
-	entity.max_health = 275.0
-	entity.defense = 1.0
+	entity.health = 225.0
+	entity.max_health = 225.0
+	entity.defense = 0.0
 	entity.name = "Poison Slime"
 	entity.id = 7
 	Entities.add_entity(entity)

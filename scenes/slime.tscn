@@ -84,7 +84,7 @@ bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
 [node name="Slime" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
-collision_layer = 6
+collision_layer = 22
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("1_p2gj0")

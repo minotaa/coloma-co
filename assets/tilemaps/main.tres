@@ -498,7 +498,8 @@ texture = ExtResource("2_4wlla")
 2:0/0/custom_data_2 = "sewer"
 
 [resource]
-physics_layer_0/collision_layer = 1
+physics_layer_0/collision_layer = 16
+physics_layer_0/collision_mask = 15
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Grass"
 terrain_set_0/terrain_0/color = Color(0.41476, 0.75504, 0.21062, 1)

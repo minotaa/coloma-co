@@ -270,8 +270,8 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nd4x7"]
-radius = 4.0
-height = 22.0
+radius = 5.0
+height = 26.0
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_0l8pv"]
 
@@ -313,7 +313,7 @@ bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
 [node name="Crabman" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
-collision_layer = 6
+collision_layer = 22
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("2_w6kxq")
@@ -346,7 +346,7 @@ collision_layer = 2
 collision_mask = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, -6)
+position = Vector2(0, -5)
 shape = SubResource("CapsuleShape2D_stlaq")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

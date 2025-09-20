@@ -43,40 +43,7 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			player.heal(50)
-
 	items.append(healing_potion)
-	
-#	atlas = AtlasTexture.new()
-#	atlas.atlas = load("res://assets/sprites/items.png")
-#	atlas.region = Rect2(80.0, 16.0, 16.0, 16.0)
-#	var bombrat_shell = Consumable.new(1, "Bombrat Shell", atlas)
-#	bombrat_shell.description = "A shell gathered from a bombrats, explodes causing 75 DMG to anything nearby."
-#	bombrat_shell.cooldown = true
-#	bombrat_shell.cooldown_seconds = 45.0
-#	bombrat_shell.infinite = false
-#	bombrat_shell.on_consume = func():
-#		var explosion = load("res://scenes/explosion.tscn").instantiate()
-#		explosion.global_position = Man.get_player().global_position
-#		explosion.emitting = true
-#		get_parent().add_child(explosion, true)
-#		for enemy in Man.get_player().get_node("Area2D").get_overlapping_bodies():
-#			if enemy.is_in_group("enemies"):
-#				var damage_before_defense = 125
-#				var defense = enemy.entity.defense
-#				var defense_factor = 1.0 - (defense / (defense + 100.0))
-#				var total_damage = damage_before_defense * defense_factor
-#				var direction = enemy.global_position - Man.get_player().global_position
-#				var midpoint = Man.get_player().global_position + direction * 0.5
-#				var angle = direction.angle()
-#				Man.get_player().damage_dealt += total_damage 
-#				Man.get_player().total_damage_dealt += total_damage
-#				if multiplayer.has_multiplayer_peer():
-#					enemy.take_damage.rpc(total_damage, Man.get_player().global_position, Man.get_player().name)
-#					Man.get_player().add_hit_particles.rpc(midpoint, angle)
-#				else:
-#					enemy.take_damage(total_damage, Man.get_player().global_position, Man.get_player().name)
-#					Man.get_player().add_hit_particles(midpoint, angle)
-#	items.append(bombrat_shell)
 	
 	atlas = AtlasTexture.new()
 	atlas.atlas = load("res://assets/sprites/items.png")
@@ -92,15 +59,12 @@ func _init() -> void:
 	
 	atlas = AtlasTexture.new()
 	atlas.atlas = load("res://assets/sprites/items.png")
-	atlas.region = Rect2(96.0, 16.0, 16.0, 16.0)
-	var generic_boomerang = Weapon.new(2, "Wooden Boomerang", atlas)
-	generic_boomerang.damage = 50.0
-	generic_boomerang.description = "A regular wooden boomerang."
-	generic_boomerang.type = "BOOMERANG"
-	generic_boomerang.data = {
-		"reach": 1.0
-	}
-	items.append(generic_boomerang)
+	atlas.region = Rect2(16.0, 0.0, 16.0, 16.0)
+	var hoodie = Armor.new(2, "T-Shirt", atlas)
+	hoodie.description = "Doesn't give any benefits but looks nice!"
+	hoodie.defense = 0.0
+	hoodie.health = 0.0
+	items.append(hoodie)
 
 	atlas = AtlasTexture.new()
 	atlas.atlas = load("res://assets/sprites/items.png")
@@ -117,3 +81,28 @@ func _init() -> void:
 			player.add_status_effect(strength)
 			Toast.add("You have Strength for 30 seconds.")
 	items.append(strength_potion)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(112.0, 16.0, 16.0, 16.0)
+	var daggers = Weapon.new(4, "Throwing Daggers", atlas)
+	daggers.damage = 75.0
+	daggers.description = "Click in any direction to throw daggers, however you have limited ammo."
+	daggers.type = "THROWABLE"
+	daggers.data = {
+		"clip": 16,
+		"reload_time": 2.15,
+		"speed": 250.0,
+		"texture": preload("res://assets/sprites/dagger.png")
+	}
+	items.append(daggers)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(96.0, 16.0, 16.0, 16.0)
+	var boomerang = Weapon.new(5, "Boomerang", atlas)
+	boomerang.damage = 25.0
+	boomerang.description = "Click in any direction to throw boomerang."
+	boomerang.type = "BOOMERANG"
+	items.append(boomerang)
+	
