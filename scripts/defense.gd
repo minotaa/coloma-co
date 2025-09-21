@@ -66,7 +66,10 @@ func _ready() -> void:
 		smoke.global_position = p.global_position
 		smoke.emitting = true
 		add_child(smoke, true)
+		p.setup_ui("Defense")
 		return
+		
+	
 
 	# Multiplayer: spawn players from the current list
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
@@ -91,6 +94,11 @@ func _ready() -> void:
 			smoke.global_position = p.global_position
 			smoke.emitting = true
 			add_child(smoke, true)
+		
+		await get_tree().create_timer(1.0).timeout
+		for player in get_tree().get_nodes_in_group("players"):
+			player.setup_ui.rpc("Defense")
+			print("Setting Defense UI for " + player.name + ".")
 
 		# Connect signals for player joins and quits
 		NetworkManager.player_joined.connect(player_joined)

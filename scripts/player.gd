@@ -164,15 +164,8 @@ func _connect_button_sfx(button: Button):
 func _enter_tree() -> void:
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
-	
+
 func _ready() -> void:	
-	if Man.equipped_weapon.type == "THROWABLE":
-		play_ui_sfx(preload("res://assets/sounds/click1.wav"))
-		Toast.add("Reloaded your throwable.")
-		clip = Man.equipped_weapon.data["clip"]
-		$Clip.visible = true 
-	if multiplayer.has_multiplayer_peer():
-		set_multiplayer_authority(name.to_int())
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
@@ -201,38 +194,25 @@ func _ready() -> void:
 		if file:
 			file.store_line("--- Chat session started at %s ---" % timestamp)
 		file.close()
-		await get_tree().create_timer(0.1).timeout
-		print("this is running " + str(multiplayer.get_unique_id()) + " " + name + " " + str(is_multiplayer_authority()))
-		print(type)
-		wait_for_type_sync()
-
-func wait_for_type_sync():
-	var ticks = 0
-	var max_ticks = 30  # 3 seconds at 60fps should be more than enough
-
-	while type == "" and ticks < max_ticks:
-		await get_tree().create_timer(0.5).timeout
-		ticks += 1
-		print("Waiting for type sync... tick %d, type: '%s'" % [ticks, type])
-
-	if type != "":
-		print("Type synced after %d ticks: %s" % [ticks, type])
-		setup_ui()
-	else:
-		print("Type sync timed out after %d ticks" % ticks)
+		if Man.equipped_weapon.type == "THROWABLE":
+			play_ui_sfx(preload("res://assets/sounds/click1.wav"))
+			Toast.add("Reloaded your throwable.")
+			clip = Man.equipped_weapon.data["clip"]
+			$Clip.visible = true 
 		
-func setup_ui() -> void:
+@rpc("authority", "call_local", "reliable")
+func setup_ui(type: String) -> void:
+	#if is_multiplayer_authority():
+	self.type = type
 	print("Setting up UI - type: '%s'" % type)
-
-	if is_multiplayer_authority():
-		for children in $UI.get_children():
-			children.visible = false
-		if type != "":
-			print("Showing UI for type: %s" % type)
-			$UI.get_node(str(type)).visible = true
-		else:
-			print("Type is empty, no specific UI shown")
-		$UI/Global.visible = true
+	for children in $UI.get_children():
+		children.visible = false
+	if type != "":
+		print("Showing UI for type: %s" % type)
+		$UI.get_node(str(type)).visible = true
+	else:
+		print("Type is empty, no specific UI shown")
+	$UI/Global.visible = true
 		
 func heal(amount: float) -> void:	
 	if alive:
@@ -439,6 +419,7 @@ func _process_input(delta) -> void:
 		
 	elif Man.equipped_weapon.type == "BOOMERANG":
 		if Input.is_action_just_pressed("attack") and has_boomerang:
+			play_animation("throw_" + last_direction)
 			var mouse_pos = get_global_mouse_position()
 			var direction = (mouse_pos - global_position).normalized()
 			
@@ -450,6 +431,7 @@ func _process_input(delta) -> void:
 		
 		# Handle directional keyboard controls
 		elif has_boomerang and (Input.is_action_pressed("attack_up") or Input.is_action_pressed("attack_down") or Input.is_action_pressed("attack_left") or Input.is_action_pressed("attack_right")):
+			play_animation("throw_" + last_direction)
 			# Calculate direction based on pressed keys
 			var direction = Vector2.ZERO
 			if Input.is_action_pressed("attack_up"):
@@ -471,6 +453,7 @@ func _process_input(delta) -> void:
 	elif Man.equipped_weapon.type == "THROWABLE":
 		if clip > 0:
 			if Input.is_action_just_pressed("attack"):
+				play_animation("throw_" + last_direction)
 				var mouse_pos = get_global_mouse_position()
 				var direction = (mouse_pos - global_position).normalized()
 				if multiplayer.has_multiplayer_peer():
@@ -482,6 +465,7 @@ func _process_input(delta) -> void:
 					reload_time = Man.equipped_weapon.data["reload_time"]
 				play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
 			if (Input.is_action_just_pressed("attack_up") or Input.is_action_just_pressed("attack_down") or Input.is_action_just_pressed("attack_left") or Input.is_action_just_pressed("attack_right")):
+				play_animation("throw_" + last_direction)
 				var direction = Vector2.ZERO
 				if Input.is_action_just_pressed("attack_up"):
 					direction.y -= 1
@@ -934,7 +918,7 @@ func _calculate_offset_in_direction_node(dir: Vector2, node: Control) -> Vector2
 		return size / 2  # fallback
 		
 func _animation_finished() -> void:
-	if $AnimatedSprite2D.animation.begins_with("sword_"):
+	if $AnimatedSprite2D.animation.begins_with("sword_") or $AnimatedSprite2D.animation.begins_with("throw_"):
 		play_idle_animation()
 
 func get_boomerang_back() -> void:

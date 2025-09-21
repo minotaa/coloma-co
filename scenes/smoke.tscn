@@ -32,6 +32,7 @@ scale_over_velocity_max = 45.0
 alpha_curve = SubResource("CurveTexture_nfeox")
 
 [node name="Smoke" type="GPUParticles2D"]
+z_index = 1
 scale = Vector2(2, 2)
 emitting = false
 amount = 1
