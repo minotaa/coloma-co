@@ -241,6 +241,15 @@ func merge_room(room: Node, offset: Vector2i) -> int:
 		"filler_area": Rect2i(filler_min, filler_max - filler_min + Vector2i.ONE)
 	}
 	
+	var exits_world := []
+	if room.has_method("get") and "exits" in room:
+		var room_exits = room.get("exits")
+		for exit in room_exits:
+			# exit.pos is expected to be room-local tile coordinates; convert to Vector2i and add offset
+			var exit_pos = Vector2i(int(exit.pos.x), int(exit.pos.y)) + offset
+			exits_world.append({"dir": exit.dir, "pos": exit_pos})
+	rooms[room_id]["exits"] = exits_world
+	
 	room.queue_free()
 	return room_id
 
@@ -391,11 +400,10 @@ func update_barrier_label() -> void:
 		$Barrier.get_node("Label").text = str(completed_waves) + "/" + str(total_waves)
 
 func get_current_wave() -> Dictionary:
-	var applicable_waves = []
 	for wave in waves:
 		if completed_rooms >= wave.requirement:
-			applicable_waves.append(wave)
-	return applicable_waves.pick_random()
+			return wave
+	return {}
 
 func spawn_current_wave() -> void:
 	var current_wave = get_current_wave()
@@ -557,30 +565,52 @@ func spawn_next_room() -> void:
 		var last_room_id = room_ids_in_order[-1]
 		var last_room_bounds = get_room_bounds(last_room_id)
 		
-		# Find the north exit position of the last room (center of top edge)
-		var last_room_north_exit = Vector2i(
-			last_room_bounds.position.x + last_room_bounds.size.x / 2,
-			last_room_bounds.position.y
-		)
-		
-		# Find a south exit in the new room to connect to
+		var connection_point: Vector2i = Vector2i.ZERO
 		var connection_found = false
-		for room_exit in room_exits:
-			if room_exit.dir == "south":
-				var room_south_exit = Vector2i(room_exit.pos.x, room_exit.pos.y)
-				# Calculate offset so the south exit of new room aligns with north exit of last room
-				offset = last_room_north_exit - room_south_exit
-				connection_found = true
-				print("[ROOM] Connected via exits: last room north (", last_room_north_exit, ") to new room south (", room_south_exit, ") with offset (", offset, ")")
-				break
 		
-		# Fallback: place room above last room using geometric center
+		# --- NEW: read the stored exits from the last (merged) room instead of re-instancing random scenes ---
+		if rooms.has(last_room_id) and rooms[last_room_id].has("exits"):
+			var last_room_exits = rooms[last_room_id]["exits"]
+			for exit in last_room_exits:
+				if exit.dir == "north":
+					connection_point = exit.pos
+					connection_found = true
+					break
+		# --------------------------------------------------------------------
+		
+		# If we have a connection_point from the last room, try to align new room's south exit to it
+		if connection_found and room_exits.size() > 0:
+			for room_exit in room_exits:
+				if room_exit.dir == "south":
+					var room_south_exit = Vector2i(int(room_exit.pos.x), int(room_exit.pos.y))
+					# Calculate offset so the south exit of new room aligns with north exit of previous room
+					offset = connection_point - room_south_exit
+					connection_found = true
+					print("[ROOM] Connected via exits: previous north (", connection_point, ") to new south (", room_south_exit, ") with offset (", offset, ")")
+					break
+		
+		# Fallbacks: if we couldn't find exits or match them, keep existing centered fallback logic
 		if not connection_found:
-			offset = Vector2i(
-				last_room_bounds.position.x,
-				last_room_bounds.position.y - 15
-			)
-			print("[ROOM] No exit connection found, using fallback offset: ", offset)
+			var temp_room_layer = room_instance.get_node_or_null("TileMapLayer")
+			if temp_room_layer:
+				var new_room_cells = temp_room_layer.get_used_cells()
+				if not new_room_cells.is_empty():
+					var new_min_pos = new_room_cells[0]
+					var new_max_pos = new_room_cells[0]
+					for cell in new_room_cells:
+						new_min_pos.x = min(new_min_pos.x, cell.x)
+						new_min_pos.y = min(new_min_pos.y, cell.y)
+						new_max_pos.x = max(new_max_pos.x, cell.x)
+						new_max_pos.y = max(new_max_pos.y, cell.y)
+					
+					var new_room_center_x = new_min_pos.x + (new_max_pos.x - new_min_pos.x) / 2
+					var last_room_center_x = last_room_bounds.position.x + last_room_bounds.size.x / 2
+					
+					offset = Vector2i(
+						last_room_center_x - new_room_center_x,
+						last_room_bounds.position.y - new_max_pos.y - 1
+					)
+					print("[ROOM] No exit connection found, using centered fallback offset: ", offset)
 	
 	var new_room_id = merge_room(room_instance, offset)
 	room_ids_in_order.append(new_room_id)
@@ -624,11 +654,7 @@ func position_barrier_at_room_exit(room_id: int, exit_direction: String) -> void
 	$Barrier.global_position = barrier_pos
 
 func countdown_and_spawn_room() -> void:
-	# Countdown from 5 to spawn room
-	$Barrier.get_node("Label").text = "5"
-	await get_tree().create_timer(1.0).timeout
-	$Barrier.get_node("Label").text = "4"
-	await get_tree().create_timer(1.0).timeout
+	# Countdown from 3 to spawn room
 	$Barrier.get_node("Label").text = "3"
 	await get_tree().create_timer(1.0).timeout
 	$Barrier.get_node("Label").text = "2"

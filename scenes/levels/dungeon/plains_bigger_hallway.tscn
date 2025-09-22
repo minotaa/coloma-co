@@ -8,13 +8,13 @@
 [sub_resource type="Resource" id="Resource_1nvno"]
 script = ExtResource("2_2h48t")
 dir = "north"
-pos = Vector2i(7, 0)
+pos = Vector2i(6, 0)
 metadata/_custom_type_script = "uid://ckyd3t3tcpqr7"
 
 [sub_resource type="Resource" id="Resource_1yex5"]
 script = ExtResource("2_2h48t")
 dir = "south"
-pos = Vector2i(7, 17)
+pos = Vector2i(6, 17)
 metadata/_custom_type_script = "uid://ckyd3t3tcpqr7"
 
 [node name="Plains Bigger Hallway" type="Node2D"]
