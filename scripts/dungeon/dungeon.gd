@@ -5,33 +5,15 @@ var player_scene = preload("res://scenes/player.tscn")
 var filler_tile = Vector2i(3, 0)
 
 var valid_rooms = [
-	preload("res://scenes/levels/dungeon/plains_tall_hallway.tscn")
+	preload("res://scenes/levels/dungeon/plains_tall_hallway.tscn"),
+	preload("res://scenes/levels/dungeon/plains_bigger_hallway.tscn")
 ]
 
-var waves = [
-	{
-		"requirement": 0,
-		"content": [
-			[{ "slime": 5 }, { "bauble": 2 }]
-		]
-	},
-	{
-		"requirement": 0,
-		"content": [
-			[{ "slime": 3 }], 
-			[{ "slime": 5 }, { "bauble": 2 }]
-		]
-	},
-	{
-		"requirement": 5,
-		"content": [
-			[{ "slime": 3 }], 
-			[{ "slime": 5 }, { "bauble": 2 }],
-			[{ "slime": 8 }, { "bauble": 5 }],
-			[{ "mother_slime": 2 }, { "slime": 12 }],
-		]
-	}
-]
+var start_rooms = {
+	"Plains": preload("res://scenes/levels/dungeon/plains_start_room.tscn")
+}
+
+var waves = []
 
 # Enemy scene preloads
 var rapid_bauble = preload("res://scenes/rapid_bauble.tscn")
@@ -54,8 +36,13 @@ var completed_rooms = 0
 var current_wave_index = 0
 var current_subwave_index = 0
 var spawning_active = false
+var currently_spawning = false
 var room_ids_in_order = []
 var kills = {}
+
+# Void detection
+var void_check_counter = 0
+var wave_check_counter = 0
 
 @onready var spawner_layer = $Spawner
 
@@ -81,32 +68,88 @@ func update_kills(kills: Dictionary) -> void:
 	self.kills = kills
 
 func _ready() -> void:
-	multiplayer.multiplayer_peer = null
-	# Singleplayer: spawn one player normally
-	var p = player_scene.instantiate()
-	p.name = "Player"
-	p.type = "Dungeon"
-	p.global_position = Vector2(128, 128)
-	call_deferred("add_child", p, true)
+	var file = FileAccess.open("res://waves.json", FileAccess.READ)
+	if not file:
+		push_error("Failed to load waves.json")
+		return
+	waves = JSON.parse_string(file.get_as_text())
+	file.close()
 	
-	var smoke = smoke_scene.instantiate()
-	smoke.global_position = p.global_position
-	smoke.emitting = true
-	add_child(smoke, true)
-	p.setup_ui("Dungeon")
 	$TileMapLayer.clear()
 	
 	# Only spawn the start room initially
-	var start_id = merge_room(preload("res://scenes/levels/dungeon/plains_start_room.tscn").instantiate(), Vector2(0, 0))
+	var start_id = merge_room(start_rooms[Man.selected_map].instantiate(), Vector2(0, 0))
 	room_ids_in_order = [start_id]
 	
 	# Position barrier at the north exit of start room to indicate next room spawn
 	position_barrier_at_room_exit(start_id, "north")
 	
+	if not multiplayer.has_multiplayer_peer():
+		# Singleplayer: spawn one player normally
+		var p = player_scene.instantiate()
+		p.name = "Player"
+		p.type = "Dungeon"
+		p.global_position = Vector2(128, 128)
+		call_deferred("add_child", p, true)
+		
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = p.global_position
+		smoke.emitting = true
+		add_child(smoke, true)
+		p.setup_ui("Dungeon")
+	else:
+		# Multiplayer: spawn players from the current list
+		if multiplayer.is_server():
+			var radius = 30  # Radius of the spawn circle
+			var rng = RandomNumberGenerator.new()
+			rng.randomize()
+			var spawn_center = Vector2(128, 128)  # Center of start room
+
+			for player_data in NetworkManager.players:
+				var peer_id = player_data["id"]
+				var p = player_scene.instantiate()
+				p.name = str(peer_id)
+				p.type = "Dungeon"
+				p.get_node("Username").text = player_data["username"]
+
+				# Random angle around the circle
+				var angle = rng.randf_range(0.0, TAU)
+				var offset = Vector2(cos(angle), sin(angle)) * radius
+				p.global_position = spawn_center + offset
+				call_deferred("add_child", p, true)
+				
+				var smoke = smoke_scene.instantiate()
+				smoke.global_position = p.global_position
+				smoke.emitting = true
+				add_child(smoke, true)
+			
+			await get_tree().create_timer(1.0).timeout
+			for player in get_tree().get_nodes_in_group("players"):
+				player.setup_ui.rpc("Dungeon")
+				print("Setting Dungeon UI for " + player.name + ".")
+	
 	# Start countdown to spawn first room
 	await get_tree().create_timer(2.0).timeout
-	countdown_and_spawn_room()
+	if is_server_or_singleplayer():
+		countdown_and_spawn_room()
 	return
+
+func _physics_process(_delta: float) -> void:
+	# Check players for void every 30 physics frames (roughly every 0.5 seconds at 60fps)
+	void_check_counter += 1
+	if void_check_counter >= 30:
+		void_check_counter = 0
+		check_players_for_void()
+	
+	# Check wave completion every 30 physics frames (roughly every 0.5 seconds at 60fps)
+	if is_server_or_singleplayer():
+		wave_check_counter += 1
+		if wave_check_counter >= 30:
+			wave_check_counter = 0
+			check_wave_completion()
+
+func is_server_or_singleplayer() -> bool:
+	return not multiplayer.has_multiplayer_peer() or multiplayer.is_server()
 
 func move_barrier(where_to: Vector2) -> void:
 	$Barrier.get_node("Label").text = "5"
@@ -154,8 +197,8 @@ func merge_room(room: Node, offset: Vector2i) -> int:
 	min_pos += offset
 	max_pos += offset
 	
-	# Fill 16-tile radius around the room with filler tiles
-	var filler_radius = 20
+	# Fill 24-tile radius around the room with filler tiles
+	var filler_radius = 24
 	var filler_min = Vector2i(min_pos.x - filler_radius, min_pos.y - filler_radius)
 	var filler_max = Vector2i(max_pos.x + filler_radius, max_pos.y + filler_radius)
 	
@@ -258,63 +301,6 @@ func delete_room(room_id: int, cleanup_filler: bool = true) -> bool:
 	# Remove from tracking
 	rooms.erase(room_id)
 	print("[GENERATOR] Deleted room ", room_id, " with cleanup: ", cleanup_filler)
-	return true
-
-func delete_room_progressive(room_id: int) -> bool:
-	if not rooms.has(room_id):
-		print("[GENERATOR] Room ID ", room_id, " not found")
-		return false
-	
-	var room_data = rooms[room_id]
-	
-	# Clear all room tiles
-	for cell in room_data.cells:
-		$TileMapLayer.set_cell(cell, -1)
-	
-	# Clear spawner tiles in this room's area
-	var filler_area = room_data.filler_area
-	for x in range(filler_area.position.x, filler_area.end.x):
-		for y in range(filler_area.position.y, filler_area.end.y):
-			var pos = Vector2i(x, y)
-			# Clear spawner tiles in this area
-			if spawner_layer.get_cell_source_id(pos) != -1:
-				spawner_layer.set_cell(pos, -1)
-	
-	# Progressive filler cleanup
-	var remaining_room_bounds = []
-	for other_id in rooms:
-		if other_id != room_id:
-			remaining_room_bounds.append(rooms[other_id].bounds)
-	
-	# Clear filler area intelligently
-	for x in range(filler_area.position.x, filler_area.end.x):
-		for y in range(filler_area.position.y, filler_area.end.y):
-			var pos = Vector2i(x, y)
-			
-			# Only clear if it's a filler tile
-			var atlas_coords = $TileMapLayer.get_cell_atlas_coords(pos)
-			if atlas_coords != filler_tile:
-				continue
-			
-			# Check if this filler tile is still needed by any remaining room
-			var needed_by_other_room = false
-			for bounds in remaining_room_bounds:
-				# Check if this filler position is within 16 tiles of any remaining room
-				var expanded_bounds = Rect2i(
-					bounds.position - Vector2i(16, 16),
-					bounds.size + Vector2i(32, 32)
-				)
-				if expanded_bounds.has_point(pos):
-					needed_by_other_room = true
-					break
-			
-			# Safe to delete if not needed by other rooms
-			if not needed_by_other_room:
-				$TileMapLayer.set_cell(pos, -1)
-	
-	# Remove from tracking
-	rooms.erase(room_id)
-	print("[GENERATOR] Deleted room ", room_id, " progressively")
 	return true
 
 func convert_room_to_filler(room_id: int) -> bool:
@@ -430,14 +416,20 @@ func spawn_current_wave() -> void:
 	# Update barrier to show current progress (0 completed when wave just started)
 	update_barrier_label()
 	
+	# Set spawning flag to prevent premature wave completion
+	currently_spawning = true
+	
 	for enemy_data in subwave:
 		for enemy_type in enemy_data:
 			var count = enemy_data[enemy_type]
 			for i in range(count):
 				spawn_enemy(enemy_type)
+				# Add 1.5 second delay between each enemy spawn
+				if i < count - 1:  # Don't wait after the last enemy
+					await get_tree().create_timer(1.5).timeout
 	
-	# Start checking for wave completion
-	check_wave_completion()
+	# Done spawning enemies
+	currently_spawning = false
 
 func spawn_enemy(enemy_type: String) -> void:
 	var matching_cells: Array[Vector2i] = []
@@ -522,21 +514,18 @@ func spawn_enemy(enemy_type: String) -> void:
 	add_child(smoke, true)
 
 func check_wave_completion() -> void:
-	if not spawning_active:
+	if not spawning_active or currently_spawning:
 		return
 		
 	var enemies = get_tree().get_nodes_in_group("enemies")
-	print("[WAVE] Checking completion. Enemies remaining: ", enemies.size())
 	
 	if enemies.size() == 0:
 		print("[WAVE] Wave complete, spawning next...")
-		# All enemies defeated, spawn next wave
-		await get_tree().create_timer(1.0).timeout  # Brief pause between waves
+		# All enemies defeated, spawn next wave after brief delay
+		currently_spawning = true  # Prevent multiple triggers
+		await get_tree().create_timer(1.0).timeout
+		currently_spawning = false
 		spawn_current_wave()
-	else:
-		# Check again in a moment
-		await get_tree().create_timer(0.5).timeout
-		check_wave_completion()
 
 func complete_room() -> void:
 	spawning_active = false
@@ -562,14 +551,14 @@ func spawn_next_room() -> void:
 	# Get the room's exits
 	var room_exits = room_instance.exits if room_instance.has_method("get") and "exits" in room_instance else []
 	
-	# Calculate offset based on connecting to the last room's north exit
+	# Calculate offset based on connecting exits properly
 	var offset = Vector2i(0, 0)
 	if room_ids_in_order.size() > 0:
 		var last_room_id = room_ids_in_order[-1]
 		var last_room_bounds = get_room_bounds(last_room_id)
 		
-		# Find the north exit position of the last room
-		var connection_point = Vector2i(
+		# Find the north exit position of the last room (center of top edge)
+		var last_room_north_exit = Vector2i(
 			last_room_bounds.position.x + last_room_bounds.size.x / 2,
 			last_room_bounds.position.y
 		)
@@ -578,17 +567,20 @@ func spawn_next_room() -> void:
 		var connection_found = false
 		for room_exit in room_exits:
 			if room_exit.dir == "south":
-				var exit_pos = Vector2i(room_exit.pos.x, room_exit.pos.y)
-				offset = connection_point - exit_pos
+				var room_south_exit = Vector2i(room_exit.pos.x, room_exit.pos.y)
+				# Calculate offset so the south exit of new room aligns with north exit of last room
+				offset = last_room_north_exit - room_south_exit
 				connection_found = true
+				print("[ROOM] Connected via exits: last room north (", last_room_north_exit, ") to new room south (", room_south_exit, ") with offset (", offset, ")")
 				break
 		
-		# Fallback: place room above last room
+		# Fallback: place room above last room using geometric center
 		if not connection_found:
 			offset = Vector2i(
 				last_room_bounds.position.x,
 				last_room_bounds.position.y - 15
 			)
+			print("[ROOM] No exit connection found, using fallback offset: ", offset)
 	
 	var new_room_id = merge_room(room_instance, offset)
 	room_ids_in_order.append(new_room_id)
@@ -600,22 +592,6 @@ func spawn_next_room() -> void:
 	
 	# Stage 2: Completely remove very distant filler areas
 	cleanup_distant_filler()
-
-func move_barrier_to_previous_room() -> void:
-	if room_ids_in_order.size() < 2:
-		return
-	
-	# Get the second-to-last room (current/previous room where waves happen)
-	var current_room_id = room_ids_in_order[-2]
-	var current_room_bounds = get_room_bounds(current_room_id)
-	
-	# Position barrier at the top of the current room to indicate progression
-	var barrier_target = $TileMapLayer.map_to_local(Vector2i(
-		current_room_bounds.position.x + current_room_bounds.size.x / 2,
-		current_room_bounds.position.y - 3
-	))
-	
-	$Barrier.global_position = barrier_target
 
 func position_barrier_at_room_exit(room_id: int, exit_direction: String) -> void:
 	var room_bounds = get_room_bounds(room_id)
@@ -677,3 +653,69 @@ func countdown_and_spawn_room() -> void:
 	current_subwave_index = 0
 	update_barrier_label()
 	spawn_current_wave()
+
+func check_players_for_void() -> void:
+	# Only run void detection on server or in singleplayer
+	if not is_server_or_singleplayer():
+		return
+		
+	# Get all players using the proper group
+	var players = get_tree().get_nodes_in_group("players")
+	
+	for player in players:
+		if is_player_in_void(player):
+			teleport_player_to_safety(player)
+
+func is_player_in_void(player: Node2D) -> bool:
+	var player_tile_pos = $TileMapLayer.local_to_map(player.global_position)
+	var tile_source_id = $TileMapLayer.get_cell_source_id(player_tile_pos)
+	var tile_atlas_id = $TileMapLayer.get_cell_atlas_coords(player_tile_pos)
+	
+	# Player is in void if there's no tile at their position or they're on filler
+	return tile_source_id == -1 or tile_atlas_id == filler_tile
+
+func teleport_player_to_safety(player: Node2D) -> void:
+	var safe_position = find_nearest_safe_position(player.global_position)
+	if safe_position != Vector2.ZERO:
+		player.global_position = safe_position
+		
+		# Add visual effect
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = player.global_position
+		smoke.emitting = true
+		add_child(smoke, true)
+		
+		print("[SAFETY] Teleported player to safety: ", safe_position)
+
+func find_nearest_safe_position(from_position: Vector2) -> Vector2:
+	var search_radius = 50  # Search within 50 tiles
+	var from_tile = $TileMapLayer.local_to_map(from_position)
+	
+	# Spiral search for nearest valid tile
+	for radius in range(1, search_radius + 1):
+		for x in range(-radius, radius + 1):
+			for y in range(-radius, radius + 1):
+				# Only check border of current radius
+				if abs(x) != radius and abs(y) != radius:
+					continue
+					
+				var check_pos = from_tile + Vector2i(x, y)
+				var tile_source_id = $TileMapLayer.get_cell_source_id(check_pos)
+				var tile_atlas = $TileMapLayer.get_cell_atlas_coords(check_pos)
+				
+				# Valid tile that's not filler
+				if tile_source_id != -1 and tile_atlas != filler_tile:
+					return $TileMapLayer.map_to_local(check_pos)
+	
+	# Fallback: try to find any active room center
+	if not room_ids_in_order.is_empty():
+		var latest_room_id = room_ids_in_order[-1]
+		var room_bounds = get_room_bounds(latest_room_id)
+		var center_pos = Vector2i(
+			room_bounds.position.x + room_bounds.size.x / 2,
+			room_bounds.position.y + room_bounds.size.y / 2
+		)
+		return $TileMapLayer.map_to_local(center_pos)
+	
+	# Final fallback
+	return Vector2(128, 128)  # Original spawn position

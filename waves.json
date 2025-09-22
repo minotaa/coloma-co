@@ -1,0 +1,348 @@
+[
+		{
+		"requirement": 0,
+		"content": [
+			[{ "slime": 4 }, { "bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 0,
+		"content": [
+			[{ "slime": 3 }],
+			[{ "bauble": 2 }, { "slime": 1 }]
+		]
+	},
+	{
+		"requirement": 1,
+		"content": [
+			[{ "slime": 5 }],
+			[{ "bauble": 3 }, { "slime": 2 }]
+		]
+	},
+	{
+		"requirement": 1,
+		"content": [
+			[{ "slime": 4 }, { "bauble": 2 }],
+			[{ "poison_slime": 1 }]
+		]
+	},
+	{
+		"requirement": 2,
+		"content": [
+			[{ "slime": 6 }],
+			[{ "bauble": 3 }],
+			[{ "poison_slime": 1 }]
+		]
+	},
+	{
+		"requirement": 2,
+		"content": [
+			[{ "bauble": 4 }],
+			[{ "slime": 5 }, { "bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 3,
+		"content": [
+			[{ "slime": 7 }, { "bauble": 3 }]
+		]
+	},
+	{
+		"requirement": 3,
+		"content": [
+			[{ "slime": 4 }, { "poison_slime": 2 }]
+		]
+	},
+	{
+		"requirement": 4,
+		"content": [
+			[{ "slime": 6 }, { "bauble": 3 }],
+			[{ "rapid_bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 4,
+		"content": [
+			[{ "slime": 5 }],
+			[{ "bauble": 4 }, { "poison_slime": 1 }]
+		]
+	},
+	{
+		"requirement": 5,
+		"content": [
+			[{ "slime": 8 }],
+			[{ "bauble": 3 }],
+			[{ "poison_slime": 2 }]
+		]
+	},
+	{
+		"requirement": 5,
+		"content": [
+			[{ "slime": 4 }, { "bauble": 2 }],
+			[{ "rapid_bauble": 3 }]
+		]
+	},
+	{
+		"requirement": 6,
+		"content": [
+			[{ "slime": 6 }, { "bauble": 3 }],
+			[{ "poison_slime": 2 }, { "slime": 3 }]
+		]
+	},
+	{
+		"requirement": 6,
+		"content": [
+			[{ "slime": 8 }],
+			[{ "rapid_bauble": 2 }, { "bauble": 3 }]
+		]
+	},
+	{
+		"requirement": 7,
+		"content": [
+			[{ "slime": 10 }],
+			[{ "poison_slime": 3 }]
+		]
+	},
+	{
+		"requirement": 7,
+		"content": [
+			[{ "bauble": 5 }, { "slime": 5 }],
+			[{ "rapid_bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 8,
+		"content": [
+			[{ "slime": 6 }, { "bauble": 4 }],
+			[{ "poison_slime": 2 }, { "rapid_bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 8,
+		"content": [
+			[{ "slime": 10 }],
+			[{ "angry_bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 10,
+		"content": [
+			[{ "mother_slime": 1 }, { "slime": 6 }],
+			[{ "poison_slime": 3 }, { "rapid_bauble": 3 }]
+		]
+	},
+	{
+		"requirement": 12,
+		"content": [
+			[{ "angry_bauble": 4 }, { "slime": 4 }],
+			[{ "rapid_bauble": 6 }, { "poison_slime": 2 }]
+		]
+	},
+	{
+		"requirement": 0,
+		"content": [
+			[{ "slime": 5 }],
+			[{ "bauble": 3 }]
+		]
+	},
+	{
+		"requirement": 1,
+		"content": [
+			[{ "slime": 5 }],
+			[{ "bauble": 3 }, { "slime": 8 }]
+		]
+	},
+	{
+		"requirement": 2,
+		"content": [
+			[{ "slime": 10 }, { "bauble": 3 }],
+			[{ "slime": 8 }, { "bauble": 4 }]
+		]
+	},
+	{
+		"requirement": 3,
+		"content": [
+			[{ "bauble": 3 }],
+			[{ "slime": 3 }, { "bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 4,
+		"content": [
+			[{ "slime": 4 }],
+			[{ "bauble": 2 }, { "slime": 2 }]
+		]
+	},
+	{
+		"requirement": 5,
+		"content": [
+			[{ "slime": 2 }, { "bauble": 2 }],
+			[{ "slime": 3 }],
+			[{ "bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 6,
+		"content": [
+			[{ "slime": 5 }],
+			[{ "bauble": 3 }],
+			[{ "slime": 2 }, { "bauble": 1 }]
+		]
+	},
+	{
+		"requirement": 7,
+		"content": [
+			[{ "bauble": 4 }],
+			[{ "slime": 3 }, { "bauble": 2 }],
+			[{ "slime": 4 }]
+		]
+	},
+	{
+		"requirement": 8,
+		"content": [
+			[{ "slime": 4 }, { "bauble": 2 }],
+			[{ "slime": 2 }, { "bauble": 3 }]
+		]
+	},
+		{
+		"requirement": 22,
+		"content": [
+			[{ "slime": 10 }, { "bauble": 5 }],
+			[{ "poison_slime": 4 }, { "rapid_bauble": 6 }]
+		]
+	},
+	{
+		"requirement": 24,
+		"content": [
+			[{ "angry_bauble": 6 }],
+			[{ "slime": 8 }, { "mother_slime": 2 }],
+			[{ "rapid_bauble": 8 }]
+		]
+	},
+	{
+		"requirement": 26,
+		"content": [
+			[{ "poison_slime": 6 }, { "slime": 6 }],
+			[{ "angry_bauble": 4 }, { "rapid_bauble": 6 }],
+			[{ "crabman": 1 }, { "bauble": 4 }]
+		]
+	},
+	{
+		"requirement": 28,
+		"content": [
+			[{ "mother_slime": 3 }, { "slime": 10 }],
+			[{ "rapid_bauble": 10 }, { "angry_bauble": 5 }]
+		]
+	},
+	{
+		"requirement": 30,
+		"content": [
+			[{ "crabman": 2 }],
+			[{ "slime": 12 }, { "poison_slime": 6 }],
+			[{ "angry_bauble": 6 }, { "rapid_bauble": 10 }]
+		]
+	},
+	{
+		"requirement": 32,
+		"content": [
+			[{ "slime": 15 }],
+			[{ "bauble": 12 }, { "rapid_bauble": 8 }],
+			[{ "mother_slime": 2 }, { "angry_bauble": 6 }]
+		]
+	},
+	{
+		"requirement": 35,
+		"content": [
+			[{ "poison_slime": 8 }, { "slime": 10 }],
+			[{ "rapid_bauble": 12 }, { "angry_bauble": 8 }],
+			[{ "crabman": 1 }, { "mother_slime": 2 }]
+		]
+	},
+	{
+		"requirement": 38,
+		"content": [
+			[{ "slime": 20 }],
+			[{ "poison_slime": 10 }, { "bauble": 10 }],
+			[{ "rapid_bauble": 12 }, { "angry_bauble": 10 }],
+			[{ "crabman": 2 }]
+		]
+	},
+	{
+		"requirement": 40,
+		"content": [
+			[{ "mother_slime": 4 }, { "slime": 12 }],
+			[{ "rapid_bauble": 15 }, { "angry_bauble": 12 }],
+			[{ "crabman": 3 }, { "poison_slime": 10 }]
+		]
+	},
+		{
+		"requirement": 0,
+		"content": [
+			[{ "slime": 3 }],
+			[{ "bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 2,
+		"content": [
+			[{ "slime": 5 }],
+			[{ "bauble": 3 }, { "slime": 2 }]
+		]
+	},
+	{
+		"requirement": 4,
+		"content": [
+			[{ "slime": 6 }, { "bauble": 2 }],
+			[{ "rapid_bauble": 3 }]
+		]
+	},
+	{
+		"requirement": 6,
+		"content": [
+			[{ "poison_slime": 2 }, { "slime": 4 }],
+			[{ "bauble": 4 }, { "slime": 3 }]
+		]
+	},
+	{
+		"requirement": 8,
+		"content": [
+			[{ "rapid_bauble": 5 }],
+			[{ "slime": 5 }, { "angry_bauble": 2 }]
+		]
+	},
+	{
+		"requirement": 10,
+		"content": [
+			[{ "mother_slime": 1 }, { "slime": 6 }],
+			[{ "poison_slime": 3 }, { "rapid_bauble": 3 }]
+		]
+	},
+	{
+		"requirement": 12,
+		"content": [
+			[{ "angry_bauble": 4 }, { "slime": 4 }],
+			[{ "rapid_bauble": 6 }, { "poison_slime": 2 }]
+		]
+	},
+	{
+		"requirement": 15,
+		"content": [
+			[{ "crabman": 1 }, { "slime": 5 }],
+			[{ "angry_bauble": 3 }, { "poison_slime": 3 }]
+		]
+	},
+	{
+		"requirement": 18,
+		"content": [
+			[{ "mother_slime": 2 }, { "slime": 6 }],
+			[{ "rapid_bauble": 8 }, { "angry_bauble": 4 }]
+		]
+	},
+	{
+		"requirement": 20,
+		"content": [
+			[{ "crabman": 2 }, { "poison_slime": 4 }],
+			[{ "mother_slime": 2 }, { "angry_bauble": 5 }, { "rapid_bauble": 5 }]
+		]
+	}
+]

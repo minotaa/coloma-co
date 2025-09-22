@@ -2,15 +2,16 @@ extends Node
 
 @onready var main_menu_scene: PackedScene = preload("res://scenes/main_menu.tscn")
 
-var modes: Array[Variant] = ["Defense"]
+var modes: Array[Variant] = ["Defense", "Dungeon"]
 var maps: Dictionary[Variant, Variant] = {
 	"defense": ["Plains", "Desert"],
-	"dungeon": []
+	"dungeon": ["Plains"]
 }
 
 var map_paths: Dictionary[Variant, Variant] = {
 	"Defense_Plains": "res://scenes/levels/defense/Plains.tscn",
-	"Defense_Desert": "res://scenes/levels/defense/Desert.tscn"
+	"Defense_Desert": "res://scenes/levels/defense/Desert.tscn",
+	"Dungeon_Plains": "res://scenes/levels/dungeon/plains_start_room.tscn"
 }
 
 var selected_mode: String = "Defense"
@@ -159,14 +160,17 @@ func _ready() -> void:
 @rpc("authority", "call_local", "reliable")
 func start_game(mode: String, map: String) -> void:
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Main Menu") or child.name.begins_with("Defense"):
+		if child.name.begins_with("Main Menu") or child.name.begins_with("Defense") or child.name.begins_with("Dungeon"):
 			child.queue_free()
+	if Man.selected_mode == "Dungeon":
+		get_tree().current_scene.add_child(load("res://scenes/levels/dungeon/dungeon.tscn").instantiate(), true)
+		return
 	get_tree().current_scene.add_child(load(map_paths[mode + "_" + map]).instantiate(), true)
 	
 @rpc("authority", "call_local", "reliable")
 func end_game() -> void:	
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Defense") or child.name.begins_with("Main Menu"):
+		if child.name.begins_with("Defense") or child.name.begins_with("Main Menu") or child.name.begins_with("Dungeon"):
 			child.queue_free()
 	get_tree().current_scene.add_child(main_menu_scene.instantiate(), true)
 	
