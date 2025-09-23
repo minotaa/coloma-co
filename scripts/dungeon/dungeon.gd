@@ -73,13 +73,15 @@ func end() -> void:
 
 @rpc("authority", "call_local")
 func are_we_sure_everyone_is_dead() -> void:
-	for player in get_tree().get_nodes_in_group("players"):
-		if player.lives <= 0:
-			if multiplayer.has_multiplayer_peer():
-				Toast.add.rpc("Everyone has died! The game is over.")
-			else:
-				Toast.add("Everyone has died! The game is over.")
-			end()
+	if is_server_or_singleplayer():
+		for player in get_tree().get_nodes_in_group("players"):
+			if player.lives > 0:
+				return
+		if multiplayer.has_multiplayer_peer():
+			Toast.add.rpc("Everyone has died! The game is over.")
+		else:
+			Toast.add("Everyone has died! The game is over.")
+		end()
 
 @rpc("authority", "call_local")
 func reset() -> void:

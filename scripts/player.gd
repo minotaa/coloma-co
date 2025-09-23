@@ -272,7 +272,10 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	else:
 		play_sfx("hit", global_position, 10.0)
 	apply_knockback(location, 220.0)
-	show_floating_text(amount, global_position)
+	if multiplayer.has_multiplayer_peer():
+		show_floating_text.rpc(amount, global_position)
+	else:
+		show_floating_text(amount, global_position)
 	if health <= 0:
 		die()
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
@@ -352,6 +355,7 @@ func apply_knockback(from_position: Vector2, strength: float):
 func play_idle_animation() -> void:
 	play_animation("idle_" + last_direction)
 
+@rpc("any_peer", "call_local")
 func show_floating_text(amount: int, center_position: Vector2):
 	var floating_text_scene = preload("res://scenes/floating_text.tscn")
 	var floating_text = floating_text_scene.instantiate()
@@ -1137,8 +1141,10 @@ func _on_chat_bar_focus_exited() -> void:
 
 func _on_play_again_pressed() -> void:
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		get_parent().end.rpc()
 		get_parent().reset.rpc()
 	elif not multiplayer.has_multiplayer_peer():
+		get_parent().end()
 		get_parent().reset()
 
 func _on_main_menu_pressed() -> void:
