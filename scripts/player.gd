@@ -31,6 +31,7 @@ var sprint := 220.0
 var step_timer := 0.0
 var step_interval := 0.4
 var alive: bool = true
+var lives: int = 4
 var max_health := 100.0
 var health := 100.0
 var damage := 25.0
@@ -108,31 +109,55 @@ func reset_game() -> void:
 	revival_time = 0.0
 	gold = 0
 	sprint = 220
+	lives = 4
 	alive = true
 	bag = Bag.new()
 	global_position = Vector2(0, 0)
 	play_idle_animation()
 	$"UI/Defense/Game Over".visible = false
 	$UI/Defense/Death.visible = false
+	$"UI/Dungeon/Game Over".visible = false
+	$UI/Dungeon/Death.visible = false
 	show_ui()
 
 func end_game() -> void:
+	$AnimatedSprite2D.play("death")
+	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
+	alive = false
+	revival_time = -1
 	hide_ui()
 	var stats_text := "Your final stats:\n"
-	stats_text += "Final wave:\t " + str(get_parent().wave)
 	stats_text += "\nGold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
 	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
 	stats_text += "Damage Dealt:\t " + str(roundi(damage_dealt)) + " (" + percent(damage_dealt, total_damage_dealt) + ")\n"
 	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
-	$"UI/Defense/Game Over".visible = true
-	$"UI/Defense/Game Over/Panel/Meta".text = stats_text
-	if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
-		$"UI/Defense/Game Over/Panel/Play Again".visible = true
-		$"UI/Defense/Game Over/Panel/Main Menu".visible = true
-	else:
-		$"UI/Defense/Game Over/Panel/Play Again".visible = false
-		$"UI/Defense/Game Over/Panel/Main Menu".visible = false
+	if type == "Defense":
+		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "The gem has broken."
+		stats_text += "Final wave:\t " + str(get_parent().wave)
+		$"UI/Defense/Game Over".visible = true
+		$"UI/Defense/Game Over/Panel/Meta".text = stats_text
+		if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
+			$"UI/Defense/Game Over/Panel/Play Again".visible = true
+			$"UI/Defense/Game Over/Panel/Main Menu".visible = true
+		else:
+			$"UI/Defense/Game Over/Panel/Play Again".visible = false
+			$"UI/Defense/Game Over/Panel/Main Menu".visible = false
+	elif type == "Dungeon":
+		if multiplayer.has_multiplayer_peer():
+			get_parent().are_we_sure_everyone_is_dead.rpc()
+		else:
+			get_parent().are_we_sure_everyone_is_dead()
+		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "You lost all your lives."
+		stats_text += "\nRooms completed: " + str(roundi(get_parent().completed_rooms))
+		$"UI/Dungeon/Game Over".visible = true
+		$"UI/Dungeon/Game Over/Panel/Meta".text = stats_text
+		if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
+			$"UI/Dungeon/Game Over/Panel/Play Again".visible = true
+			$"UI/Dungeon/Game Over/Panel/Main Menu".visible = true
+		else:
+			$"UI/Dungeon/Game Over/Panel/Play Again".visible = false
+			$"UI/Dungeon/Game Over/Panel/Main Menu".visible = false
 
 func send_title(title: String, delay: float) -> void:
 	print("Showing title \"" + title + "\" to player.")
@@ -262,23 +287,31 @@ func percent(current: float, total: float) -> String:
 func die() -> void:
 	$AnimatedSprite2D.play("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
+	alive = false
+	hide_ui()
+	if type == "Dungeon" and lives <= 0:
+		Toast.add("You lost all your lives, you're out of the game!")
+		end_game()
+		return
 	if multiplayer.has_multiplayer_peer():
 		Toast.add.rpc_id(int(name), "You're dead... you will respawn in 10 seconds.")
 	else:
 		Toast.add("You're dead... you will respawn in 10 seconds.")
 	revival_time = MAX_REVIVAL_TIME
-	alive = false
-	hide_ui()
-	if type == "Defense" and get_parent().started:
-		$"UI/Defense/Death".visible = true	
 	var stats_text := "This life:\n"
 	stats_text += "Gold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
 	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
 	stats_text += "Damage Dealt:\t " + str(roundi(damage_dealt)) + " (" + percent(damage_dealt, total_damage_dealt) + ")\n"
 	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
-
-	$"UI/Defense/Death/Panel/Meta".text = stats_text
+	if type == "Defense" and get_parent().started:
+		$"UI/Defense/Death".visible = true	
+		$"UI/Defense/Death/Panel/Meta".text = stats_text
+	if type == "Dungeon":
+		$UI/Dungeon/Death.visible = true
+		stats_text += "\nRooms:\t " + str(roundi(get_parent().completed_rooms))
+		$"UI/Dungeon/Death/Panel/Meta".text = stats_text
+	
 	reset_status_effects()
 	
 	#health = max_health
@@ -572,17 +605,30 @@ func create_throwable(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_
 	play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), spawn_pos)
 
 func press_inventory_slot(index: int) -> void:
-	var slots = $UI/Defense/Inventory.get_children()
-	if index < 0 or index >= slots.size():
-		return
+	if type == "Defense":
+		var slots = $UI/Defense/Inventory.get_children()
+		if index < 0 or index >= slots.size():
+			return
 
-	var slot = slots[index]
-	var item = slot.item
+		var slot = slots[index]
+		var item = slot.item
 
-	var cooldown_active = item and item.cooldown and Man.is_on_cooldown(item)
+		var cooldown_active = item and item.cooldown and Man.is_on_cooldown(item)
 
-	if alive and not cooldown_active:
-		slot.get_node("Button").emit_signal("pressed")
+		if alive and not cooldown_active:
+			slot.get_node("Button").emit_signal("pressed")
+	elif type == "Dungeon":
+		var slots = $UI/Dungeon/Inventory.get_children()
+		if index < 0 or index >= slots.size():
+			return
+
+		var slot = slots[index]
+		var item = slot.item
+
+		var cooldown_active = item and item.cooldown and Man.is_on_cooldown(item)
+
+		if alive and not cooldown_active:
+			slot.get_node("Button").emit_signal("pressed")
 		
 func change_zoom(delta: float) -> void:
 	zoom_multiplier = clamp(zoom_multiplier + delta, 0.50, 2.0)
@@ -687,6 +733,7 @@ func show_ui() -> void:
 		$UI/Dungeon/HBoxContainer.visible = true 
 		$UI/Dungeon/HealthBar.visible = true
 		$UI/Dungeon/SprintBar.visible = true
+		$UI/Dungeon/Inventory.visible = true
 
 func hide_ui() -> void:
 	if $UI/Defense.visible:
@@ -701,6 +748,7 @@ func hide_ui() -> void:
 		$UI/Dungeon/HBoxContainer.visible = false 
 		$UI/Dungeon/HealthBar.visible = false
 		$UI/Dungeon/SprintBar.visible = false
+		$UI/Dungeon/Inventory.visible = false 
 
 func _is_mouse_over_chat_bar() -> bool:
 	if not $UI/Global/ChatBar.visible:
@@ -734,21 +782,25 @@ func _physics_process(delta: float) -> void:
 		$UI/Global/ChatBar.modulate.a = lerp($UI/Global/ChatBar.modulate.a, 1.0, FADE_SPEED * delta)
 	else:
 		$UI/Global/ChatBar.modulate.a = lerp($UI/Global/ChatBar.modulate.a, 0.0, FADE_SPEED * delta)
-	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
-		$UI/Defense/HealthBar.max_value = max_health
-		$UI/Defense/HealthBar.value = health
-		$UI/Defense/SprintBar.value = sprint
-		if sprint >= 220:
-			exhausted = false
-			$UI/Defense/SprintBar.visible = false
-		else:
-			$UI/Defense/SprintBar.visible = true
-		$UI/Defense/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
+	if $UI/Defense.visible:
+		if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
+			$UI/Defense/HealthBar.max_value = max_health
+			$UI/Defense/HealthBar.value = health
+			$UI/Defense/SprintBar.value = sprint
+			if sprint >= 220:
+				exhausted = false
+				$UI/Defense/SprintBar.visible = false
+			else:
+				$UI/Defense/SprintBar.visible = true
+			$UI/Defense/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	if $"UI/Defense/Death".visible:
 		$"UI/Defense/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
-	if $UI/Dungeon.visible:
+	if $UI/Dungeon/Death.visible:
+		$"UI/Dungeon/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
+	if $UI/Dungeon.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
 		$UI/Dungeon/HBoxContainer/Room/Label.text = "Room: " + str(get_parent().completed_rooms + 1)
+		$UI/Dungeon/HBoxContainer/Lives/Label.text = "Lives: " + str(lives)
 		$UI/Dungeon/HBoxContainer/Progress/Label.text = str(get_parent().progress)
 		$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 		$UI/Dungeon/HealthBar.max_value = max_health
@@ -761,7 +813,7 @@ func _physics_process(delta: float) -> void:
 			$UI/Dungeon/SprintBar.visible = true
 		$UI/Dungeon/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
 		
-	if not alive:
+	if not alive and revival_time != -1:
 		revival_time -= delta
 		
 		if revival_time <= 0.0:
@@ -773,13 +825,22 @@ func _physics_process(delta: float) -> void:
 			kills = 0
 			if type == "Defense":
 				$"UI/Defense/Death".visible = false
+			if type == "Dungeon":
+				$UI/Dungeon/Death.visible = false
 			health = max_health
 			gold = max(roundi(gold / 2), 0)
 			hit_cooldown = max_hit_cooldown
-			if multiplayer.has_multiplayer_peer():
-				Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
-			else:
-				Toast.add("You respawned! You lost half your gold.")
+			if type == "Defense":
+				if multiplayer.has_multiplayer_peer():
+					Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
+				else:
+					Toast.add("You respawned! You lost half your gold.")
+			elif type == "Dungeon":
+				lives -= 1
+				if multiplayer.has_multiplayer_peer():
+					Toast.add.rpc_id(int(name), "You respawned! You have " + str(lives) + " lives left.")
+				else:
+					Toast.add("You respawned! You have " + str(lives) + " lives left.")
 			play_idle_animation()
 			$AnimatedSprite2D.material = null
 			global_position = Vector2.ZERO
@@ -797,25 +858,47 @@ func _physics_process(delta: float) -> void:
 			sprint += 0.5
 	if velocity.length() == SPEED and sprint < 220:
 		sprint += 0.45
-	var slots = $UI/Defense/Inventory.get_children()
+	
+	if type == "Defense":
+		var slots = $UI/Defense/Inventory.get_children()
 
-	for i in slots.size():
-		var slot = slots[i]
-		var icon = slot.get_node("TextureRect")
-		var amount_label = slot.get_node("Label")
-		var progress_bar = slot.get_node("ProgressBar")
+		for i in slots.size():
+			var slot = slots[i]
+			var icon = slot.get_node("TextureRect")
+			var amount_label = slot.get_node("Label")
+			var progress_bar = slot.get_node("ProgressBar")
 
-		if i < bag.list.size():
-			var stack = bag.list[i]
-			slot.set_item(stack.type)
-			icon.visible = true
-			amount_label.visible = stack.amount > 1
-			progress_bar.visible = stack.type.cooldown
-		else:
-			slot.set_item(null)
-			icon.visible = false
-			amount_label.visible = false
-			progress_bar.visible = false
+			if i < bag.list.size():
+				var stack = bag.list[i]
+				slot.set_item(stack.type)
+				icon.visible = true
+				amount_label.visible = stack.amount > 1
+				progress_bar.visible = stack.type.cooldown
+			else:
+				slot.set_item(null)
+				icon.visible = false
+				amount_label.visible = false
+				progress_bar.visible = false
+	elif type == "Dungeon":
+		var slots = $UI/Dungeon/Inventory.get_children()
+
+		for i in slots.size():
+			var slot = slots[i]
+			var icon = slot.get_node("TextureRect")
+			var amount_label = slot.get_node("Label")
+			var progress_bar = slot.get_node("ProgressBar")
+
+			if i < bag.list.size():
+				var stack = bag.list[i]
+				slot.set_item(stack.type)
+				icon.visible = true
+				amount_label.visible = stack.amount > 1
+				progress_bar.visible = stack.type.cooldown
+			else:
+				slot.set_item(null)
+				icon.visible = false
+				amount_label.visible = false
+				progress_bar.visible = false
 
 	if sword_hitbox_active:
 		for body in $SwordHbox.get_overlapping_bodies():
@@ -839,78 +922,78 @@ func _physics_process(delta: float) -> void:
 		$UI/Defense/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
 		$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 
-	for bombrat in get_bombrats_to_track():
-		if not is_instance_valid(bombrat):
-			continue
-		
-		if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
-			_remove_marker(bombrat)
-			continue
+		for bombrat in get_bombrats_to_track():
+			if not is_instance_valid(bombrat):
+				continue
 			
-		var dir = (bombrat.global_position - global_position).normalized()
-		var direction_node = _get_direction_node_from_vector(dir)
+			if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
+				_remove_marker(bombrat)
+				continue
+				
+			var dir = (bombrat.global_position - global_position).normalized()
+			var direction_node = _get_direction_node_from_vector(dir)
 
-		if direction_node == null:
-			_remove_marker(bombrat)
-			continue
+			if direction_node == null:
+				_remove_marker(bombrat)
+				continue
 
-		var marker = active_markers.get(bombrat)
-		if marker == null:
-			marker = marker_scene.instantiate()
-			direction_node.add_child(marker)
-			active_markers[bombrat] = marker
+			var marker = active_markers.get(bombrat)
+			if marker == null:
+				marker = marker_scene.instantiate()
+				direction_node.add_child(marker)
+				active_markers[bombrat] = marker
 
-		marker.position = _calculate_offset_in_direction_node(dir, direction_node)
+			marker.position = _calculate_offset_in_direction_node(dir, direction_node)
 
-		# Snap to cardinal direction
-		match direction_node.name:
-			"Up":
-				marker.rotation = 0
-			"Right":
-				marker.rotation = PI / 2
-			"Down":
-				marker.rotation = PI
-			"Left":
-				marker.rotation = -PI / 2
+			# Snap to cardinal direction
+			match direction_node.name:
+				"Up":
+					marker.rotation = 0
+				"Right":
+					marker.rotation = PI / 2
+				"Down":
+					marker.rotation = PI
+				"Left":
+					marker.rotation = -PI / 2
 
-	for bombrat in get_big_bombrats_to_track():
-		if not is_instance_valid(bombrat):
-			continue
-		
-		if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
-			_remove_marker(bombrat)
-			continue
+		for bombrat in get_big_bombrats_to_track():
+			if not is_instance_valid(bombrat):
+				continue
 			
-		var dir = (bombrat.global_position - global_position).normalized()
-		var direction_node = _get_direction_node_from_vector(dir)
+			if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
+				_remove_marker(bombrat)
+				continue
+				
+			var dir = (bombrat.global_position - global_position).normalized()
+			var direction_node = _get_direction_node_from_vector(dir)
 
-		if direction_node == null:
-			_remove_marker(bombrat)
-			continue
+			if direction_node == null:
+				_remove_marker(bombrat)
+				continue
 
-		var marker = active_markers.get(bombrat)
-		if marker == null:
-			marker = marker_scene.instantiate()
-			direction_node.add_child(marker)
-			active_markers[bombrat] = marker
+			var marker = active_markers.get(bombrat)
+			if marker == null:
+				marker = marker_scene.instantiate()
+				direction_node.add_child(marker)
+				active_markers[bombrat] = marker
 
-		marker.position = _calculate_offset_in_direction_node(dir, direction_node)
-		marker.scale = Vector2(1.5, 1.5)
+			marker.position = _calculate_offset_in_direction_node(dir, direction_node)
+			marker.scale = Vector2(1.5, 1.5)
 
-		# Snap to cardinal direction
-		match direction_node.name:
-			"Up":
-				marker.rotation = 0
-			"Right":
-				marker.rotation = PI / 2
-			"Down":
-				marker.rotation = PI
-			"Left":
-				marker.rotation = -PI / 2
-	
-	for tracked in active_markers.keys():
-		if not is_instance_valid(tracked) or not get_bombrats_to_track().has(tracked):
-			_remove_marker(tracked)
+			# Snap to cardinal direction
+			match direction_node.name:
+				"Up":
+					marker.rotation = 0
+				"Right":
+					marker.rotation = PI / 2
+				"Down":
+					marker.rotation = PI
+				"Left":
+					marker.rotation = -PI / 2
+		
+		for tracked in active_markers.keys():
+			if not is_instance_valid(tracked) or not get_bombrats_to_track().has(tracked):
+				_remove_marker(tracked)
 
 
 func _remove_marker(bombrat):
@@ -1053,7 +1136,7 @@ func _on_chat_bar_focus_exited() -> void:
 			child.visible = false
 
 func _on_play_again_pressed() -> void:
-	if multiplayer.is_server():
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		get_parent().reset.rpc()
 	elif not multiplayer.has_multiplayer_peer():
 		get_parent().reset()

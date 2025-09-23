@@ -67,6 +67,52 @@ func add_kill(player_id: String, enemy_type: String) -> void:
 func update_kills(kills: Dictionary) -> void:
 	self.kills = kills
 
+func end() -> void:
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		enemy.queue_free()
+
+@rpc("authority", "call_local")
+func are_we_sure_everyone_is_dead() -> void:
+	for player in get_tree().get_nodes_in_group("players"):
+		if player.lives <= 0:
+			if multiplayer.has_multiplayer_peer():
+				Toast.add.rpc("Everyone has died! The game is over.")
+			else:
+				Toast.add("Everyone has died! The game is over.")
+			end()
+
+@rpc("authority", "call_local")
+func reset() -> void:
+	for player in get_tree().get_nodes_in_group("players"):
+		player.reset_game()
+	completed_rooms = 0
+	current_wave_index = 0
+	current_subwave_index = 0
+	spawning_active = false
+	currently_spawning = false
+	rooms = {}
+	next_room_id = 0
+	deleted_rooms = {}
+	room_ids_in_order = []
+	$TileMapLayer.clear()
+	
+	# Only spawn the start room initially
+	var start_id: int
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		merge_room.rpc(start_rooms[Man.selected_map], Vector2(0, 0))
+		start_id = last_room_id
+	else:
+		merge_room(start_rooms[Man.selected_map], Vector2(0, 0))
+		start_id = last_room_id
+	room_ids_in_order = [start_id]
+	
+	# Position barrier at the north exit of start room to indicate next room spawn
+	position_barrier_at_room_exit(start_id, "north")
+	
+	if is_server_or_singleplayer():
+		countdown_and_spawn_room()
+	return
+
 func _ready() -> void:
 	var file = FileAccess.open("res://waves.json", FileAccess.READ)
 	if not file:

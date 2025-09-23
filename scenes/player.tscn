@@ -900,6 +900,9 @@ properties/5/replication_mode = 1
 properties/6/path = NodePath(".:type")
 properties/6/spawn = true
 properties/6/replication_mode = 1
+properties/7/path = NodePath(".:lives")
+properties/7/spawn = true
+properties/7/replication_mode = 1
 
 [sub_resource type="LabelSettings" id="LabelSettings_a8ls1"]
 font = ExtResource("19_4r5pv")
@@ -1603,16 +1606,46 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Dead" type="Control" parent="UI/Dungeon"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="You Dead" type="Label" parent="UI/Dungeon/Dead"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 56.0
+offset_right = 864.0
+offset_bottom = 117.0
+text = "GAME OVER!"
+label_settings = SubResource("LabelSettings_l71n6")
+
+[node name="Respawn Timer" type="Label" parent="UI/Dungeon/Dead"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 128.0
+offset_right = 768.0
+offset_bottom = 215.0
+text = "But the fight's not over yet, your party is still in the game!"
+label_settings = SubResource("LabelSettings_ke2ow")
+vertical_alignment = 1
+autowrap_mode = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 506.0
+offset_right = 419.0
 offset_bottom = 76.0
 theme_override_constants/separation = 6
 alignment = 1
 
 [node name="Progress" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
@@ -1647,7 +1680,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Gold" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
@@ -1813,9 +1845,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -168.0
-offset_top = -64.0
+offset_top = -184.0
 offset_right = 168.0
-offset_bottom = -16.0
+offset_bottom = -136.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxTexture_ujl30")
@@ -1848,15 +1880,40 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -172.0
-offset_top = -96.0
+offset_top = -216.0
 offset_right = 172.0
-offset_bottom = -64.0
+offset_bottom = -184.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxTexture_4ni07")
 theme_override_styles/fill = SubResource("StyleBoxTexture_l71n6")
 max_value = 220.0
 show_percentage = false
+
+[node name="Inventory" type="HBoxContainer" parent="UI/Dungeon"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -164.0
+offset_top = -124.0
+offset_right = 164.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="Slot1" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
 
 [node name="Global" type="Control" parent="UI"]
 layout_mode = 3
@@ -1990,6 +2047,8 @@ texture_progress = ExtResource("34_jc3p3")
 [connection signal="pressed" from="UI/Defense/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
+[connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="focus_entered" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_entered"]
 [connection signal="focus_exited" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_exited"]
 [connection signal="gui_input" from="UI/Global/ChatBar" to="." method="_on_chatbar_gui_input"]
