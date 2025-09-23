@@ -676,21 +676,31 @@ func _disable_all_sword_hitboxes() -> void:
 			child.disabled = true
 
 func show_ui() -> void:
-	if get_parent().started:
-		$UI/Defense/Markers.visible = true
-		$UI/Defense/HealthBar.visible = true
-		$UI/Defense/SprintBar.visible = true
-		$UI/Defense/Inventory.visible = true
-		$UI/Defense/HBoxContainer.visible = true
+	if $UI/Defense.visible:
+		if get_parent().started:
+			$UI/Defense/Markers.visible = true
+			$UI/Defense/HealthBar.visible = true
+			$UI/Defense/SprintBar.visible = true
+			$UI/Defense/Inventory.visible = true
+			$UI/Defense/HBoxContainer.visible = true
+	else:
+		$UI/Dungeon/HBoxContainer.visible = true 
+		$UI/Dungeon/HealthBar.visible = true
+		$UI/Dungeon/SprintBar.visible = true
 
 func hide_ui() -> void:
-	$UI/Defense/Markers.visible = false
-	$UI/Defense/HealthBar.visible = false
-	$UI/Defense/SprintBar.visible = false
-	$UI/Defense/Inventory.visible = false
-	$UI/Defense/HBoxContainer.visible = false
-	$UI/Defense/Tab.visible = false
-	$UI/Defense/Shop.visible = false
+	if $UI/Defense.visible:
+		$UI/Defense/Markers.visible = false
+		$UI/Defense/HealthBar.visible = false
+		$UI/Defense/SprintBar.visible = false
+		$UI/Defense/Inventory.visible = false
+		$UI/Defense/HBoxContainer.visible = false
+		$UI/Defense/Tab.visible = false
+		$UI/Defense/Shop.visible = false
+	else:
+		$UI/Dungeon/HBoxContainer.visible = false 
+		$UI/Dungeon/HealthBar.visible = false
+		$UI/Dungeon/SprintBar.visible = false
 
 func _is_mouse_over_chat_bar() -> bool:
 	if not $UI/Global/ChatBar.visible:
@@ -737,6 +747,20 @@ func _physics_process(delta: float) -> void:
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	if $"UI/Defense/Death".visible:
 		$"UI/Defense/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
+	if $UI/Dungeon.visible:
+		$UI/Dungeon/HBoxContainer/Room/Label.text = "Room: " + str(get_parent().completed_rooms + 1)
+		$UI/Dungeon/HBoxContainer/Progress/Label.text = str(get_parent().progress)
+		$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+		$UI/Dungeon/HealthBar.max_value = max_health
+		$UI/Dungeon/HealthBar.value = health
+		$UI/Dungeon/SprintBar.value = sprint
+		if sprint >= 220:
+			exhausted = false
+			$UI/Dungeon/SprintBar.visible = false
+		else:
+			$UI/Dungeon/SprintBar.visible = true
+		$UI/Dungeon/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
+		
 	if not alive:
 		revival_time -= delta
 		

@@ -386,6 +386,12 @@ func start_wave_system() -> void:
 	update_barrier_label()
 	spawn_current_wave()
 
+var progress: String = ""
+
+@rpc("authority", "call_local")
+func set_progress(_progress: String) -> void:
+	progress = _progress
+
 func update_barrier_label() -> void:
 	var current_wave = get_current_wave()
 	if not current_wave.is_empty():
@@ -394,12 +400,17 @@ func update_barrier_label() -> void:
 		# Ensure completed doesn't go negative
 		completed_waves = max(0, completed_waves)
 		$Barrier.get_node("Label").text = str(completed_waves) + "/" + str(total_waves)
+		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+			set_progress.rpc(str(completed_waves) + "/" + str(total_waves))
+		else:
+			set_progress(str(completed_waves) + "/" + str(total_waves))
 
 func get_current_wave() -> Dictionary:
+	var applicable_waves = []
 	for wave in waves:
 		if completed_rooms >= wave.requirement:
-			return wave
-	return {}
+			applicable_waves.append(wave)
+	return applicable_waves.pick_random()
 
 func spawn_current_wave() -> void:
 	var current_wave = get_current_wave()
@@ -531,9 +542,15 @@ func check_wave_completion() -> void:
 		currently_spawning = false
 		spawn_current_wave()
 
+@rpc("authority", "call_local")
+func send_rooms(rooms: int) -> void:
+	completed_rooms = rooms
+
 func complete_room() -> void:
 	spawning_active = false
 	completed_rooms += 1
+	if multiplayer.is_server():
+		send_rooms.rpc(completed_rooms)
 	current_subwave_index = 0
 	
 	print("[ROOM] Room completed! Total completed: ", completed_rooms)
@@ -543,6 +560,10 @@ func complete_room() -> void:
 	if not current_wave.is_empty():
 		var total_waves = current_wave.content.size()
 		$Barrier.get_node("Label").text = str(total_waves) + "/" + str(total_waves)
+		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+			set_progress.rpc(str("0") + "/" + str(total_waves))
+		else:
+			set_progress(str(total_waves) + "/" + str(total_waves))
 	
 	# Wait a moment, then start countdown for next room
 	await get_tree().create_timer(2.0).timeout
@@ -664,10 +685,22 @@ func position_barrier_at_room_exit(room_id: int, exit_direction: String) -> void
 func countdown_and_spawn_room() -> void:
 	# Countdown from 3 to spawn room
 	$Barrier.get_node("Label").text = "3"
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		set_progress.rpc("3")
+	else:
+		set_progress("3")
 	await get_tree().create_timer(1.0).timeout
 	$Barrier.get_node("Label").text = "2"
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		set_progress.rpc("2")
+	else:
+		set_progress("2")
 	await get_tree().create_timer(1.0).timeout
 	$Barrier.get_node("Label").text = "1"
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		set_progress.rpc("1")
+	else:
+		set_progress("1")
 	await get_tree().create_timer(1.0).timeout
 	
 	# Poof effect and spawn room
