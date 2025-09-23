@@ -3,8 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://bs8spg0m7oinl" path="res://assets/sprites/shopkeeper.png" id="1_gbpxa"]
 [ext_resource type="Script" uid="uid://cwkvsfbo6u8oa" path="res://scripts/shopkeeper.gd" id="1_y54bd"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_y54bd"]
-size = Vector2(74, 40)
+[sub_resource type="CircleShape2D" id="CircleShape2D_y54bd"]
+radius = 61.532513
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t3gtr"]
 size = Vector2(59.5, 32)
@@ -17,10 +17,10 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("1_gbpxa")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 1)
-shape = SubResource("RectangleShape2D_y54bd")
+position = Vector2(-1.5, 3)
+shape = SubResource("CircleShape2D_y54bd")
 
-[node name="Area2D" type="StaticBody2D" parent="."]
+[node name="Area2D" type="StaticBody2D" parent="." groups=["gem"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(-0.25, 1)
