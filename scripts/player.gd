@@ -378,16 +378,28 @@ func _process_input(delta) -> void:
 	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible:
 		return
 	if Input.is_action_just_pressed("interact"):
-		if not $UI/Defense/Shop.visible:
-			for area in $Area2D.get_overlapping_areas():
-				if (area as Area2D).is_in_group("gem"):
-					$UI/Defense/Shop.visible = true
-					play_idle_animation()
-					$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
-		else:
-			$UI/Defense/Shop.visible = false
+		if type == "Defense":
+			if not $UI/Defense/Shop.visible:
+				for area in $Area2D.get_overlapping_areas():
+					if (area as Area2D).is_in_group("gem"):
+						$UI/Defense/Shop.visible = true
+						play_idle_animation()
+						$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+			else:
+				$UI/Defense/Shop.visible = false
+		elif type == "Dungeon":
+			if not $UI/Dungeon/Shop.visible:
+				for area in $Area2D.get_overlapping_areas():
+					if (area as Area2D).is_in_group("gem"):
+						$UI/Dungeon/Shop.visible = true
+						play_idle_animation()
+						$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+			else:
+				$UI/Dungeon/Shop.visible = false
 			
 	if $UI/Defense/Shop.visible:
+		return
+	if $UI/Dungeon/Shop.visible:
 		return
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 	var velocity_length = velocity.length_squared()
@@ -753,6 +765,7 @@ func hide_ui() -> void:
 		$UI/Dungeon/HealthBar.visible = false
 		$UI/Dungeon/SprintBar.visible = false
 		$UI/Dungeon/Inventory.visible = false 
+		$UI/Dungeon/Shop.visible = false
 
 func _is_mouse_over_chat_bar() -> bool:
 	if not $UI/Global/ChatBar.visible:

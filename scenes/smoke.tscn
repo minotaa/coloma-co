@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://bj012ermk1riu"]
+[gd_scene load_steps=8 format=3 uid="uid://bj012ermk1riu"]
 
 [ext_resource type="Texture2D" uid="uid://p0poxd6lwncg" path="res://assets/sprites/smoke.png" id="1_acmqr"]
+[ext_resource type="Script" uid="uid://c04wfkbnrfspx" path="res://scripts/temporary_particles.gd" id="2_rx0m8"]
 
 [sub_resource type="Curve" id="Curve_17npe"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.80292, 0.98374), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -41,3 +42,6 @@ texture = ExtResource("1_acmqr")
 lifetime = 0.85
 one_shot = true
 process_material = SubResource("ParticleProcessMaterial_acmqr")
+script = ExtResource("2_rx0m8")
+
+[connection signal="finished" from="." to="." method="_on_finished"]

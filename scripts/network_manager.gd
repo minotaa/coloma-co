@@ -81,8 +81,8 @@ func _ready() -> void:
 	# await HAuth.login_anonymous_async()
 	
 	var initialize_response = Steam.steamInitEx(ProjectSettings.get_setting("steam/initialization/app_id"), true)
-	if initialize_response['status'] > Steam.STEAM_API_INIT_RESULT_OK:
-		print("Failed to initialize Steam, disabling Steam functionality: " + initialize_response)
+	if initialize_response.status > Steam.STEAM_API_INIT_RESULT_OK:
+		print("Failed to initialize Steam, disabling Steam functionality: " + str(initialize_response))
 		steam_enabled = false
 	if steam_enabled:
 		print("Steam name: " + Steam.getPersonaName())

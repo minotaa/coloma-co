@@ -1915,11 +1915,135 @@ layout_mode = 2
 [node name="Slot3" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
+[node name="Shop" type="Control" parent="UI/Dungeon"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="UI/Dungeon/Shop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 80.0
+offset_right = -24.0
+offset_bottom = -128.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
+
+[node name="Title" type="Label" parent="UI/Dungeon/Shop/Panel"]
+layout_mode = 1
+offset_left = 32.0
+offset_top = 24.0
+offset_right = 144.0
+offset_bottom = 80.0
+size_flags_vertical = 0
+text = "Shop"
+label_settings = SubResource("LabelSettings_60mlk")
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon/Shop/Panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -125.0
+offset_top = 22.0
+offset_right = -16.0
+offset_bottom = 64.0
+grow_horizontal = 0
+alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/Dungeon/Shop/Panel/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("14_a8ls1")
+expand_mode = 2
+
+[node name="Gold" type="Label" parent="UI/Dungeon/Shop/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "000"
+label_settings = SubResource("LabelSettings_60mlk")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Dungeon/Shop/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.026
+anchor_top = 0.167
+anchor_right = 0.98700005
+anchor_bottom = 0.84400004
+offset_left = -0.032001495
+offset_top = -0.1760025
+offset_right = 0.015991211
+offset_bottom = -0.12802124
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="HBoxContainer" parent="UI/Dungeon/Shop/Panel/ScrollContainer"]
+custom_minimum_size = Vector2(1184, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="Catalog Item" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
+layout_mode = 2
+script = SubResource("GDScript_fulsm")
+
+[node name="Button" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item" index="0"]
+tooltip_text = "A nice helpful healing potion to heal +50 HP. 
+Has a 10 second cooldown."
+
+[node name="Catalog Item2" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
+layout_mode = 2
+script = SubResource("GDScript_wqfne")
+
+[node name="Button" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="0"]
+tooltip_text = "Multiplies your damage by 2.5x for 10 seconds.
+60 second cooldown."
+
+[node name="Label" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="1"]
+text = "Strength Potion"
+
+[node name="TextureRect" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="2"]
+texture = SubResource("AtlasTexture_md1ol")
+
+[node name="Gold" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2/HBoxContainer" index="1"]
+text = "500"
+
+[node name="Close" type="Button" parent="UI/Dungeon/Shop/Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -188.0
+offset_top = -76.0
+offset_right = 188.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxTexture_hax0n")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
+theme_override_styles/hover = SubResource("StyleBoxTexture_wnwbv")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
+text = "Close"
+
 [node name="Global" type="Control" parent="UI"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -16.0
+offset_right = -16.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -2057,3 +2181,5 @@ texture_progress = ExtResource("34_jc3p3")
 
 [editable path="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
 [editable path="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]
+[editable path="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
+[editable path="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]

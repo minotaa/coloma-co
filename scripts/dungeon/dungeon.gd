@@ -6,11 +6,16 @@ var filler_tile = Vector2i(3, 0)
 
 var valid_rooms: Array[String] = [
 	"res://scenes/levels/dungeon/plains_tall_hallway.tscn",
-	"res://scenes/levels/dungeon/plains_bigger_hallway.tscn"
+	"res://scenes/levels/dungeon/plains_bigger_hallway.tscn",
+	"res://scenes/levels/dungeon/plains_curvy_way.tscn"
 ]
 
 var start_rooms = {
 	"Plains": "res://scenes/levels/dungeon/plains_start_room.tscn"
+}
+
+var shop_rooms = {
+	"Plains": "res://scenes/levels/dungeon/plains_shop.tscn"
 }
 
 var waves = []
@@ -25,11 +30,19 @@ var mother_slime = preload("res://scenes/mother_slime.tscn")
 var poison_slime = preload("res://scenes/poison_slime.tscn")
 var bauble = preload("res://scenes/bauble.tscn")
 var crabman = preload("res://scenes/crabman.tscn")
+var gem = preload("res://scenes/gem.tscn")
+var shopkeeper = preload("res://scenes/shopkeeper.tscn")
 
 # Room tracking system
 var rooms = {}  # Dictionary: room_id -> {bounds: Rect2i, cells: Array[Vector2i], filler_area: Rect2i}
 var next_room_id = 0
 var deleted_rooms = {}  # Dictionary: room_id -> {bounds: Rect2i, filler_area: Rect2i} - rooms converted to filler
+
+# Shop system
+var shop_active = false
+var shop_timer = 0.0
+var shop_duration = 90.0
+var current_shopkeepers = []
 
 # Wave system
 var completed_rooms = 0
@@ -71,7 +84,7 @@ func end() -> void:
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		enemy.queue_free()
 
-@rpc("authority", "call_local")
+@rpc("any_peer", "call_local")
 func are_we_sure_everyone_is_dead() -> void:
 	if is_server_or_singleplayer():
 		for player in get_tree().get_nodes_in_group("players"):
@@ -187,19 +200,26 @@ func _ready() -> void:
 		countdown_and_spawn_room()
 	return
 
-func _physics_process(_delta: float) -> void:
-	# Check players for void every 30 physics frames (roughly every 0.5 seconds at 60fps)
+func _physics_process(delta: float) -> void:
+	# Void check
 	void_check_counter += 1
-	if void_check_counter >= 30:	
+	if void_check_counter >= 30:
 		void_check_counter = 0
 		check_players_for_void()
-	
-	# Check wave completion every 30 physics frames (roughly every 0.5 seconds at 60fps)
+
+	# Wave or shop checks
 	if is_server_or_singleplayer():
-		wave_check_counter += 1
-		if wave_check_counter >= 30:
-			wave_check_counter = 0
-			check_wave_completion()
+		if shop_active:
+			shop_timer -= delta
+			if int(shop_timer) % 1 == 0:
+				update_barrier_label_for_shop()
+			if shop_timer <= 0:
+				end_shop_phase()
+		else:
+			wave_check_counter += 1
+			if wave_check_counter >= 30:
+				wave_check_counter = 0
+				check_wave_completion()
 
 func is_server_or_singleplayer() -> bool:
 	return not multiplayer.has_multiplayer_peer() or multiplayer.is_server()
@@ -597,11 +617,16 @@ func send_rooms(rooms: int) -> void:
 func complete_room() -> void:
 	spawning_active = false
 	completed_rooms += 1
-	if multiplayer.is_server():
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		send_rooms.rpc(completed_rooms)
 	current_subwave_index = 0
 	
 	print("[ROOM] Room completed! Total completed: ", completed_rooms)
+	
+	if completed_rooms % 1 == 0:
+		spawn_shop_room()
+		start_shop_phase()
+		return
 	
 	# Show completion
 	var current_wave = get_current_wave()
@@ -614,7 +639,6 @@ func complete_room() -> void:
 			set_progress(str(total_waves) + "/" + str(total_waves))
 	
 	# Wait a moment, then start countdown for next room
-	await get_tree().create_timer(2.0).timeout
 	countdown_and_spawn_room()
 
 func spawn_next_room() -> void:
@@ -845,3 +869,118 @@ func find_nearest_safe_position(from_position: Vector2) -> Vector2:
 	
 	# Final fallback
 	return Vector2(128, 128)  # Original spawn position
+
+# --- SHOP SYSTEM ---
+
+func start_shop_phase() -> void:
+	shop_timer = shop_duration
+	shop_active = true
+	update_barrier_label_for_shop()
+
+	# Spawn Shopkeeper(s) on sewer spawners in the latest room
+	var latest_room_id = room_ids_in_order[-1]
+	var latest_bounds = get_room_bounds(latest_room_id)
+	var sewer_spawners: Array[Vector2i] = []
+	for cell in spawner_layer.get_used_cells():
+		if latest_bounds.has_point(cell):
+			var data = spawner_layer.get_cell_tile_data(cell)
+			if data and data.get_custom_data("spawner_type") == "sewer":
+				sewer_spawners.append(cell)
+
+	if sewer_spawners.size() > 0:
+		var min_pos = Vector2.INF
+		var max_pos = -Vector2.INF
+	
+		for spawner_cell in sewer_spawners:
+			var cell_pos = spawner_layer.map_to_local(spawner_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+			min_pos = min_pos.min(cell_pos)
+			max_pos = max_pos.max(cell_pos)
+	
+		var midpoint = (min_pos + max_pos) / 2.0
+		
+		midpoint.y -= 12
+		midpoint.x -= 10
+		
+		var s = shopkeeper.instantiate()
+		s.global_position = midpoint
+		add_child(s, true)
+		current_shopkeepers.append(s)
+
+
+func spawn_shop_room() -> void:
+	print("[SHOP] Spawning shop room after ", completed_rooms, " completed rooms")
+
+	var shop_room_path = shop_rooms[Man.selected_map]
+	var shop_instance = load(shop_room_path).instantiate()
+	var offset: Vector2i = Vector2i.ZERO
+
+	# Find connection point from the last room
+	if room_ids_in_order.size() > 0:
+		last_room_id = room_ids_in_order[-1]
+		var connection_point: Vector2i
+		var connection_found := false
+
+		if rooms.has(last_room_id) and rooms[last_room_id].has("exits"):
+			for exit in rooms[last_room_id]["exits"]:
+				if exit.dir == "north": # assume shop connects north
+					connection_point = exit.pos
+					connection_found = true
+					break
+
+		# Align shop's south exit to that connection point
+		if connection_found:
+			if shop_instance.exits != null:
+				for exit in shop_instance.exits:
+					if exit.dir == "south":
+						offset = connection_point - exit.pos
+						break
+			shop_instance.queue_free()
+
+	# Merge the shop room
+	var shop_room_id: int
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		merge_room.rpc(shop_room_path, offset)
+		shop_room_id = last_room_id
+	else:
+		merge_room(shop_room_path, offset)
+		shop_room_id = last_room_id
+
+	# Append the shop room to our order
+	room_ids_in_order.append(shop_room_id)
+
+	# Keep only the last 3 rooms alive
+	while room_ids_in_order.size() > 3:
+		var oldest_room_id = room_ids_in_order.pop_front()
+		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+			convert_room_to_filler.rpc(oldest_room_id)
+		else:
+			convert_room_to_filler(oldest_room_id)
+
+	# Cleanup filler tiles
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		cleanup_distant_filler.rpc()
+	else:
+		cleanup_distant_filler()
+
+	# Place barrier at the shop's exit (north side)
+	position_barrier_at_room_exit(shop_room_id, "north")
+
+func end_shop_phase() -> void:
+	# Despawn Shopkeepers
+	for s in current_shopkeepers:
+		if is_instance_valid(s):
+			s.queue_free()
+	current_shopkeepers.clear()
+
+	shop_active = false
+	shop_timer = 0.0
+	# Continue to next room
+	countdown_and_spawn_room()
+
+func update_barrier_label_for_shop() -> void:
+	var seconds_left = int(shop_timer)
+	$Barrier.get_node("Label").text = "Shop: " + str(seconds_left) + "s"
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		set_progress.rpc("Shop: " + str(seconds_left) + "s")
+	else:
+		set_progress("Shop: " + str(seconds_left) + "s")
