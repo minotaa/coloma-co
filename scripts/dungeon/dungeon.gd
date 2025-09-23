@@ -4,13 +4,13 @@ var smoke_scene = preload("res://scenes/smoke.tscn")
 var player_scene = preload("res://scenes/player.tscn")
 var filler_tile = Vector2i(3, 0)
 
-var valid_rooms = [
-	preload("res://scenes/levels/dungeon/plains_tall_hallway.tscn"),
-	preload("res://scenes/levels/dungeon/plains_bigger_hallway.tscn")
+var valid_rooms: Array[String] = [
+	"res://scenes/levels/dungeon/plains_tall_hallway.tscn",
+	"res://scenes/levels/dungeon/plains_bigger_hallway.tscn"
 ]
 
 var start_rooms = {
-	"Plains": preload("res://scenes/levels/dungeon/plains_start_room.tscn")
+	"Plains": "res://scenes/levels/dungeon/plains_start_room.tscn"
 }
 
 var waves = []
@@ -78,7 +78,13 @@ func _ready() -> void:
 	$TileMapLayer.clear()
 	
 	# Only spawn the start room initially
-	var start_id = merge_room(start_rooms[Man.selected_map].instantiate(), Vector2(0, 0))
+	var start_id: int
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		merge_room.rpc(start_rooms[Man.selected_map], Vector2(0, 0))
+		start_id = last_room_id
+	else:
+		merge_room(start_rooms[Man.selected_map], Vector2(0, 0))
+		start_id = last_room_id
 	room_ids_in_order = [start_id]
 	
 	# Position barrier at the north exit of start room to indicate next room spawn
@@ -97,39 +103,38 @@ func _ready() -> void:
 		smoke.emitting = true
 		add_child(smoke, true)
 		p.setup_ui("Dungeon")
-	else:
-		# Multiplayer: spawn players from the current list
-		if multiplayer.is_server():
-			var radius = 30  # Radius of the spawn circle
-			var rng = RandomNumberGenerator.new()
-			rng.randomize()
-			var spawn_center = Vector2(128, 128)  # Center of start room
+	
+	# Multiplayer: spawn players from the current list
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		var radius = 30  # Radius of the spawn circle
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+		var spawn_center = Vector2(128, 128)  # Center of start room
 
-			for player_data in NetworkManager.players:
-				var peer_id = player_data["id"]
-				var p = player_scene.instantiate()
-				p.name = str(peer_id)
-				p.type = "Dungeon"
-				p.get_node("Username").text = player_data["username"]
+		for player_data in NetworkManager.players:
+			var peer_id = player_data["id"]
+			var p = player_scene.instantiate()
+			p.name = str(peer_id)
+			p.type = "Dungeon"
+			p.get_node("Username").text = player_data["username"]
 
-				# Random angle around the circle
-				var angle = rng.randf_range(0.0, TAU)
-				var offset = Vector2(cos(angle), sin(angle)) * radius
-				p.global_position = spawn_center + offset
-				call_deferred("add_child", p, true)
-				
-				var smoke = smoke_scene.instantiate()
-				smoke.global_position = p.global_position
-				smoke.emitting = true
-				add_child(smoke, true)
+			# Random angle around the circle
+			var angle = rng.randf_range(0.0, TAU)
+			var offset = Vector2(cos(angle), sin(angle)) * radius
+			p.global_position = spawn_center + offset
+			call_deferred("add_child", p, true)
 			
-			await get_tree().create_timer(1.0).timeout
-			for player in get_tree().get_nodes_in_group("players"):
-				player.setup_ui.rpc("Dungeon")
-				print("Setting Dungeon UI for " + player.name + ".")
+			var smoke = smoke_scene.instantiate()
+			smoke.global_position = p.global_position
+			smoke.emitting = true
+			add_child(smoke, true)
+		
+		await get_tree().create_timer(1.0).timeout
+		for player in get_tree().get_nodes_in_group("players"):
+			player.setup_ui.rpc("Dungeon")
+			print("Setting Dungeon UI for " + player.name + ".")
 	
 	# Start countdown to spawn first room
-	await get_tree().create_timer(2.0).timeout
 	if is_server_or_singleplayer():
 		countdown_and_spawn_room()
 	return
@@ -137,7 +142,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	# Check players for void every 30 physics frames (roughly every 0.5 seconds at 60fps)
 	void_check_counter += 1
-	if void_check_counter >= 30:
+	if void_check_counter >= 30:	
 		void_check_counter = 0
 		check_players_for_void()
 	
@@ -151,38 +156,26 @@ func _physics_process(_delta: float) -> void:
 func is_server_or_singleplayer() -> bool:
 	return not multiplayer.has_multiplayer_peer() or multiplayer.is_server()
 
-func move_barrier(where_to: Vector2) -> void:
-	$Barrier.get_node("Label").text = "5"
-	await get_tree().create_timer(1.0).timeout
-	$Barrier.get_node("Label").text = "4"
-	await get_tree().create_timer(1.0).timeout
-	$Barrier.get_node("Label").text = "3"
-	await get_tree().create_timer(1.0).timeout
-	$Barrier.get_node("Label").text = "2"
-	await get_tree().create_timer(1.0).timeout
-	$Barrier.get_node("Label").text = "1"
-	await get_tree().create_timer(1.0).timeout
-	var smoke = smoke_scene.instantiate()
-	smoke.global_position = $Barrier.global_position
-	smoke.emitting = true
-	add_child(smoke, true)
-	$Barrier.global_position = where_to
-	Toast.add("The barrier has moved!")
+var last_room_id: int
+func get_last_room_id() -> int:
+	return last_room_id
 
-func merge_room(room: Node, offset: Vector2i) -> int:
+@rpc("authority", "call_local")
+func merge_room(room_path: String, offset: Vector2i) -> void:
+	var room = load(room_path).instantiate()
 	var room_layer = room.get_node_or_null("TileMapLayer")
 	var room_spawner = room.get_node_or_null("Spawner")
 	
 	if not room_layer:
 		print("[GENERATOR] Room has no TileMapLayer, skipping")
-		return -1
+		return
 	
 	# Get room bounds for filler calculation
 	var room_cells = room_layer.get_used_cells()
 	if room_cells.is_empty():
 		print("[GENERATOR] Room has no cells, skipping")
 		room.queue_free()
-		return -1
+		return
 	
 	# Find the bounds of the room
 	var min_pos = room_cells[0]
@@ -251,8 +244,9 @@ func merge_room(room: Node, offset: Vector2i) -> int:
 	rooms[room_id]["exits"] = exits_world
 	
 	room.queue_free()
-	return room_id
+	last_room_id = room_id
 
+@rpc("authority", "call_local")
 func delete_room(room_id: int, cleanup_filler: bool = true) -> bool:
 	if not rooms.has(room_id):
 		print("[GENERATOR] Room ID ", room_id, " not found")
@@ -312,6 +306,7 @@ func delete_room(room_id: int, cleanup_filler: bool = true) -> bool:
 	print("[GENERATOR] Deleted room ", room_id, " with cleanup: ", cleanup_filler)
 	return true
 
+@rpc("authority", "call_local")
 func convert_room_to_filler(room_id: int) -> bool:
 	if not rooms.has(room_id):
 		print("[GENERATOR] Room ID ", room_id, " not found for conversion")
@@ -342,6 +337,7 @@ func convert_room_to_filler(room_id: int) -> bool:
 	print("[GENERATOR] Converted room ", room_id, " to filler")
 	return true
 
+@rpc("authority", "call_local")
 func cleanup_distant_filler() -> void:
 	if room_ids_in_order.is_empty():
 		return
@@ -554,7 +550,7 @@ func complete_room() -> void:
 
 func spawn_next_room() -> void:
 	var random_room_scene = valid_rooms.pick_random()
-	var room_instance = random_room_scene.instantiate()
+	var room_instance = load(random_room_scene).instantiate()
 	
 	# Get the room's exits
 	var room_exits = room_instance.exits if room_instance.has_method("get") and "exits" in room_instance else []
@@ -612,16 +608,28 @@ func spawn_next_room() -> void:
 					)
 					print("[ROOM] No exit connection found, using centered fallback offset: ", offset)
 	
-	var new_room_id = merge_room(room_instance, offset)
+	var new_room_id: int 
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		merge_room.rpc(random_room_scene, offset)	
+		new_room_id = last_room_id 
+	else:
+		merge_room(random_room_scene, offset)
+		new_room_id = last_room_id
 	room_ids_in_order.append(new_room_id)
 	
 	# Stage 1: Convert old rooms to filler (keep last 3 active)
 	while room_ids_in_order.size() > 3:
 		var oldest_room_id = room_ids_in_order.pop_front()
-		convert_room_to_filler(oldest_room_id)
+		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+			convert_room_to_filler.rpc(oldest_room_id)
+		else:
+			convert_room_to_filler(oldest_room_id)
 	
 	# Stage 2: Completely remove very distant filler areas
-	cleanup_distant_filler()
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		cleanup_distant_filler.rpc()
+	else:
+		cleanup_distant_filler()
 
 func position_barrier_at_room_exit(room_id: int, exit_direction: String) -> void:
 	var room_bounds = get_room_bounds(room_id)
@@ -690,7 +698,10 @@ func check_players_for_void() -> void:
 	
 	for player in players:
 		if is_player_in_void(player):
-			teleport_player_to_safety(player)
+			if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+				teleport_player_to_safety.rpc(player.name)
+			else:
+				teleport_player_to_safety(player.name)
 
 func is_player_in_void(player: Node2D) -> bool:
 	var player_tile_pos = $TileMapLayer.local_to_map(player.global_position)
@@ -700,7 +711,15 @@ func is_player_in_void(player: Node2D) -> bool:
 	# Player is in void if there's no tile at their position or they're on filler
 	return tile_source_id == -1 or tile_atlas_id == filler_tile
 
-func teleport_player_to_safety(player: Node2D) -> void:
+@rpc("authority", "call_local")
+func teleport_player_to_safety(player_name: String) -> void:
+	var player: Node2D
+	for players in get_tree().get_nodes_in_group("players"):
+		if players.name == player_name:
+			player = players
+	if player == null:
+		print("[SAFETY] Couldn't find player by name: " + player_name + ".")
+		return
 	var safe_position = find_nearest_safe_position(player.global_position)
 	if safe_position != Vector2.ZERO:
 		player.global_position = safe_position
@@ -714,7 +733,7 @@ func teleport_player_to_safety(player: Node2D) -> void:
 		print("[SAFETY] Teleported player to safety: ", safe_position)
 
 func find_nearest_safe_position(from_position: Vector2) -> Vector2:
-	var search_radius = 50  # Search within 50 tiles
+	var search_radius = 100  # Search within 50 tiles
 	var from_tile = $TileMapLayer.local_to_map(from_position)
 	
 	# Spiral search for nearest valid tile

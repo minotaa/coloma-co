@@ -200,7 +200,7 @@ func _ready() -> void:
 			clip = Man.equipped_weapon.data["clip"]
 			$Clip.visible = true 
 		
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func setup_ui(type: String) -> void:
 	#if is_multiplayer_authority():
 	self.type = type
@@ -269,7 +269,7 @@ func die() -> void:
 	revival_time = MAX_REVIVAL_TIME
 	alive = false
 	hide_ui()
-	if get_parent().started:
+	if type == "Defense" and get_parent().started:
 		$"UI/Defense/Death".visible = true	
 	var stats_text := "This life:\n"
 	stats_text += "Gold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
@@ -811,7 +811,7 @@ func _physics_process(delta: float) -> void:
 	if count > 0:
 		bombrat_counter.text = "%d" % count
 
-	if $UI/Defense.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
+	if type == "Defense" and $UI/Defense.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
 		$UI/Defense/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
 		$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 
