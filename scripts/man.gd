@@ -14,6 +14,7 @@ var map_paths: Dictionary[Variant, Variant] = {
 	"Dungeon_Plains": "res://scenes/levels/dungeon/plains_start_room.tscn"
 }
 
+var playtime_points: int = 0
 var selected_mode: String = "Defense"
 var selected_map: String  = "Plains"
 
@@ -45,6 +46,20 @@ var equipped_weapon: Weapon = Items.get_by_id(1)
 var equipped_armor: Armor = Items.get_by_id(2)
 var game_loaded: bool = false
 var cooldowns: Dictionary[Variant, Variant] = {}
+
+@rpc("authority", "call_local")
+func add_playtime_points(amount: int) -> void:
+	playtime_points += amount
+	if playtime_points % 100 == 0:
+		var options = []
+		for item in Items.items:
+			if item is Weapon and not bag.has_item(item):
+				options.append(item)
+				
+		if not options.is_empty():
+			var item = options.pick_random()
+			bag.add_item(ItemStack.new(item, 1))
+			Toast.add("You earned: " + item.name + "! Equip it in Loadout in the main menu.")
 
 func set_rich_presence(token: String) -> void:
 	if NetworkManager.steam_enabled:
@@ -134,6 +149,8 @@ func load_game():
 			equipped_weapon = Items.get_by_id(data["equipped_weapon"])
 		if data.has("equipped_armor"):
 			equipped_armor = Items.get_by_id(data["equipped_armor"])
+		if data.has("playtime_points"):
+			playtime_points = data["playtime_points"]
 	print("Loaded save data.")
 
 func get_save_data() -> Dictionary:
@@ -141,7 +158,8 @@ func get_save_data() -> Dictionary:
 		"bag": bag.to_list(),
 		"equipped_weapon": equipped_weapon.id,
 		"equipped_armor": equipped_armor.id,
-		"fullscreen": fullscreen
+		"fullscreen": fullscreen,
+		"playtime_points": playtime_points
 	}
 
 func _notification(what: int) -> void:
@@ -156,6 +174,14 @@ func save_game(reason: String) -> void:
 
 func _ready() -> void:
 	load_game()
+	var timer = Timer.new()
+	timer.wait_time = 60.0
+	timer.timeout.connect(_on_minute_passed)
+	add_child(timer)
+	timer.start()
+	
+func _on_minute_passed() -> void:
+	add_playtime_points(5)
 	
 @rpc("authority", "call_local", "reliable")
 func start_game(mode: String, map: String) -> void:
