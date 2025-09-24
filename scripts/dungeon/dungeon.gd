@@ -7,7 +7,9 @@ var filler_tile = Vector2i(3, 0)
 var valid_rooms: Array[String] = [
 	"res://scenes/levels/dungeon/plains_tall_hallway.tscn",
 	"res://scenes/levels/dungeon/plains_bigger_hallway.tscn",
-	"res://scenes/levels/dungeon/plains_curvy_way.tscn"
+	"res://scenes/levels/dungeon/plains_curvy_way.tscn",
+	"res://scenes/levels/dungeon/plains_loop.tscn",
+	"res://scenes/levels/dungeon/plains_zig_zag_hallway.tscn"
 ]
 
 var start_rooms = {
@@ -41,7 +43,7 @@ var deleted_rooms = {}  # Dictionary: room_id -> {bounds: Rect2i, filler_area: R
 # Shop system
 var shop_active = false
 var shop_timer = 0.0
-var shop_duration = 90.0
+var shop_duration = 60.0
 var current_shopkeepers = []
 
 # Wave system

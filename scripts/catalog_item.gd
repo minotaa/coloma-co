@@ -17,7 +17,7 @@ func _on_button_pressed() -> void:
 		# Check if the player already has this item
 		var has_stack := false
 		for stack in bag.list:
-			if stack.item == item:
+			if stack.type == item:
 				has_stack = true
 				break
 
