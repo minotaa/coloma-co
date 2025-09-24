@@ -649,7 +649,7 @@ func complete_room() -> void:
 	
 	print("[ROOM] Room completed! Total completed: ", completed_rooms)
 	
-	if (completed_rooms + 1) % 1 == 0:
+	if (completed_rooms + 1) % 10 == 0:
 		spawn_shop_room()
 		start_shop_phase()
 		return
