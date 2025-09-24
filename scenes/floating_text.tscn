@@ -13,6 +13,6 @@ shadow_color = Color(0, 0, 0, 0.8)
 offset_right = 23.0
 offset_bottom = 14.0
 scale = Vector2(0.5, 0.5)
-text = "100"
+text = "N/A"
 label_settings = SubResource("LabelSettings_27d3m")
 script = ExtResource("2_ki2nc")

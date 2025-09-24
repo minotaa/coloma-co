@@ -1,5 +1,6 @@
-[gd_scene load_steps=16 format=3 uid="uid://dicfu5afqotfu"]
+[gd_scene load_steps=17 format=3 uid="uid://dicfu5afqotfu"]
 
+[ext_resource type="Script" uid="uid://de6cbb8lbvb3f" path="res://scripts/catalog_item.gd" id="1_6o20a"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="1_dhxhl"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="1_grc48"]
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_oa20i"]
@@ -8,17 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://d4b5761just5a" path="res://assets/sprites/coins.png" id="3_mtjpl"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="4_e3oif"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dhxhl"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_emsfw"]
-texture = ExtResource("1_grc48")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a0ot6"]
-texture = ExtResource("2_6o20a")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1g7mf"]
+texture = ExtResource("4_e3oif")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
@@ -31,12 +23,21 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1g7mf"]
-texture = ExtResource("4_e3oif")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a0ot6"]
+texture = ExtResource("2_6o20a")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_emsfw"]
+texture = ExtResource("1_grc48")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dhxhl"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_dhxhl"]
 font = ExtResource("1_dhxhl")
@@ -61,6 +62,7 @@ anchor_bottom = 0.389
 offset_bottom = -0.0800171
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_6o20a")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1
@@ -69,11 +71,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_dhxhl")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_emsfw")
-theme_override_styles/hover = SubResource("StyleBoxTexture_a0ot6")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_apdh8")
 theme_override_styles/normal = SubResource("StyleBoxTexture_1g7mf")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_apdh8")
+theme_override_styles/hover = SubResource("StyleBoxTexture_a0ot6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_emsfw")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_dhxhl")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1

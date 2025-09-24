@@ -1,4 +1,4 @@
-[gd_scene load_steps=153 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=148 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -26,10 +26,8 @@
 [ext_resource type="PackedScene" uid="uid://d2i53glql5uik" path="res://scenes/tab_entry.tscn" id="16_a8ls1"]
 [ext_resource type="Texture2D" uid="uid://css6budcibphr" path="res://assets/sprites/throw-right.png" id="16_cs1tg"]
 [ext_resource type="Texture2D" uid="uid://bntstpnc7js3q" path="res://assets/sprites/throw-up.png" id="17_2dvfe"]
-[ext_resource type="PackedScene" uid="uid://dicfu5afqotfu" path="res://scenes/catalog_item.tscn" id="17_fulsm"]
 [ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="17_qfm1y"]
 [ext_resource type="FontFile" uid="uid://cxii8uarl0lvi" path="res://assets/fonts/BitPotion.ttf" id="19_4r5pv"]
-[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="22_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="23_ke2ow"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="24_ujl30"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
@@ -728,54 +726,6 @@ shadow_size = 0
 shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
 shadow_offset = Vector2(4, 4)
 
-[sub_resource type="GDScript" id="GDScript_fulsm"]
-resource_name = "healing_potion"
-script/source = "extends Control
-
-var cost = 100
-var item_id = 0
-
-func _on_button_pressed() -> void:
-	#print(\"uhhh... healing potion... bought?\")
-	#print(Man.get_player().gold)
-	if Man.get_player().gold >= cost:
-		if Man.get_player().bag.list.size() < 3:
-			Man.get_player().gold -= cost
-			Man.get_player().bag.add_item(ItemStack.new(Items.get_by_id(0), 1))
-			Toast.add(\"You purchased: \" + str(ItemStack.new(Items.get_by_id(0), 1)))
-			Toast.add(\"-\" + str(cost) + \" Gold\")
-		else:
-			Toast.add(\"You don't have the inventory space!\")
-	else:
-		Toast.add(\"You can't afford this!\")
-"
-
-[sub_resource type="GDScript" id="GDScript_wqfne"]
-resource_name = "strength_potion"
-script/source = "extends Control
-
-var cost = 500
-var item_id = 3
-
-func _on_button_pressed() -> void:
-	#print(\"uhhh... healing potion... bought?\")
-	#print(Man.get_player().gold)
-	if Man.get_player().gold >= cost:
-		if Man.get_player().bag.list.size() < 3:
-			Man.get_player().gold -= cost
-			Man.get_player().bag.add_item(ItemStack.new(Items.get_by_id(3), 1))
-			Toast.add(\"You purchased: \" + str(ItemStack.new(Items.get_by_id(3), 1)))
-			Toast.add(\"-\" + str(cost) + \" Gold\")
-		else:
-			Toast.add(\"You don't have the inventory space!\")
-	else:
-		Toast.add(\"You can't afford this!\")
-"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_md1ol"]
-atlas = ExtResource("22_dt7fs")
-region = Rect2(48, 16, 16, 16)
-
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hax0n"]
 texture = ExtResource("27_wqfne")
 texture_margin_left = 32.0
@@ -982,7 +932,7 @@ shape = SubResource("RectangleShape2D_jej6c")
 disabled = true
 
 [node name="Area2D" type="Area2D" parent="."]
-collision_mask = 10
+collision_mask = 11
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_esh0l")
@@ -1414,31 +1364,6 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_constants/h_separation = 12
 columns = 6
-
-[node name="Catalog Item" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
-layout_mode = 2
-script = SubResource("GDScript_fulsm")
-
-[node name="Button" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item" index="0"]
-tooltip_text = "A nice helpful healing potion to heal +50 HP. 
-Has a 10 second cooldown."
-
-[node name="Catalog Item2" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
-layout_mode = 2
-script = SubResource("GDScript_wqfne")
-
-[node name="Button" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="0"]
-tooltip_text = "Multiplies your damage by 2.5x for 10 seconds.
-60 second cooldown."
-
-[node name="Label" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="1"]
-text = "Strength Potion"
-
-[node name="TextureRect" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="2"]
-texture = SubResource("AtlasTexture_md1ol")
-
-[node name="Gold" parent="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2/HBoxContainer" index="1"]
-text = "500"
 
 [node name="Close" type="Button" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
@@ -1916,6 +1841,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Shop" type="Control" parent="UI/Dungeon"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1991,31 +1917,6 @@ custom_minimum_size = Vector2(1184, 0)
 layout_mode = 2
 alignment = 1
 
-[node name="Catalog Item" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
-layout_mode = 2
-script = SubResource("GDScript_fulsm")
-
-[node name="Button" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item" index="0"]
-tooltip_text = "A nice helpful healing potion to heal +50 HP. 
-Has a 10 second cooldown."
-
-[node name="Catalog Item2" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer" instance=ExtResource("17_fulsm")]
-layout_mode = 2
-script = SubResource("GDScript_wqfne")
-
-[node name="Button" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="0"]
-tooltip_text = "Multiplies your damage by 2.5x for 10 seconds.
-60 second cooldown."
-
-[node name="Label" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="1"]
-text = "Strength Potion"
-
-[node name="TextureRect" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2" index="2"]
-texture = SubResource("AtlasTexture_md1ol")
-
-[node name="Gold" parent="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2/HBoxContainer" index="1"]
-text = "500"
-
 [node name="Close" type="Button" parent="UI/Dungeon/Shop/Panel"]
 layout_mode = 1
 anchors_preset = 7
@@ -2042,8 +1943,6 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -16.0
-offset_right = -16.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -2173,13 +2072,9 @@ texture_progress = ExtResource("34_jc3p3")
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="UI/Dungeon/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
 [connection signal="focus_entered" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_entered"]
 [connection signal="focus_exited" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_exited"]
 [connection signal="gui_input" from="UI/Global/ChatBar" to="." method="_on_chatbar_gui_input"]
 [connection signal="text_submitted" from="UI/Global/ChatBar" to="." method="_on_chat_bar_submitted"]
 [connection signal="timeout" from="UI/Global/Zoom/Timer" to="." method="_on_zoom_timeout"]
-
-[editable path="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
-[editable path="UI/Defense/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]
-[editable path="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item"]
-[editable path="UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer/Catalog Item2"]

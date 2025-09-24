@@ -228,6 +228,14 @@ var last_room_id: int
 func get_last_room_id() -> int:
 	return last_room_id
 
+# NEW: Synchronize room data to all clients
+@rpc("authority", "call_local")
+func sync_room_data(rooms_data: Dictionary, deleted_rooms_data: Dictionary, room_ids_order: Array) -> void:
+	rooms = rooms_data
+	deleted_rooms = deleted_rooms_data
+	room_ids_in_order = room_ids_order
+	print("[SYNC] Room data synchronized - Active rooms: ", rooms.keys(), " Order: ", room_ids_in_order)
+
 @rpc("authority", "call_local")
 func merge_room(room_path: String, offset: Vector2i) -> void:
 	var room = load(room_path).instantiate()
@@ -313,6 +321,10 @@ func merge_room(room_path: String, offset: Vector2i) -> void:
 	
 	room.queue_free()
 	last_room_id = room_id
+	
+	# NEW: Sync room data to clients after any room changes
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		sync_room_data.rpc(rooms, deleted_rooms, room_ids_in_order)
 
 @rpc("authority", "call_local")
 func delete_room(room_id: int, cleanup_filler: bool = true) -> bool:
@@ -372,6 +384,11 @@ func delete_room(room_id: int, cleanup_filler: bool = true) -> bool:
 	# Remove from tracking
 	rooms.erase(room_id)
 	print("[GENERATOR] Deleted room ", room_id, " with cleanup: ", cleanup_filler)
+	
+	# NEW: Sync room data to clients after deletion
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		sync_room_data.rpc(rooms, deleted_rooms, room_ids_in_order)
+	
 	return true
 
 @rpc("authority", "call_local")
@@ -403,6 +420,11 @@ func convert_room_to_filler(room_id: int) -> bool:
 	# Remove from active rooms
 	rooms.erase(room_id)
 	print("[GENERATOR] Converted room ", room_id, " to filler")
+	
+	# NEW: Sync room data to clients after conversion
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		sync_room_data.rpc(rooms, deleted_rooms, room_ids_in_order)
+	
 	return true
 
 @rpc("authority", "call_local")
@@ -439,6 +461,10 @@ func cleanup_distant_filler() -> void:
 		
 		deleted_rooms.erase(room_id)
 		print("[GENERATOR] Cleaned up distant filler for room ", room_id)
+	
+	# NEW: Sync room data to clients after cleanup
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		sync_room_data.rpc(rooms, deleted_rooms, room_ids_in_order)
 
 func get_room_bounds(room_id: int) -> Rect2i:
 	if rooms.has(room_id):
@@ -623,7 +649,7 @@ func complete_room() -> void:
 	
 	print("[ROOM] Room completed! Total completed: ", completed_rooms)
 	
-	if completed_rooms % 1 == 0:
+	if (completed_rooms + 1) % 1 == 0:
 		spawn_shop_room()
 		start_shop_phase()
 		return
@@ -725,6 +751,48 @@ func spawn_next_room() -> void:
 		cleanup_distant_filler()
 
 func position_barrier_at_room_exit(room_id: int, exit_direction: String) -> void:
+	if not rooms.has(room_id) or not rooms[room_id].has("exits"):
+		print("[BARRIER] No exits found for room ", room_id, ", using fallback positioning")
+		position_barrier_fallback(room_id, exit_direction)
+		return
+	
+	var room_exits = rooms[room_id]["exits"]
+	var target_exit = null
+	
+	# Find the specific exit we want to position the barrier at
+	for exit in room_exits:
+		if exit.dir == exit_direction:
+			target_exit = exit
+			break
+	
+	if target_exit == null:
+		print("[BARRIER] No ", exit_direction, " exit found for room ", room_id, ", using fallback")
+		position_barrier_fallback(room_id, exit_direction)
+		return
+	
+	# Position barrier at the actual exit location with appropriate offset
+	var exit_tile_pos = target_exit.pos
+	var barrier_pos: Vector2
+	
+	match exit_direction:
+		"north":
+			# Place barrier 2 tiles north of the exit
+			barrier_pos = $TileMapLayer.map_to_local(Vector2i(exit_tile_pos.x, exit_tile_pos.y - 2))
+		"south":
+			# Place barrier 2 tiles south of the exit
+			barrier_pos = $TileMapLayer.map_to_local(Vector2i(exit_tile_pos.x, exit_tile_pos.y + 2))
+		"east":
+			# Place barrier 2 tiles east of the exit
+			barrier_pos = $TileMapLayer.map_to_local(Vector2i(exit_tile_pos.x + 2, exit_tile_pos.y))
+		"west":
+			# Place barrier 2 tiles west of the exit
+			barrier_pos = $TileMapLayer.map_to_local(Vector2i(exit_tile_pos.x - 2, exit_tile_pos.y))
+	
+	$Barrier.global_position = barrier_pos
+	print("[BARRIER] Positioned at actual ", exit_direction, " exit: ", exit_tile_pos, " -> ", barrier_pos)
+
+# Fallback positioning method (original logic) for when exits aren't available
+func position_barrier_fallback(room_id: int, exit_direction: String) -> void:
 	var room_bounds = get_room_bounds(room_id)
 	if room_bounds == Rect2i():
 		return
@@ -816,6 +884,36 @@ func is_player_in_void(player: Node2D) -> bool:
 	# Player is in void if there's no tile at their position or they're on filler
 	return tile_source_id == -1 or tile_atlas_id == filler_tile
 
+# NEW: Find the best room exit position for teleportation
+func find_room_exit_position(room_id: int, preferred_direction: String = "") -> Vector2:
+	if not rooms.has(room_id) or not rooms[room_id].has("exits"):
+		return Vector2.ZERO
+	
+	var room_exits = rooms[room_id]["exits"]
+	
+	# If we have a preferred direction, try to find that exit first
+	if preferred_direction != "":
+		for exit in room_exits:
+			if exit.dir == preferred_direction:
+				return $TileMapLayer.map_to_local(exit.pos)
+	
+	# Otherwise, prioritize exits in this order: south, north, east, west
+	var priority_order = ["south", "north", "east", "west"]
+	for direction in priority_order:
+		for exit in room_exits:
+			if exit.dir == direction:
+				return $TileMapLayer.map_to_local(exit.pos)
+	
+	# If no exits found, return room center as fallback
+	var room_bounds = get_room_bounds(room_id)
+	var center_pos = Vector2i(
+		room_bounds.position.x + room_bounds.size.x / 2,
+		room_bounds.position.y + room_bounds.size.y / 2
+	)
+	return $TileMapLayer.map_to_local(center_pos)
+
+
+
 @rpc("authority", "call_local")
 func teleport_player_to_safety(player_name: String) -> void:
 	var player: Node2D
@@ -825,7 +923,27 @@ func teleport_player_to_safety(player_name: String) -> void:
 	if player == null:
 		print("[SAFETY] Couldn't find player by name: " + player_name + ".")
 		return
-	var safe_position = find_nearest_safe_position(player.global_position)
+	
+	# NEW: Try to find the best room exit position for teleportation
+	var safe_position = Vector2.ZERO
+	
+	# First, try to find an exit in the latest active room
+	if not room_ids_in_order.is_empty():
+		var latest_room_id = room_ids_in_order[-1]
+		safe_position = find_room_exit_position(latest_room_id, "south")  # Prefer south exit (entrance)
+		
+		# If no exit found in latest room, try other active rooms
+		if safe_position == Vector2.ZERO:
+			for i in range(room_ids_in_order.size() - 1, -1, -1):  # Go backwards through rooms
+				var room_id = room_ids_in_order[i]
+				safe_position = find_room_exit_position(room_id)
+				if safe_position != Vector2.ZERO:
+					break
+	
+	# Fallback: use the old nearest safe position method
+	if safe_position == Vector2.ZERO:
+		safe_position = find_nearest_safe_position(player.global_position)
+	
 	if safe_position != Vector2.ZERO:
 		player.global_position = safe_position
 		
@@ -835,7 +953,7 @@ func teleport_player_to_safety(player_name: String) -> void:
 		smoke.emitting = true
 		add_child(smoke, true)
 		
-		print("[SAFETY] Teleported player to safety: ", safe_position)
+		print("[SAFETY] Teleported player to exit position: ", safe_position)
 
 func find_nearest_safe_position(from_position: Vector2) -> Vector2:
 	var search_radius = 100  # Search within 50 tiles
@@ -979,8 +1097,8 @@ func end_shop_phase() -> void:
 
 func update_barrier_label_for_shop() -> void:
 	var seconds_left = int(shop_timer)
-	$Barrier.get_node("Label").text = "Shop: " + str(seconds_left) + "s"
+	$Barrier.get_node("Label").text = "Shop: " + str(seconds_left)
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-		set_progress.rpc("Shop: " + str(seconds_left) + "s")
+		set_progress.rpc("Shop: " + str(seconds_left))
 	else:
-		set_progress("Shop: " + str(seconds_left) + "s")
+		set_progress("Shop: " + str(seconds_left))

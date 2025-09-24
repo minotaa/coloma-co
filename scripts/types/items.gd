@@ -37,6 +37,8 @@ func _init() -> void:
 	var healing_potion = Consumable.new(0, "Healing Potion", atlas)
 	healing_potion.description = "Heals +50 HP, 10 second cooldown."
 	healing_potion.cooldown = true
+	healing_potion.purchasable = true
+	healing_potion.price = 100
 	healing_potion.cooldown_seconds = 10.0
 	healing_potion.infinite = false
 	healing_potion.on_consume = func():
@@ -70,6 +72,8 @@ func _init() -> void:
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(48.0, 16.0, 16.0, 16.0)
 	var strength_potion = Consumable.new(3, "Strength Potion", atlas)
+	strength_potion.purchasable = true
+	strength_potion.price = 500
 	strength_potion.description = "Multiplies your damage by 2.5x for 30 seconds. 60 second cooldown."
 	strength_potion.cooldown = true
 	strength_potion.cooldown_seconds = 60.0
@@ -106,3 +110,36 @@ func _init() -> void:
 	boomerang.type = "BOOMERANG"
 	items.append(boomerang)
 	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(16.0, 16.0, 16.0, 16.0)
+	var mini_strength_potion = Consumable.new(6, "Mini Strength Potion", atlas)
+	mini_strength_potion.description = "Multiplies your damage by 2.5x for 15 seconds. 30 second cooldown."
+	mini_strength_potion.cooldown = true
+	mini_strength_potion.purchasable = true
+	mini_strength_potion.price = 250
+	mini_strength_potion.cooldown_seconds = 30.0
+	mini_strength_potion.infinite = false
+	mini_strength_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var strength = Effect.new("Strength", Color.from_rgba8(255, 69, 69, 255), 15.0)
+			player.add_status_effect(strength)
+			Toast.add("You have Strength for 15 seconds.")
+	items.append(mini_strength_potion)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(96.0, 0.0, 16.0, 16.0)
+	var mini_healing_potion = Consumable.new(7, "Mini Healing Potion", atlas)
+	mini_healing_potion.description = "Heals +25 HP, 5 second cooldown."
+	mini_healing_potion.cooldown = true
+	mini_healing_potion.purchasable = true
+	mini_healing_potion.price = 50
+	mini_healing_potion.cooldown_seconds = 5.0
+	mini_healing_potion.infinite = false
+	mini_healing_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			player.heal(25)
+	items.append(mini_healing_potion)

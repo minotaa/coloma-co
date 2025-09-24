@@ -341,7 +341,6 @@ func play_sfx(stream_name: String, position: Vector2, volume: float = 0.0, pitch
 		sfx.queue_free()
 	)
 
-
 func play_animation(name: String, backwards: bool = false, speed: float = 1) -> void:
 	if backwards == false:
 		$AnimatedSprite2D.play(name, speed)
@@ -375,9 +374,10 @@ func _process_input(delta) -> void:
 		return
 	if $UI/Global/ChatBar.has_focus() and alive:
 		play_idle_animation()
-	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible:
+	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible:
 		return
 	if Input.is_action_just_pressed("interact"):
+		print("interacted")
 		if type == "Defense":
 			if not $UI/Defense/Shop.visible:
 				for area in $Area2D.get_overlapping_areas():
@@ -385,6 +385,13 @@ func _process_input(delta) -> void:
 						$UI/Defense/Shop.visible = true
 						play_idle_animation()
 						$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+				for children in $UI/Defense/Shop/Panel/ScrollContainer/GridContainer.get_children():
+					children.queue_free()
+				for item in Items.items:
+					if (item as ItemType).purchasable:
+						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
+						catalog_item.set_item(item)
+						$UI/Defense/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)
 			else:
 				$UI/Defense/Shop.visible = false
 		elif type == "Dungeon":
@@ -394,6 +401,13 @@ func _process_input(delta) -> void:
 						$UI/Dungeon/Shop.visible = true
 						play_idle_animation()
 						$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+				for children in $UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer.get_children():
+					children.queue_free()
+				for item in Items.items:
+					if (item as ItemType).purchasable:
+						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
+						catalog_item.set_item(item)
+						$UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)
 			else:
 				$UI/Dungeon/Shop.visible = false
 			
@@ -860,7 +874,29 @@ func _physics_process(delta: float) -> void:
 					Toast.add("You respawned! You have " + str(lives) + " lives left.")
 			play_idle_animation()
 			$AnimatedSprite2D.material = null
-			global_position = Vector2.ZERO
+			if type == "Defense":
+				global_position = Vector2.ZERO
+			elif type == "Dungeon":
+				var safe_position = Vector2.ZERO
+
+				if not get_parent().room_ids_in_order.is_empty():
+					var latest_room_id = get_parent().room_ids_in_order[-1]
+					safe_position = get_parent().find_room_exit_position(latest_room_id, "south")  # Prefer south exit (entrance)
+					
+					# If no exit found in latest room, try other active rooms
+					if safe_position == Vector2.ZERO:
+						for i in range(get_parent().room_ids_in_order.size() - 1, -1, -1):  # Go backwards through rooms
+							var room_id = get_parent().room_ids_in_order[i]
+							safe_position = get_parent().find_room_exit_position(room_id)
+							if safe_position != Vector2.ZERO:
+								break
+				
+				# Fallback: use the old nearest safe position method
+				if safe_position == Vector2.ZERO:
+					safe_position = get_parent().find_nearest_safe_position(global_position)
+				
+				if safe_position != Vector2.ZERO:
+					global_position = safe_position
 			alive = true
 			show_ui()
 	_process_input(delta)
@@ -1094,6 +1130,8 @@ func _process_hit(body, damage: float):
 
 func _on_shop_close_button_pressed() -> void:
 	$UI/Defense/Shop.visible = false
+	$UI/Dungeon/Shop.visible = false
+	
 
 func add_message(message: String, player_name: String) -> void:
 	if multiplayer.has_multiplayer_peer():

@@ -1,13 +1,13 @@
 [gd_scene load_steps=6 format=3 uid="uid://chx40w18vwd46"]
 
-[ext_resource type="Script" path="res://scripts/barrier.gd" id="1_8ilpk"]
+[ext_resource type="Script" uid="uid://ni8wp52imf2e" path="res://scripts/barrier.gd" id="1_8ilpk"]
 [ext_resource type="Texture2D" uid="uid://bl2sf6j1hf5vi" path="res://assets/sprites/barrier.png" id="2_dlnxh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cs17i"]
 size = Vector2(96, 48)
 
 [sub_resource type="LabelSettings" id="LabelSettings_8ilpk"]
-font_size = 11
+font_size = 22
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8ilpk"]
 properties/0/path = NodePath(".:position")
@@ -32,10 +32,18 @@ collision_mask = 3
 shape = SubResource("RectangleShape2D_cs17i")
 
 [node name="Label" type="Label" parent="."]
-offset_left = -192.0
-offset_top = 28.0
-offset_right = 192.0
-offset_bottom = 49.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = 29.0
+offset_right = 288.0
+offset_bottom = 57.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
 text = "Starting soon"
 label_settings = SubResource("LabelSettings_8ilpk")
 horizontal_alignment = 1
