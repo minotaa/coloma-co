@@ -374,7 +374,7 @@ func _process_input(delta) -> void:
 		return
 	if $UI/Global/ChatBar.has_focus() and alive:
 		play_idle_animation()
-	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible:
+	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible or $UI/Global/Pause.visible:
 		return
 	if Input.is_action_just_pressed("interact"):
 		print("interacted")
@@ -685,6 +685,11 @@ func _input(event: InputEvent) -> void:
 		change_zoom(0.25)
 	elif event.is_action_pressed("zoom_out") and not $UI/Global/ChatBar.has_focus():
 		change_zoom(-0.25)
+	if not $UI/Global/ChatBar.has_focus() and event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		if $UI/Global/Pause.visible: 
+			$UI/Global/Pause.visible = false
+		else:
+			$UI/Global/Pause.visible = true
 	
 func _unhandled_input(event: InputEvent) -> void:
 	if multiplayer.has_multiplayer_peer() and !is_multiplayer_authority():
@@ -1206,6 +1211,17 @@ func _on_main_menu_pressed() -> void:
 
 func _on_chatbar_gui_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		$UI/Global/ChatBar.text = ""
-		$UI/Global/ChatBar.release_focus()
-		get_viewport().set_input_as_handled()
+		if $UI/Global/ChatBar.has_focus():
+			$UI/Global/ChatBar.text = ""
+			$UI/Global/ChatBar.release_focus()
+			get_viewport().set_input_as_handled()
+
+func _on_quit_game_pressed() -> void:
+	Man.save_game("quit")
+	get_tree().quit()
+
+func _on_resume_pressed() -> void:
+	$UI/Global/Pause.visible = false
+	
+func _on_quit_to_main_menu_pressed() -> void:
+	Man.end_game()

@@ -209,27 +209,19 @@ grow_vertical = 2
 [node name="Title" type="Label" parent="UI/Main"]
 texture_filter = 1
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -603.0
+offset_left = 43.0
 offset_top = 32.0
-offset_right = 187.0
+offset_right = 833.0
 offset_bottom = 134.0
-grow_horizontal = 2
 text = "Myrkwood: Offshoot"
 label_settings = SubResource("LabelSettings_wu84c")
 
 [node name="Subtitle" type="Label" parent="UI/Main"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -592.0
+offset_left = 43.0
 offset_top = 136.0
-offset_right = -144.0
+offset_right = 491.0
 offset_bottom = 192.0
-grow_horizontal = 2
 text = "by Minota"
 label_settings = SubResource("LabelSettings_bqqt6")
 

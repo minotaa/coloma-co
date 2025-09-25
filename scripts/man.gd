@@ -185,20 +185,38 @@ func _on_minute_passed() -> void:
 	
 @rpc("authority", "call_local", "reliable")
 func start_game(mode: String, map: String) -> void:
+	await Fade.fade_out(0.25)
 	for child in get_tree().current_scene.get_children():
 		if child.name.begins_with("Main Menu") or child.name.begins_with("Defense") or child.name.begins_with("Dungeon"):
 			child.queue_free()
 	if Man.selected_mode == "Dungeon":
 		get_tree().current_scene.add_child(load("res://scenes/levels/dungeon/dungeon.tscn").instantiate(), true)
+		await Fade.fade_in(0.25)
 		return
 	get_tree().current_scene.add_child(load(map_paths[mode + "_" + map]).instantiate(), true)
+	await Fade.fade_in(0.25)
 	
 @rpc("authority", "call_local", "reliable")
 func end_game() -> void:	
+	if multiplayer != null and multiplayer.has_multiplayer_peer():
+		if multiplayer.peer_connected.is_connected(NetworkManager._player_joined):
+			multiplayer.peer_connected.disconnect(NetworkManager._player_joined)
+
+		if multiplayer.peer_disconnected.is_connected(NetworkManager._player_quit):
+			multiplayer.peer_disconnected.disconnect(NetworkManager._player_quit)
+		NetworkManager.players.clear()
+
+		if multiplayer.multiplayer_peer is EOSGMultiplayerPeer:
+			multiplayer.multiplayer_peer.close()
+		else:
+			multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
+			multiplayer.multiplayer_peer = null
+	await Fade.fade_out(0.25)
 	for child in get_tree().current_scene.get_children():
 		if child.name.begins_with("Defense") or child.name.begins_with("Main Menu") or child.name.begins_with("Dungeon"):
 			child.queue_free()
 	get_tree().current_scene.add_child(main_menu_scene.instantiate(), true)
+	await Fade.fade_in(0.25)
 	
 func get_player() -> Node2D:
 	for player in get_tree().get_nodes_in_group("players"):

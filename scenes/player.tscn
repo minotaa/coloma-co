@@ -1,4 +1,4 @@
-[gd_scene load_steps=148 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=149 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -828,6 +828,16 @@ texture_margin_bottom = 16.0
 [sub_resource type="LabelSettings" id="LabelSettings_dt7fs"]
 font_size = 22
 
+[sub_resource type="LabelSettings" id="LabelSettings_jc3p3"]
+font = ExtResource("17_qfm1y")
+font_size = 60
+font_color = Color(1, 0.8666667, 0, 1)
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.796078)
+shadow_offset = Vector2(4, 4)
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3v2ag"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -899,7 +909,6 @@ shape = SubResource("RectangleShape2D_qfm1y")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3.75, 3.75)
-position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 
 [node name="Cursor" type="Sprite2D" parent="."]
@@ -2033,6 +2042,113 @@ horizontal_scroll_mode = 3
 layout_mode = 2
 alignment = 2
 
+[node name="Pause" type="Control" parent="UI/Global"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="UI/Global/Pause"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
+
+[node name="Title" type="Label" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -134.5
+offset_right = 288.0
+offset_bottom = -73.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "GAME MENU"
+label_settings = SubResource("LabelSettings_jc3p3")
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="UI/Global/Pause/Panel"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 128.0
+offset_right = 1216.0
+offset_bottom = 193.0
+label_settings = SubResource("LabelSettings_ke2ow")
+vertical_alignment = 1
+
+[node name="Resume" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = -37.0
+offset_right = 232.0
+offset_bottom = 37.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Resume"
+
+[node name="Quit to Main Menu" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = 51.0
+offset_right = 232.0
+offset_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Quit to Main Menu"
+
+[node name="Quit Game" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = 139.0
+offset_right = 232.0
+offset_bottom = 213.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Quit Game"
+
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
 
@@ -2078,3 +2194,6 @@ texture_progress = ExtResource("34_jc3p3")
 [connection signal="gui_input" from="UI/Global/ChatBar" to="." method="_on_chatbar_gui_input"]
 [connection signal="text_submitted" from="UI/Global/ChatBar" to="." method="_on_chat_bar_submitted"]
 [connection signal="timeout" from="UI/Global/Zoom/Timer" to="." method="_on_zoom_timeout"]
+[connection signal="pressed" from="UI/Global/Pause/Panel/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="UI/Global/Pause/Panel/Quit to Main Menu" to="." method="_on_quit_to_main_menu_pressed"]
+[connection signal="pressed" from="UI/Global/Pause/Panel/Quit Game" to="." method="_on_quit_game_pressed"]
