@@ -50,6 +50,7 @@ var current_shopkeepers = []
 var completed_rooms = 0
 var current_wave_index = 0
 var current_subwave_index = 0
+var completed_subwaves = 0  # Track actually completed subwaves
 var spawning_active = false
 var currently_spawning = false
 var room_ids_in_order = []
@@ -105,6 +106,7 @@ func reset() -> void:
 	completed_rooms = 0
 	current_wave_index = 0
 	current_subwave_index = 0
+	completed_subwaves = 0
 	spawning_active = false
 	currently_spawning = false
 	rooms = {}
@@ -491,15 +493,12 @@ func set_progress(_progress: String) -> void:
 func update_barrier_label() -> void:
 	var current_wave = get_current_wave()
 	if not current_wave.is_empty():
-		var completed_waves = current_subwave_index - 1  # Subtract 1 because we increment before spawning
 		var total_waves = current_wave.content.size()
-		# Ensure completed doesn't go negative
-		completed_waves = max(0, completed_waves)
-		$Barrier.get_node("Label").text = str(completed_waves) + "/" + str(total_waves)
+		$Barrier.get_node("Label").text = str(completed_subwaves) + "/" + str(total_waves)
 		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-			set_progress.rpc(str(completed_waves) + "/" + str(total_waves))
+			set_progress.rpc(str(completed_subwaves) + "/" + str(total_waves))
 		else:
-			set_progress(str(completed_waves) + "/" + str(total_waves))
+			set_progress(str(completed_subwaves) + "/" + str(total_waves))
 
 func get_current_wave() -> Dictionary:
 	var applicable_waves = []
@@ -522,10 +521,18 @@ func spawn_current_wave() -> void:
 	var subwave = current_wave.content[current_subwave_index]
 	print("[WAVE] Spawning subwave ", current_subwave_index, ": ", subwave)
 	
+	# Store total waves for this room when we start the first subwave
+	if current_subwave_index == 0:
+		var total_waves = current_wave.content.size()
+		# Update label to show initial 0/total state
+		$Barrier.get_node("Label").text = "0/" + str(total_waves)
+		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+			set_progress.rpc("0/" + str(total_waves))
+		else:
+			set_progress("0/" + str(total_waves))
+	
 	# Increment wave index BEFORE spawning
 	current_subwave_index += 1
-	# Update barrier to show current progress (0 completed when wave just started)
-	update_barrier_label()
 	
 	# Set spawning flag to prevent premature wave completion
 	currently_spawning = true
@@ -632,6 +639,17 @@ func check_wave_completion() -> void:
 	
 	if enemies.size() == 0:
 		print("[WAVE] Wave complete, spawning next...")
+		# Increment completed subwaves and update label with current wave's total
+		completed_subwaves += 1
+		var current_wave = get_current_wave()
+		if not current_wave.is_empty():
+			var total_waves = current_wave.content.size()
+			$Barrier.get_node("Label").text = str(completed_subwaves) + "/" + str(total_waves)
+			if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+				set_progress.rpc(str(completed_subwaves) + "/" + str(total_waves))
+			else:
+				set_progress(str(completed_subwaves) + "/" + str(total_waves))
+		
 		# All enemies defeated, spawn next wave after brief delay
 		currently_spawning = true  # Prevent multiple triggers
 		await get_tree().create_timer(1.0).timeout
@@ -648,6 +666,7 @@ func complete_room() -> void:
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		send_rooms.rpc(completed_rooms)
 	current_subwave_index = 0
+	completed_subwaves = 0  # Reset for next room
 	
 	print("[ROOM] Room completed! Total completed: ", completed_rooms)
 	
@@ -655,16 +674,6 @@ func complete_room() -> void:
 		spawn_shop_room()
 		start_shop_phase()
 		return
-	
-	# Show completion
-	var current_wave = get_current_wave()
-	if not current_wave.is_empty():
-		var total_waves = current_wave.content.size()
-		$Barrier.get_node("Label").text = str(total_waves) + "/" + str(total_waves)
-		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-			set_progress.rpc(str("0") + "/" + str(total_waves))
-		else:
-			set_progress(str(total_waves) + "/" + str(total_waves))
 	
 	# Wait a moment, then start countdown for next room
 	countdown_and_spawn_room()
@@ -857,9 +866,10 @@ func countdown_and_spawn_room() -> void:
 	var new_room_id = room_ids_in_order[-1]
 	position_barrier_at_room_exit(new_room_id, "north")
 	
-	# Start wave system
+	# Start wave system - reset completed subwaves for new room
 	spawning_active = true
 	current_subwave_index = 0
+	completed_subwaves = 0
 	update_barrier_label()
 	spawn_current_wave()
 
