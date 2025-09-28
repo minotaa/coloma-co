@@ -10,8 +10,8 @@ var accel: float = 0.0
 const ACCEL_RATE: float = 800.0 # pixels/sec^2, tweak this
 
 func _ready() -> void:
-	$Sprite2D.texture = Items.get_by_id(weapon_id).data["texture"]
-	SPEED = Items.get_by_id(weapon_id).data["speed"]
+	$Sprite2D.texture = Catalog.get_by_id(weapon_id).data["texture"]
+	SPEED = Catalog.get_by_id(weapon_id).data["speed"]
 	$Sprite2D.rotation = direction.angle() + PI/2
 
 func _physics_process(delta: float) -> void:
@@ -25,7 +25,7 @@ func _physics_process(delta: float) -> void:
 	for body in get_overlapping_bodies():
 		if body.is_in_group("enemies") and body.alive:
 			if not multiplayer.has_multiplayer_peer() or get_parent().get_node(SOURCE).is_multiplayer_authority():
-				get_parent().get_node(SOURCE)._process_hit(body, Items.get_by_id(weapon_id).damage)
+				get_parent().get_node(SOURCE)._process_hit(body, Catalog.get_by_id(weapon_id).damage + get_parent().get_node(SOURCE).get_bonus_damage())
 			queue_free()
 			print("Removed throwable.")
 			pass

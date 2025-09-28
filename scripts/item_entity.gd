@@ -60,7 +60,7 @@ func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, lo
 		print(body.bag.list)
 		if not body.bag.is_full():
 			print("Collided with player, emitting collect event.")
-			Items.emit_signal("collect_item", item)
+			Catalog.emit_signal("collect_item", item)
 			queue_free()
 		else:
 			body.get_node("AudioStreamPlayer2D").volume_db = 5.0

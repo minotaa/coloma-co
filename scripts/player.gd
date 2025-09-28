@@ -32,7 +32,6 @@ var step_timer := 0.0
 var step_interval := 0.4
 var alive: bool = true
 var lives: int = 4
-var max_health := 100.0
 var health := 100.0
 var damage := 25.0
 var strength := 0
@@ -42,6 +41,7 @@ var gold: int = 0
 var revival_time: float = 0.0
 const MAX_REVIVAL_TIME: float = 10.0 # like in seconds and stuff
 var bag = Bag.new()
+var upgrade_bag = Bag.new()
 
 # stats and stuff
 var total_damage_taken: float = 0.0
@@ -56,6 +56,24 @@ var total_kills: int = 0
 var kills: int = 0
 
 var active_effects: Array = []
+
+func get_bonus_damage() -> float:
+	var bonus_damage := 0.0
+	if upgrade_bag.has_item(Catalog.get_by_id(8)):
+		bonus_damage += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(8)).data["level"]
+	return bonus_damage
+
+func get_defense() -> float:
+	var defense := 0.0
+	if upgrade_bag.has_item(Catalog.get_by_id(9)):
+		defense += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(9)).data["level"]
+	return defense
+
+func get_max_health() -> float:
+	var max_health := 100.0
+	if upgrade_bag.has_item(Catalog.get_by_id(10)):
+		max_health += 10 * upgrade_bag.get_item_stack(Catalog.get_by_id(10)).data["level"]
+	return max_health
 
 func add_status_effect(effect: Effect) -> void:
 	effect.on_apply.call(self)
@@ -105,13 +123,14 @@ func reset_game() -> void:
 	damage_healed = 0.0
 	damage_taken = 0.0
 	gold_collected = 0
-	health = max_health
+	health = get_max_health()
 	revival_time = 0.0
 	gold = 0
 	sprint = 220
 	lives = 4
 	alive = true
 	bag = Bag.new()
+	upgrade_bag = Bag.new()
 	global_position = Vector2(0, 0)
 	play_idle_animation()
 	$"UI/Defense/Game Over".visible = false
@@ -134,7 +153,7 @@ func end_game() -> void:
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
 	if type == "Defense":
 		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "The gem has broken."
-		stats_text += "Final wave:\t " + str(get_parent().wave)
+		stats_text += "\nFinal wave:\t " + str(get_parent().wave)
 		$"UI/Defense/Game Over".visible = true
 		$"UI/Defense/Game Over/Panel/Meta".text = stats_text
 		if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
@@ -191,6 +210,7 @@ func _enter_tree() -> void:
 		set_multiplayer_authority(name.to_int())
 
 func _ready() -> void:	
+	print(name, " authority: ", get_multiplayer_authority(), " is me: ", is_multiplayer_authority())
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
@@ -242,7 +262,7 @@ func setup_ui(type: String) -> void:
 func heal(amount: float) -> void:	
 	if alive:
 		var old_health = health
-		health = min(health + amount, max_health)
+		health = min(health + amount, get_max_health())
 		var healed = roundi(health - old_health)
 		damage_healed += healed
 		total_damage_healed += healed
@@ -262,25 +282,37 @@ func heal(amount: float) -> void:
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0 or not alive:
 		return
-	print("Player took ", amount, " damage")
+
+	var defense = get_defense()
+	var defense_factor = 1.0 - (defense / (defense + 100.0))
+	var final_damage = amount * defense_factor
+
+	print("Player took ", final_damage, " damage (raw: ", amount, ", defense: ", defense, ")")
+
 	hit_cooldown = max_hit_cooldown
-	health = health - amount
-	damage_taken += amount
-	total_damage_taken += amount
+	health -= final_damage
+	damage_taken += final_damage
+	total_damage_taken += final_damage
+
 	if multiplayer.has_multiplayer_peer():
 		play_sfx.rpc("hit", global_position, 10.0)
 	else:
 		play_sfx("hit", global_position, 10.0)
+
 	apply_knockback(location, 220.0)
+
 	if multiplayer.has_multiplayer_peer():
-		show_floating_text.rpc(amount, global_position)
+		show_floating_text.rpc(final_damage, global_position)
 	else:
-		show_floating_text(amount, global_position)
+		show_floating_text(final_damage, global_position)
+
 	if health <= 0:
 		die()
+
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
 	await get_tree().create_timer(0.1).timeout
 	$AnimatedSprite2D.material = null
+
 
 func percent(current: float, total: float) -> String:
 	if total > 0.0:
@@ -387,11 +419,16 @@ func _process_input(delta) -> void:
 						$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 				for children in $UI/Defense/Shop/Panel/ScrollContainer/GridContainer.get_children():
 					children.queue_free()
-				for item in Items.items:
+				for item in Catalog.items:
 					if (item as ItemType).purchasable:
 						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
 						catalog_item.set_item(item)
 						$UI/Defense/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)
+				for upgrade in Catalog.upgrades:
+					if (upgrade as ItemType).purchasable:
+						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
+						catalog_item.set_item(upgrade)
+						$UI/Defense/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)	
 			else:
 				$UI/Defense/Shop.visible = false
 		elif type == "Dungeon":
@@ -403,11 +440,16 @@ func _process_input(delta) -> void:
 						$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 				for children in $UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer.get_children():
 					children.queue_free()
-				for item in Items.items:
+				for item in Catalog.items:
 					if (item as ItemType).purchasable:
 						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
 						catalog_item.set_item(item)
 						$UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)
+				for upgrade in Catalog.upgrades:
+					if (upgrade as ItemType).purchasable:
+						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
+						catalog_item.set_item(upgrade)
+						$UI/Defense/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)	
 			else:
 				$UI/Dungeon/Shop.visible = false
 			
@@ -820,7 +862,7 @@ func _physics_process(delta: float) -> void:
 		$UI/Global/ChatBar.modulate.a = lerp($UI/Global/ChatBar.modulate.a, 0.0, FADE_SPEED * delta)
 	if $UI/Defense.visible:
 		if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
-			$UI/Defense/HealthBar.max_value = max_health
+			$UI/Defense/HealthBar.max_value = get_max_health()
 			$UI/Defense/HealthBar.value = health
 			$UI/Defense/SprintBar.value = sprint
 			if sprint >= 220:
@@ -828,7 +870,7 @@ func _physics_process(delta: float) -> void:
 				$UI/Defense/SprintBar.visible = false
 			else:
 				$UI/Defense/SprintBar.visible = true
-			$UI/Defense/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
+			$UI/Defense/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(get_max_health()))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	if $"UI/Defense/Death".visible:
 		$"UI/Defense/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
@@ -839,7 +881,7 @@ func _physics_process(delta: float) -> void:
 		$UI/Dungeon/HBoxContainer/Lives/Label.text = "Lives: " + str(lives)
 		$UI/Dungeon/HBoxContainer/Progress/Label.text = str(get_parent().progress)
 		$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
-		$UI/Dungeon/HealthBar.max_value = max_health
+		$UI/Dungeon/HealthBar.max_value = get_max_health()
 		$UI/Dungeon/HealthBar.value = health
 		$UI/Dungeon/SprintBar.value = sprint
 		if sprint >= 220:
@@ -847,7 +889,12 @@ func _physics_process(delta: float) -> void:
 			$UI/Dungeon/SprintBar.visible = false
 		else:
 			$UI/Dungeon/SprintBar.visible = true
-		$UI/Dungeon/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(max_health))
+		$UI/Dungeon/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(get_max_health()))
+		
+	if $UI/Defense/Shop.visible:
+		$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+	if $UI/Dungeon/Shop.visible:
+		$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 		
 	if not alive and revival_time != -1:
 		revival_time -= delta
@@ -863,7 +910,7 @@ func _physics_process(delta: float) -> void:
 				$"UI/Defense/Death".visible = false
 			if type == "Dungeon":
 				$UI/Dungeon/Death.visible = false
-			health = max_health
+			health = get_max_health()
 			gold = max(roundi(gold / 2), 0)
 			hit_cooldown = max_hit_cooldown
 			if type == "Defense":
@@ -881,7 +928,13 @@ func _physics_process(delta: float) -> void:
 			$AnimatedSprite2D.material = null
 			if type == "Defense":
 				global_position = Vector2.ZERO
+				if $UI/Defense/Shop.visible:
+					$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+					
 			elif type == "Dungeon":
+				if $UI/Dungeon/Shop.visible:
+					$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+					
 				var safe_position = Vector2.ZERO
 
 				if not get_parent().room_ids_in_order.is_empty():
@@ -961,7 +1014,7 @@ func _physics_process(delta: float) -> void:
 	if sword_hitbox_active:
 		for body in $SwordHbox.get_overlapping_bodies():
 			if body.is_in_group("enemies") and body not in hit_enemies:
-				_process_hit(body, Man.equipped_weapon.damage)
+				_process_hit(body, Man.equipped_weapon.damage + get_bonus_damage())
 				hit_enemies.append(body)
 		
 		sword_hitbox_timer -= delta

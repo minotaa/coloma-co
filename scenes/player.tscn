@@ -1372,7 +1372,7 @@ grow_vertical = 2
 [node name="GridContainer" type="GridContainer" parent="UI/Defense/Shop/Panel/ScrollContainer"]
 layout_mode = 2
 theme_override_constants/h_separation = 12
-columns = 6
+columns = 5
 
 [node name="Close" type="Button" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
@@ -1533,6 +1533,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Main Menu"
 
 [node name="Dungeon" type="Control" parent="UI"]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

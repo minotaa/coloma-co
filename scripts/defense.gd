@@ -159,19 +159,23 @@ func add_gold(id: String, amount: int) -> void:
 	get_node(id).gold_collected += amount
 	get_node(id).total_gold_collected += amount
 
-func player_joined(id) -> void:
+const MAX_RETRIES := 10
+
+func player_joined(id: int) -> void:
 	if not multiplayer.is_server():
 		return
+	print("Player", id, "joined late — kicking silently.")
+	multiplayer.disconnect_peer(id)
 
-	var player = player_scene.instantiate()
-	player.name = str(id)
-	player.type = "Defense"
-	call_deferred("add_child", player, true)
-	Man.start_game.rpc_id(id)
+func _finalize_player_join(p: Node, id: int) -> void:
+	add_child(p, true)
+	p.setup_ui.rpc("Defense")
 
 func player_quit(id) -> void:
 	if not multiplayer.is_server():
 		return
+		
+	print("this fired")
 
 	print("[" + str(multiplayer.multiplayer_peer.get_unique_id()) + "] removing " + str(id) + " from the game")
 	for child in get_children():
@@ -186,7 +190,7 @@ func spawn_wave() -> void:
 		update_wave.rpc(wave)
 
 	for player in get_tree().get_nodes_in_group("players"):
-		if player.health < player.max_health and player.alive:
+		if player.health < player.get_max_health() and player.alive:
 			player.heal(10)
 
 	match wave:

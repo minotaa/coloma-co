@@ -30,7 +30,7 @@ config/icon="uid://cpuu4kwxvepvg"
 
 Toast="*res://scripts/toastmanager.gd"
 Entities="*res://scripts/types/entities.gd"
-Items="*res://scripts/types/items.gd"
+Catalog="*res://scripts/types/catalog.gd"
 NetworkManager="*res://scripts/network_manager.gd"
 Man="*res://scripts/man.gd"
 EOSGRuntime="*res://addons/epic-online-services-godot/runtime.gd"

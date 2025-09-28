@@ -8,6 +8,7 @@ var rarity: String = "COMMON" # COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
 var texture: Texture
 var purchasable: bool = false
 var price: int = 0
+var shop_type: String = "ANY"
 
 func _init(id: int, name: String, texture: Texture) -> void:
 	self.id = id

@@ -44,7 +44,7 @@ func _physics_process(delta: float) -> void:
 	for body in get_overlapping_bodies():
 		if body.is_in_group("enemies") and body.alive and body not in hit_enemies:
 			if not multiplayer.has_multiplayer_peer() or get_parent().get_node(SOURCE).is_multiplayer_authority():
-				get_parent().get_node(SOURCE)._process_hit(body, Items.get_by_id(weapon_id).damage)
+				get_parent().get_node(SOURCE)._process_hit(body, Catalog.get_by_id(weapon_id).damage + get_parent().get_node(SOURCE).get_bonus_damage())
 			hit_enemies.append(body)
 
 func _on_timer_timeout() -> void:

@@ -42,8 +42,8 @@ var controls: Dictionary[Variant, Variant] = {
 var fullscreen: bool = false
 var sfx_volume: float = 100.0
 var bag = Bag.new()
-var equipped_weapon: Weapon = Items.get_by_id(1)
-var equipped_armor: Armor = Items.get_by_id(2)
+var equipped_weapon: Weapon = Catalog.get_by_id(1)
+var equipped_armor: Armor = Catalog.get_by_id(2)
 var game_loaded: bool = false
 var cooldowns: Dictionary[Variant, Variant] = {}
 
@@ -52,7 +52,7 @@ func add_playtime_points(amount: int) -> void:
 	playtime_points += amount
 	if playtime_points % 100 == 0:
 		var options = []
-		for item in Items.items:
+		for item in Catalog.items:
 			if item is Weapon and not bag.has_item(item):
 				options.append(item)
 				
@@ -118,16 +118,16 @@ func load_game():
 		var data = json.get_data()
 		if data.has("bag"):
 			bag.set_list_from_save(data["bag"])
-			var wooden_sword = ItemStack.new(Items.get_by_id(1), 1)
-			var t_shirt = ItemStack.new(Items.get_by_id(2), 1)
+			var wooden_sword = ItemStack.new(Catalog.get_by_id(1), 1)
+			var t_shirt = ItemStack.new(Catalog.get_by_id(2), 1)
 			if bag.list.is_empty():
 				bag.add_item(wooden_sword)
 				bag.add_item(t_shirt)
 				Toast.add("Gave you a Wooden Sword & T-Shirt.")
-			if not bag.has_item(Items.get_by_id(1)):
+			if not bag.has_item(Catalog.get_by_id(1)):
 				bag.add_item(wooden_sword)
 				Toast.add("Gave you a Wooden Sword.")
-			if not bag.has_item(Items.get_by_id(2)):
+			if not bag.has_item(Catalog.get_by_id(2)):
 				bag.add_item(t_shirt)
 				Toast.add("Gave you a T-Shirt.")
 				
@@ -146,9 +146,9 @@ func load_game():
 				var db_value = lerp(-80.0, 0.0, sfx_volume / 100.0)
 				AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
 		if data.has("equipped_weapon"):
-			equipped_weapon = Items.get_by_id(data["equipped_weapon"])
+			equipped_weapon = Catalog.get_by_id(data["equipped_weapon"])
 		if data.has("equipped_armor"):
-			equipped_armor = Items.get_by_id(data["equipped_armor"])
+			equipped_armor = Catalog.get_by_id(data["equipped_armor"])
 		if data.has("playtime_points"):
 			playtime_points = data["playtime_points"]
 	print("Loaded save data.")

@@ -3,12 +3,16 @@ extends Node
 signal collect_item(item_type: ItemStack)
 
 var items = []
+var upgrades = []
 var item_resource = preload("res://scenes/item.tscn")
 
 func get_by_id(id: int) -> ItemType:
 	for item in items:
 		if item.id == id:
 			return item
+	for upgrade in upgrades:
+		if upgrade.id == id:
+			return upgrade
 	return null
 	
 func spawn(item: ItemStack, location: Vector2) -> RigidBody2D:
@@ -39,6 +43,7 @@ func _init() -> void:
 	healing_potion.cooldown = true
 	healing_potion.purchasable = true
 	healing_potion.price = 100
+	healing_potion.shop_type = "ANY"
 	healing_potion.cooldown_seconds = 10.0
 	healing_potion.infinite = false
 	healing_potion.on_consume = func():
@@ -78,6 +83,7 @@ func _init() -> void:
 	strength_potion.cooldown = true
 	strength_potion.cooldown_seconds = 60.0
 	strength_potion.infinite = false
+	strength_potion.shop_type = "ANY"
 	strength_potion.on_consume = func():
 		var player = Man.get_player()
 		if player != null:
@@ -90,12 +96,12 @@ func _init() -> void:
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(112.0, 16.0, 16.0, 16.0)
 	var daggers = Weapon.new(4, "Throwing Daggers", atlas)
-	daggers.damage = 75.0
+	daggers.damage = 45.0
 	daggers.description = "Click in any direction to throw daggers, however you have limited ammo."
 	daggers.type = "THROWABLE"
 	daggers.data = {
 		"clip": 16,
-		"reload_time": 2.15,
+		"reload_time": 2.0,
 		"speed": 250.0,
 		"texture": preload("res://assets/sprites/dagger.png")
 	}
@@ -117,6 +123,7 @@ func _init() -> void:
 	mini_strength_potion.description = "Multiplies your damage by 2.5x for 15 seconds. 30 second cooldown."
 	mini_strength_potion.cooldown = true
 	mini_strength_potion.purchasable = true
+	mini_strength_potion.shop_type = "ANY"
 	mini_strength_potion.price = 250
 	mini_strength_potion.cooldown_seconds = 30.0
 	mini_strength_potion.infinite = false
@@ -136,6 +143,7 @@ func _init() -> void:
 	mini_healing_potion.cooldown = true
 	mini_healing_potion.purchasable = true
 	mini_healing_potion.price = 50
+	mini_healing_potion.shop_type = "ANY"
 	mini_healing_potion.cooldown_seconds = 5.0
 	mini_healing_potion.infinite = false
 	mini_healing_potion.on_consume = func():
@@ -143,3 +151,36 @@ func _init() -> void:
 		if player != null:
 			player.heal(25)
 	items.append(mini_healing_potion)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(128.0, 16.0, 16.0, 16.0)
+	var damage_upgrade = Upgrade.new(8, "Damage Upgrade", atlas)
+	damage_upgrade.description = "Upgrade the damage of your weapon by 5."
+	damage_upgrade.max_level = 5
+	damage_upgrade.purchasable = true 
+	damage_upgrade.price = 1000
+	damage_upgrade.shop_type = "ANY"
+	upgrades.append(damage_upgrade)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(144.0, 16.0, 16.0, 16.0)
+	var defense_upgrade = Upgrade.new(9, "Defense Upgrade", atlas)
+	defense_upgrade.description = "Upgrade your defense by 5."
+	defense_upgrade.max_level = 5
+	defense_upgrade.purchasable = true 
+	defense_upgrade.price = 750
+	defense_upgrade.shop_type = "ANY"
+	upgrades.append(defense_upgrade)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(160.0, 16.0, 16.0, 16.0)
+	var health_upgrade = Upgrade.new(10, "Health Upgrade", atlas)
+	health_upgrade.description = "Upgrade your health by 10."
+	health_upgrade.max_level = 10
+	health_upgrade.purchasable = true 
+	health_upgrade.price = 850
+	health_upgrade.shop_type = "ANY"
+	upgrades.append(health_upgrade)
