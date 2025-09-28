@@ -37,6 +37,8 @@ func _ready() -> void:
 		$"UI/Main/Multiplayer Buttons/Online2".visible = true
 		$"UI/Main/Multiplayer Buttons/Name".visible = true
 		$"UI/Main/Multiplayer Buttons/Address".visible = true
+	if NetworkManager.steam_enabled:
+		$"UI/Main/Multiplayer Buttons/LineEdit".visible = false
 
 	print('HEY APRIL WERE CONNECTING')
 	if NetworkManager.eos_is_initialized:
@@ -276,30 +278,17 @@ func _on_dev_online_pressed() -> void:
 	HAuth.login_devtool_async($"UI/Main/Multiplayer Buttons/Address".text, $"UI/Main/Multiplayer Buttons/Name".text)
 
 func _on_online_pressed() -> void:
-	if not NetworkManager.steam_enabled:
-		if HAuth.product_user_id == "":
+	if HAuth.product_user_id == "":
+		if not NetworkManager.steam_enabled:
 			var result = await HAuth.login_anonymous_async($"UI/Main/Multiplayer Buttons/LineEdit".text)
 			if result == false:
 				Toast.add("An error occurred while attempting to sign in.")
 				play_ui_sfx(preload("res://assets/sounds/deny.wav"))
 		else:
-			$"UI/Main/Multiplayer Buttons".visible = false
-			init_online_buttons()
+			NetworkManager.initiate_steam_login_to_eos()
 	else:
-		var params = EOS.Connect.LoginOptions.new()
-		var creds = EOS.Connect.Credentials.new()
-		creds.type = EOS.ExternalCredentialType.SteamSessionTicket
-		var ticket = Steam.getAuthSessionTicket()
-		var buffer = ticket["buffer"]
-		
-		creds.token = buffer.hex_encode()
-		
-		params.credentials = creds
-		var result = await HAuth.login_game_services_async(params)
-		if result == false:
-			Toast.add("An error occurred while attempting to sign in.")
-			play_ui_sfx(preload("res://assets/sounds/deny.wav"))
-		print("sure, this works, why not?")
+		$"UI/Main/Multiplayer Buttons".visible = false
+		init_online_buttons()
 
 func _on_address_text_submitted(new_text:String) -> void:
 	$UI/Main/Join/Join.emit_signal("pressed")

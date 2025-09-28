@@ -8,8 +8,8 @@ var dev_mode: bool = false
 var players = []
 var player_name: String
 var eos_is_initialized: bool = false
-var steam_enabled: bool = true
-var app_ticket: Dictionary = {}
+var steam_enabled: bool = false
+var auth_tickets: Dictionary = {}
 
 signal player_joined(peer_id)
 signal update_players(players)
@@ -84,21 +84,34 @@ func _ready() -> void:
 	if initialize_response.status > Steam.STEAM_API_INIT_RESULT_OK:
 		print("Failed to initialize Steam, disabling Steam functionality: " + str(initialize_response))
 		steam_enabled = false
+	else:
+		steam_enabled = true
 	if steam_enabled:
 		print("Steam name: " + Steam.getPersonaName())
-		Steam.encrypted_app_ticket_response.connect(_steam_encrypted_app_ticket_request)
-		Steam.getAuthSessionTicket()
+		Steam.get_auth_session_ticket_response.connect(_get_auth_session_ticket_response)
 		var join_param = Steam.getLaunchQueryParam("join")
 		print("Join param: " + join_param)
-	
-func _steam_encrypted_app_ticket_request(result):
-	if result != "ok":
-		print("result isn't ok, might be inaccurate")
-		print(result)
-	
-	app_ticket = Steam.getEncryptedAppTicket()
-	print("Encrypted app ticket: " + str(app_ticket))
 		
+func _get_auth_session_ticket_response(this_auth_ticket: int, result: int) -> void:
+	print("Auth session result: %s" % result)
+	print("Auth session ticket handle: %s" % this_auth_ticket)
+	if not auth_tickets.has(this_auth_ticket):
+		print("Value doesn't exist probably a multi instance issue")
+		return
+	var params = EOS.Connect.LoginOptions.new()
+	var creds = EOS.Connect.Credentials.new()
+	creds.type = EOS.ExternalCredentialType.SteamSessionTicket
+	creds.token = auth_tickets[this_auth_ticket]
+
+	params.credentials = creds
+	var login_result = await HAuth.login_game_services_async(params)
+	if login_result == false:
+		Toast.add("An error occurred while attempting to sign in.")
+
+func initiate_steam_login_to_eos() -> void:
+	var ticket = Steam.getAuthSessionTicket()
+	auth_tickets[ticket["id"]] = ticket["buffer"].hex_encode()
+
 func _eos_display_name_changed():
 	print("HEY APRIL WERE NOW CALLED " + HAuth.display_name + ".")
 	Toast.add("Your username has been changed to: " + HAuth.display_name)
@@ -108,6 +121,8 @@ func _on_eos_logged_in():
 
 func _on_eos_log_msg(msg: EOS.Logging.LogMessage) -> void:
 	print("SDK %s | %s" % [msg.category, msg.message])
+	if msg.category == "[ERROR]":
+		Toast.add(msg.message)
 
 # -----------------------
 # Connection Functions
