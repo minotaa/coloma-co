@@ -3,10 +3,10 @@ extends Node2D
 var click1 = preload("res://assets/sounds/click1.wav")
 var click2 = preload("res://assets/sounds/click.wav")
 
-func play_ui_sfx(stream: AudioStream) -> void:
+func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:
 	var sfx = AudioStreamPlayer.new()
 	sfx.stream = stream
-	sfx.bus = "SFX"
+	sfx.bus = bus
 	sfx.volume_db = -10.0
 	add_child(sfx)
 
@@ -15,6 +15,26 @@ func play_ui_sfx(stream: AudioStream) -> void:
 	sfx.finished.connect(func():
 		sfx.queue_free()
 	)
+
+func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer:
+	var sfx = AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = "Music"
+	sfx.volume_db = -10.0
+	add_child(sfx)
+
+	sfx.play()
+
+	if looping:
+		sfx.finished.connect(func():
+			sfx.play()
+		)
+	else:
+		sfx.finished.connect(func():
+			sfx.queue_free()
+		)
+	
+	return sfx
 
 func _connect_button_sfx(button: Button):
 	button.mouse_entered.connect(func():
@@ -26,6 +46,8 @@ func _connect_button_sfx(button: Button):
 
 func _ready() -> void:
 	Man.set_rich_presence("#In_MainMenu")
+	play_music(preload("res://assets/sounds/MO_titlescreen.wav"), true)
+	
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
@@ -47,6 +69,8 @@ func _ready() -> void:
 		HPlatform.platform_created.connect(_eos_initialized)
 	$UI/Main/Options/General/CheckBox.button_pressed = Man.fullscreen
 	$UI/Main/Options/General/HSlider.value = Man.sfx_volume
+	$UI/Main/Options/General/HSlider2.value = Man.music_volume
+	
 
 func init_online_buttons() -> void:
 	$"UI/Main/Online Buttons".visible = true
@@ -93,8 +117,10 @@ func _on_back_pressed() -> void:
 		$UI/Main/Loadout/Panel/Main.visible = true 
 		update_loadout()
 		return
+	
 	if $UI/Main/Options.visible and not $UI/Main/Options/General.visible: # doing this instead of adding something that'd make this way more easier for me in the future.
 		$UI/Main/Options/Controls.visible = false
+		$UI/Main/Options/Credits.visible = false
 		$UI/Main/Options/General.visible = true
 	elif $UI/Main/Loadout.visible:
 		$UI/Main/Loadout.visible = false 
@@ -443,3 +469,19 @@ func select_armor(item: Armor) -> void:
 	Man.equipped_armor = item
 	Toast.add("Set your armor to: " + item.name) 
 	Man.save_game("set armor")
+
+func _on_credits_pressed() -> void:
+	$UI/Main/Options/General.visible = false
+	$UI/Main/Options/Credits.visible = true
+
+func _on_h_slider_2_value_changed(value: float) -> void:
+	Man.music_volume = value
+	if value <= 0.0:
+		AudioServer.set_bus_mute(AudioServer.get_bus_index("Music"), true)
+	else:
+		AudioServer.set_bus_mute(AudioServer.get_bus_index("Music"), false)
+		var db_value = lerp(-55.0, 0.0, value / 100.0)
+		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), db_value)
+
+func _on_h_slider_2_drag_ended(value_changed: bool) -> void:
+	play_ui_sfx(preload("res://assets/sounds/f_slash.wav"), "Music")

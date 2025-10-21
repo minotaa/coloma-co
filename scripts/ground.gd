@@ -2,6 +2,7 @@ extends TileMapLayer
 
 @onready var tiles = $"../Tiles"
 var harmful_areas: Dictionary = {}
+var tree_shadows: Dictionary = {}
 
 func _use_tile_data_runtime_update(coords: Vector2i) -> bool:
 	if coords in tiles.get_used_cells_by_id(0):
@@ -13,10 +14,21 @@ func _tile_data_runtime_update(coords: Vector2i, tile_data: TileData) -> void:
 		tile_data.set_navigation_polygon(0, null)
 		
 	var tile_info = tiles.get_cell_tile_data(coords)
-	if tile_info and tile_info.get_custom_data("harmful"):
-		_create_harmful_area(coords, tile_info)
+	if tile_info:
+		# Handle harmful tiles
+		if tile_info.get_custom_data("harmful"):
+			_create_harmful_area(coords, tile_info)
+		else:
+			_remove_harmful_area(coords)
+		
+		# Handle tree shadows
+		if tile_info.has_custom_data("tree"):
+			_create_tree_shadow(coords, tile_info.get_custom_data("tree"))
+		else:
+			_remove_tree_shadow(coords)
 	else:
 		_remove_harmful_area(coords)
+		_remove_tree_shadow(coords)
 
 func _create_harmful_area(coords: Vector2i, tile_info: TileData):
 	if harmful_areas.has(coords):
@@ -55,3 +67,23 @@ func _remove_harmful_area(coords: Vector2i):
 	if harmful_areas.has(coords):
 		harmful_areas[coords].queue_free()
 		harmful_areas.erase(coords)
+
+func _create_tree_shadow(coords: Vector2i, size: float):
+	if tree_shadows.has(coords):
+		return
+	
+	var shadow_scene = preload("res://scenes/shadow.tscn")
+	var shadow_instance = shadow_scene.instantiate()
+	
+	tiles.add_child(shadow_instance)
+	shadow_instance.position = tiles.map_to_local(coords)
+	shadow_instance.position.y += 16
+	if size == 1.0:
+		shadow_instance.position.y -= 11
+	shadow_instance.scale = Vector2(size, size)
+	tree_shadows[coords] = shadow_instance
+
+func _remove_tree_shadow(coords: Vector2i):
+	if tree_shadows.has(coords):
+		tree_shadows[coords].queue_free()
+		tree_shadows.erase(coords)

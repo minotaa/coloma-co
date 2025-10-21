@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dnbbh3mlyjb70"]
+
+[ext_resource type="Shader" uid="uid://ccmhxm84fe4xo" path="res://scripts/sway.gdshader" id="1_cyq3o"]
+
+[resource]
+shader = ExtResource("1_cyq3o")
+shader_parameter/speed = 1.0
+shader_parameter/minStrength = 0.50000002375
+shader_parameter/maxStrength = 0.030000001425
+shader_parameter/strengthScale = 100.0
+shader_parameter/interval = 3.5
+shader_parameter/detail = 1.0
+shader_parameter/distortion = 0.0
+shader_parameter/heightOffset = 0.0
+shader_parameter/offset = 0.0
+shader_parameter/positionRandomness = 1.0
