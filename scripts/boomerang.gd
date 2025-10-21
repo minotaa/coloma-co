@@ -46,6 +46,11 @@ func _physics_process(delta: float) -> void:
 			if not multiplayer.has_multiplayer_peer() or get_parent().get_node(SOURCE).is_multiplayer_authority():
 				get_parent().get_node(SOURCE)._process_hit(body, Catalog.get_by_id(weapon_id).damage + get_parent().get_node(SOURCE).get_bonus_damage())
 			hit_enemies.append(body)
+		if body.is_in_group("players") and body.alive and body != self:
+			if multiplayer.has_multiplayer_peer():
+				body.knockback.rpc_id(body.name.to_int(), SOURCE)
+			else:
+				body.knockback(SOURCE)
 
 func _on_timer_timeout() -> void:
 	returning = true

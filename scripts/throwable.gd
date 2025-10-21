@@ -29,6 +29,11 @@ func _physics_process(delta: float) -> void:
 			queue_free()
 			print("Removed throwable.")
 			pass
+		if body.is_in_group("players") and body.alive and body != self:
+			if multiplayer.has_multiplayer_peer():
+				body.knockback.rpc_id(body.name.to_int(), SOURCE)
+			else:
+				body.knockback(SOURCE)
 
 func _on_timer_timeout() -> void:
 	queue_free()
