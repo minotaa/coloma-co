@@ -4,19 +4,19 @@ extends Node
 
 var modes: Array[Variant] = ["Defense", "Dungeon"]
 var maps: Dictionary[Variant, Variant] = {
-	"defense": ["Plains", "Desert"],
+	"defense": ["Lysawood", "Solmere"],
 	"dungeon": ["Plains"]
 }
 
 var map_paths: Dictionary[Variant, Variant] = {
-	"Defense_Plains": "res://scenes/levels/defense/Plains.tscn",
-	"Defense_Desert": "res://scenes/levels/defense/Desert.tscn",
+	"Defense_Lysawood": "res://scenes/levels/defense/Plains.tscn",
+	"Defense_Solmere": "res://scenes/levels/defense/Desert.tscn",
 	"Dungeon_Plains": "res://scenes/levels/dungeon/plains_start_room.tscn"
 }
 
 var playtime_points: int = 0
 var selected_mode: String = "Defense"
-var selected_map: String  = "Plains"
+var selected_map: String  = "Lysawood"
 
 var controls: Dictionary[Variant, Variant] = {
 	KEY_W: "Move forward",
@@ -41,6 +41,7 @@ var controls: Dictionary[Variant, Variant] = {
 
 var fullscreen: bool = false
 var sfx_volume: float = 100.0
+var music_volume: float = 100.0
 var bag = Bag.new()
 var equipped_weapon: Weapon = Catalog.get_by_id(1)
 var equipped_armor: Armor = Catalog.get_by_id(2)
@@ -53,7 +54,7 @@ func add_playtime_points(amount: int) -> void:
 	if playtime_points % 100 == 0:
 		var options = []
 		for item in Catalog.items:
-			if item is Weapon and not bag.has_item(item):
+			if (item is Weapon or item is Armor) and not bag.has_item(item):
 				options.append(item)
 				
 		if not options.is_empty():
@@ -143,8 +144,17 @@ func load_game():
 				AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), true)
 			else:
 				AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), false)
-				var db_value = lerp(-80.0, 0.0, sfx_volume / 100.0)
+				var db_value = lerp(-55.0, 0.0, sfx_volume / 100.0)
 				AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
+		if data.has("music_volume"):
+			music_volume = data["music_volume"]
+			if music_volume <= 0.0:
+				AudioServer.set_bus_mute(AudioServer.get_bus_index("Music"), true)
+			else:
+				AudioServer.set_bus_mute(AudioServer.get_bus_index("Music"), false)
+				var db_value = lerp(-55.0, 0.0, music_volume / 100.0)
+				AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), db_value)
+				
 		if data.has("equipped_weapon"):
 			equipped_weapon = Catalog.get_by_id(data["equipped_weapon"])
 		if data.has("equipped_armor"):
@@ -159,7 +169,9 @@ func get_save_data() -> Dictionary:
 		"equipped_weapon": equipped_weapon.id,
 		"equipped_armor": equipped_armor.id,
 		"fullscreen": fullscreen,
-		"playtime_points": playtime_points
+		"playtime_points": playtime_points,
+		"music_volume": music_volume,
+		"sfx_volume": sfx_volume
 	}
 
 func _notification(what: int) -> void:
