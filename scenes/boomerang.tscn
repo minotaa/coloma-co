@@ -20,7 +20,7 @@ properties/1/replication_mode = 1
 
 [node name="Boomerang" type="Area2D"]
 collision_layer = 4
-collision_mask = 6
+collision_mask = 7
 script = ExtResource("1_q1dmq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
