@@ -74,6 +74,14 @@ func get_retreat_position_away_from(player_pos: Vector2) -> Vector2:
 
 			# Temporarily test path to candidate
 			agent.target_position = candidate
+			
+			# Wait for navigation to update
+			await get_tree().process_frame
+			
+			# Check if the path is actually reachable
+			if not agent.is_target_reachable():
+				continue
+				
 			var next_pos = agent.get_next_path_position()
 
 			if next_pos != Vector2.ZERO:
@@ -114,7 +122,7 @@ func _physics_process(delta: float) -> void:
 			target_speed = RETREAT_SPEED
 
 			if agent.is_navigation_finished():
-				var retreat_target = get_retreat_position_away_from(player.global_position)
+				var retreat_target = await get_retreat_position_away_from(player.global_position)
 				agent.target_position = retreat_target
 
 		elif dist_squared > APPROACH_DISTANCE * APPROACH_DISTANCE:
@@ -214,10 +222,8 @@ func take_damage(amount: float, from_position: Vector2, name: String) -> void:
 		die()
 		alive = false
 		if multiplayer.has_multiplayer_peer():
-			Toast.add.rpc_id(int(name), "+25 Gold")
 			get_parent().add_gold.rpc(name, 25)
 		else:
-			Toast.add("+25 Gold")
 			get_parent().add_gold(name, 25)
 		get_parent().add_kill(name, "angry_bauble")
 
