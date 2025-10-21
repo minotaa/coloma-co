@@ -50,6 +50,7 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			player.heal(50)
+			player.play_sfx("glug", player.global_position, 10.0)
 	items.append(healing_potion)
 	
 	atlas = AtlasTexture.new()
@@ -87,8 +88,9 @@ func _init() -> void:
 	strength_potion.on_consume = func():
 		var player = Man.get_player()
 		if player != null:
-			var strength = Effect.new("Strength", Color.from_rgba8(255, 69, 69), 30.0)
+			var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 30.0)
 			player.add_status_effect(strength)
+			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Strength for 30 seconds.")
 	items.append(strength_potion)
 	
@@ -130,8 +132,9 @@ func _init() -> void:
 	mini_strength_potion.on_consume = func():
 		var player = Man.get_player()
 		if player != null:
-			var strength = Effect.new("Strength", Color.from_rgba8(255, 69, 69, 255), 15.0)
+			var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 15.0)
 			player.add_status_effect(strength)
+			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Strength for 15 seconds.")
 	items.append(mini_strength_potion)
 
@@ -150,6 +153,7 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			player.heal(25)
+			player.play_sfx("glug", player.global_position, 10.0)
 	items.append(mini_healing_potion)
 	
 	atlas = AtlasTexture.new()
@@ -184,3 +188,44 @@ func _init() -> void:
 	health_upgrade.price = 850
 	health_upgrade.shop_type = "ANY"
 	upgrades.append(health_upgrade)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(192.2, 16.0, 16.0, 16.0)
+	var pajamas = Armor.new(11, "Pajamas", atlas)
+	pajamas.description = "Has a 20% chance to block any damage."
+	pajamas.health = -20
+	items.append(pajamas)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(208.0, 16.0, 16.0, 16.0)
+	var blunderbuss = Weapon.new(12, "Blunderbuss", atlas)
+	blunderbuss.damage = 15.0
+	blunderbuss.description = "Does pitiful damage from far away but is devastating up close."
+	blunderbuss.type = "BLUNDERBUSS"
+	blunderbuss.data = {
+		"clip": 4,
+		"reload_time": 1.0,
+		"speed": 350.0,
+		"texture": preload("res://assets/sprites/bullet.png")
+	}
+	items.append(blunderbuss)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(224.0, 16.0, 16.0, 16.0)
+	var dealmaker = Armor.new(13, "Dealmaker", atlas)
+	dealmaker.description = "Grants 50% more gold."
+	dealmaker.defense = 5.0
+	dealmaker.health = 10.0
+	items.append(dealmaker)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(240.0, 16.0, 16.0, 16.0)
+	var vampire_fangs = Armor.new(14, "Vampire Fangs", atlas)
+	vampire_fangs.description = "Grants HP upon killing an enemy."
+	vampire_fangs.defense = -35.0
+	vampire_fangs.health = 50.0
+	items.append(vampire_fangs)
