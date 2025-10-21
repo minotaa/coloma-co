@@ -34,6 +34,9 @@ var bauble = preload("res://scenes/bauble.tscn")
 var crabman = preload("res://scenes/crabman.tscn")
 var gem = preload("res://scenes/gem.tscn")
 var shopkeeper = preload("res://scenes/shopkeeper.tscn")
+var ghost = preload("res://scenes/ghost.tscn")
+var gunk_slime = preload("res://scenes/gunk_slime.tscn")
+var explosive_bauble = preload("res://scenes/explosive_bauble.tscn")
 
 # Room tracking system
 var rooms = {}  # Dictionary: room_id -> {bounds: Rect2i, cells: Array[Vector2i], filler_area: Rect2i}
@@ -62,8 +65,41 @@ var wave_check_counter = 0
 
 @onready var spawner_layer = $Spawner
 
+func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer:
+	var sfx = AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = "Music"
+	sfx.volume_db = -10.0
+	add_child(sfx)
+
+	sfx.play()
+
+	if looping:
+		sfx.finished.connect(func():
+			sfx.play()
+		)
+	else:
+		sfx.finished.connect(func():
+			sfx.queue_free()
+		)
+	
+	return sfx
+
+var equipment = {}
+@rpc("any_peer", "call_local", "reliable") 
+func send_equipment(name: String, equipped_weapon: int, equipped_armor: int) -> void:
+	equipment[str(name)] = {}
+	equipment[str(name)]["equipped_weapon"] = equipped_weapon
+	equipment[str(name)]["equipped_armor"] = equipped_armor
+	
 @rpc("authority", "call_local")
 func add_gold(id: String, amount: int) -> void:
+	if equipment[id]["equipped_armor"] == 13:
+		amount *= 2
+	if multiplayer.has_multiplayer_peer():
+		Toast.add.rpc_id(int(name), "+" + str(amount) + " Gold")
+	else:
+		Toast.add("+" + str(amount) + " Gold")
 	get_node(id).gold += amount
 	get_node(id).gold_collected += amount
 	get_node(id).total_gold_collected += amount
@@ -133,6 +169,7 @@ func reset() -> void:
 	return
 
 func _ready() -> void:
+	play_music(preload("res://assets/sounds/MO_ingame_v2.wav"), true)
 	var file = FileAccess.open("res://waves.json", FileAccess.READ)
 	if not file:
 		push_error("Failed to load waves.json")
@@ -618,6 +655,12 @@ func spawn_enemy(enemy_type: String) -> void:
 			enemy_scene = big_bombrat
 		"crabman":
 			enemy_scene = crabman
+		"ghost":
+			enemy_scene = ghost
+		"gunk_slime":
+			enemy_scene = gunk_slime
+		"explosive_bauble":
+			enemy_scene = explosive_bauble
 		_:
 			print("[SPAWN] Unknown enemy type: ", enemy_type)
 			return

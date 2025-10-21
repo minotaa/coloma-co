@@ -19,8 +19,31 @@ var poison_slime = preload("res://scenes/poison_slime.tscn")
 var bauble = preload("res://scenes/bauble.tscn")
 var crabman = preload("res://scenes/crabman.tscn")
 var player_scene = preload("res://scenes/player.tscn")
+var ghost = preload("res://scenes/ghost.tscn")
+var gunk_slime = preload("res://scenes/gunk_slime.tscn")
+var explosive_bauble = preload("res://scenes/explosive_bauble.tscn")
 
 @onready var spawner_layer = $Spawner
+
+func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer:
+	var sfx = AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = "Music"
+	sfx.volume_db = -10.0
+	add_child(sfx)
+
+	sfx.play()
+
+	if looping:
+		sfx.finished.connect(func():
+			sfx.play()
+		)
+	else:
+		sfx.finished.connect(func():
+			sfx.queue_free()
+		)
+	
+	return sfx
 
 func add_kill(player_id: String, enemy_type: String) -> void:
 	if not kills.has(player_id):
@@ -53,6 +76,7 @@ func reset() -> void:
 	$Gem.entity.health = $Gem.entity.max_health
 	
 func _ready() -> void:
+	play_music(preload("res://assets/sounds/MO_ingame_v2.wav"), true)
 	if not multiplayer.has_multiplayer_peer():
 		# Singleplayer: spawn one player normally
 		var p = player_scene.instantiate()
@@ -153,8 +177,21 @@ func update_kills(kills: Dictionary) -> void:
 func update_wave(wave: int) -> void:
 	self.wave = wave
 	
+var equipment = {}
+@rpc("any_peer", "call_local", "reliable") 
+func send_equipment(name: String, equipped_weapon: int, equipped_armor: int) -> void:
+	equipment[str(name)] = {}
+	equipment[str(name)]["equipped_weapon"] = equipped_weapon
+	equipment[str(name)]["equipped_armor"] = equipped_armor
+	
 @rpc("authority", "call_local")
 func add_gold(id: String, amount: int) -> void:
+	if equipment[id]["equipped_armor"] == 13:
+		amount *= 2
+	if multiplayer.has_multiplayer_peer():
+		Toast.add.rpc_id(int(name), "+" + str(amount) + " Gold")
+	else:
+		Toast.add("+" + str(amount) + " Gold")
 	get_node(id).gold += amount
 	get_node(id).gold_collected += amount
 	get_node(id).total_gold_collected += amount
@@ -251,6 +288,11 @@ func spawn_wave() -> void:
 			var bauble_chance := clampf(0.25 + float(wave) / 30.0, 0.25, 0.75)
 			var baubles_to_spawn := 0
 
+			if wave >= 20:
+				var ghost_chance := clampf(0.50 + float(wave) / 30.0, 0.50, 0.85)
+				if randf() < ghost_chance:
+					await spawn_ghosts(randi_range(3, 5))
+
 			for i in range(5):
 				if randf() < bauble_chance:
 					baubles_to_spawn += 1
@@ -279,6 +321,13 @@ func spawn_slimes(count: int) -> void:
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_slime(directions.pick_random())
+
+func spawn_ghosts(count: int) -> void:
+	for i in count:
+		var delay = randf_range(0.75, 2.25)
+		await get_tree().create_timer(delay).timeout
+		var directions = ["north", "south", "west", "east"]
+		spawn_ghost(directions.pick_random())
 
 func spawn_baubles(count: int) -> void:
 	for i in count:
@@ -365,14 +414,59 @@ func spawn_slime(direction: String) -> void:
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
 		var s: CharacterBody2D
 		if wave >= 15 and randf() <= 0.1: 
-			if randf() <= .5:
+			var rand = randf()
+			if rand <= 0.33:
 				s = mother_slime.instantiate()
-			else:
+			elif rand <= 0.66:
 				s = poison_slime.instantiate()
+			else:
+				s = gunk_slime.instantiate()
 		else: 
 			s = slime.instantiate()
 		s.global_position = spawn_pos
 		add_child(s, true)
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = spawn_pos
+		smoke.emitting = true
+		add_child(smoke, true)
+
+func spawn_ghost(direction: String) -> void:
+	var matching_cells: Array[Vector2i] = []
+	var cells = spawner_layer.get_used_cells()
+
+	for cell_loc in cells:
+		var data = spawner_layer.get_cell_tile_data(cell_loc)
+		if not data:
+			continue
+		if data.get_custom_data("spawner_type") != "sewer":
+			continue
+
+		match direction:
+			"north":
+				if cell_loc.y < 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"south":
+				if cell_loc.y > 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"west":
+				if cell_loc.x < 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+			"east":
+				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+
+	if matching_cells.is_empty():
+		matching_cells = cells.filter(func(c):
+			var d = spawner_layer.get_cell_tile_data(c)
+			return d and d.get_custom_data("spawner_type") == "main"
+		)
+		
+	if matching_cells:
+		var selected_cell = matching_cells.pick_random()
+		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		var g = ghost.instantiate()
+		g.global_position = spawn_pos
+		add_child(g, true)
 		var smoke = smoke_scene.instantiate()
 		smoke.global_position = spawn_pos
 		smoke.emitting = true
@@ -461,10 +555,12 @@ func spawn_bauble(direction: String) -> void:
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
 		var baub: Node
 		if wave >= 20 and randf() <= 0.1: 
-			if randf() <= 0.5:
+			if randf() <= 0.33:
 				baub = angry_bauble.instantiate()
-			else:
+			elif randf() <= 0.66:
 				baub = rapid_bauble.instantiate()
+			else:
+				baub = explosive_bauble.instantiate()
 		else: 
 			baub = bauble.instantiate()
 		baub.global_position = spawn_pos
