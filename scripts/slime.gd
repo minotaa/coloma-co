@@ -99,10 +99,8 @@ func take_damage(amount: float, from_position: Vector2, name: String) -> void:
 		die()
 		alive = false
 		if multiplayer.has_multiplayer_peer():
-			Toast.add.rpc_id(int(name), "+12 Gold")
 			get_parent().add_gold.rpc(name, 12)
 		else:
-			Toast.add("+12 Gold")
 			get_parent().add_gold(name, 12)
 		get_parent().add_kill(name, "slime")
 

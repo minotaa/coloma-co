@@ -98,10 +98,8 @@ func take_damage(amount: float, from_position: Vector2, name: String) -> void:
 		die()
 		alive = false
 		if multiplayer.has_multiplayer_peer():
-			Toast.add.rpc_id(int(name), "+20 Gold")
-			get_parent().add_gold.rpc(name, 12)
+			get_parent().add_gold.rpc(name, 20)
 		else:
-			Toast.add("+20 Gold")
 			get_parent().add_gold(name, 20)
 		get_parent().add_kill(name, "poison_slime")
 
@@ -133,7 +131,7 @@ func _physics_process(delta: float) -> void:
 	for body in $Hurtbox.get_overlapping_bodies():
 		if body != null and body.is_in_group("players") and alive:
 			if randf() < 0.1 and body.alive and not body.has_effect("Poison"):
-				var poison = Effect.new("Poison", Color.from_rgba8(255, 69, 69), 10.0, 0, 2)
+				var poison = Effect.new("Poison", Color.from_rgba8(55, 198, 0, 255), 10.0, 0, 2)
 				var enemy_pos = global_position
 				poison.on_effect = func(target):
 					target.take_damage(2, enemy_pos)
