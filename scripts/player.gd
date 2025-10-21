@@ -32,7 +32,6 @@ var step_timer := 0.0
 var step_interval := 0.4
 var alive: bool = true
 var lives: int = 4
-var health := 100.0
 var damage := 25.0
 var strength := 0
 var sword_reach := 1.55  # Base reach
@@ -42,7 +41,7 @@ var revival_time: float = 0.0
 const MAX_REVIVAL_TIME: float = 10.0 # like in seconds and stuff
 var bag = Bag.new()
 var upgrade_bag = Bag.new()
-
+var health := get_max_health()
 # stats and stuff
 var total_damage_taken: float = 0.0
 var damage_taken: float = 0.0
@@ -67,12 +66,14 @@ func get_defense() -> float:
 	var defense := 0.0
 	if upgrade_bag.has_item(Catalog.get_by_id(9)):
 		defense += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(9)).data["level"]
+	defense += Man.equipped_armor.defense
 	return defense
 
 func get_max_health() -> float:
 	var max_health := 100.0
 	if upgrade_bag.has_item(Catalog.get_by_id(10)):
 		max_health += 10 * upgrade_bag.get_item_stack(Catalog.get_by_id(10)).data["level"]
+	max_health += Man.equipped_armor.health
 	return max_health
 
 func add_status_effect(effect: Effect) -> void:
@@ -210,7 +211,6 @@ func _enter_tree() -> void:
 		set_multiplayer_authority(name.to_int())
 
 func _ready() -> void:	
-	print(name, " authority: ", get_multiplayer_authority(), " is me: ", is_multiplayer_authority())
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
@@ -228,6 +228,10 @@ func _ready() -> void:
 		$AudioListener2D.clear_current()
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		$Camera2D.make_current()
+		get_parent().send_equipment.rpc(name, Man.equipped_weapon.id, Man.equipped_armor.id)
+	if not multiplayer.has_multiplayer_peer():
+		get_parent().send_equipment(str(name), Man.equipped_weapon.id, Man.equipped_armor.id)
+	
 	if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
 		if not DirAccess.dir_exists_absolute("user://chats"):
 			DirAccess.make_dir_absolute("user://chats")
@@ -242,6 +246,11 @@ func _ready() -> void:
 		if Man.equipped_weapon.type == "THROWABLE":
 			play_ui_sfx(preload("res://assets/sounds/click1.wav"))
 			Toast.add("Reloaded your throwable.")
+			clip = Man.equipped_weapon.data["clip"]
+			$Clip.visible = true 
+		if Man.equipped_weapon.type == "BLUNDERBUSS":
+			play_ui_sfx(preload("res://assets/sounds/click1.wav"))
+			Toast.add("Reloaded your Blunderbuss.")
 			clip = Man.equipped_weapon.data["clip"]
 			$Clip.visible = true 
 		
@@ -282,7 +291,13 @@ func heal(amount: float) -> void:
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0 or not alive:
 		return
-
+	if Man.equipped_armor.id == 11:
+		if randf() < 0.2:
+			play_ui_sfx(preload("res://assets/sounds/mama.wav"))
+			Toast.add("Your Pajamas negated the damage!")
+			return
+			
+	screen_shake(3.0, 0.3)
 	var defense = get_defense()
 	var defense_factor = 1.0 - (defense / (defense + 100.0))
 	var final_damage = amount * defense_factor
@@ -592,6 +607,60 @@ func _process_input(delta) -> void:
 				if clip <= 0:
 					reload_time = Man.equipped_weapon.data["reload_time"]
 				play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
+	elif Man.equipped_weapon.type == "BLUNDERBUSS":
+		if clip > 0:
+			if Input.is_action_just_pressed("attack"):
+				play_animation("throw_" + last_direction)
+				var mouse_pos = get_global_mouse_position()
+				var direction = (mouse_pos - global_position).normalized()
+				
+				# Shoot 3 projectiles with spread
+				var spread_angle = deg_to_rad(15)  # Adjust this for wider/tighter spread
+				for i in range(-1, 2):  # -1, 0, 1
+					var angle_offset = i * spread_angle
+					var spread_direction = direction.rotated(angle_offset)
+					
+					if multiplayer.has_multiplayer_peer():
+						create_throwable.rpc(Man.equipped_weapon.id, global_position, spread_direction, name)
+					else:
+						create_throwable(Man.equipped_weapon.id, global_position, spread_direction, name)
+				
+				clip -= 1
+				if clip <= 0:
+					reload_time = Man.equipped_weapon.data["reload_time"]
+				play_sfx("shoot", global_position, 10.0)
+				screen_shake(2.0, 0.15)
+				
+			if (Input.is_action_just_pressed("attack_up") or Input.is_action_just_pressed("attack_down") or Input.is_action_just_pressed("attack_left") or Input.is_action_just_pressed("attack_right")):
+				play_animation("throw_" + last_direction)
+				var direction = Vector2.ZERO
+				if Input.is_action_just_pressed("attack_up"):
+					direction.y -= 1
+				if Input.is_action_just_pressed("attack_down"):
+					direction.y += 1
+				if Input.is_action_just_pressed("attack_left"):
+					direction.x -= 1
+				if Input.is_action_just_pressed("attack_right"):
+					direction.x += 1
+				
+				direction = direction.normalized()
+				
+				# Shoot 3 projectiles with spread
+				var spread_angle = deg_to_rad(15)
+				for i in range(-1, 2):
+					var angle_offset = i * spread_angle
+					var spread_direction = direction.rotated(angle_offset)
+					
+					if multiplayer.has_multiplayer_peer():
+						create_throwable.rpc(Man.equipped_weapon.id, global_position, spread_direction, name)
+					else:
+						create_throwable(Man.equipped_weapon.id, global_position, spread_direction, name)
+				
+				clip -= 1
+				if clip <= 0:
+					reload_time = Man.equipped_weapon.data["reload_time"]
+				play_sfx("shoot", global_position, 10.0)
+				screen_shake(2.0, 0.15)
 
 	# Apply velocity and move
 	velocity *= SPEED
@@ -652,7 +721,22 @@ func _process_input(delta) -> void:
 	else:
 		$UI/Defense/Tab.visible = false
 	
+	if has_effect("Gunked"):
+		velocity /= 2 
 	move_and_slide()
+
+func screen_shake(intensity: float, duration: float):
+	var original_offset = $Camera2D.offset
+	var shake_count = int(duration / 0.05)  # Shake every 0.05 seconds
+	
+	for i in shake_count:
+		$Camera2D.offset = original_offset + Vector2(
+			randf_range(-intensity, intensity),
+			randf_range(-intensity, intensity)
+		)
+		await get_tree().create_timer(0.05).timeout
+	
+	$Camera2D.offset = original_offset  # Reset to original
 
 @rpc("any_peer", "call_local", "reliable")
 func create_boomerang(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_path: String):
@@ -747,56 +831,136 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
 		$UI/Global/ChatBar.grab_focus()
 
+@rpc("any_peer", "call_local", "reliable")
+func knockback(from_player) -> void:
+	if not alive:
+		return
+	var player = get_parent().get_node(NodePath(from_player))
+	if player == null:
+		return
+	# Calculate knockback direction and apply it
+	var knockback_strength = 180.0  # Adjust this value to control knockback power
+	apply_knockback(player.position, knockback_strength)
+	
+	# Optional: Play a light impact sound
+	if multiplayer.has_multiplayer_peer():
+		play_sfx.rpc("swoosh2louder", global_position, -15.0, randf_range(1.2, 1.4))
+	else:
+		play_sfx("swoosh2louder", global_position, -15.0, randf_range(1.2, 1.4))
+
+func clear_slashes() -> void:
+	for child in get_children():
+		if child.name.begins_with("Slash"):
+			child.queue_free()
+
 func _enable_sword_hitbox(direction: String) -> void:
 	var hitbox = $SwordHbox
-
+	clear_slashes()
+	# Disable all sword hitboxes first
 	for child in hitbox.get_children():
 		if child is CollisionShape2D:
 			child.disabled = true
 
-	if hitbox.has_node(direction):
-		var shape_node = hitbox.get_node(direction)
-		if shape_node is CollisionShape2D:
-			shape_node.disabled = false
+	# Enable the correct directional hitbox
+	if not hitbox.has_node(direction):
+		return
+	
+	var shape_node = hitbox.get_node(direction)
+	if not (shape_node is CollisionShape2D):
+		return
+	
+	shape_node.disabled = false
 
-			var shape: Shape2D =  shape_node.shape
-			var reach_factor := sword_reach / 2.0
+	var shape: Shape2D = shape_node.shape
+	var reach_factor := sword_reach / 2.0
 
-			if shape is RectangleShape2D:
-				#var slash = preload("res://scenes/slash.tscn").instantiate()
-				#slash.emitting = true
-				if direction == "up":
-					shape.size = Vector2(58.0, 20.5 * reach_factor)
-					shape_node.position = Vector2(0, -20 * reach_factor)
-					#slash.process_material.gravity = Vector3(0.0, -98.0, 0.0)
-					#slash.process_material.angle_min = 0
-					#slash.process_material.angle_max = 0
-					
-				elif direction == "down":
-					shape.size = Vector2(58.0, 20.5 * reach_factor)
-					shape_node.position = Vector2(0, 20 * reach_factor)
-					#slash.process_material.gravity = Vector3(0.0, 98.0, 0.0)
-					#slash.process_material.angle_min = -180
-					#slash.process_material.angle_max = -180
+	if shape is RectangleShape2D:
+		match direction:
+			"up":
+				shape.size = Vector2(58.0, 20.5 * reach_factor)
+				shape_node.position = Vector2(0, -20 * reach_factor)
+			"down":
+				shape.size = Vector2(58.0, 20.5 * reach_factor)
+				shape_node.position = Vector2(0, 20 * reach_factor)
+			"left":
+				shape.size = Vector2(20.5 * reach_factor, 58.0)
+				shape_node.position = Vector2(-20 * reach_factor, 0)
+			"right":
+				shape.size = Vector2(20.5 * reach_factor, 58.0)
+				shape_node.position = Vector2(20 * reach_factor, 0)
 
-				elif direction == "left":
-					shape.size = Vector2(20.5 * reach_factor, 58.0)
-					shape_node.position = Vector2(-20 * reach_factor, 0)
-					#slash.process_material.gravity = Vector3(-98.0, 0.0, 0.0)
-					#slash.process_material.angle_min = 90
-					#slash.process_material.angle_max = 90
-					
-				elif direction == "right":
-					shape.size = Vector2(20.5 * reach_factor, 58.0)
-					shape_node.position = Vector2(20 * reach_factor, 0)
-				
-				#slash.global_position = shape_node.global_position
-				#get_parent().add_child(slash, true)
+	# Spawn the slash effect
+	var slash_scene := preload("res://scenes/slash_effect.tscn")
+	var slash = slash_scene.instantiate()
+	add_child(slash, true)
+	slash.show_slash(get_fan_slash_points(global_position, direction, reach_factor))
+
+func get_fan_slash_points(player_pos: Vector2, direction: String, reach_factor: float, segments: int = 12, fan_angle: float = 60.0) -> Array[Vector2]:
+	var points: Array[Vector2] = []
+	
+	# Simple 36 unit offset based on direction
+	var offset := Vector2.ZERO
+	match direction:
+		"up":
+			offset = Vector2(0, 42)
+		"down":
+			offset = Vector2(0, -42)
+		"left":
+			offset = Vector2(42, 0)
+		"right":
+			offset = Vector2(-42, 0)
+	
+	# Start position is player + offset
+	var start_pos = player_pos + offset
+	
+	# Base direction vector
+	var base_direction := Vector2.ZERO
+	match direction:
+		"up":
+			base_direction = Vector2(0, -1)
+		"down":
+			base_direction = Vector2(0, 1)
+		"left":
+			base_direction = Vector2(-1, 0)
+		"right":
+			base_direction = Vector2(1, 0)
+	
+	# Slash size (58.0 units)
+	var slash_size = 58.0
+	
+	# Convert fan angle to radians
+	var half_fan = deg_to_rad(fan_angle / 2.0)
+	
+	# Randomness parameters
+	var wobble_amount = 0.0  # How much the slash wobbles in degrees
+	var length_variation = 0.0  # Random length variation in pixels
+	
+	# Create fan points with randomness
+	for i in range(segments + 1):
+		var t = float(i) / float(segments)
+		
+		# Angle offset for the fan spread
+		var angle_offset = lerp(-half_fan, half_fan, t)
+		
+		# Rotate the base direction by the angle
+		var rotated_dir = base_direction.rotated(angle_offset)
+		
+		# Point extends from start position by randomized distance
+		var point = start_pos + rotated_dir * slash_size
+		points.append(point)
+	
+	return points
 
 func _disable_all_sword_hitboxes() -> void:
-	for child in $SwordHbox.get_children():
+	var hitbox_container := $SwordHbox
+	if not is_instance_valid(hitbox_container):
+		return
+
+	for child in hitbox_container.get_children():
 		if child is CollisionShape2D:
 			child.disabled = true
+
+	clear_slashes()
 
 func show_ui() -> void:
 	if $UI/Defense.visible:
@@ -834,11 +998,56 @@ func _is_mouse_over_chat_bar() -> bool:
 	var local_mouse_pos = $UI/Global/ChatBar.get_local_mouse_position()
 	return $UI/Global/ChatBar.get_rect().has_point(local_mouse_pos)
 
+func get_blended_effect_color() -> Color:
+	if active_effects.is_empty():
+		return Color.WHITE
+	
+	var total_red := 0.0
+	var total_green := 0.0
+	var total_blue := 0.0
+	var count := 0
+	
+	for effect in active_effects:
+		if effect != null and is_instance_valid(effect):
+			var color = effect.color
+			total_red += color.r
+			total_green += color.g
+			total_blue += color.b
+			count += 1
+	
+	if count == 0:
+		return Color.WHITE
+	
+	return Color(
+		total_red / count,
+		total_green / count,
+		total_blue / count,
+		1.0
+	)
+
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
 	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+	if lifesteal_cooldown > 0.0:
+		lifesteal_cooldown -= delta
+	if active_effects.size() > 0:
+		$Potion.emitting = true
+		$Potion.process_material.color = get_blended_effect_color()
+	else:
+		$Potion.emitting = false
+	if Man.selected_map == "Lysawood":
+		if global_position.x < (-30.5 * 16):
+			global_position.x = 30.15 * 16
+		elif global_position.x > (30.15 * 16):
+			global_position.x = (-30.5 * 16)
+
+		if global_position.y < (-485.1):
+			global_position.y = 29.55 * 16
+		elif global_position.y > (477.0):
+			global_position.y = (-485.1)
+
 	if Man.equipped_weapon.type == "THROWABLE":
 		$Clip.value = float(clip) / float(Man.equipped_weapon.data["clip"]) * 100.0
 		if clip <= 0:
@@ -847,6 +1056,18 @@ func _physics_process(delta: float) -> void:
 			if reload_time <= 0.0:
 				clip = Man.equipped_weapon.data["clip"]
 				Toast.add("Reloaded your " + Man.equipped_weapon.name + ".")
+
+	elif Man.equipped_weapon.type == "BLUNDERBUSS":
+		$Clip.value = float(clip) / float(Man.equipped_weapon.data["clip"]) * 100.0
+		if clip < Man.equipped_weapon.data["clip"]:  
+			reload_time -= delta
+			if reload_time <= 0.0:
+				clip += 1 
+				play_ui_sfx(preload("res://assets/sounds/load.wav"))
+				reload_time = Man.equipped_weapon.data["reload_time"]
+				if clip >= Man.equipped_weapon.data["clip"]:
+					play_ui_sfx(preload("res://assets/sounds/pump.wav"))
+					Toast.add("Reloaded your " + Man.equipped_weapon.name + ".")
 	if alive:
 		for effect in active_effects.duplicate():
 			if effect != null and is_instance_valid(effect):
@@ -971,6 +1192,12 @@ func _physics_process(delta: float) -> void:
 		sprint += 0.45
 	
 	if type == "Defense":
+		var found_shop = false
+		for area in $Area2D.get_overlapping_areas():
+			if (area as Area2D).is_in_group("gem"):
+				found_shop = true
+		$Key.visible = found_shop
+			
 		var slots = $UI/Defense/Inventory.get_children()
 
 		for i in slots.size():
@@ -991,6 +1218,12 @@ func _physics_process(delta: float) -> void:
 				amount_label.visible = false
 				progress_bar.visible = false
 	elif type == "Dungeon":
+		var found_shop = false
+		for area in $Area2D.get_overlapping_areas():
+			if (area as Area2D).is_in_group("gem"):
+				found_shop = true
+		$Key.visible = found_shop
+		
 		var slots = $UI/Dungeon/Inventory.get_children()
 
 		for i in slots.size():
@@ -1016,6 +1249,11 @@ func _physics_process(delta: float) -> void:
 			if body.is_in_group("enemies") and body not in hit_enemies:
 				_process_hit(body, Man.equipped_weapon.damage + get_bonus_damage())
 				hit_enemies.append(body)
+			if body.is_in_group("players") and body.alive and body != self:
+				if multiplayer.has_multiplayer_peer():
+					body.knockback.rpc_id(body.name.to_int(), name)
+				else:
+					body.knockback(name)
 		
 		sword_hitbox_timer -= delta
 		if sword_hitbox_timer <= 0.0:
@@ -1151,12 +1389,16 @@ func add_hit_particles(position: Vector2, angle: float):
 	particles.rotation = angle
 	particles.emitting = true
 
+var lifesteal_cooldown: float = 0.0
+const LIFESTEAL_COOLDOWN_DURATION: float = 2.0
+
 func _process_hit(body, damage: float):
 	if body.is_in_group("enemies"):
 		if multiplayer.has_multiplayer_peer():
 			play_sfx.rpc("swoosh2louder", global_position, -8.0, randf_range(0.95, 1.15))
 		else:
 			play_sfx("swoosh2louder", global_position, -8.0, randf_range(0.95, 1.15))
+		
 		# Apply separate Strength buff multiplier if active
 		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
 
@@ -1177,6 +1419,11 @@ func _process_hit(body, damage: float):
 
 		damage_dealt += total_damage
 		total_damage_dealt += total_damage
+
+		if Man.equipped_armor.id == 14 and lifesteal_cooldown <= 0.0:
+			var heal_amount = total_damage * 0.1
+			heal(heal_amount)
+			lifesteal_cooldown = LIFESTEAL_COOLDOWN_DURATION
 
 		# Multiplayer-safe damage + particles
 		if multiplayer.has_multiplayer_peer():

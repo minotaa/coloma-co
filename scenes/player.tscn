@@ -1,4 +1,4 @@
-[gd_scene load_steps=149 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=151 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -36,6 +36,7 @@
 [ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="32_md1ol"]
 [ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="33_bj30b"]
 [ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="34_jc3p3"]
+[ext_resource type="PackedScene" uid="uid://cr5ypwn2b5ncm" path="res://scenes/key.tscn" id="37_hax0n"]
 
 [sub_resource type="Curve" id="Curve_gl8cc"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -59,10 +60,15 @@ emission_sphere_radius = 1.0
 angle_min = -360.0
 angle_max = 360.0
 angle_curve = SubResource("CurveTexture_bj30b")
-direction = Vector3(0, 1, 0)
-initial_velocity_min = -120.0
-initial_velocity_max = 120.0
-gravity = Vector3(0, -5, 0)
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = -25.0
+initial_velocity_max = -25.0
+angular_velocity_min = 9.999984
+angular_velocity_max = 19.999983
+gravity = Vector3(0, -25, 0)
+linear_accel_min = -5.000002
+linear_accel_max = -5.000002
 scale_min = 0.25
 scale_max = 0.4
 color = Color(1, 1, 1, 0.945098)
@@ -870,6 +876,10 @@ font_size = 48
 outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_hax0n"]
+font = ExtResource("17_qfm1y")
+font_size = 57
+
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 z_index = 2
 texture_filter = 1
@@ -882,6 +892,8 @@ script = ExtResource("1_oxdyo")
 emitting = false
 amount = 10
 texture = ExtResource("2_wnwbv")
+lifetime = 1.2
+preprocess = 1.0
 randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_jc3p3")
 
@@ -918,7 +930,7 @@ scale = Vector2(0.0277778, 0.0277778)
 
 [node name="SwordHbox" type="Area2D" parent="."]
 collision_layer = 4
-collision_mask = 6
+collision_mask = 7
 
 [node name="up" type="CollisionShape2D" parent="SwordHbox"]
 position = Vector2(0, -20)
@@ -947,6 +959,7 @@ collision_mask = 11
 shape = SubResource("CircleShape2D_esh0l")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
+visible = false
 energy = 0.25
 shadow_color = Color(0, 0, 0, 0.192157)
 texture = ExtResource("9_fnujr")
@@ -2178,6 +2191,19 @@ texture_under = ExtResource("32_md1ol")
 texture_over = ExtResource("33_bj30b")
 texture_progress = ExtResource("34_jc3p3")
 
+[node name="Key" parent="." instance=ExtResource("37_hax0n")]
+visible = false
+offset_left = -5.999999
+offset_top = 14.000002
+offset_right = 122.0
+offset_bottom = 142.0
+scale = Vector2(0.1, 0.1)
+keycode = "69"
+
+[node name="Label" parent="Key" index="1"]
+text = "E"
+label_settings = SubResource("LabelSettings_hax0n")
+
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
 [connection signal="body_entered" from="SwordHbox" to="." method="_on_sword_hbox_entered"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]
@@ -2198,3 +2224,5 @@ texture_progress = ExtResource("34_jc3p3")
 [connection signal="pressed" from="UI/Global/Pause/Panel/Resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="UI/Global/Pause/Panel/Quit to Main Menu" to="." method="_on_quit_to_main_menu_pressed"]
 [connection signal="pressed" from="UI/Global/Pause/Panel/Quit Game" to="." method="_on_quit_game_pressed"]
+
+[editable path="Key"]

@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://smxc8r4khg61"]
+
+[ext_resource type="Script" uid="uid://bl30w81yewyfq" path="res://scripts/slash.gd" id="1_ft43f"]
+[ext_resource type="Shader" uid="uid://fcs6y4yquohm" path="res://scripts/pixelate.gdshader" id="1_hrkk7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_evnw6"]
+shader = ExtResource("1_hrkk7")
+shader_parameter/pixel_size = 16.0
+
+[sub_resource type="Curve" id="Curve_ft43f"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.496875, 0.68453336), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="Slash" type="Line2D"]
+material = SubResource("ShaderMaterial_evnw6")
+width = 8.0
+width_curve = SubResource("Curve_ft43f")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+script = ExtResource("1_ft43f")
