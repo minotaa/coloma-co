@@ -14,7 +14,7 @@ config/name="Myrkwood: Offshoot"
 config/name_localized={
 "en": "Myrkwood: Offshoot"
 }
-config/version="4"
+config/version="5"
 run/main_scene="uid://bow6ppc3d127l"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Offshoot"
@@ -176,3 +176,4 @@ textures/vram_compression/import_etc2_astc=true
 
 initialization/app_id=3951230
 initialization/embed_callbacks=true
+initialization/initialize_on_startup=false
