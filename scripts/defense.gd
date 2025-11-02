@@ -189,7 +189,7 @@ func add_gold(id: String, amount: int) -> void:
 	if equipment[id]["equipped_armor"] == 13:
 		amount *= 2
 	if multiplayer.has_multiplayer_peer():
-		Toast.add.rpc_id(int(name), "+" + str(amount) + " Gold")
+		Toast.add.rpc_id(int(id), "+" + str(amount) + " Gold")
 	else:
 		Toast.add("+" + str(amount) + " Gold")
 	get_node(id).gold += amount

@@ -354,7 +354,7 @@ func die() -> void:
 	stats_text += "Damage Dealt:\t " + str(roundi(damage_dealt)) + " (" + percent(damage_dealt, total_damage_dealt) + ")\n"
 	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
-	if type == "Defense" and get_parent().started:
+	if type == "Defense":
 		$"UI/Defense/Death".visible = true	
 		$"UI/Defense/Death/Panel/Meta".text = stats_text
 	if type == "Dungeon":
@@ -964,12 +964,11 @@ func _disable_all_sword_hitboxes() -> void:
 
 func show_ui() -> void:
 	if $UI/Defense.visible:
-		if get_parent().started:
-			$UI/Defense/Markers.visible = true
-			$UI/Defense/HealthBar.visible = true
-			$UI/Defense/SprintBar.visible = true
-			$UI/Defense/Inventory.visible = true
-			$UI/Defense/HBoxContainer.visible = true
+		$UI/Defense/Markers.visible = true
+		$UI/Defense/HealthBar.visible = true
+		$UI/Defense/SprintBar.visible = true
+		$UI/Defense/Inventory.visible = true
+		$UI/Defense/HBoxContainer.visible = true
 	else:
 		$UI/Dungeon/HBoxContainer.visible = true 
 		$UI/Dungeon/HealthBar.visible = true
