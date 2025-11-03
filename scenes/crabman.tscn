@@ -339,7 +339,6 @@ stream = SubResource("AudioStreamPolyphonic_0l8pv")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
-radius = 20.0
 
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 2

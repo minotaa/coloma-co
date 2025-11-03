@@ -2,16 +2,18 @@ extends Node
 
 @onready var main_menu_scene: PackedScene = preload("res://scenes/main_menu.tscn")
 
-var modes: Array[Variant] = ["Defense", "Dungeon"]
+var modes: Array[Variant] = ["Defense", "Dungeon", "Campaign"]
 var maps: Dictionary[Variant, Variant] = {
 	"defense": ["Lysawood", "Solmere"],
-	"dungeon": ["Plains"]
+	"dungeon": ["Plains"],
+	"campaign": ["Joro"]
 }
 
 var map_paths: Dictionary[Variant, Variant] = {
 	"Defense_Lysawood": "res://scenes/levels/defense/Plains.tscn",
 	"Defense_Solmere": "res://scenes/levels/defense/Desert.tscn",
-	"Dungeon_Plains": "res://scenes/levels/dungeon/plains_start_room.tscn"
+	"Dungeon_Plains": "res://scenes/levels/dungeon/plains_start_room.tscn",
+	"Campaign_Myrkwood": "res://scenes/levels/campaign/campaign.tscn"
 }
 
 var playtime_points: int = 0

@@ -189,10 +189,9 @@ func add_gold(id: String, amount: int) -> void:
 	if equipment[id]["equipped_armor"] == 13:
 		amount *= 2
 	if multiplayer.has_multiplayer_peer():
-		Toast.add.rpc_id(int(id), "+" + str(amount) + " Gold")
+		get_node(id).add_gold_notification.rpc_id(int(id), amount)
 	else:
-		Toast.add("+" + str(amount) + " Gold")
-	get_node(id).gold += amount
+		get_node(id).add_gold_notification(amount)
 	get_node(id).gold_collected += amount
 	get_node(id).total_gold_collected += amount
 
@@ -231,7 +230,7 @@ func spawn_wave() -> void:
 			player.heal(10)
 
 	match wave:
-		1:
+		1:			
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 		2:

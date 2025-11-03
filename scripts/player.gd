@@ -32,6 +32,9 @@ var step_timer := 0.0
 var step_interval := 0.4
 var alive: bool = true
 var lives: int = 4
+var added_gold: int = 0
+var added_gold_display: int = 0
+var added_gold_timeout: float = 0.0
 var damage := 25.0
 var strength := 0
 var sword_reach := 1.55  # Base reach
@@ -56,6 +59,23 @@ var kills: int = 0
 
 var active_effects: Array = []
 
+@rpc("authority", "call_local", "reliable")
+func add_gold_notification(amount: int) -> void:
+	if type == "Defense":
+		added_gold += amount
+		added_gold_timeout = 2.0
+		if added_gold > 0:
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+		else:
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+	elif type == "Dungeon":
+		added_gold += amount
+		added_gold_timeout = 2.0
+		if added_gold > 0:
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+		else:
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+			
 func get_bonus_damage() -> float:
 	var bonus_damage := 0.0
 	if upgrade_bag.has_item(Catalog.get_by_id(8)):
@@ -801,7 +821,7 @@ func _on_zoom_timeout() -> void:
 	$UI/Global/Zoom.visible = false
 	
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and not $UI/Global/ChatBar.has_focus():
+	if event is InputEventMouseButton and event.pressed and not $UI/Global/ChatBar.has_focus() and not $UI/Defense/Shop.visible and not $UI/Dungeon/Shop.visible:
 		match event.button_index:
 			MOUSE_BUTTON_WHEEL_UP:
 				change_zoom(0.25)
@@ -1101,9 +1121,31 @@ func _physics_process(delta: float) -> void:
 		$UI/Dungeon/HBoxContainer/Lives/Label.text = "Lives: " + str(lives)
 		$UI/Dungeon/HBoxContainer/Progress/Label.text = str(get_parent().progress)
 		$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+
+		if added_gold_timeout > 0.0:
+			added_gold_timeout -= delta
+			if added_gold_timeout <= 0.0:
+				# Timeout finished - start transferring gold
+				pass
+
+		if added_gold_timeout <= 0.0 and added_gold > 0:
+			# Transfer gold smoothly from added_gold to actual gold
+			var increment = max(1, ceil(added_gold * delta * 5.0))
+			increment = min(increment, added_gold)
+			
+			gold += increment
+			added_gold -= increment
+
+		# Show the added gold in the same label
+		if added_gold > 0:
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+		else:
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+					
 		$UI/Dungeon/HealthBar.max_value = get_max_health()
 		$UI/Dungeon/HealthBar.value = health
 		$UI/Dungeon/SprintBar.value = sprint
+		
 		if sprint >= 220:
 			exhausted = false
 			$UI/Dungeon/SprintBar.visible = false
@@ -1270,6 +1312,26 @@ func _physics_process(delta: float) -> void:
 		$UI/Defense/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
 		$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 
+		if added_gold_timeout > 0.0:
+			added_gold_timeout -= delta
+			if added_gold_timeout <= 0.0:
+				# Timeout finished - start transferring gold
+				pass
+
+		if added_gold_timeout <= 0.0 and added_gold > 0:
+			# Transfer gold smoothly from added_gold to actual gold
+			var increment = max(1, ceil(added_gold * delta * 5.0))
+			increment = min(increment, added_gold)
+			
+			gold += increment
+			added_gold -= increment
+
+		# Show the added gold in the same label
+		if added_gold > 0:
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+		else:
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+					
 		for bombrat in get_bombrats_to_track():
 			if not is_instance_valid(bombrat):
 				continue

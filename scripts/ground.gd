@@ -3,15 +3,19 @@ extends TileMapLayer
 @onready var tiles = $"../Tiles"
 var harmful_areas: Dictionary = {}
 var tree_shadows: Dictionary = {}
+var affected_nav_cells: Dictionary = {}
 
 func _use_tile_data_runtime_update(coords: Vector2i) -> bool:
-	if coords in tiles.get_used_cells_by_id(0):
+	# Check if this coord should have nav disabled
+	if coords in affected_nav_cells:
 		return true
 	return false
 
 func _tile_data_runtime_update(coords: Vector2i, tile_data: TileData) -> void:
-	if coords in tiles.get_used_cells_by_id(0):
+	# Disable navigation if this cell is marked as affected
+	if coords in affected_nav_cells:
 		tile_data.set_navigation_polygon(0, null)
+		return
 		
 	var tile_info = tiles.get_cell_tile_data(coords)
 	if tile_info:
@@ -29,6 +33,33 @@ func _tile_data_runtime_update(coords: Vector2i, tile_data: TileData) -> void:
 	else:
 		_remove_harmful_area(coords)
 		_remove_tree_shadow(coords)
+
+func _ready():
+	# Find all tiles in the tiles layer and mark their nav cells
+	_update_all_navigation_cells()
+	
+func _update_all_navigation_cells():
+	affected_nav_cells.clear()
+	
+	for tile_coords in tiles.get_used_cells():
+		var atlas_coords = tiles.get_cell_atlas_coords(tile_coords)
+		var source_id = tiles.get_cell_source_id(tile_coords)
+		
+		if source_id == -1:
+			continue
+			
+		var tile_set_source = tiles.tile_set.get_source(source_id)
+		if tile_set_source is TileSetAtlasSource:
+			var tile_size_in_atlas = tile_set_source.get_tile_size_in_atlas(atlas_coords)
+			
+			# Mark all cells covered by this tile for nav removal
+			for x in range(tile_size_in_atlas.x):
+				for y in range(tile_size_in_atlas.y):
+					var affected_coord = tile_coords + Vector2i(x, y)
+					affected_nav_cells[affected_coord] = true
+	
+	# Notify the navigation system to update
+	notify_runtime_tile_data_update()
 
 func _create_harmful_area(coords: Vector2i, tile_info: TileData):
 	if harmful_areas.has(coords):

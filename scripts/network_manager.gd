@@ -338,7 +338,6 @@ func server_disconnected() -> void:
 	Toast.add("Disconnected from the server.")
 	multiplayer.server_disconnected.disconnect(server_disconnected)
 	multiplayer.connection_failed.disconnect(connection_failed)
-	multiplayer.multiplayer_peer = null
 	Man.end_game()
 		
 func connection_failed() -> void:
@@ -346,5 +345,4 @@ func connection_failed() -> void:
 	Toast.add("Connection failed.")
 	multiplayer.server_disconnected.disconnect(server_disconnected)
 	multiplayer.connection_failed.disconnect(connection_failed)
-	multiplayer.multiplayer_peer = null
 	Man.end_game()
