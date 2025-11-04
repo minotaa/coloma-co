@@ -15,7 +15,6 @@ func _tile_data_runtime_update(coords: Vector2i, tile_data: TileData) -> void:
 	# Disable navigation if this cell is marked as affected
 	if coords in affected_nav_cells:
 		tile_data.set_navigation_polygon(0, null)
-		return
 		
 	var tile_info = tiles.get_cell_tile_data(coords)
 	if tile_info:

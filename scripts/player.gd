@@ -315,6 +315,7 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 		if randf() < 0.2:
 			play_ui_sfx(preload("res://assets/sounds/mama.wav"))
 			Toast.add("Your Pajamas negated the damage!")
+			hit_cooldown = max_hit_cooldown
 			return
 			
 	screen_shake(3.0, 0.3)
