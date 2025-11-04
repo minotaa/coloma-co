@@ -2,7 +2,7 @@ extends Node
 
 @onready var main_menu_scene: PackedScene = preload("res://scenes/main_menu.tscn")
 
-var modes: Array[Variant] = ["Defense", "Dungeon", "Campaign"]
+var modes: Array[Variant] = ["Defense", "Dungeon"]
 var maps: Dictionary[Variant, Variant] = {
 	"defense": ["Lysawood", "Solmere"],
 	"dungeon": ["Plains"],
