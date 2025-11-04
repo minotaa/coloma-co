@@ -229,3 +229,87 @@ func _init() -> void:
 	vampire_fangs.defense = -35.0
 	vampire_fangs.health = 50.0
 	items.append(vampire_fangs)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(0.0, 32.0, 16.0, 16.0)
+	var enrichment_potion = Consumable.new(15, "Enrichment Potion", atlas)
+	enrichment_potion.description = "Heals +100 HP over time, 15 second cooldown."
+	enrichment_potion.cooldown = true
+	enrichment_potion.purchasable = true
+	enrichment_potion.price = 200
+	enrichment_potion.shop_type = "ANY"
+	enrichment_potion.cooldown_seconds = 15.0
+	enrichment_potion.infinite = false
+	enrichment_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var regeneration = Effect.new("Regeneration", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
+			regeneration.on_effect = func(target):
+				target.heal(5)
+			player.add_status_effect(regeneration)
+			player.play_sfx("glug", player.global_position, 20.0)
+			Toast.add("You have Regeneration for 20 seconds.")
+	items.append(enrichment_potion)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(16.0, 32.0, 16.0, 16.0)
+	var mini_enrichment_potion = Consumable.new(16, "Mini Enrichment Potion", atlas)
+	mini_enrichment_potion.description = "Heals +50 HP over time, 7.5 second cooldown."
+	mini_enrichment_potion.cooldown = true
+	mini_enrichment_potion.purchasable = true
+	mini_enrichment_potion.price = 100
+	mini_enrichment_potion.shop_type = "ANY"
+	mini_enrichment_potion.cooldown_seconds = 7.5
+	mini_enrichment_potion.infinite = false
+	mini_enrichment_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var regeneration = Effect.new("Regeneration", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
+			regeneration.on_effect = func(target):
+				target.heal(5)
+			player.add_status_effect(regeneration)
+			player.play_sfx("glug", player.global_position, 10.0)
+			Toast.add("You have Regeneration for 10 seconds.")
+	items.append(mini_enrichment_potion)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(32.0, 32.0, 16.0, 16.0)
+	var focus_potion = Consumable.new(17, "Focus Potion", atlas)
+	focus_potion.description = "Increases your critical hit chance by +50% for 30 seconds."
+	focus_potion.cooldown = true
+	focus_potion.purchasable = true
+	focus_potion.price = 125
+	focus_potion.shop_type = "ANY"
+	focus_potion.cooldown_seconds = 20.0
+	focus_potion.infinite = false
+	focus_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var focus = Effect.new("Focus", Color.from_rgba8(73, 209, 205, 255), 30.0, 0, 1)
+			player.add_status_effect(focus)
+			player.play_sfx("glug", player.global_position, 10.0)
+			Toast.add("You have Focus for 30 seconds.")
+	items.append(focus_potion)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(48.0, 32.0, 16.0, 16.0)
+	var mini_focus_potion = Consumable.new(18, "Mini Focus Potion", atlas)
+	mini_focus_potion.description = "Increases your critical hit chance by +50% for 15 seconds."
+	mini_focus_potion.cooldown = true
+	mini_focus_potion.purchasable = true
+	mini_focus_potion.price = 75
+	mini_focus_potion.shop_type = "ANY"
+	mini_focus_potion.cooldown_seconds = 30.0
+	mini_focus_potion.infinite = false
+	mini_focus_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var focus = Effect.new("Focus", Color.from_rgba8(73, 209, 205, 255), 15.0, 0, 1)
+			player.add_status_effect(focus)
+			player.play_sfx("glug", player.global_position, 10.0)
+			Toast.add("You have Focus for 15 seconds.")
+	items.append(mini_focus_potion)

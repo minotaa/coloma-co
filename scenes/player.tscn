@@ -1,4 +1,4 @@
-[gd_scene load_steps=151 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=154 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -28,6 +28,7 @@
 [ext_resource type="Texture2D" uid="uid://bntstpnc7js3q" path="res://assets/sprites/throw-up.png" id="17_2dvfe"]
 [ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="17_qfm1y"]
 [ext_resource type="FontFile" uid="uid://cxii8uarl0lvi" path="res://assets/fonts/BitPotion.ttf" id="19_4r5pv"]
+[ext_resource type="Texture2D" uid="uid://b0ttalh388lui" path="res://assets/sprites/box8.png" id="21_t4otl"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="23_ke2ow"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="24_ujl30"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
@@ -663,8 +664,18 @@ texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 modulate_color = Color(1, 1, 1, 0.854902)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_31cv2"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_j2b1d"]
 texture = ExtResource("14_a38lo")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+modulate_color = Color(1, 1, 1, 0.854902)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cs1tg"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2dvfe"]
+texture = ExtResource("21_t4otl")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
@@ -974,7 +985,6 @@ volume_db = -12.5
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Defense" type="Control" parent="UI"]
-visible = false
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
@@ -1057,22 +1067,40 @@ offset_bottom = -136.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxTexture_ujl30")
-theme_override_styles/fill = SubResource("StyleBoxTexture_31cv2")
+theme_override_styles/fill = SubResource("StyleBoxTexture_j2b1d")
 show_percentage = false
 
-[node name="Label" type="Label" parent="UI/Defense/HealthBar"]
+[node name="OverhealBar" type="ProgressBar" parent="UI/Defense"]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -32.0
-offset_top = -10.5
-offset_right = 32.0
-offset_bottom = 10.5
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -184.0
+offset_right = 168.0
+offset_bottom = -136.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxEmpty_cs1tg")
+theme_override_styles/fill = SubResource("StyleBoxTexture_2dvfe")
+value = 2.98
+show_percentage = false
+
+[node name="Health Label" type="Label" parent="UI/Defense"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -42.0
+offset_top = -175.0
+offset_right = 42.0
+offset_bottom = -147.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "Uh oh!"
 label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
@@ -1799,22 +1827,39 @@ offset_bottom = -136.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxTexture_ujl30")
-theme_override_styles/fill = SubResource("StyleBoxTexture_31cv2")
+theme_override_styles/fill = SubResource("StyleBoxTexture_j2b1d")
 show_percentage = false
 
-[node name="Label" type="Label" parent="UI/Dungeon/HealthBar"]
+[node name="OverhealBar" type="ProgressBar" parent="UI/Dungeon"]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -32.0
-offset_top = -10.5
-offset_right = 32.0
-offset_bottom = 10.5
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -184.0
+offset_right = 168.0
+offset_bottom = -136.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxEmpty_cs1tg")
+theme_override_styles/fill = SubResource("StyleBoxTexture_2dvfe")
+show_percentage = false
+
+[node name="Health Label" type="Label" parent="UI/Dungeon"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -42.0
+offset_top = -175.0
+offset_right = 42.0
+offset_bottom = -147.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "Uh oh!"
 label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1

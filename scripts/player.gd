@@ -45,6 +45,7 @@ const MAX_REVIVAL_TIME: float = 10.0 # like in seconds and stuff
 var bag = Bag.new()
 var upgrade_bag = Bag.new()
 var health := get_max_health()
+var overheal := 50.0
 # stats and stuff
 var total_damage_taken: float = 0.0
 var damage_taken: float = 0.0
@@ -76,6 +77,12 @@ func add_gold_notification(amount: int) -> void:
 		else:
 			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
 			
+func get_crit_chance() -> float:
+	var crit_chance = 15.0
+	if has_effect("Focus"):
+		crit_chance += 50.0
+	return crit_chance
+			
 func get_bonus_damage() -> float:
 	var bonus_damage := 0.0
 	if upgrade_bag.has_item(Catalog.get_by_id(8)):
@@ -88,6 +95,10 @@ func get_defense() -> float:
 		defense += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(9)).data["level"]
 	defense += Man.equipped_armor.defense
 	return defense
+
+func get_max_overheal() -> float:
+	var max_overheal := 100.0
+	return max_overheal
 
 func get_max_health() -> float:
 	var max_health := 100.0
@@ -326,6 +337,19 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	print("Player took ", final_damage, " damage (raw: ", amount, ", defense: ", defense, ")")
 
 	hit_cooldown = max_hit_cooldown
+	
+	# Handle overheal absorption
+	if overheal > 0:
+		var halved_damage = final_damage * 0.5
+		if overheal >= halved_damage:
+			# Overheal absorbs all damage
+			overheal -= halved_damage
+			final_damage = 0
+		else:
+			# Overheal absorbs what it can, rest goes to health
+			final_damage -= overheal
+			overheal = 0
+	
 	health -= final_damage
 	damage_taken += final_damage
 	total_damage_taken += final_damage
@@ -348,7 +372,6 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
 	await get_tree().create_timer(0.1).timeout
 	$AnimatedSprite2D.material = null
-
 
 func percent(current: float, total: float) -> String:
 	if total > 0.0:
@@ -427,7 +450,11 @@ func show_floating_text(amount: int, center_position: Vector2):
 	var floating_text_scene = preload("res://scenes/floating_text.tscn")
 	var floating_text = floating_text_scene.instantiate()
 	floating_text.text = str(amount)
+	(floating_text as Label).label_settings = LabelSettings.new()
+	(floating_text as Label).label_settings.font = preload("res://assets/fonts/slkscr.ttf")
+	(floating_text as Label).label_settings.font_size = 17
 	(floating_text as Label).label_settings.font_color = Color.RED
+	(floating_text as Label).label_settings.shadow_color = Color(0, 0, 0, 0.80)
 	$"..".add_child(floating_text, true)
 
 	var random_offset = Vector2(
@@ -1104,14 +1131,16 @@ func _physics_process(delta: float) -> void:
 	if $UI/Defense.visible:
 		if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
 			$UI/Defense/HealthBar.max_value = get_max_health()
+			$UI/Defense/OverhealBar.max_value = get_max_health()
 			$UI/Defense/HealthBar.value = health
+			$UI/Defense/OverhealBar.value = overheal
 			$UI/Defense/SprintBar.value = sprint
 			if sprint >= 220:
 				exhausted = false
 				$UI/Defense/SprintBar.visible = false
 			else:
 				$UI/Defense/SprintBar.visible = true
-			$UI/Defense/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(get_max_health()))
+			$"UI/Defense/Health Label".text = str(roundi(health + overheal)) + "/" + str(roundi(get_max_health()))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	if $"UI/Defense/Death".visible:
 		$"UI/Defense/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
@@ -1146,13 +1175,16 @@ func _physics_process(delta: float) -> void:
 		$UI/Dungeon/HealthBar.max_value = get_max_health()
 		$UI/Dungeon/HealthBar.value = health
 		$UI/Dungeon/SprintBar.value = sprint
+		$UI/Defense/OverhealBar.max_value = get_max_health()
+		$UI/Dungeon/OverhealBar.value = overheal
 		
 		if sprint >= 220:
 			exhausted = false
 			$UI/Dungeon/SprintBar.visible = false
 		else:
 			$UI/Dungeon/SprintBar.visible = true
-		$UI/Dungeon/HealthBar/Label.text = str(roundi(health)) + "/" + str(roundi(get_max_health()))
+		$"UI/Dungeon/Health Label".text = str(roundi(health + overheal)) + "/" + str(roundi(get_max_health()))
+		
 		
 	if $UI/Defense/Shop.visible:
 		$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
@@ -1464,8 +1496,12 @@ func _process_hit(body, damage: float):
 		# Apply separate Strength buff multiplier if active
 		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
 
+		# Apply crit damage
+		var crit_multiplier = 2.5 if (randf() * 100.0) <= get_crit_chance() else 1.0
+		var crit = true if crit_multiplier == 3.0 else false
+
 		# Damage before defense, using normal strength stat scaling
-		var damage_before_defense = (damage * (1.0 + strength / 100.0)) * strength_multiplier
+		var damage_before_defense = ((damage * (1.0 + strength / 100.0)) * strength_multiplier) * crit_multiplier 
 
 		# Defense reduction formula
 		var defense = body.entity.defense
@@ -1489,10 +1525,10 @@ func _process_hit(body, damage: float):
 
 		# Multiplayer-safe damage + particles
 		if multiplayer.has_multiplayer_peer():
-			body.take_damage.rpc(total_damage, global_position, name)
+			body.take_damage.rpc(total_damage, global_position, name, crit)
 			add_hit_particles.rpc(midpoint, angle)
 		else:
-			body.take_damage(total_damage, global_position, name)
+			body.take_damage(total_damage, global_position, name, crit)
 			add_hit_particles(midpoint, angle)
 
 func _on_shop_close_button_pressed() -> void:

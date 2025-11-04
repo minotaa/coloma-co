@@ -46,17 +46,24 @@ func _ready() -> void:
 	nav_agent.target_desired_distance = 8
 
 @rpc("call_local")
-func _show_damage_feedback(amount: int, center_position: Vector2):
-	var floating_text_scene: PackedScene = preload("res://scenes/floating_text.tscn")
-	var floating_text: Node = floating_text_scene.instantiate()
-	(floating_text as Label).text = str(amount)
-	(floating_text as Label).label_settings.font_color = Color.WHITE
+func _show_damage_feedback(amount: int, center_position: Vector2, crit: bool):
+	var floating_text_scene = preload("res://scenes/floating_text.tscn")
+	var floating_text = floating_text_scene.instantiate()
+	floating_text.text = str(amount)
+	(floating_text as Label).label_settings = LabelSettings.new()
+	(floating_text as Label).label_settings.font = preload("res://assets/fonts/slkscr.ttf")
+	(floating_text as Label).label_settings.font_size = 17
+	if crit:
+		(floating_text as Label).label_settings.font_color = Color.YELLOW
+	else:
+		(floating_text as Label).label_settings.font_color = Color.WHITE
+	(floating_text as Label).label_settings.shadow_color = Color(0, 0, 0, 0.80)
 	$"..".add_child(floating_text, true)
 
-	var random_offset: Vector2 = Vector2(
-									 randi_range(-8, 8),
-									 randi_range(-8, 8)
-								 )
+	var random_offset = Vector2(
+		randi_range(-8, 8),
+		randi_range(-8, 8)
+	)
 	floating_text.position = center_position + random_offset
 
 @rpc("call_local")
@@ -96,7 +103,7 @@ func update_target() -> void:
 #		target_line.visible = false
 
 @rpc("any_peer", "call_local")
-func take_damage(amount: float, from_position: Vector2, name: String) -> void:
+func take_damage(amount: float, from_position: Vector2, name: String, crit: bool) -> void:
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
 
@@ -112,10 +119,10 @@ func take_damage(amount: float, from_position: Vector2, name: String) -> void:
 	stun_time = base_stun * clamp(amount / 20.0, 0.5, 2.0)
 	
 	if multiplayer.has_multiplayer_peer():
-		_show_damage_feedback.rpc(amount, global_position)
+		_show_damage_feedback.rpc(amount, global_position, crit)
 		_flash_material.rpc()
 	else:
-		_show_damage_feedback(amount, global_position)
+		_show_damage_feedback(amount, global_position, crit)
 		_flash_material()
 
 	if entity.health <= 0 and alive:

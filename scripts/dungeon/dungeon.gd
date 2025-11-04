@@ -64,6 +64,7 @@ var void_check_counter = 0
 var wave_check_counter = 0
 
 @onready var spawner_layer = $Spawner
+@onready var decoration_layer = $Tiles
 
 func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer:
 	var sfx = AudioStreamPlayer.new()
@@ -281,6 +282,7 @@ func merge_room(room_path: String, offset: Vector2i) -> void:
 	var room = load(room_path).instantiate()
 	var room_layer = room.get_node_or_null("TileMapLayer")
 	var room_spawner = room.get_node_or_null("Spawner")
+	var room_decoration = room.get_node_or_null("Decorations")
 	
 	if not room_layer:
 		print("[GENERATOR] Room has no TileMapLayer, skipping")
@@ -340,6 +342,18 @@ func merge_room(room_path: String, offset: Vector2i) -> void:
 				continue
 			var final_pos = cell + offset
 			spawner_layer.set_cell(final_pos, source_id, atlas_coords)
+
+	# Copy decorations tiles if the room has a Decorations layer
+	if room_decoration:
+		var decoration_cells = room_decoration.get_used_cells()
+		for cell in decoration_cells:
+			var source_id = room_decoration.get_cell_source_id(cell)
+			var atlas_coords = room_decoration.get_cell_atlas_coords(cell)
+			if source_id == -1:
+				continue
+			var final_pos = cell + offset
+			decoration_layer.set_cell(final_pos, source_id, atlas_coords)
+	$TileMapLayer._update_all_navigation_cells()
 	
 	# Store room data for tracking
 	var room_id = next_room_id
@@ -450,6 +464,8 @@ func convert_room_to_filler(room_id: int) -> bool:
 			var pos = Vector2i(x, y)
 			if spawner_layer.get_cell_source_id(pos) != -1:
 				spawner_layer.set_cell(pos, -1)
+			if decoration_layer.get_cell_source_id(pos) != -1:
+				decoration_layer.set_cell(pos, -1)
 	
 	# Move to deleted_rooms tracking for later cleanup
 	deleted_rooms[room_id] = {
