@@ -5,14 +5,14 @@ extends Node
 var modes: Array[Variant] = ["Defense", "Dungeon"]
 var maps: Dictionary[Variant, Variant] = {
 	"defense": ["Lysawood", "Solmere"],
-	"dungeon": ["Plains"],
+	"dungeon": ["Lysawood"],
 	"campaign": ["Joro"]
 }
 
 var map_paths: Dictionary[Variant, Variant] = {
 	"Defense_Lysawood": "res://scenes/levels/defense/Plains.tscn",
 	"Defense_Solmere": "res://scenes/levels/defense/Desert.tscn",
-	"Dungeon_Plains": "res://scenes/levels/dungeon/plains_start_room.tscn",
+	"Dungeon_Lysawood": "res://scenes/levels/dungeon/plains_start_room.tscn",
 	"Campaign_Myrkwood": "res://scenes/levels/campaign/campaign.tscn"
 }
 
@@ -78,18 +78,18 @@ func set_rich_presence_value(key: String, token: String) -> void:
 	else:
 		print("Steam is not enabled, not running this.")	
 
-func start_cooldown(item: Consumable, seconds: float) -> void:
+func start_cooldown(item, seconds: float) -> void:  # Accept both Consumable and Tossable
 	cooldowns[item.id] = {
 		"end_time": Time.get_ticks_msec() / 1000.0 + seconds
 	}
 
-func get_cooldown_left(item: Consumable) -> float:
+func get_cooldown_left(item) -> float:  # Accept both Consumable and Tossable
 	if not cooldowns.has(item.id):
 		return 0.0
 	var time_left = cooldowns[item.id]["end_time"] - Time.get_ticks_msec() / 1000.0
 	return max(time_left, 0.0)
 
-func is_on_cooldown(item: Consumable) -> bool:
+func is_on_cooldown(item) -> bool:  # Accept both Consumable and Tossable
 	return get_cooldown_left(item) > 0.0
 
 func take_screenshot() -> void:

@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://bottg27ofdocj"]
+
+[ext_resource type="Script" uid="uid://btd2w5exxkfi0" path="res://scripts/tossable.gd" id="1_35x0o"]
+[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="2_vyr2g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0du8l"]
+atlas = ExtResource("2_vyr2g")
+region = Rect2(112, 32, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j1i3o"]
+size = Vector2(8, 14)
+
+[node name="Tossable" type="CharacterBody2D"]
+script = ExtResource("1_35x0o")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_0du8l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_j1i3o")

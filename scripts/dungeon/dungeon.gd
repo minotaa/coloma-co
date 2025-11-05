@@ -4,20 +4,22 @@ var smoke_scene = preload("res://scenes/smoke.tscn")
 var player_scene = preload("res://scenes/player.tscn")
 var filler_tile = Vector2i(3, 0)
 
-var valid_rooms: Array[String] = [
-	"res://scenes/levels/dungeon/plains_tall_hallway.tscn",
-	"res://scenes/levels/dungeon/plains_bigger_hallway.tscn",
-	"res://scenes/levels/dungeon/plains_curvy_way.tscn",
-	"res://scenes/levels/dungeon/plains_loop.tscn",
-	"res://scenes/levels/dungeon/plains_zig_zag_hallway.tscn"
-]
+var valid_rooms: Dictionary = {
+	"Lysawood": [
+		"res://scenes/levels/dungeon/plains_tall_hallway.tscn",
+		"res://scenes/levels/dungeon/plains_bigger_hallway.tscn",
+		"res://scenes/levels/dungeon/plains_curvy_way.tscn",
+		"res://scenes/levels/dungeon/plains_loop.tscn",
+		"res://scenes/levels/dungeon/plains_zig_zag_hallway.tscn"	
+	]
+}
 
 var start_rooms = {
-	"Plains": "res://scenes/levels/dungeon/plains_start_room.tscn"
+	"Lysawood": "res://scenes/levels/dungeon/plains_start_room.tscn"
 }
 
 var shop_rooms = {
-	"Plains": "res://scenes/levels/dungeon/plains_shop.tscn"
+	"Lysawood": "res://scenes/levels/dungeon/plains_shop.tscn"
 }
 
 var waves = []
@@ -737,7 +739,7 @@ func complete_room() -> void:
 	countdown_and_spawn_room()
 
 func spawn_next_room() -> void:
-	var random_room_scene = valid_rooms.pick_random()
+	var random_room_scene = valid_rooms[Man.selected_map].pick_random()
 	var room_instance = load(random_room_scene).instantiate()
 	
 	# Get the room's exits

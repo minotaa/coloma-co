@@ -103,7 +103,19 @@ const FLOAT_AMPLITUDE := 1.0
 const FLOAT_SPEED := 2.0
 var float_timer := 0.0
 
+func apply_knockback(from_position: Vector2, strength: float):
+	var direction = (global_position - from_position).normalized()
+	knockback_velocity = direction * strength
+
+var knockback_velocity := Vector2.ZERO
+var knockback_friction := 800.0
+
 func _physics_process(delta: float) -> void:
+	if knockback_velocity.length() > 0.1:
+		velocity += knockback_velocity
+		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
+	else:
+		knockback_velocity = Vector2.ZERO
 	# Floating animation
 	float_timer += delta * FLOAT_SPEED
 	var offset_y = FLOAT_AMPLITUDE * sin(float_timer)

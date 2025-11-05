@@ -45,7 +45,7 @@ const MAX_REVIVAL_TIME: float = 10.0 # like in seconds and stuff
 var bag = Bag.new()
 var upgrade_bag = Bag.new()
 var health := get_max_health()
-var overheal := 50.0
+var overheal := 0.0
 # stats and stuff
 var total_damage_taken: float = 0.0
 var damage_taken: float = 0.0
@@ -62,6 +62,8 @@ var active_effects: Array = []
 
 @rpc("authority", "call_local", "reliable")
 func add_gold_notification(amount: int) -> void:
+	if has_effect("Prosperity"):
+		amount *= 2
 	if type == "Defense":
 		added_gold += amount
 		added_gold_timeout = 2.0
@@ -1084,7 +1086,7 @@ func _physics_process(delta: float) -> void:
 		$Potion.process_material.color = get_blended_effect_color()
 	else:
 		$Potion.emitting = false
-	if Man.selected_map == "Lysawood":
+	if Man.selected_map == "Lysawood" and Man.selected_mode == "Defense":
 		if global_position.x < (-30.5 * 16):
 			global_position.x = 30.15 * 16
 		elif global_position.x > (30.15 * 16):
@@ -1498,7 +1500,7 @@ func _process_hit(body, damage: float):
 
 		# Apply crit damage
 		var crit_multiplier = 2.5 if (randf() * 100.0) <= get_crit_chance() else 1.0
-		var crit = true if crit_multiplier == 3.0 else false
+		var crit = true if crit_multiplier == 2.5 else false
 
 		# Damage before defense, using normal strength stat scaling
 		var damage_before_defense = ((damage * (1.0 + strength / 100.0)) * strength_multiplier) * crit_multiplier 

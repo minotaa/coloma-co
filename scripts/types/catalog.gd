@@ -244,12 +244,12 @@ func _init() -> void:
 	enrichment_potion.on_consume = func():
 		var player = Man.get_player()
 		if player != null:
-			var regeneration = Effect.new("Regeneration", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
+			var regeneration = Effect.new("Enrichment", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
 			regeneration.on_effect = func(target):
 				target.heal(5)
 			player.add_status_effect(regeneration)
 			player.play_sfx("glug", player.global_position, 20.0)
-			Toast.add("You have Regeneration for 20 seconds.")
+			Toast.add("You have Enrichment for 20 seconds.")
 	items.append(enrichment_potion)
 
 	atlas = AtlasTexture.new()
@@ -313,3 +313,163 @@ func _init() -> void:
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Focus for 15 seconds.")
 	items.append(mini_focus_potion)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(64.0, 32.0, 16.0, 16.0)
+	var lucky_apple = Consumable.new(19, "Lucky Apple", atlas)
+	lucky_apple.description = "Increases your Gold gain by 50% for 60 seconds."
+	lucky_apple.cooldown = true
+	lucky_apple.purchasable = true
+	lucky_apple.price = 200
+	lucky_apple.shop_type = "ANY"
+	lucky_apple.cooldown_seconds = 5.0
+	lucky_apple.infinite = false
+	lucky_apple.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var prosperous = Effect.new("Prosperity", Color.from_rgba8(255, 222, 45, 255), 60.0, 0, 1)
+			player.add_status_effect(prosperous)
+			player.play_sfx("glug", player.global_position, 10.0)
+			Toast.add("You have Prosperity for 60 seconds.")
+	items.append(lucky_apple)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(80.0, 32.0, 16.0, 16.0)
+	var overheal_potion = Consumable.new(20, "Overheal Potion", atlas)
+	overheal_potion.description = "Adds 50 Overheal HP."
+	overheal_potion.cooldown = true
+	overheal_potion.purchasable = true
+	overheal_potion.price = 500
+	overheal_potion.shop_type = "ANY"
+	overheal_potion.cooldown_seconds = 20.0
+	overheal_potion.infinite = false
+	overheal_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			player.overheal = min(player.overheal + 50.0, player.get_max_overheal())
+			player.play_sfx("glug", player.global_position, 10.0)
+			Toast.add("You just got 50 Overheal HP.")
+	items.append(overheal_potion)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(96.0, 32.0, 16.0, 16.0)
+	var mini_overheal_potion = Consumable.new(21, "Mini Overheal Potion", atlas)
+	mini_overheal_potion.description = "Adds 25 Overheal HP."
+	mini_overheal_potion.cooldown = true
+	mini_overheal_potion.purchasable = true
+	mini_overheal_potion.price = 250
+	mini_overheal_potion.shop_type = "ANY"
+	mini_overheal_potion.cooldown_seconds = 20.0
+	mini_overheal_potion.infinite = false
+	mini_overheal_potion.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			player.overheal = min(player.overheal + 25.0, player.get_max_overheal())
+			player.play_sfx("glug", player.global_position, 10.0)
+			Toast.add("You just got 25 Overheal HP.")
+	items.append(mini_overheal_potion)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(112.0, 32.0, 16.0, 16.0)
+	var healing_totem = Tossable.new(22, "Healing Totem", atlas)
+	healing_totem.description = "Heals anyone in its radius. Active for 60 seconds."
+	healing_totem.cooldown = true
+	healing_totem.purchasable = true
+	healing_totem.price = 500
+	healing_totem.shop_type = "ANY"
+	healing_totem.cooldown_seconds = 60.0
+	healing_totem.duration = 60.0
+	healing_totem.infinite = false
+	healing_totem.update_interval = 3.0
+
+	var heal_range = 60.0
+	var heal_amount = 5.0
+
+	healing_totem.on_toss = func(target, location):
+		pass
+
+	healing_totem.on_update = func(target, location):
+		var pulse = preload("res://scenes/pulse.tscn").instantiate()
+		pulse.process_material.color = Color.from_rgba8(56, 177, 67, 255)
+		pulse.emitting = true
+		target.add_child(pulse)
+		print("Healing totem update called at: ", location)
+		var space_state = target.get_world_2d().direct_space_state
+		var query = PhysicsShapeQueryParameters2D.new()
+		var shape = CircleShape2D.new()
+		shape.radius = heal_range
+		query.shape = shape
+		query.transform = Transform2D(0, location)
+		query.collision_mask = 1
+		
+		var results = space_state.intersect_shape(query)
+		print("Found ", results.size(), " objects in range")
+		for result in results:
+			var body = result.collider
+			print("Found body: ", body.name, " - has heal method: ", body.has_method("heal"))
+			if body.has_method("heal"):
+				body.heal(heal_amount)
+				print("Healed ", body.name, " for ", heal_amount)
+				
+	healing_totem.on_end = func(target, location):
+		pass # Totem expires
+
+	items.append(healing_totem)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(128.0, 32.0, 16.0, 16.0)  # Adjust region for wind totem sprite
+	var wind_totem = Tossable.new(23, "Wind Totem", atlas)
+	wind_totem.description = "Blows enemies away from its radius. Active for 30 seconds."
+	wind_totem.cooldown = true
+	wind_totem.purchasable = true
+	wind_totem.price = 800
+	wind_totem.shop_type = "ANY"
+	wind_totem.cooldown_seconds = 45.0
+	wind_totem.duration = 30.0
+	wind_totem.infinite = false
+	wind_totem.update_interval = 1.0  # Pushes every second
+
+	var wind_range = 80.0
+
+	wind_totem.on_toss = func(target, location):
+		pass
+
+	wind_totem.on_update = func(target, location):
+		var pulse = preload("res://scenes/pulse.tscn").instantiate()
+		pulse.process_material.color = Color.from_rgba8(200, 230, 255, 255)  # Light blue/cyan for wind
+		pulse.emitting = true
+		target.add_child(pulse)
+		
+		var space_state = target.get_world_2d().direct_space_state
+		var query = PhysicsShapeQueryParameters2D.new()
+		var shape = CircleShape2D.new()
+		shape.radius = wind_range
+		query.shape = shape
+		query.transform = Transform2D(0, location)
+		query.collision_mask = 2  # Assuming enemies are on layer 2 (bit 1)
+		
+		var results = space_state.intersect_shape(query)
+		for result in results:
+			var body = result.collider
+			if body.has_method("apply_knockback") or body is CharacterBody2D:
+				# Calculate direction away from totem
+				var direction = (body.global_position - location).normalized()
+				
+				# Apply knockback
+				if body.has_method("apply_knockback"):
+					body.apply_knockback(location, 80.0)
+				elif body is CharacterBody2D:
+					# Fallback: directly push the velocity
+					body.velocity += direction * knockback_force
+				
+				print("Pushed ", body.name, " away with force ", knockback_force)
+				
+	wind_totem.on_end = func(target, location):
+		pass  # Totem expires
+
+	items.append(wind_totem)

@@ -126,7 +126,20 @@ func die() -> void:
 	else:
 		play_sfx("appear", global_position, 0.0, 0.45)
 
+func apply_knockback(from_position: Vector2, strength: float):
+	var direction = (global_position - from_position).normalized()
+	knockback_velocity = direction * strength
+
+var knockback_friction := 800.0
+
 func _physics_process(delta: float) -> void:
+	if knockback_velocity.length() > 0.1:
+		velocity += knockback_velocity
+		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
+		move_and_slide()
+	else:
+		knockback_velocity = Vector2.ZERO
+	
 	if (multiplayer.has_multiplayer_peer() and multiplayer.is_server()) or not multiplayer.has_multiplayer_peer():
 		if entity != null:
 			$ProgressBar.value = entity.health

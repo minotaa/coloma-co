@@ -344,5 +344,34 @@
 			[{ "crabman": 2 }, { "poison_slime": 4 }],
 			[{ "mother_slime": 2 }, { "angry_bauble": 5 }, { "rapid_bauble": 5 }]
 		]
+	},
+	{
+		"requirement": 50,
+		"content": [
+			[{ "crabman": 3 }, { "gunk_slime": 8 }],
+			[{ "explosive_bauble": 5 }, { "angry_bauble": 5 }],
+		]
+	},
+	{
+		"requirement": 10,
+		"content": [
+			[{ "ghost": 10 }],
+		]
+	},
+	{
+		"requirement": 15,
+		"content": [
+			[{ "ghost": 5 }, { "gunk_slime": 8 }],
+			[{ "gunk_slime": 3 }],
+		]
+	},
+	{
+		"requirement": 50,
+		"content": [
+			[{ "bauble": 15 }],
+			[{ "angry_bauble": 10 }],
+			[{ "rapid_bauble": 8 }],
+			[{ "explosive_bauble": 5 }],
+		]
 	}
 ]
