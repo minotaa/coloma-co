@@ -435,6 +435,7 @@ func _init() -> void:
 	wind_totem.update_interval = 1.0  # Pushes every second
 
 	var wind_range = 80.0
+	var knockback_force = 80.0
 
 	wind_totem.on_toss = func(target, location):
 		pass
@@ -462,7 +463,7 @@ func _init() -> void:
 				
 				# Apply knockback
 				if body.has_method("apply_knockback"):
-					body.apply_knockback(location, 80.0)
+					body.apply_knockback(location, knockback_force)
 				elif body is CharacterBody2D:
 					# Fallback: directly push the velocity
 					body.velocity += direction * knockback_force
@@ -473,3 +474,49 @@ func _init() -> void:
 		pass  # Totem expires
 
 	items.append(wind_totem)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(144.0, 32.0, 16.0, 16.0)  # Adjust region for strength totem sprite
+	var strength_totem = Tossable.new(24, "Strength Totem", atlas)
+	strength_totem.description = "Grants Strength to allies in its radius. Active for 30 seconds."
+	strength_totem.cooldown = true
+	strength_totem.purchasable = true
+	strength_totem.price = 600
+	strength_totem.shop_type = "ANY"
+	strength_totem.cooldown_seconds = 60.0
+	strength_totem.duration = 45.0
+	strength_totem.infinite = false
+	strength_totem.update_interval = 5.0  # Apply strength every 5 seconds
+
+	var strength_range = 80.0
+
+	strength_totem.on_toss = func(target, location):
+		pass
+
+	strength_totem.on_update = func(target, location):
+		var pulse = preload("res://scenes/pulse.tscn").instantiate()
+		pulse.process_material.color = Color.from_rgba8(255, 145, 41, 255)  # Orange for strength
+		pulse.emitting = true
+		target.add_child(pulse)
+		
+		var space_state = target.get_world_2d().direct_space_state
+		var query = PhysicsShapeQueryParameters2D.new()
+		var shape = CircleShape2D.new()
+		shape.radius = strength_range
+		query.shape = shape
+		query.transform = Transform2D(0, location)
+		query.collision_mask = 1  # Players layer
+		
+		var results = space_state.intersect_shape(query)
+		for result in results:
+			var body = result.collider
+			if body.has_method("add_status_effect"):
+				var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 5.0)
+				body.add_status_effect(strength)
+				print("Applied Strength effect to ", body.name)
+				
+	strength_totem.on_end = func(target, location):
+		pass  # Totem expires
+
+	items.append(strength_totem)
