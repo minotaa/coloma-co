@@ -142,7 +142,7 @@ func _process(delta: float) -> void:
 
 	var bombrats_left := 0
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1 or enemy.entity.id == 4:
+		if enemy.id == 1 or enemy.id == 4:
 			bombrats_left += 1
 
 	if bombrats_left <= 0:
@@ -230,7 +230,7 @@ func spawn_wave() -> void:
 			player.heal(10)
 
 	match wave:
-		1:			
+		1:
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 		2:
@@ -553,7 +553,7 @@ func spawn_bauble(direction: String) -> void:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
 		var baub: Node
-		if wave >= 20 and randf() <= 0.1: 
+		if wave >= 20 and randf() <= 0.25: 
 			if randf() <= 0.33:
 				baub = angry_bauble.instantiate()
 			elif randf() <= 0.66:

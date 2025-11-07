@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://ctlmmarbw45jg"]
+[gd_scene load_steps=23 format=3 uid="uid://ctlmmarbw45jg"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_ad2k7"]
 [ext_resource type="Script" uid="uid://cmq1r38fuxky1" path="res://scripts/poison_slime.gd" id="2_jgoq5"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_b2m7e"]
 [ext_resource type="Texture2D" uid="uid://dpdgureg2t3ti" path="res://assets/sprites/poison-slime.png" id="4_63nwn"]
 [ext_resource type="Texture2D" uid="uid://b4ifcnh4bwsck" path="res://assets/sprites/target.png" id="5_yahew"]
+[ext_resource type="Texture2D" uid="uid://dg10u7211mx3c" path="res://assets/sprites/swirly.png" id="6_jgoq5"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
 shader = ExtResource("1_ad2k7")
@@ -82,6 +83,42 @@ bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2npkn"]
 bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
+[sub_resource type="Curve" id="Curve_b2m7e"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_63nwn"]
+curve = SubResource("Curve_b2m7e")
+
+[sub_resource type="Curve" id="Curve_yahew"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_c5t28"]
+width = 512
+curve = SubResource("Curve_yahew")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6th5u"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 1.0
+angle_min = -360.0
+angle_max = 360.0
+angle_curve = SubResource("CurveTexture_c5t28")
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = -25.0
+initial_velocity_max = -25.0
+angular_velocity_min = 9.999984
+angular_velocity_max = 19.999983
+gravity = Vector3(0, -25, 0)
+linear_accel_min = -5.000002
+linear_accel_max = -5.000002
+scale_min = 0.25
+scale_max = 0.4
+color = Color(1, 1, 1, 0.945098)
+alpha_curve = SubResource("CurveTexture_63nwn")
+
 [node name="Poison Slime" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 2
@@ -133,3 +170,12 @@ modulate = Color(1, 1, 1, 0.592157)
 top_level = true
 z_index = -1
 texture = ExtResource("5_yahew")
+
+[node name="Potion" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+texture = ExtResource("6_jgoq5")
+lifetime = 1.2
+preprocess = 1.0
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_6th5u")

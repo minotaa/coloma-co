@@ -43,14 +43,14 @@
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_487ah"]
+[sub_resource type="CurveTexture" id="CurveTexture_t4otl"]
 curve = SubResource("Curve_gl8cc")
 
 [sub_resource type="Curve" id="Curve_md1ol"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_bj30b"]
+[sub_resource type="CurveTexture" id="CurveTexture_j2b1d"]
 width = 512
 curve = SubResource("Curve_md1ol")
 
@@ -60,7 +60,7 @@ emission_shape = 2
 emission_sphere_radius = 1.0
 angle_min = -360.0
 angle_max = 360.0
-angle_curve = SubResource("CurveTexture_bj30b")
+angle_curve = SubResource("CurveTexture_j2b1d")
 direction = Vector3(0, -1, 0)
 spread = 180.0
 initial_velocity_min = -25.0
@@ -73,7 +73,7 @@ linear_accel_max = -5.000002
 scale_min = 0.25
 scale_max = 0.4
 color = Color(1, 1, 1, 0.945098)
-alpha_curve = SubResource("CurveTexture_487ah")
+alpha_curve = SubResource("CurveTexture_t4otl")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wqfne"]
 particle_flag_disable_z = true
@@ -1339,7 +1339,6 @@ alignment = 1
 layout_mode = 2
 
 [node name="Shop" type="Control" parent="UI/Defense"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1428,6 +1427,24 @@ offset_right = 188.0
 offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxTexture_hax0n")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
+theme_override_styles/hover = SubResource("StyleBoxTexture_wnwbv")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
+text = "Close"
+
+[node name="Reroll" type="Button" parent="UI/Defense/Shop/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -188.0
+offset_top = 16.0
+offset_right = 188.0
+offset_bottom = 76.0
+grow_horizontal = 2
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_hax0n")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
@@ -2256,6 +2273,7 @@ label_settings = SubResource("LabelSettings_hax0n")
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]
 [connection signal="body_shape_exited" from="Area2D" to="." method="_on_body_shape_exited"]
 [connection signal="pressed" from="UI/Defense/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
+[connection signal="pressed" from="UI/Defense/Shop/Panel/Reroll" to="." method="_on_shop_close_button_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]

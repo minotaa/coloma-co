@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://cuycs5b6h1yuu"]
+[gd_scene load_steps=55 format=3 uid="uid://cuycs5b6h1yuu"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_err82"]
 [ext_resource type="Script" uid="uid://cswc66gckpm5u" path="res://scripts/crabman.gd" id="2_w6kxq"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://2pyd0mratbfg" path="res://assets/sprites/crabman_left.png" id="5_g83du"]
 [ext_resource type="Texture2D" uid="uid://dq3jk4tpkjdyo" path="res://assets/sprites/crabman_right.png" id="6_m4864"]
 [ext_resource type="Texture2D" uid="uid://bnsx4uaysnibe" path="res://assets/sprites/crabman_up.png" id="7_mr6k1"]
+[ext_resource type="Texture2D" uid="uid://dg10u7211mx3c" path="res://assets/sprites/swirly.png" id="8_w6kxq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
 shader = ExtResource("1_err82")
@@ -311,6 +312,42 @@ bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svhan"]
 bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
+[sub_resource type="Curve" id="Curve_4cx8d"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_4g15a"]
+curve = SubResource("Curve_4cx8d")
+
+[sub_resource type="Curve" id="Curve_g83du"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_m4864"]
+width = 512
+curve = SubResource("Curve_g83du")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mr6k1"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 1.0
+angle_min = -360.0
+angle_max = 360.0
+angle_curve = SubResource("CurveTexture_m4864")
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = -25.0
+initial_velocity_max = -25.0
+angular_velocity_min = 9.999984
+angular_velocity_max = 19.999983
+gravity = Vector3(0, -25, 0)
+linear_accel_min = -5.000002
+linear_accel_max = -5.000002
+scale_min = 0.25
+scale_max = 0.4
+color = Color(1, 1, 1, 0.945098)
+alpha_curve = SubResource("CurveTexture_4g15a")
+
 [node name="Crabman" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 2
@@ -373,3 +410,12 @@ default_color = Color(1, 0, 0, 0.54902)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
+
+[node name="Potion" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+texture = ExtResource("8_w6kxq")
+lifetime = 1.2
+preprocess = 1.0
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_mr6k1")

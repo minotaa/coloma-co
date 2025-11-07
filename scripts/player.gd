@@ -1,5 +1,9 @@
 extends CharacterBody2D
 
+var shop_items = []  # Current shop inventory
+var current_shop_seed = 0  # Seed from server for deterministic random selection
+var rerolls_available = 3  # Number of rerolls player can use
+var reroll_cost = 50  # Gold cost per reroll
 var type: String = ""
 var current_log_path: String
 var original_zoom := Vector2(4.0, 4.0)
@@ -139,14 +143,14 @@ var active_markers := {}
 func get_bombrats_to_track():
 	var bombrats = []
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1 or enemy.entity.id == 4:
+		if enemy.id == 1 or enemy.id == 4:
 			bombrats.append(enemy)
 	return bombrats
 	
 func get_big_bombrats_to_track():
 	var bombrats = []
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 4:
+		if enemy.id == 4:
 			bombrats.append(enemy)
 	return bombrats
 
@@ -286,6 +290,18 @@ func _ready() -> void:
 			Toast.add("Reloaded your Blunderbuss.")
 			clip = Man.equipped_weapon.data["clip"]
 			$Clip.visible = true 
+		
+@rpc("authority", "call_local")
+func refresh_shop(new_seed: int):
+	current_shop_seed = new_seed
+	rerolls_available = 3  # Reset rerolls on server refresh
+	generate_shop_inventory()
+	
+	# If shop is currently open, update it
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	if shop_node.visible:
+		populate_shop_ui()
+		update_shop_ui()
 		
 @rpc("any_peer", "call_local", "reliable")
 func setup_ui(type: String) -> void:
@@ -465,6 +481,81 @@ func show_floating_text(amount: int, center_position: Vector2):
 	)
 	floating_text.position = center_position + random_offset
 
+func generate_shop_inventory():
+	shop_items.clear()
+	
+	# Use server seed for deterministic randomization
+	seed(current_shop_seed)
+	
+	# Determine shop type based on game mode
+	var current_shop_type = "DEFENSE" if type == "Defense" else "DUNGEON"
+	
+	# Get available items for this shop type
+	var available_items = []
+	for item in Catalog.items:
+		if (item as ItemType).purchasable and \
+		   ((item as ItemType).shop_type == current_shop_type or \
+			(item as ItemType).shop_type == "ANY"):
+			available_items.append(item)
+	
+	# Get available upgrades
+	var available_upgrades = []
+	for upgrade in Catalog.upgrades:
+		if (upgrade as ItemType).purchasable:
+			available_upgrades.append(upgrade)
+	
+	# Randomly select 3 items
+	available_items.shuffle()
+	for i in range(min(3, available_items.size())):
+		shop_items.append(available_items[i])
+	
+	# Randomly select 1 upgrade
+	if available_upgrades.size() > 0:
+		available_upgrades.shuffle()
+		shop_items.append(available_upgrades[0])
+	
+	# Reset seed to avoid affecting other random calls
+	randomize()
+
+func populate_shop_ui():
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	var grid = shop_node.get_node("Panel/ScrollContainer/GridContainer")
+	
+	# Clear existing items
+	for child in grid.get_children():
+		child.queue_free()
+	
+	# Add current shop items
+	for item in shop_items:
+		var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
+		catalog_item.set_item(item)
+		grid.add_child(catalog_item, true)
+
+func reroll_shop():
+	if gold >= reroll_cost and rerolls_available > 0:
+		gold -= reroll_cost
+		rerolls_available -= 1
+		
+		# Generate new local seed for reroll
+		var reroll_seed = current_shop_seed + rerolls_available
+		current_shop_seed = reroll_seed
+		
+		generate_shop_inventory()
+		populate_shop_ui()
+		update_shop_ui()
+		return true
+	return false
+
+func update_shop_ui():
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	shop_node.get_node("Panel/HBoxContainer/Gold").text = str(gold)
+	
+	# Update reroll button text/availability
+	var reroll_btn = shop_node.get_node("Panel/Reroll")  # You'll need to add this
+	if reroll_btn:
+		reroll_btn.text = "Reroll (%d left - %d gold)" % [rerolls_available, reroll_cost]
+		reroll_btn.disabled = gold < reroll_cost or rerolls_available <= 0
+
 func _process_input(delta) -> void:
 	# Handle movement input
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
@@ -475,48 +566,22 @@ func _process_input(delta) -> void:
 		return
 	if Input.is_action_just_pressed("interact"):
 		print("interacted")
-		if type == "Defense":
-			if not $UI/Defense/Shop.visible:
-				for area in $Area2D.get_overlapping_areas():
-					if (area as Area2D).is_in_group("gem"):
-						$UI/Defense/Shop.visible = true
-						play_idle_animation()
-						$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
-				for children in $UI/Defense/Shop/Panel/ScrollContainer/GridContainer.get_children():
-					children.queue_free()
-				for item in Catalog.items:
-					if (item as ItemType).purchasable:
-						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
-						catalog_item.set_item(item)
-						$UI/Defense/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)
-				for upgrade in Catalog.upgrades:
-					if (upgrade as ItemType).purchasable:
-						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
-						catalog_item.set_item(upgrade)
-						$UI/Defense/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)	
-			else:
-				$UI/Defense/Shop.visible = false
-		elif type == "Dungeon":
-			if not $UI/Dungeon/Shop.visible:
-				for area in $Area2D.get_overlapping_areas():
-					if (area as Area2D).is_in_group("gem"):
-						$UI/Dungeon/Shop.visible = true
-						play_idle_animation()
-						$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
-				for children in $UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer.get_children():
-					children.queue_free()
-				for item in Catalog.items:
-					if (item as ItemType).purchasable:
-						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
-						catalog_item.set_item(item)
-						$UI/Dungeon/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)
-				for upgrade in Catalog.upgrades:
-					if (upgrade as ItemType).purchasable:
-						var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
-						catalog_item.set_item(upgrade)
-						$UI/Defense/Shop/Panel/ScrollContainer/GridContainer.add_child(catalog_item, true)	
-			else:
-				$UI/Dungeon/Shop.visible = false
+		var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+		
+		if not shop_node.visible:
+			# Check if player is near a gem
+			for area in $Area2D.get_overlapping_areas():
+				if (area as Area2D).is_in_group("gem"):
+					# Generate shop if not already generated
+					if shop_items.is_empty():
+						generate_shop_inventory()
+					shop_node.visible = true
+					play_idle_animation()
+					populate_shop_ui()
+					update_shop_ui()
+					break
+		else:
+			shop_node.visible = false
 			
 	if $UI/Defense/Shop.visible:
 		return
@@ -1016,25 +1081,35 @@ func show_ui() -> void:
 	if $UI/Defense.visible:
 		$UI/Defense/Markers.visible = true
 		$UI/Defense/HealthBar.visible = true
+		$UI/Defense/OverhealBar.visible = true
+		$"UI/Defense/Health Label".visible = true
 		$UI/Defense/SprintBar.visible = true
 		$UI/Defense/Inventory.visible = true
 		$UI/Defense/HBoxContainer.visible = true
 	else:
 		$UI/Dungeon/HBoxContainer.visible = true 
 		$UI/Dungeon/HealthBar.visible = true
+		$UI/Dungeon/OverhealBar.visible = true
+		
 		$UI/Dungeon/SprintBar.visible = true
 		$UI/Dungeon/Inventory.visible = true
+		$"UI/Dungeon/Health Label".visible = true
 
 func hide_ui() -> void:
 	if $UI/Defense.visible:
-		$UI/Defense/Markers.visible = false
 		$UI/Defense/HealthBar.visible = false
+		$UI/Defense/OverhealBar.visible = false
+		$"UI/Defense/Health Label".visible = false
+		$UI/Defense/Markers.visible = false
 		$UI/Defense/SprintBar.visible = false
 		$UI/Defense/Inventory.visible = false
 		$UI/Defense/HBoxContainer.visible = false
 		$UI/Defense/Tab.visible = false
 		$UI/Defense/Shop.visible = false
 	else:
+		$UI/Dungeon/HealthBar.visible = false
+		$UI/Dungeon/OverhealBar.visible = false
+		$"UI/Dungeon/Health Label".visible = false
 		$UI/Dungeon/HBoxContainer.visible = false 
 		$UI/Dungeon/HealthBar.visible = false
 		$UI/Dungeon/SprintBar.visible = false
@@ -1338,7 +1413,7 @@ func _physics_process(delta: float) -> void:
 			_disable_all_sword_hitboxes()
 	var count := 0
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.entity.id == 1 or enemy.entity.id == 4:
+		if enemy.id == 1 or enemy.id == 4:
 			count += 1
 	if count > 0:
 		bombrat_counter.text = "%d" % count
@@ -1506,7 +1581,7 @@ func _process_hit(body, damage: float):
 		var damage_before_defense = ((damage * (1.0 + strength / 100.0)) * strength_multiplier) * crit_multiplier 
 
 		# Defense reduction formula
-		var defense = body.entity.defense
+		var defense = body.defense
 		var defense_factor = 1.0 - (defense / (defense + 100.0))
 
 		# Final damage after defense
@@ -1524,6 +1599,9 @@ func _process_hit(body, damage: float):
 			var heal_amount = total_damage * 0.1
 			heal(heal_amount)
 			lifesteal_cooldown = LIFESTEAL_COOLDOWN_DURATION
+
+		#var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
+		#body.add_status_effect(gunked)
 
 		# Multiplayer-safe damage + particles
 		if multiplayer.has_multiplayer_peer():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://bfnnju2fwq13d"]
+[gd_scene load_steps=38 format=3 uid="uid://bfnnju2fwq13d"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_hebxe"]
 [ext_resource type="Script" uid="uid://dbkhpbgs1cksc" path="res://scripts/bombrat.gd" id="2_svhan"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cvxq0jf1abijc" path="res://assets/sprites/bombrat-left.png" id="5_qm7hw"]
 [ext_resource type="Texture2D" uid="uid://doerngmwc4448" path="res://assets/sprites/bombrat-right.png" id="6_0ucap"]
 [ext_resource type="Texture2D" uid="uid://4hr2f4vcjjha" path="res://assets/sprites/bombrat-up.png" id="7_a8hrx"]
+[ext_resource type="Texture2D" uid="uid://dg10u7211mx3c" path="res://assets/sprites/swirly.png" id="8_svhan"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
 shader = ExtResource("1_hebxe")
@@ -190,6 +191,42 @@ bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svhan"]
 bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
+[sub_resource type="Curve" id="Curve_aft4d"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_487ah"]
+curve = SubResource("Curve_aft4d")
+
+[sub_resource type="Curve" id="Curve_7vwjr"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_bj30b"]
+width = 512
+curve = SubResource("Curve_7vwjr")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qm7hw"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 1.0
+angle_min = -360.0
+angle_max = 360.0
+angle_curve = SubResource("CurveTexture_bj30b")
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = -25.0
+initial_velocity_max = -25.0
+angular_velocity_min = 9.999984
+angular_velocity_max = 19.999983
+gravity = Vector3(0, -25, 0)
+linear_accel_min = -5.000002
+linear_accel_max = -5.000002
+scale_min = 0.25
+scale_max = 0.4
+color = Color(1, 1, 1, 0.945098)
+alpha_curve = SubResource("CurveTexture_487ah")
+
 [node name="Bombrat" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 2
@@ -239,3 +276,12 @@ show_percentage = false
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 position = Vector2(0, -1.5)
 scale = Vector2(1, 1.35)
+
+[node name="Potion" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+texture = ExtResource("8_svhan")
+lifetime = 1.2
+preprocess = 1.0
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_qm7hw")

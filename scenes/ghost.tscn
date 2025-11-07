@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://bfgg3l6wwrpvt"]
+[gd_scene load_steps=43 format=3 uid="uid://bfgg3l6wwrpvt"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_4pqta"]
 [ext_resource type="Script" uid="uid://dk646lyk7rw6s" path="res://scripts/ghost.gd" id="2_ok4sd"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://wluecivcha13" path="res://assets/sprites/ghost-right.png" id="8_p0uf5"]
 [ext_resource type="Texture2D" uid="uid://0khxw8gf6bli" path="res://assets/sprites/ghost-right-aggro.png" id="9_bj4ww"]
 [ext_resource type="Texture2D" uid="uid://0ehr1x55rdaw" path="res://assets/sprites/ghost-up.png" id="10_f8b1n"]
+[ext_resource type="Texture2D" uid="uid://dg10u7211mx3c" path="res://assets/sprites/swirly.png" id="12_o57ao"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pjw23"]
 shader = ExtResource("1_4pqta")
@@ -223,6 +224,42 @@ bg_color = Color(0.432838, 1.29953e-06, 2.64719e-07, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svhan"]
 bg_color = Color(1.44874e-05, 0.762052, 0.163541, 1)
 
+[sub_resource type="Curve" id="Curve_8ky03"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_c10vd"]
+curve = SubResource("Curve_8ky03")
+
+[sub_resource type="Curve" id="Curve_uehw0"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_pe3fk"]
+width = 512
+curve = SubResource("Curve_uehw0")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p0uf5"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 1.0
+angle_min = -360.0
+angle_max = 360.0
+angle_curve = SubResource("CurveTexture_pe3fk")
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = -25.0
+initial_velocity_max = -25.0
+angular_velocity_min = 9.999984
+angular_velocity_max = 19.999983
+gravity = Vector3(0, -25, 0)
+linear_accel_min = -5.000002
+linear_accel_max = -5.000002
+scale_min = 0.25
+scale_max = 0.4
+color = Color(1, 1, 1, 0.945098)
+alpha_curve = SubResource("CurveTexture_c10vd")
+
 [node name="Ghost" type="CharacterBody2D" groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 22
@@ -287,3 +324,12 @@ target_position = Vector2(90, 0)
 
 [node name="Left" type="RayCast2D" parent="."]
 target_position = Vector2(-90, 0)
+
+[node name="Potion" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+texture = ExtResource("12_o57ao")
+lifetime = 1.2
+preprocess = 1.0
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_p0uf5")
