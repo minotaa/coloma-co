@@ -160,7 +160,7 @@ func _init() -> void:
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(128.0, 16.0, 16.0, 16.0)
 	var damage_upgrade = Upgrade.new(8, "Damage Upgrade", atlas)
-	damage_upgrade.description = "Upgrade the damage of your weapon by 5."
+	damage_upgrade.description = "Upgrade the damage of your weapon by 10."
 	damage_upgrade.max_level = 5
 	damage_upgrade.purchasable = true 
 	damage_upgrade.price = 1000

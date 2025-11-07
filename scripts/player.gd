@@ -92,7 +92,7 @@ func get_crit_chance() -> float:
 func get_bonus_damage() -> float:
 	var bonus_damage := 0.0
 	if upgrade_bag.has_item(Catalog.get_by_id(8)):
-		bonus_damage += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(8)).data["level"]
+		bonus_damage += 10 * upgrade_bag.get_item_stack(Catalog.get_by_id(8)).data["level"]
 	return bonus_damage
 
 func get_defense() -> float:
@@ -183,6 +183,7 @@ func end_game() -> void:
 	alive = false
 	revival_time = -1
 	hide_ui()
+	Man.enemies_killed += total_kills
 	var stats_text := "Your final stats:\n"
 	stats_text += "\nGold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
 	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
@@ -192,6 +193,8 @@ func end_game() -> void:
 	if type == "Defense":
 		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "The gem has broken."
 		stats_text += "\nFinal wave:\t " + str(get_parent().wave)
+		if get_parent().wave > Man.highest_wave:
+			Man.highest_wave = get_parent().wave
 		$"UI/Defense/Game Over".visible = true
 		$"UI/Defense/Game Over/Panel/Meta".text = stats_text
 		if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
@@ -205,6 +208,8 @@ func end_game() -> void:
 			get_parent().are_we_sure_everyone_is_dead.rpc()
 		else:
 			get_parent().are_we_sure_everyone_is_dead()
+		if get_parent().completed_rooms:
+			Man.highest_rooms = get_parent().completed_rooms
 		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "You lost all your lives."
 		stats_text += "\nRooms completed: " + str(roundi(get_parent().completed_rooms))
 		$"UI/Dungeon/Game Over".visible = true

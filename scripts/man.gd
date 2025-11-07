@@ -50,6 +50,10 @@ var equipped_armor: Armor = Catalog.get_by_id(2)
 var game_loaded: bool = false
 var cooldowns: Dictionary[Variant, Variant] = {}
 
+var highest_wave: int = 0
+var highest_rooms: int = 0
+var enemies_killed: int = 0
+
 @rpc("authority", "call_local")
 func add_playtime_points(amount: int) -> void:
 	playtime_points += amount
@@ -163,6 +167,12 @@ func load_game():
 			equipped_armor = Catalog.get_by_id(data["equipped_armor"])
 		if data.has("playtime_points"):
 			playtime_points = data["playtime_points"]
+		if data.has("highest_wave"):
+			highest_wave = data["highest_wave"]
+		if data.has("highest_rooms"):
+			highest_rooms = data["highest_rooms"]
+		if data.has("enemies_killed"):
+			enemies_killed = data["enemies_killed"]
 	print("Loaded save data.")
 
 func get_save_data() -> Dictionary:
@@ -173,7 +183,10 @@ func get_save_data() -> Dictionary:
 		"fullscreen": fullscreen,
 		"playtime_points": playtime_points,
 		"music_volume": music_volume,
-		"sfx_volume": sfx_volume
+		"sfx_volume": sfx_volume,
+		"highest_wave": highest_wave,
+		"highest_rooms": highest_rooms,
+		"enemies_killed": enemies_killed
 	}
 
 func _notification(what: int) -> void:
@@ -184,6 +197,8 @@ func _notification(what: int) -> void:
 func save_game(reason: String) -> void:
 	var save_file: FileAccess = FileAccess.open("user://game.mewo", FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(get_save_data()))
+	HStats.ingest_stat_async("rooms", highest_rooms)
+	HStats.ingest_stat_async("waves", highest_wave)
 	print("Saved the game. " + "(" + reason + ")")
 
 func _ready() -> void:

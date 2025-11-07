@@ -299,6 +299,7 @@ func _on_username_text_changed(new_text: String) -> void:
 	else:
 		$Demoman/Username.text = new_text
 		$Demoman/Username.visible = true
+	HAuth.display_name = new_text
 
 func _on_dev_online_pressed() -> void:
 	HAuth.login_devtool_async($"UI/Main/Multiplayer Buttons/Address".text, $"UI/Main/Multiplayer Buttons/Name".text)

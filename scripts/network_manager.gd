@@ -69,7 +69,7 @@ func _ready() -> void:
 	HAuth.logged_in.connect(_on_eos_logged_in)
 	HAuth.logged_in_connect.connect(_on_eos_logged_in)
 
-	print('HEY APRIL WERE EMITTING')
+	print('HEY ...mino? WERE EMITTING')
 	eos_is_initialized = true
 
 	HAuth.display_name_changed.connect(_eos_display_name_changed)
@@ -91,6 +91,55 @@ func _ready() -> void:
 		Steam.get_auth_session_ticket_response.connect(_get_auth_session_ticket_response)
 		var join_param = Steam.getLaunchQueryParam("join")
 		print("Join param: " + join_param)
+	await auto_login_async()
+	
+func auto_login_async() -> void:
+	if HAuth.product_user_id != "":
+		return  # Already logged in
+
+	# Step 1: Persistent device login
+	print("Logging in with persistent device...")
+	var device_login_result = await login_persistent_device_async()
+	if not device_login_result:
+		Toast.add("Failed to login with device ID.")
+		return
+
+	# Step 2: Attempt Steam login if available
+	if steam_enabled:
+		print("Initiating Steam login to EOS...")
+		initiate_steam_login_to_eos()
+
+func login_persistent_device_async() -> bool:
+	var user_display_name = HAuth.display_name.strip_edges()
+	if user_display_name == "":
+		user_display_name = "Guest" + str(randi() % 10000)
+	HAuth.display_name = user_display_name
+	HAuth.display_name_changed.emit()
+
+	# Attempt login with device ID first
+	var login_opts = EOS.Connect.LoginOptions.new()
+	login_opts.credentials = EOS.Connect.Credentials.new()
+	login_opts.credentials.type = EOS.ExternalCredentialType.DeviceidAccessToken
+	login_opts.user_login_info = EOS.Connect.UserLoginInfo.new()
+	login_opts.user_login_info.display_name = user_display_name
+
+	var login_result = await HAuth.login_game_services_async(login_opts)
+	if login_result:
+		return true # success
+
+	# If login failed due to missing device ID, create one
+	var create_opts = EOS.Connect.CreateDeviceIdOptions.new()
+	create_opts.device_model = " ".join(PackedStringArray([OS.get_name(), OS.get_model_name()]))
+	EOS.Connect.ConnectInterface.create_device_id(create_opts)
+
+	var create_ret = await IEOS.connect_interface_create_device_id_callback
+	if not EOS.is_success(create_ret):
+		printerr("Failed to create device id: result_code=%s" % EOS.result_str(create_ret))
+		return false
+
+	# Try login again with newly created device ID
+	return await HAuth.login_game_services_async(login_opts)
+
 		
 func _get_auth_session_ticket_response(this_auth_ticket: int, result: int) -> void:
 	print("Auth session result: %s" % result)
@@ -113,8 +162,8 @@ func initiate_steam_login_to_eos() -> void:
 	auth_tickets[ticket["id"]] = ticket["buffer"].hex_encode()
 
 func _eos_display_name_changed():
-	print("HEY APRIL WERE NOW CALLED " + HAuth.display_name + ".")
-	Toast.add("Your username has been changed to: " + HAuth.display_name)
+	print("HEY ...mino? WERE NOW CALLED " + HAuth.display_name + ".")
+	#Toast.add("Your username has been changed to: " + HAuth.display_name)
 
 func _on_eos_logged_in():
 	print("EOS logged in successfully: product_user_id=%s" % HAuth.product_user_id)
