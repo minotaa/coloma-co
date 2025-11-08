@@ -91,6 +91,7 @@ func _ready() -> void:
 		smoke.emitting = true
 		add_child(smoke, true)
 		p.setup_ui("Defense")
+		p.refresh_shop(randi())
 		return
 		
 	
@@ -98,9 +99,6 @@ func _ready() -> void:
 	# Multiplayer: spawn players from the current list
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		var radius = 20  # Radius of the spawn circle
-		var rng = RandomNumberGenerator.new()
-		rng.randomize()
-
 		for player_data in NetworkManager.players:
 			var peer_id = player_data["id"]
 			var p = player_scene.instantiate()
@@ -119,9 +117,12 @@ func _ready() -> void:
 			smoke.emitting = true
 			add_child(smoke, true)
 		
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(0.2).timeout
+		var chosen_seed = randi()
 		for player in get_tree().get_nodes_in_group("players"):
 			player.setup_ui.rpc("Defense")
+			player.refresh_shop.rpc(chosen_seed)
+			print("Refreshing shop for " + player.name)
 			print("Setting Defense UI for " + player.name + ".")
 
 		# Connect signals for player joins and quits
@@ -225,9 +226,15 @@ func spawn_wave() -> void:
 	if multiplayer.has_multiplayer_peer():
 		update_wave.rpc(wave)
 
+	var chosen_seed = randi()
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.health < player.get_max_health() and player.alive:
 			player.heal(10)
+			if wave % 5 == 0:
+				if multiplayer.has_multiplayer_peer():
+					player.refresh_shop.rpc(chosen_seed)
+				else:
+					player.refresh_shop(chosen_seed)
 
 	match wave:
 		1:

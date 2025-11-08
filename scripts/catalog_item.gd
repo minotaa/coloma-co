@@ -5,6 +5,7 @@ var item: ItemType
 func set_item(item: ItemType) -> void:
 	self.item = item
 	tooltip_text = item.description
+	$Button.tooltip_text = item.description
 	$TextureRect.texture = item.texture
 	$HBoxContainer/Gold.text = str(item.price)
 	$Label.text = item.name

@@ -72,7 +72,9 @@ gem=""
 
 [gui]
 
+timers/tooltip_delay_sec=0.0
 fonts/dynamic_fonts/use_oversampling=false
+theme/custom="uid://c11leby2o82ok"
 theme/custom_font="res://assets/fonts/DepartureMono-Regular.otf"
 
 [input]
@@ -176,4 +178,3 @@ textures/vram_compression/import_etc2_astc=true
 
 initialization/app_id=3951230
 initialization/embed_callbacks=true
-initialization/initialize_on_startup=false

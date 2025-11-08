@@ -1,7 +1,10 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://c11leby2o82ok"]
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://c11leby2o82ok"]
+
+[ext_resource type="Texture2D" uid="uid://ddquoti6b8ear" path="res://assets/sprites/box5.png" id="1_5x3i2"]
+[ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="1_wl1kw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p4udp"]
-bg_color = Color(0.678431, 0.619608, 0.607843, 1)
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a241b"]
 bg_color = Color(0, 0, 0, 0.862745)
@@ -17,9 +20,32 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wl1kw"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wl1kw"]
+texture = ExtResource("1_5x3i2")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+modulate_color = Color(1, 1, 1, 0.77254903)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lu33j"]
+
 [resource]
 Panel/styles/panel = SubResource("StyleBoxFlat_p4udp")
 ProgressBar/constants/outline_size = 8
 ProgressBar/font_sizes/font_size = 12
 ProgressBar/styles/background = SubResource("StyleBoxFlat_a241b")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_ky4nf")
+TooltipLabel/colors/font_color = Color(0.875, 0.875, 0.875, 1)
+TooltipLabel/colors/font_outline_color = Color(0, 0, 0, 1)
+TooltipLabel/colors/font_shadow_color = Color(0, 0, 0, 0.627451)
+TooltipLabel/constants/outline_size = 1
+TooltipLabel/constants/shadow_offset_x = 1
+TooltipLabel/constants/shadow_offset_y = 1
+TooltipLabel/font_sizes/font_size = 16
+TooltipLabel/fonts/font = ExtResource("1_wl1kw")
+TooltipLabel/styles/focus = SubResource("StyleBoxEmpty_wl1kw")
+TooltipLabel/styles/normal = SubResource("StyleBoxTexture_wl1kw")
+TooltipPanel/styles/panel = SubResource("StyleBoxEmpty_lu33j")

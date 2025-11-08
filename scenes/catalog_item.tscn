@@ -71,6 +71,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_default_cursor_shape = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_1g7mf")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_apdh8")
 theme_override_styles/hover = SubResource("StyleBoxTexture_a0ot6")
@@ -122,6 +123,7 @@ offset_right = 39.0
 offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
 layout_mode = 2

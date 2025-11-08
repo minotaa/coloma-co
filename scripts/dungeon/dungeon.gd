@@ -2,7 +2,9 @@ extends Node2D
 
 var smoke_scene = preload("res://scenes/smoke.tscn")
 var player_scene = preload("res://scenes/player.tscn")
-var filler_tile = Vector2i(3, 0)
+var filler_tile = {
+	"Lysawood": Vector2i(3, 0)
+}
 
 var valid_rooms: Dictionary = {
 	"Lysawood": [
@@ -207,12 +209,14 @@ func _ready() -> void:
 		smoke.emitting = true
 		add_child(smoke, true)
 		p.setup_ui("Dungeon")
+		p.refresh_shop(randi())
 	
 	# Multiplayer: spawn players from the current list
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		var radius = 30  # Radius of the spawn circle
 		var rng = RandomNumberGenerator.new()
 		rng.randomize()
+		var chosen_seed = randi()
 		var spawn_center = Vector2(128, 128)  # Center of start room
 
 		for player_data in NetworkManager.players:
@@ -233,9 +237,10 @@ func _ready() -> void:
 			smoke.emitting = true
 			add_child(smoke, true)
 		
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(0.2).timeout
 		for player in get_tree().get_nodes_in_group("players"):
 			player.setup_ui.rpc("Dungeon")
+			player.refresh_shop.rpc(chosen_seed)
 			print("Setting Dungeon UI for " + player.name + ".")
 	
 	# Start countdown to spawn first room
@@ -321,7 +326,7 @@ func merge_room(room_path: String, offset: Vector2i) -> void:
 			var pos = Vector2i(x, y)
 			# Only set filler if the cell is empty (source_id == -1 means empty)
 			if $TileMapLayer.get_cell_source_id(pos) == -1:
-				$TileMapLayer.set_cell(pos, 0, filler_tile)  # Assuming source_id 0 for filler
+				$TileMapLayer.set_cell(pos, 0, filler_tile[Man.selected_map])  # Assuming source_id 0 for filler
 	
 	# Copy room tiles (this overwrites filler tiles where the room exists)
 	var placed_cells = []
@@ -409,7 +414,7 @@ func delete_room(room_id: int, cleanup_filler: bool = true) -> bool:
 				
 				# Only clear if it's a filler tile
 				var atlas_coords = $TileMapLayer.get_cell_atlas_coords(pos)
-				if atlas_coords != filler_tile:
+				if atlas_coords != filler_tile[Man.selected_map]:
 					continue
 				
 				# Check if this filler tile is still needed by any remaining room
@@ -457,7 +462,7 @@ func convert_room_to_filler(room_id: int) -> bool:
 	
 	# Convert room tiles to filler tiles
 	for cell in room_data.cells:
-		$TileMapLayer.set_cell(cell, 0, filler_tile)
+		$TileMapLayer.set_cell(cell, 0, filler_tile[Man.selected_map])
 	
 	# Clear spawner tiles in this room's bounds only
 	var room_bounds = room_data.bounds
@@ -954,7 +959,7 @@ func is_player_in_void(player: Node2D) -> bool:
 	var tile_atlas_id = $TileMapLayer.get_cell_atlas_coords(player_tile_pos)
 	
 	# Player is in void if there's no tile at their position or they're on filler
-	return tile_source_id == -1 or tile_atlas_id == filler_tile
+	return tile_source_id == -1 or tile_atlas_id == filler_tile[Man.selected_map]
 
 # NEW: Find the best room exit position for teleportation
 func find_room_exit_position(room_id: int, preferred_direction: String = "") -> Vector2:
@@ -1044,7 +1049,7 @@ func find_nearest_safe_position(from_position: Vector2) -> Vector2:
 				var tile_atlas = $TileMapLayer.get_cell_atlas_coords(check_pos)
 				
 				# Valid tile that's not filler
-				if tile_source_id != -1 and tile_atlas != filler_tile:
+				if tile_source_id != -1 and tile_atlas != filler_tile[Man.selected_map]:
 					return $TileMapLayer.map_to_local(check_pos)
 	
 	# Fallback: try to find any active room center

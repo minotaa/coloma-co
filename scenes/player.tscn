@@ -1339,6 +1339,7 @@ alignment = 1
 layout_mode = 2
 
 [node name="Shop" type="Control" parent="UI/Defense"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1395,24 +1396,29 @@ label_settings = SubResource("LabelSettings_60mlk")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Defense/Shop/Panel"]
+[node name="ScrollContainer" type="Control" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
-anchors_preset = -1
 anchor_left = 0.026
 anchor_top = 0.167
 anchor_right = 0.987
 anchor_bottom = 0.879
-offset_left = -0.0320015
-offset_top = -0.176003
-offset_right = 0.0159912
-offset_bottom = -0.11203
+offset_left = -0.032001495
+offset_top = -0.1760025
+offset_right = 0.015991211
+offset_bottom = -0.11203003
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="GridContainer" parent="UI/Defense/Shop/Panel/ScrollContainer"]
-layout_mode = 2
-theme_override_constants/h_separation = 12
-columns = 5
+[node name="GridContainer" type="HBoxContainer" parent="UI/Defense/Shop/Panel/ScrollContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
 
 [node name="Close" type="Button" parent="UI/Defense/Shop/Panel"]
 layout_mode = 1
@@ -1983,9 +1989,8 @@ label_settings = SubResource("LabelSettings_60mlk")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Dungeon/Shop/Panel"]
+[node name="ScrollContainer" type="Control" parent="UI/Dungeon/Shop/Panel"]
 layout_mode = 1
-anchors_preset = -1
 anchor_left = 0.026
 anchor_top = 0.167
 anchor_right = 0.98700005
@@ -1999,7 +2004,16 @@ grow_vertical = 2
 
 [node name="GridContainer" type="HBoxContainer" parent="UI/Dungeon/Shop/Panel/ScrollContainer"]
 custom_minimum_size = Vector2(1184, 0)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -592.0
+offset_right = 592.0
+grow_horizontal = 2
+grow_vertical = 2
 alignment = 1
 
 [node name="Close" type="Button" parent="UI/Dungeon/Shop/Panel"]

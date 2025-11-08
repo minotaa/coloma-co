@@ -296,7 +296,7 @@ func _ready() -> void:
 			clip = Man.equipped_weapon.data["clip"]
 			$Clip.visible = true 
 		
-@rpc("authority", "call_local")
+@rpc("any_peer", "call_local", "reliable")
 func refresh_shop(new_seed: int):
 	current_shop_seed = new_seed
 	rerolls_available = 3  # Reset rerolls on server refresh
@@ -486,16 +486,16 @@ func show_floating_text(amount: int, center_position: Vector2):
 	)
 	floating_text.position = center_position + random_offset
 
+var shop_rng = RandomNumberGenerator.new()
+
 func generate_shop_inventory():
 	shop_items.clear()
 	
-	# Use server seed for deterministic randomization
-	seed(current_shop_seed)
+	shop_rng.seed = current_shop_seed
+	print("Generating shop with seed: ", current_shop_seed)
 	
-	# Determine shop type based on game mode
 	var current_shop_type = "DEFENSE" if type == "Defense" else "DUNGEON"
 	
-	# Get available items for this shop type
 	var available_items = []
 	for item in Catalog.items:
 		if (item as ItemType).purchasable and \
@@ -503,24 +503,38 @@ func generate_shop_inventory():
 			(item as ItemType).shop_type == "ANY"):
 			available_items.append(item)
 	
-	# Get available upgrades
+	print("Available items: ", available_items.size())
+	
 	var available_upgrades = []
 	for upgrade in Catalog.upgrades:
 		if (upgrade as ItemType).purchasable:
 			available_upgrades.append(upgrade)
 	
-	# Randomly select 3 items
-	available_items.shuffle()
+	print("Available upgrades: ", available_upgrades.size())
+	
+	# Shuffle and select items...
+	for i in range(available_items.size() - 1, 0, -1):
+		var j = shop_rng.randi_range(0, i)
+		var temp = available_items[i]
+		available_items[i] = available_items[j]
+		available_items[j] = temp
+	
 	for i in range(min(3, available_items.size())):
 		shop_items.append(available_items[i])
 	
-	# Randomly select 1 upgrade
+	print("Selected items: ", shop_items.size())
+	
+	# Shuffle and select upgrades...
+	for i in range(available_upgrades.size() - 1, 0, -1):
+		var j = shop_rng.randi_range(0, i)
+		var temp = available_upgrades[i]
+		available_upgrades[i] = available_upgrades[j]
+		available_upgrades[j] = temp
+	
 	if available_upgrades.size() > 0:
-		available_upgrades.shuffle()
 		shop_items.append(available_upgrades[0])
 	
-	# Reset seed to avoid affecting other random calls
-	randomize()
+	print("Total shop items: ", shop_items.size())
 
 func populate_shop_ui():
 	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
@@ -577,9 +591,6 @@ func _process_input(delta) -> void:
 			# Check if player is near a gem
 			for area in $Area2D.get_overlapping_areas():
 				if (area as Area2D).is_in_group("gem"):
-					# Generate shop if not already generated
-					if shop_items.is_empty():
-						generate_shop_inventory()
 					shop_node.visible = true
 					play_idle_animation()
 					populate_shop_ui()
