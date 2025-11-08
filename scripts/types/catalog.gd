@@ -518,5 +518,228 @@ func _init() -> void:
 				
 	strength_totem.on_end = func(target, location):
 		pass  # Totem expires
-
 	items.append(strength_totem)
+
+	# ID 25 - Crit Boost I-III
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(160.0, 32.0, 16.0, 16.0)
+	var crit_boost = Upgrade.new(25, "Crit Boost", atlas)
+	crit_boost.description = "Increase your critical hit chance by 5%."
+	crit_boost.max_level = 3
+	crit_boost.purchasable = true
+	crit_boost.price = 1500
+	crit_boost.shop_type = "ANY"
+	upgrades.append(crit_boost)
+
+	# ID 26 - Lifesteal Boost I-V
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(176.0, 32.0, 16.0, 16.0)
+	var lifesteal_boost = Upgrade.new(26, "Lifesteal Boost", atlas)
+	lifesteal_boost.description = "Adds on-kill lifesteal. With Vampire Fangs, adds on-hit lifesteal instead."
+	lifesteal_boost.max_level = 5
+	lifesteal_boost.purchasable = true
+	lifesteal_boost.price = 2000
+	lifesteal_boost.shop_type = "ANY"
+	upgrades.append(lifesteal_boost)
+
+	# ID 27 - Piercing I-V
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(192.0, 32.0, 16.0, 16.0)
+	var piercing = Upgrade.new(27, "Piercing", atlas)
+	piercing.description = "Your attacks ignore a portion of enemy defense."
+	piercing.max_level = 5
+	piercing.purchasable = true
+	piercing.price = 1800
+	piercing.shop_type = "ANY"
+	upgrades.append(piercing)
+
+	# ID 28 - Slow on Hit I-III
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(208.0, 32.0, 16.0, 16.0)
+	var slow_on_hit = Upgrade.new(28, "Slow on Hit", atlas)
+	slow_on_hit.description = "Chance to apply Gunked status to enemies when hitting them."
+	slow_on_hit.max_level = 3
+	slow_on_hit.purchasable = true
+	slow_on_hit.price = 1200
+	slow_on_hit.shop_type = "ANY"
+	upgrades.append(slow_on_hit)
+
+	# ID 29 - Overheal Increase I-III
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(224.0, 32.0, 16.0, 16.0)
+	var overheal_increase = Upgrade.new(29, "Overheal Increase", atlas)
+	overheal_increase.description = "Increase your maximum overheal capacity."
+	overheal_increase.max_level = 3
+	overheal_increase.purchasable = true
+	overheal_increase.price = 1600
+	overheal_increase.shop_type = "ANY"
+	upgrades.append(overheal_increase)
+
+	# ID 30 - Damage Reflection I-V
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(240.0, 32.0, 16.0, 16.0)
+	var damage_reflection = Upgrade.new(30, "Damage Reflection", atlas)
+	damage_reflection.description = "Chance to reflect damage back to attackers. Enhanced by Cactus Armor."
+	damage_reflection.max_level = 5
+	damage_reflection.purchasable = true
+	damage_reflection.price = 2200
+	damage_reflection.shop_type = "ANY"
+	upgrades.append(damage_reflection)
+
+	# ID 31 - Dodge I-V
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(0.0, 48.0, 16.0, 16.0)
+	var dodge = Upgrade.new(31, "Dodge", atlas)
+	dodge.description = "Chance to completely avoid incoming damage. Enhanced by Pajamas."
+	dodge.max_level = 5
+	dodge.purchasable = true
+	dodge.price = 2500
+	dodge.shop_type = "ANY"
+	upgrades.append(dodge)
+
+	# ID 32 - Berserk I-III
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(16.0, 48.0, 16.0, 16.0)
+	var berserk = Upgrade.new(32, "Berserk", atlas)
+	berserk.description = "When low on health, increase your attack and critical damage."
+	berserk.max_level = 3
+	berserk.purchasable = true
+	berserk.price = 1800
+	berserk.shop_type = "ANY"
+	upgrades.append(berserk)
+
+	# ID 33 - Swiftness I-III
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(32.0, 48.0, 16.0, 16.0)
+	var swiftness = Upgrade.new(33, "Swiftness", atlas)
+	swiftness.description = "Increase your movement speed."
+	swiftness.max_level = 3
+	swiftness.purchasable = true
+	swiftness.price = 1400
+	swiftness.shop_type = "ANY"
+	upgrades.append(swiftness)
+
+	# ID 34 - Cooldown Reduction I-V
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(48.0, 48.0, 16.0, 16.0)
+	var cooldown_reduction = Upgrade.new(34, "Cooldown Reduction", atlas)
+	cooldown_reduction.description = "Decrease cooldown time on consumables."
+	cooldown_reduction.max_level = 5
+	cooldown_reduction.purchasable = true
+	cooldown_reduction.price = 2000
+	cooldown_reduction.shop_type = "ANY"
+	upgrades.append(cooldown_reduction)
+
+	# ID 35 - Extra Inventory Slot I
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(64.0, 48.0, 16.0, 16.0)
+	var extra_inventory = Upgrade.new(35, "Extra Inventory Slot", atlas)
+	extra_inventory.description = "Adds an additional inventory slot."
+	extra_inventory.max_level = 1
+	extra_inventory.purchasable = true
+	extra_inventory.price = 3000
+	extra_inventory.shop_type = "ANY"
+	upgrades.append(extra_inventory)
+
+	# ID 36 - Potion Amplifier I-II
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(80.0, 48.0, 16.0, 16.0)
+	var potion_amplifier = Upgrade.new(36, "Potion Amplifier", atlas)
+	potion_amplifier.description = "Potions are 15% more effective."
+	potion_amplifier.max_level = 2
+	potion_amplifier.purchasable = true
+	potion_amplifier.price = 1700
+	potion_amplifier.shop_type = "ANY"
+	upgrades.append(potion_amplifier)
+
+	# ID 37 - Gold from Combat I-III
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(96.0, 48.0, 16.0, 16.0)
+	var gold_from_combat = Upgrade.new(37, "Gold from Combat", atlas)
+	gold_from_combat.description = "Gain more gold from killing enemies. Dealmaker changes this to on-hit."
+	gold_from_combat.max_level = 3
+	gold_from_combat.purchasable = true
+	gold_from_combat.price = 1300
+	gold_from_combat.shop_type = "ANY"
+	upgrades.append(gold_from_combat)
+
+	# ID 38 - Rabid I
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(112.0, 48.0, 16.0, 16.0)
+	var rabid = Upgrade.new(38, "Rabid", atlas)
+	rabid.description = "Gain a guaranteed critical hit after each kill."
+	rabid.max_level = 1
+	rabid.purchasable = true
+	rabid.price = 2800
+	rabid.shop_type = "ANY"
+	upgrades.append(rabid)
+
+	# ID 39 - Chain Hits I-IV
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(128.0, 48.0, 16.0, 16.0)
+	var chain_hits = Upgrade.new(39, "Chain Hits", atlas)
+	chain_hits.description = "Consecutive hits on the same enemy reduce their defense."
+	chain_hits.max_level = 4
+	chain_hits.purchasable = true
+	chain_hits.price = 1900
+	chain_hits.shop_type = "ANY"
+	upgrades.append(chain_hits)
+
+	# ID 40 - Overdrive I
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(144.0, 48.0, 16.0, 16.0)
+	var overdrive = Upgrade.new(40, "Overdrive", atlas)
+	overdrive.description = "Increase damage at full health, but lower your defense."
+	overdrive.max_level = 1
+	overdrive.purchasable = true
+	overdrive.price = 2400
+	overdrive.shop_type = "ANY"
+	upgrades.append(overdrive)
+
+	# ID 41 - Natural Regeneration I-III
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(160.0, 48.0, 16.0, 16.0)
+	var natural_regen = Upgrade.new(41, "Natural Regeneration", atlas)
+	natural_regen.description = "Slowly heal 3% HP every 10 seconds."
+	natural_regen.max_level = 3
+	natural_regen.purchasable = true
+	natural_regen.price = 2100
+	natural_regen.shop_type = "ANY"
+	upgrades.append(natural_regen)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(176.0, 48.0, 16.0, 16.0)
+	var joros_blessing = Consumable.new(42, "Joro's Blessing", atlas)
+	joros_blessing.description = "10 seconds of complete invulnerability."
+	joros_blessing.cooldown = true
+	joros_blessing.purchasable = true
+	joros_blessing.price = 500
+	joros_blessing.shop_type = "ANY"
+	joros_blessing.cooldown_seconds = 60.0
+	joros_blessing.infinite = false
+	joros_blessing.on_consume = func():
+		var player = Man.get_player()
+		if player != null:
+			var invulnerability = Effect.new("Invulnerability", Color.from_rgba8(227, 227, 227, 255), 10.0, 0, 1)
+			player.add_status_effect(invulnerability)
+			player.play_sfx("glug", player.global_position, 10.0)
+			Toast.add("You have Invulnerability for 10 seconds.")
+	items.append(joros_blessing)

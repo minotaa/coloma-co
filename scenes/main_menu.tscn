@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=4 uid="uid://dej207wipn6fc"]
+[gd_scene load_steps=54 format=4 uid="uid://dej207wipn6fc"]
 
 [ext_resource type="Script" uid="uid://bdf37d301uotm" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="Texture2D" uid="uid://ueokxb8wsx7t" path="res://assets/sprites/leaf.png" id="2_7b55j"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://b3wafympohi6" path="res://scenes/demoman.tscn" id="6_rtw2f"]
 [ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="7_5pajh"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="7_flqon"]
+[ext_resource type="StyleBox" uid="uid://cdtblkm5lh8ew" path="res://scenes/outline but for ui lol.tres" id="10_8egab"]
 [ext_resource type="Texture2D" uid="uid://bw3lecgjeqv5d" path="res://assets/sprites/box6.png" id="10_flqon"]
 [ext_resource type="Texture2D" uid="uid://ddquoti6b8ear" path="res://assets/sprites/box5.png" id="11_flqon"]
 [ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="15_a8gd2"]
@@ -72,14 +73,12 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rcqid"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gw5y6"]
 texture = ExtResource("5_5dd4i")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lgwnu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_hstxw"]
 font = ExtResource("7_5pajh")
@@ -87,14 +86,8 @@ font_size = 17
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flqon"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hstxw"]
-
 [sub_resource type="LabelSettings" id="LabelSettings_7b55j"]
 font_size = 33
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_svtp6"]
 
 [sub_resource type="FontVariation" id="FontVariation_1dfpl"]
 base_font = ExtResource("2_bqqt6")
@@ -102,10 +95,6 @@ variation_embolden = 1.5
 
 [sub_resource type="LabelSettings" id="LabelSettings_5pajh"]
 font_size = 22
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5dd4i"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j7ex8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_flqon"]
 font_size = 33
@@ -118,6 +107,10 @@ outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gw5y6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hstxw"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flqon"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rcqid"]
 
@@ -240,12 +233,16 @@ offset_top = -174.0
 offset_right = 504.0
 offset_bottom = -100.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Bag")
+focus_neighbor_bottom = NodePath("../Quit")
+focus_next = NodePath("../Quit")
+focus_previous = NodePath("../Bag")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_lgwnu")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gw5y6")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Settings"
 
 [node name="Bag" type="Button" parent="UI/Main/Buttons"]
@@ -258,12 +255,16 @@ offset_top = -256.0
 offset_right = 504.0
 offset_bottom = -176.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Play")
+focus_neighbor_bottom = NodePath("../Options")
+focus_next = NodePath("../Options")
+focus_previous = NodePath("../Play")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_lgwnu")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Loadout  "
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="UI/Main/Buttons/Bag"]
@@ -309,12 +310,16 @@ offset_top = -368.0
 offset_right = 504.0
 offset_bottom = -264.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Quit")
+focus_neighbor_bottom = NodePath("../Bag")
+focus_next = NodePath("../Bag")
+focus_previous = NodePath("../Quit")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_lgwnu")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Play"
 
 [node name="Quit" type="Button" parent="UI/Main/Buttons"]
@@ -327,12 +332,16 @@ offset_top = -98.0
 offset_right = 504.0
 offset_bottom = -24.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Options")
+focus_neighbor_bottom = NodePath("../Play")
+focus_next = NodePath("../Play")
+focus_previous = NodePath("../Options")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Quit"
 
 [node name="Loadout" type="Control" parent="UI/Main"]
@@ -356,12 +365,15 @@ offset_top = 23.92
 offset_right = -0.320038
 offset_bottom = -0.240051
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Panel/Main/WeaponButton")
+focus_next = NodePath("../Panel/Main/ArmorButton")
+focus_previous = NodePath("../Panel/Main/WeaponButton")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Back"
 
 [node name="Panel" type="Panel" parent="UI/Main/Loadout"]
@@ -423,11 +435,15 @@ offset_left = 16.0
 offset_top = 120.0
 offset_right = 128.0
 offset_bottom = 232.0
+focus_neighbor_top = NodePath("../../../Back")
+focus_neighbor_bottom = NodePath("../WeaponButton")
+focus_next = NodePath("../WeaponButton")
+focus_previous = NodePath("../../../Back")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_svtp6")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 icon_alignment = 1
 expand_icon = true
 
@@ -481,11 +497,15 @@ offset_left = 16.0
 offset_top = 308.0
 offset_right = 128.0
 offset_bottom = 420.0
+focus_neighbor_top = NodePath("../ArmorButton")
+focus_neighbor_bottom = NodePath("../../../Back")
+focus_next = NodePath("../../../Back")
+focus_previous = NodePath("../ArmorButton")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_svtp6")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 icon_alignment = 1
 expand_icon = true
 
@@ -537,7 +557,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Grid" type="Control" parent="UI/Main/Loadout/Panel"]
-visible = false
 layout_mode = 1
 anchor_left = 0.034
 anchor_top = 0.027
@@ -596,12 +615,16 @@ offset_top = -288.0
 offset_right = 504.0
 offset_bottom = -200.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Back")
+focus_neighbor_bottom = NodePath("../Multiplayer")
+focus_next = NodePath("../Multiplayer")
+focus_previous = NodePath("../Back")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_5dd4i")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Singleplayer"
 
 [node name="Multiplayer" type="Button" parent="UI/Main/Play Buttons"]
@@ -614,12 +637,16 @@ offset_top = -192.0
 offset_right = 504.0
 offset_bottom = -104.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Singleplayer")
+focus_neighbor_bottom = NodePath("../Back")
+focus_next = NodePath("../Back")
+focus_previous = NodePath("../Singleplayer")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_j7ex8")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Multiplayer"
 
 [node name="Back" type="Button" parent="UI/Main/Play Buttons"]
@@ -636,8 +663,8 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
 text = "Back"
 
 [node name="Singleplayer Mode Selector" type="Control" parent="UI/Main"]
@@ -703,11 +730,17 @@ grow_horizontal = 2
 
 [node name="Left" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Mode Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Right")
+focus_neighbor_top = NodePath("../../../Back")
+focus_neighbor_right = NodePath("../Right")
+focus_neighbor_bottom = NodePath("../../Map Selector/Left")
+focus_next = NodePath("../../Map Selector/Left")
+focus_previous = NodePath("../../../Back")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = "<"
 
@@ -720,11 +753,17 @@ horizontal_alignment = 1
 
 [node name="Right" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Mode Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Left")
+focus_neighbor_top = NodePath("../../../Back")
+focus_neighbor_right = NodePath("../Left")
+focus_neighbor_bottom = NodePath("../../Map Selector/Right")
+focus_next = NodePath("../../Map Selector/Right")
+focus_previous = NodePath("../../../Back")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = ">"
 
@@ -755,11 +794,17 @@ grow_horizontal = 2
 
 [node name="Left" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Map Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Right")
+focus_neighbor_top = NodePath("../../Mode Selector/Left")
+focus_neighbor_right = NodePath("../Right")
+focus_neighbor_bottom = NodePath("../../../Start")
+focus_next = NodePath("../../../Start")
+focus_previous = NodePath("../../Mode Selector/Left")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = "<"
 
@@ -772,11 +817,17 @@ horizontal_alignment = 1
 
 [node name="Right" type="Button" parent="UI/Main/Singleplayer Mode Selector/Panel/Map Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Left")
+focus_neighbor_top = NodePath("../../Mode Selector/Right")
+focus_neighbor_right = NodePath("../Left")
+focus_neighbor_bottom = NodePath("../../../Start")
+focus_next = NodePath("../../../Start")
+focus_previous = NodePath("../../Mode Selector/Right")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = ">"
 
@@ -796,7 +847,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Back"
 
@@ -816,7 +867,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Start"
 
@@ -887,7 +938,7 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = "<"
 
@@ -904,7 +955,7 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = ">"
 
@@ -939,7 +990,7 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = "<"
 
@@ -956,7 +1007,7 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = ">"
 
@@ -976,7 +1027,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Back"
 
@@ -996,7 +1047,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Continue"
 
@@ -1023,7 +1074,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Host"
 
@@ -1041,7 +1092,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Join"
 
@@ -1059,7 +1110,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Back"
 
@@ -1082,11 +1133,15 @@ offset_top = -290.0
 offset_right = 504.0
 offset_bottom = -200.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Back")
+focus_neighbor_bottom = NodePath("../Join")
+focus_next = NodePath("../Join")
+focus_previous = NodePath("../Back")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Host"
 
@@ -1100,11 +1155,15 @@ offset_top = -194.0
 offset_right = 504.0
 offset_bottom = -104.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Host")
+focus_neighbor_bottom = NodePath("../Back")
+focus_next = NodePath("../Back")
+focus_previous = NodePath("../Host")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Join"
 
@@ -1122,7 +1181,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Back"
 
@@ -1145,9 +1204,13 @@ offset_top = -370.0
 offset_right = 504.0
 offset_bottom = -296.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Back")
+focus_neighbor_bottom = NodePath("../Online")
+focus_next = NodePath("../Online")
+focus_previous = NodePath("../Back")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
 placeholder_text = "Username"
 alignment = 1
@@ -1167,7 +1230,7 @@ offset_bottom = -296.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
 placeholder_text = "Addr."
 alignment = 1
@@ -1185,7 +1248,7 @@ offset_bottom = -376.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
 placeholder_text = "Name"
 alignment = 1
@@ -1200,11 +1263,15 @@ offset_top = -290.0
 offset_right = 504.0
 offset_bottom = -200.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../LineEdit")
+focus_neighbor_bottom = NodePath("../Local")
+focus_next = NodePath("../Local")
+focus_previous = NodePath("../LineEdit")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 disabled = true
 text = "Online"
@@ -1224,7 +1291,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Dev"
 
@@ -1238,11 +1305,15 @@ offset_top = -194.0
 offset_right = 504.0
 offset_bottom = -104.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Online")
+focus_neighbor_bottom = NodePath("../Back")
+focus_next = NodePath("../Back")
+focus_previous = NodePath("../Online")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Local"
 
@@ -1260,7 +1331,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Back"
 
@@ -1283,11 +1354,13 @@ offset_top = -92.0
 offset_right = 384.0
 offset_bottom = -18.0
 grow_vertical = 0
+focus_neighbor_left = NodePath("../Start")
+focus_neighbor_right = NodePath("../Start")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_1ajci")
 text = "Back"
 
@@ -1381,11 +1454,13 @@ offset_top = -92.0
 offset_right = 744.0
 offset_bottom = -18.0
 grow_vertical = 0
+focus_neighbor_left = NodePath("../Back")
+focus_neighbor_right = NodePath("../Back")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_7b55j")
 text = "Start"
 
@@ -1399,11 +1474,15 @@ offset_top = -160.0
 offset_right = 743.0
 offset_bottom = -96.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Mode Selector/Panel/Map Selector/Left")
+focus_neighbor_bottom = NodePath("../Start")
+focus_next = NodePath("../Start")
+focus_previous = NodePath("../Mode Selector/Panel/Map Selector/Left")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_7b55j")
 text = "Copy User ID"
 
@@ -1473,11 +1552,17 @@ alignment = 1
 
 [node name="Left" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Mode Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Right")
+focus_neighbor_top = NodePath("../../../../Copy UserID")
+focus_neighbor_right = NodePath("../Right")
+focus_neighbor_bottom = NodePath("../../Map Selector/Left")
+focus_next = NodePath("../../Map Selector/Left")
+focus_previous = NodePath("../../../../Copy UserID")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = "<"
 
@@ -1490,11 +1575,17 @@ horizontal_alignment = 1
 
 [node name="Right" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Mode Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Left")
+focus_neighbor_top = NodePath("../../../../Copy UserID")
+focus_neighbor_right = NodePath("../Left")
+focus_neighbor_bottom = NodePath("../../Map Selector/Right")
+focus_next = NodePath("../../Map Selector/Right")
+focus_previous = NodePath("../../../../Copy UserID")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = ">"
 
@@ -1526,11 +1617,17 @@ alignment = 1
 
 [node name="Left" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Map Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Right")
+focus_neighbor_top = NodePath("../../Mode Selector/Left")
+focus_neighbor_right = NodePath("../Right")
+focus_neighbor_bottom = NodePath("../../../../Copy UserID")
+focus_next = NodePath("../../../../Copy UserID")
+focus_previous = NodePath("../../Mode Selector/Right")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = "<"
 
@@ -1543,11 +1640,17 @@ horizontal_alignment = 1
 
 [node name="Right" type="Button" parent="UI/Main/Players/Mode Selector/Panel/Map Selector"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Left")
+focus_neighbor_top = NodePath("../../Mode Selector/Right")
+focus_neighbor_right = NodePath("../Left")
+focus_neighbor_bottom = NodePath("../../../../Copy UserID")
+focus_next = NodePath("../../../../Copy UserID")
+focus_previous = NodePath("../../Mode Selector/Right")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gw5y6")
 text = ">"
 
@@ -1572,7 +1675,7 @@ offset_bottom = -184.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_5pajh")
 placeholder_text = "IP Address"
 alignment = 1
@@ -1591,7 +1694,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_a8gd2")
 text = "Join"
 
@@ -1609,7 +1712,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Back"
 
@@ -1634,7 +1737,7 @@ offset_bottom = -184.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/read_only = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_5pajh")
 placeholder_text = "User ID"
 alignment = 1
@@ -1653,7 +1756,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_a8gd2")
 text = "Join"
 
@@ -1671,7 +1774,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Back"
 
@@ -1801,7 +1904,7 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Controls"
 
@@ -1819,7 +1922,7 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Credits"
 
@@ -1901,7 +2004,7 @@ theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_rcqid")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
 text = "Back"
 
@@ -1975,6 +2078,7 @@ horizontal_alignment = 2
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 
+[connection signal="gui_input" from="UI/Main" to="." method="_gui_input"]
 [connection signal="pressed" from="UI/Main/Buttons/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/Bag" to="." method="_on_loadout_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/Play" to="." method="_on_play_pressed"]

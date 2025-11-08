@@ -5,6 +5,7 @@ var current_shop_seed = 0  # Seed from server for deterministic random selection
 var rerolls_available = 3  # Number of rerolls player can use
 var reroll_cost = 50  # Gold cost per reroll
 var type: String = ""
+var guaranteed_crit = false
 var current_log_path: String
 var original_zoom := Vector2(4.0, 4.0)
 var leveling_bar_rest_position: Vector2
@@ -43,7 +44,7 @@ var added_gold_timeout: float = 0.0
 var damage := 25.0
 var strength := 0
 var sword_reach := 1.55  # Base reach
-var gold: int = 0
+var gold: int = 10 * Man.current_level
 
 var revival_time: float = 0.0
 const MAX_REVIVAL_TIME: float = 10.0 # like in seconds and stuff
@@ -69,6 +70,17 @@ var active_effects: Array = []
 func add_gold_notification(amount: int) -> void:
 	if has_effect("Prosperity"):
 		amount *= 2
+	
+	# Check for Gold from Combat upgrade
+	if upgrade_bag.has_item(Catalog.get_by_id(37)):
+		var gold_level = upgrade_bag.get_item_stack(Catalog.get_by_id(37)).data["level"]
+		# Each level increases gold from combat by 10%
+		var gold_bonus = 1.0 + (gold_level * 0.10)
+		amount = int(amount * gold_bonus)
+	
+	var bonus = 1.0 + (0.02 * Man.current_level)
+	amount = int(amount * bonus)
+	
 	if type == "Defense":
 		added_gold += amount
 		added_gold_timeout = 2.0
@@ -83,11 +95,19 @@ func add_gold_notification(amount: int) -> void:
 			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
 		else:
 			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
-			
+		
+func get_slots() -> int:
+	var slots = 3
+	if upgrade_bag.has_item(Catalog.get_by_id(41)):
+		slots += 1
+	return slots 
+
 func get_crit_chance() -> float:
 	var crit_chance = 15.0
 	if has_effect("Focus"):
 		crit_chance += 50.0
+	if upgrade_bag.has_item(Catalog.get_by_id(25)):
+		crit_chance += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(25)).data["level"]
 	return crit_chance
 			
 func get_bonus_damage() -> float:
@@ -101,10 +121,15 @@ func get_defense() -> float:
 	if upgrade_bag.has_item(Catalog.get_by_id(9)):
 		defense += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(9)).data["level"]
 	defense += Man.equipped_armor.defense
+	if upgrade_bag.has_item(Catalog.get_by_id(40)):
+		if health >= get_max_health():
+			defense -= 15
 	return defense
 
 func get_max_overheal() -> float:
 	var max_overheal := 100.0
+	if upgrade_bag.has_item(Catalog.get_by_id(29)):
+		max_overheal += 25 * upgrade_bag.get_item_stack(Catalog.get_by_id(29)).data["level"]
 	return max_overheal
 
 func get_max_health() -> float:
@@ -115,6 +140,13 @@ func get_max_health() -> float:
 	return max_health
 
 func add_status_effect(effect: Effect) -> void:
+	# Check for Potion Amplifier upgrade (ID 36)
+	if upgrade_bag.has_item(Catalog.get_by_id(36)):
+		var amplifier_level = upgrade_bag.get_item_stack(Catalog.get_by_id(36)).data["level"]
+		# Level 1: 15% longer, Level 2: 30% longer
+		var duration_multiplier = 1.0 + (amplifier_level * 0.15)
+		effect.duration *= duration_multiplier
+	
 	effect.on_apply.call(self)
 	active_effects.append(effect)
 
@@ -164,7 +196,7 @@ func reset_game() -> void:
 	gold_collected = 0
 	health = get_max_health()
 	revival_time = 0.0
-	gold = 0
+	gold = 5 * Man.current_level
 	sprint = 220
 	lives = 4
 	alive = true
@@ -372,11 +404,32 @@ func heal(amount: float) -> void:
 		else:
 			play_sfx("maybeheal", global_position)
 	
+func _on_regen_timeout() -> void:
+	if upgrade_bag.has_item(Catalog.get_by_id(41)) and alive:
+		var regen_level = upgrade_bag.get_item_stack(Catalog.get_by_id(41)).data["level"]
+		# Each level increases heal: 3%, 4%, 5%
+		var heal_percent = 0.03 + (regen_level - 1) * 0.01
+		var heal_amount = get_max_health() * heal_percent
+		heal(heal_amount)
+		
+		var next_interval = 10.0 - ((regen_level - 1) * 2.0)
+		$Timer.wait_time = next_interval
+	
 func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0 or not alive:
 		return
+		
+	if has_effect("Invulnerability"):
+		hit_cooldown = max_hit_cooldown
+		return
+		
+	var dodge_chance = 0.0
 	if Man.equipped_armor.id == 11:
-		if randf() < 0.2:
+		dodge_chance += 0.2
+	if upgrade_bag.has_item(Catalog.get_by_id(31)):
+		dodge_chance += (0.5 * upgrade_bag.get_item_stack(Catalog.get_by_id(31)).data["level"])
+	if dodge_chance > 0.0:
+		if randf() < dodge_chance:
 			play_ui_sfx(preload("res://assets/sounds/mama.wav"))
 			Toast.add("Your Pajamas negated the damage!")
 			hit_cooldown = max_hit_cooldown
@@ -390,6 +443,13 @@ func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
 	print("Player took ", final_damage, " damage (raw: ", amount, ", defense: ", defense, ")")
 
 	hit_cooldown = max_hit_cooldown
+	
+	if upgrade_bag.has_item(Catalog.get_by_id(41)):
+		$Timer.stop()
+		await get_tree().create_timer(5.0).timeout
+		var regen_level = upgrade_bag.get_item_stack(Catalog.get_by_id(41)).data["level"]
+		var next_interval = 10.0 - ((regen_level - 1) * 2.0)
+		$Timer.start(next_interval)
 	
 	# Handle overheal absorption
 	if overheal > 0:
@@ -604,6 +664,8 @@ func update_shop_ui():
 	if reroll_btn:
 		reroll_btn.text = "Reroll (%d left - %d gold)" % [rerolls_available, reroll_cost]
 		reroll_btn.disabled = gold < reroll_cost or rerolls_available <= 0
+
+
 
 func _process_input(delta) -> void:
 	# Handle movement input
@@ -825,6 +887,8 @@ func _process_input(delta) -> void:
 
 	# Apply velocity and move
 	velocity *= SPEED
+	if upgrade_bag.has_item(Catalog.get_by_id(33)):
+		velocity *= 1.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(33)).data["level"]
 	#play_sfx(walking_sounds.pick_random(), randf_range(-5.0, 5.0))
 	if knockback_velocity.length() > 0.1:
 		velocity += knockback_velocity
@@ -1396,8 +1460,9 @@ func _physics_process(delta: float) -> void:
 		$Key.visible = found_shop
 			
 		var slots = $UI/Defense/Inventory.get_children()
+		var max_slots = get_slots()  # Get the number of slots player should have
 
-		for i in slots.size():
+		for i in max_slots:  # Only iterate through available slots
 			var slot = slots[i]
 			var icon = slot.get_node("TextureRect")
 			var amount_label = slot.get_node("Label")
@@ -1414,6 +1479,11 @@ func _physics_process(delta: float) -> void:
 				icon.visible = false
 				amount_label.visible = false
 				progress_bar.visible = false
+
+		# Hide any remaining slots beyond max_slots
+		for i in range(max_slots, slots.size()):
+			var slot = slots[i]
+			slot.visible = false
 	elif type == "Dungeon":
 		var found_shop = false
 		for area in $Area2D.get_overlapping_areas():
@@ -1422,8 +1492,9 @@ func _physics_process(delta: float) -> void:
 		$Key.visible = found_shop
 		
 		var slots = $UI/Dungeon/Inventory.get_children()
+		var max_slots = get_slots()  # Get the number of slots player should have
 
-		for i in slots.size():
+		for i in max_slots:  # Only iterate through available slots
 			var slot = slots[i]
 			var icon = slot.get_node("TextureRect")
 			var amount_label = slot.get_node("Label")
@@ -1440,6 +1511,11 @@ func _physics_process(delta: float) -> void:
 				icon.visible = false
 				amount_label.visible = false
 				progress_bar.visible = false
+
+		# Hide any remaining slots beyond max_slots
+		for i in range(max_slots, slots.size()):
+			var slot = slots[i]
+			slot.visible = false
 
 	if sword_hitbox_active:
 		for body in $SwordHbox.get_overlapping_bodies():
@@ -1609,6 +1685,10 @@ func add_hit_particles(position: Vector2, angle: float):
 var lifesteal_cooldown: float = 0.0
 const LIFESTEAL_COOLDOWN_DURATION: float = 2.0
 
+# Add this at the top of your player script with other variables
+var chain_hit_target = null
+var chain_hit_count = 0
+
 func _process_hit(body, damage: float):
 	if body.is_in_group("enemies"):
 		if multiplayer.has_multiplayer_peer():
@@ -1620,14 +1700,52 @@ func _process_hit(body, damage: float):
 		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
 
 		# Apply crit damage
+		var s = strength
 		var crit_multiplier = 2.5 if (randf() * 100.0) <= get_crit_chance() else 1.0
+		if guaranteed_crit:
+			crit_multiplier = 2.5
+			guaranteed_crit = false
 		var crit = true if crit_multiplier == 2.5 else false
-
+		if upgrade_bag.has_item(Catalog.get_by_id(32)) and (health / get_max_health()) <= 0.4:
+			crit_multiplier += 0.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(32)).data["level"]
+			s += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(32)).data["level"]
+		
+		# Overdrive increases damage at full health
+		if upgrade_bag.has_item(Catalog.get_by_id(40)):
+			if health >= get_max_health():
+				s += 25  # +25 strength at full health
+			
 		# Damage before defense, using normal strength stat scaling
-		var damage_before_defense = ((damage * (1.0 + strength / 100.0)) * strength_multiplier) * crit_multiplier 
+		var damage_before_defense = ((damage * (1.0 + s / 100.0)) * strength_multiplier) * crit_multiplier 
 
-		# Defense reduction formula
+		# Defense reduction formula with Piercing and Chain Hits
 		var defense = body.defense
+
+		# Check for Piercing upgrade
+		if upgrade_bag.has_item(Catalog.get_by_id(27)):
+			var piercing_level = upgrade_bag.get_item_stack(Catalog.get_by_id(27)).data["level"]
+			# Each level ignores 15% of defense
+			var defense_ignored = piercing_level * 0.15
+			defense = defense * (1.0 - defense_ignored)
+
+		# Check for Chain Hits upgrade
+		if upgrade_bag.has_item(Catalog.get_by_id(39)):
+			var chain_level = upgrade_bag.get_item_stack(Catalog.get_by_id(39)).data["level"]
+			
+			# Check if we're hitting the same target
+			if chain_hit_target == body:
+				chain_hit_count += 1
+			else:
+				# Reset chain on new target
+				chain_hit_target = body
+				chain_hit_count = 0
+			
+			# Reduce defense based on chain count (5 defense reduction per hit, capped by upgrade level)
+			var max_chain_hits = chain_level * 3  # Level 1 = 3 hits, Level 4 = 12 hits
+			var effective_chain = min(chain_hit_count, max_chain_hits)
+			var defense_reduction = effective_chain * 5
+			defense = max(defense - defense_reduction, 0)
+
 		var defense_factor = 1.0 - (defense / (defense + 100.0))
 
 		# Final damage after defense
@@ -1641,14 +1759,25 @@ func _process_hit(body, damage: float):
 		damage_dealt += total_damage
 		total_damage_dealt += total_damage
 
+		var heal_amount = 0.0
 		if Man.equipped_armor.id == 14 and lifesteal_cooldown <= 0.0:
-			var heal_amount = total_damage * 0.1
+			heal_amount += total_damage * 0.1
+		if upgrade_bag.has_item(Catalog.get_by_id(26)):
+			heal_amount += (0.1 * upgrade_bag.get_item_stack(Catalog.get_by_id(26)).data["level"])
+		
+		if heal_amount > 0.0:	
 			heal(heal_amount)
 			lifesteal_cooldown = LIFESTEAL_COOLDOWN_DURATION
 
-		#var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
-		#body.add_status_effect(gunked)
+		if upgrade_bag.has_item(Catalog.get_by_id(28)):
+			var slow_chance = 0.1 * upgrade_bag.get_item_stack(Catalog.get_by_id(28)).data["level"]
+			if slow_chance > randf() and not body.has_effect("Gunked"):
+				var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
+				body.add_status_effect(gunked)
 
+		if upgrade_bag.has_item(Catalog.get_by_id(38)) and total_damage > body.health:
+			guaranteed_crit = true
+			
 		# Multiplayer-safe damage + particles
 		if multiplayer.has_multiplayer_peer():
 			body.take_damage.rpc(total_damage, global_position, name, crit)
@@ -1749,3 +1878,6 @@ func _on_resume_pressed() -> void:
 	
 func _on_quit_to_main_menu_pressed() -> void:
 	Man.end_game()
+
+func _on_reroll_pressed() -> void:
+	reroll_shop()

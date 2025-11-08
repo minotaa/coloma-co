@@ -3,7 +3,8 @@ extends Node2D
 var smoke_scene = preload("res://scenes/smoke.tscn")
 var player_scene = preload("res://scenes/player.tscn")
 var filler_tile = {
-	"Lysawood": Vector2i(3, 0)
+	"Lysawood": Vector2i(3, 0),
+	"Solmere": Vector2i(6, 4)
 }
 
 var valid_rooms: Dictionary = {
@@ -13,15 +14,21 @@ var valid_rooms: Dictionary = {
 		"res://scenes/levels/dungeon/plains_curvy_way.tscn",
 		"res://scenes/levels/dungeon/plains_loop.tscn",
 		"res://scenes/levels/dungeon/plains_zig_zag_hallway.tscn"	
+	],
+	"Solmere": [
+		"res://scenes/levels/dungeon/desert_bigger_hallway.tscn",
+		"res://scenes/levels/dungeon/desert_thin_hallway.tscn"
 	]
 }
 
 var start_rooms = {
-	"Lysawood": "res://scenes/levels/dungeon/plains_start_room.tscn"
+	"Lysawood": "res://scenes/levels/dungeon/plains_start_room.tscn",
+	"Solmere": "res://scenes/levels/dungeon/desert_spawn_room.tscn"
 }
 
 var shop_rooms = {
-	"Lysawood": "res://scenes/levels/dungeon/plains_shop.tscn"
+	"Lysawood": "res://scenes/levels/dungeon/plains_shop.tscn",
+	"Solmere": "res://scenes/levels/dungeon/desert_shop.tscn"
 }
 
 var waves = []

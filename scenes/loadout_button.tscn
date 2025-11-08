@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="2_g17yw"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="3_ugjyo"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="4_6nqpo"]
+[ext_resource type="StyleBox" uid="uid://cdtblkm5lh8ew" path="res://scenes/outline but for ui lol.tres" id="5_g17yw"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hmag5"]
 texture = ExtResource("1_6ydxa")
@@ -33,8 +34,6 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3dgfq"]
-
 [node name="ArmorButton" type="Button"]
 custom_minimum_size = Vector2(128, 128)
 offset_right = 128.0
@@ -43,7 +42,7 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_hmag5")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3hlte")
 theme_override_styles/hover = SubResource("StyleBoxTexture_2q1x6")
 theme_override_styles/disabled = SubResource("StyleBoxTexture_g32v3")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_3dgfq")
+theme_override_styles/focus = ExtResource("5_g17yw")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

@@ -1,63 +1,74 @@
 extends Node2D
 
+# Audio
 var click1 = preload("res://assets/sounds/click1.wav")
 var click2 = preload("res://assets/sounds/click.wav")
 
-func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:
-	var sfx = AudioStreamPlayer.new()
-	sfx.stream = stream
-	sfx.bus = bus
-	sfx.volume_db = -10.0
-	add_child(sfx)
+# State management
+enum MenuState {
+	TITLE_SCREEN,
+	PLAY_BUTTONS,
+	SINGLEPLAYER_MODE_SELECTOR,
+	MULTIPLAYER_MODE_SELECTOR,
+	LOADOUT,
+	LOADOUT_ARMOR_GRID,
+	LOADOUT_WEAPON_GRID,
+	OPTIONS,
+	OPTIONS_CONTROLS,
+	OPTIONS_CREDITS,
+	MULTIPLAYER_BUTTONS,
+	ONLINE_BUTTONS,
+	LAN_BUTTONS,
+	ONLINE_JOIN,
+	JOIN,
+	PLAYERS
+}
 
-	sfx.play()
+var current_state: MenuState = MenuState.TITLE_SCREEN
 
-	sfx.finished.connect(func():
-		sfx.queue_free()
-	)
-
-func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer:
-	var sfx = AudioStreamPlayer.new()
-	sfx.stream = stream
-	sfx.bus = "Music"
-	sfx.volume_db = -10.0
-	add_child(sfx)
-
-	sfx.play()
-
-	if looping:
-		sfx.finished.connect(func():
-			sfx.play()
-		)
-	else:
-		sfx.finished.connect(func():
-			sfx.queue_free()
-		)
-	
-	return sfx
-
-func _connect_button_sfx(button: Button):
-	button.mouse_entered.connect(func():
-		play_ui_sfx(click2)
-	)
-	button.pressed.connect(func():
-		play_ui_sfx(click1)
-	)
+# State node references (cached for performance)
+var state_nodes := {}
 
 func _ready() -> void:
+	_cache_state_nodes()
+	_setup_audio()
+	_setup_initial_values()
+	_connect_all_buttons()
+	_setup_online_integration()
+	_setup_input_detection()
+	
+	transition_to(MenuState.TITLE_SCREEN)
+
+func _cache_state_nodes() -> void:
+	"""Cache references to all state container nodes"""
+	state_nodes[MenuState.TITLE_SCREEN] = $UI/Main/Buttons
+	state_nodes[MenuState.PLAY_BUTTONS] = $"UI/Main/Play Buttons"
+	state_nodes[MenuState.SINGLEPLAYER_MODE_SELECTOR] = $"UI/Main/Singleplayer Mode Selector"
+	state_nodes[MenuState.MULTIPLAYER_MODE_SELECTOR] = $"UI/Main/Multiplayer Mode Selector"
+	state_nodes[MenuState.LOADOUT] = $UI/Main/Loadout
+	state_nodes[MenuState.OPTIONS] = $UI/Main/Options
+	state_nodes[MenuState.MULTIPLAYER_BUTTONS] = $"UI/Main/Multiplayer Buttons"
+	state_nodes[MenuState.ONLINE_BUTTONS] = $"UI/Main/Online Buttons"
+	state_nodes[MenuState.LAN_BUTTONS] = $"UI/Main/LAN Buttons"
+	state_nodes[MenuState.ONLINE_JOIN] = $"UI/Main/Online Join"
+	state_nodes[MenuState.JOIN] = $UI/Main/Join
+	state_nodes[MenuState.PLAYERS] = $UI/Main/Players
+
+func _setup_audio() -> void:
+	play_music(preload("res://assets/sounds/MO_titlescreen.wav"), true)
+	
+func _setup_initial_values() -> void:
 	$UI/Main/Buttons/Bag/TextureProgressBar.value = Man.current_xp
 	$UI/Main/Buttons/Bag/TextureProgressBar.max_value = Man.calculate_xp_for_level(Man.current_level + 1)
 	$UI/Main/Buttons/Bag/Label.text = str(Man.current_level)
-	Man.set_rich_presence("#In_MainMenu")
-	play_music(preload("res://assets/sounds/MO_titlescreen.wav"), true)
-	
-	for button in find_children("", "Button", true):
-		if button is Button:
-			_connect_button_sfx(button)
-
-	#$UI/Main/Title.text = "Myrkwood: Offshoot" #ProjectSettings.get_setting("application/config/name")
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
-
+	$UI/Main/Options/General/CheckBox.button_pressed = Man.fullscreen
+	$UI/Main/Options/General/HSlider.value = Man.sfx_volume
+	$UI/Main/Options/General/HSlider2.value = Man.music_volume
+	
+	Man.set_rich_presence("#In_MainMenu")
+	
+	# Dev mode visibility
 	if NetworkManager.dev_mode:
 		$"UI/Main/Multiplayer Buttons/Online2".visible = true
 		$"UI/Main/Multiplayer Buttons/Name".visible = true
@@ -65,249 +76,295 @@ func _ready() -> void:
 	if NetworkManager.steam_enabled:
 		$"UI/Main/Multiplayer Buttons/LineEdit".visible = false
 
-	print('HEY APRIL WERE CONNECTING')
+func _connect_all_buttons() -> void:
+	"""Connect all button signals to their handlers"""
+	for button in find_children("", "Button", true):
+		if button is Button:
+			_connect_button_sfx(button)
+
+func _setup_online_integration() -> void:
 	if NetworkManager.eos_is_initialized:
 		_eos_initialized()
 	else:
 		HPlatform.platform_created.connect(_eos_initialized)
-	$UI/Main/Options/General/CheckBox.button_pressed = Man.fullscreen
-	$UI/Main/Options/General/HSlider.value = Man.sfx_volume
-	$UI/Main/Options/General/HSlider2.value = Man.music_volume
+
+# ============================================================================
+# STATE TRANSITION SYSTEM
+# ============================================================================
+
+func transition_to(new_state: MenuState) -> void:
+	"""Transition to a new menu state"""
+	_exit_state(current_state)
+	current_state = new_state
+	await _enter_state(current_state)
+
+func _exit_state(state: MenuState) -> void:
+	"""Handle cleanup when exiting a state"""
+	match state:
+		MenuState.PLAYERS:
+			_cleanup_multiplayer()
+		MenuState.LOADOUT:
+			_show_title_elements(true)
+
+func _enter_state(state: MenuState) -> void:
+	"""Handle setup when entering a state"""
+	_hide_all_states()
 	
+	match state:
+		MenuState.TITLE_SCREEN:
+			_enter_title_screen()
+		MenuState.PLAY_BUTTONS:
+			_enter_play_buttons()
+		MenuState.SINGLEPLAYER_MODE_SELECTOR:
+			_enter_singleplayer_mode_selector()
+		MenuState.MULTIPLAYER_MODE_SELECTOR:
+			_enter_multiplayer_mode_selector()
+		MenuState.LOADOUT:
+			_enter_loadout()
+		MenuState.LOADOUT_ARMOR_GRID:
+			_enter_loadout_armor_grid()
+		MenuState.LOADOUT_WEAPON_GRID:
+			_enter_loadout_weapon_grid()
+		MenuState.OPTIONS:
+			_enter_options()
+		MenuState.OPTIONS_CONTROLS:
+			_enter_options_controls()
+		MenuState.OPTIONS_CREDITS:
+			_enter_options_credits()
+		MenuState.MULTIPLAYER_BUTTONS:
+			_enter_multiplayer_buttons()
+		MenuState.ONLINE_BUTTONS:
+			_enter_online_buttons()
+		MenuState.LAN_BUTTONS:
+			_enter_lan_buttons()
+		MenuState.ONLINE_JOIN:
+			_enter_online_join()
+		MenuState.JOIN:
+			_enter_join()
+		MenuState.PLAYERS:
+			_enter_players()
 
-func init_online_buttons() -> void:
-	$"UI/Main/Online Buttons".visible = true
-
-func _eos_initialized() -> void:
-	print('HEY APRIL WERE _eos_initialized')
-	HAuth.logged_in.connect(_eos_on_logged_in)
-	$"UI/Main/Multiplayer Buttons/Online".disabled = false
-
-func _eos_on_logged_in() -> void:
-	print('HEY APRIL WERE _eos_on_logged_in -> ' + HAuth.product_user_id)
-	if $"UI/Main/Multiplayer Buttons".visible == true:
-		$"UI/Main/Multiplayer Buttons".visible = false
-		init_online_buttons()
-
-func _on_online_host_pressed() -> void:
-	NetworkManager.host_online_server()
-	NetworkManager.update_players.connect(_on_update_players)
-	Toast.add("Players can now connect to your game by joining it!")
+func _hide_all_states() -> void:
+	"""Hide all state containers"""
+	for node in state_nodes.values():
+		if node:
+			node.visible = false
 	
-	$"UI/Main/Online Buttons".visible = false
-	$UI/Main/Players.visible = true
-	$UI/Main/Mode.text = "-- multiplayer game (host) --"
-	_on_update_players(NetworkManager.players)
-	$UI/Main/Players/Details.visible = false
-	$UI/Main/Players/Panel2.visible = false 
+	# Hide additional UI elements
+	$UI/Main/Mode.text = ""
+	$Demoman/Username.visible = false
 
-func _on_lan_pressed() -> void:
-	$UI/Main/Buttons.visible = false
-	$"UI/Main/Multiplayer Buttons".visible = false
-	$"UI/Main/LAN Buttons".visible = true
-	$UI/Main/Mode.text = "-- select your multiplayer mode --"
+# ============================================================================
+# STATE ENTER FUNCTIONS
+# ============================================================================
+
+func _enter_title_screen() -> void:
+	state_nodes[MenuState.TITLE_SCREEN].visible = true
+	$UI/Main/Buttons/Play.grab_focus()
+	$UI/Main/Mode.text = "-- select your mode --"
+	_show_title_elements(true)
+
+func _enter_play_buttons() -> void:
+	state_nodes[MenuState.PLAY_BUTTONS].visible = true
+	$"UI/Main/Play Buttons/Singleplayer".grab_focus()
+
+func _enter_singleplayer_mode_selector() -> void:
+	state_nodes[MenuState.SINGLEPLAYER_MODE_SELECTOR].visible = true
+	update_mode_selector()
+	$"UI/Main/Singleplayer Mode Selector/Start".grab_focus()
+
+func _enter_multiplayer_mode_selector() -> void:
+	state_nodes[MenuState.MULTIPLAYER_MODE_SELECTOR].visible = true
+	update_mode_selector()
+	$"UI/Main/Multiplayer Mode Selector/Panel/Start".grab_focus()
+
+func _enter_loadout() -> void:
+	state_nodes[MenuState.LOADOUT].visible = true
+	$UI/Main/Loadout/Back.grab_focus()
+	$UI/Main/Loadout/Panel/Main.visible = true
+	$UI/Main/Loadout/Panel/Grid.visible = false
+	_show_title_elements(false)
+	update_loadout()
+	_reset_loadout_back_button_focus()
+
+func _enter_loadout_armor_grid() -> void:
+	state_nodes[MenuState.LOADOUT].visible = true
+	_show_title_elements(false)
+	
+	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
+	$UI/Main/Loadout/Panel/Grid.visible = true
+	$UI/Main/Loadout/Panel/Main.visible = false
+	$UI/Main/Loadout/Panel/Grid/Title.text = "Armor"
+	
+	var grid = $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer
+	# Properly disconnect and free old children
+	for child in grid.get_children():
+		if child.pressed.is_connected(Callable()):
+			for connection in child.get_signal_connection_list("pressed"):
+				child.pressed.disconnect(connection["callable"])
+		child.queue_free()
+	
+	# Wait a frame to ensure old nodes are cleaned up
+	await get_tree().process_frame
+	
+	for item in Man.bag.list:
+		if item.type is Armor:
+			var btn = loadout_button_scene.instantiate()
+			btn.get_node("TextureRect").texture = item.type.texture
+			grid.add_child(btn, true)
+			var armor_item = item.type  # Capture the item in a local variable
+			btn.pressed.connect(func(): 
+				select_armor(armor_item)
+				transition_to(MenuState.LOADOUT)
+			)
+	
+	# Wait for buttons to be ready in scene tree
+	await get_tree().process_frame
+	_configure_focus_neighbors_with_back(grid)
+
+func _enter_loadout_weapon_grid() -> void:
+	state_nodes[MenuState.LOADOUT].visible = true
+	_show_title_elements(false)
+	
+	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
+	$UI/Main/Loadout/Panel/Grid.visible = true
+	$UI/Main/Loadout/Panel/Main.visible = false
+	$UI/Main/Loadout/Panel/Grid/Title.text = "Weapons"
+	
+	var grid = $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer
+	# Properly disconnect and free old children
+	for child in grid.get_children():
+		if child.pressed.is_connected(Callable()):
+			for connection in child.get_signal_connection_list("pressed"):
+				child.pressed.disconnect(connection["callable"])
+		child.queue_free()
+	
+	# Wait a frame to ensure old nodes are cleaned up
+	await get_tree().process_frame
+	
+	for item in Man.bag.list:
+		if item.type is Weapon:
+			var btn = loadout_button_scene.instantiate()
+			btn.get_node("TextureRect").texture = item.type.texture
+			grid.add_child(btn, true)
+			var weapon_item = item.type  # Capture the item in a local variable
+			btn.pressed.connect(func(): 
+				select_weapon(weapon_item)
+				transition_to(MenuState.LOADOUT)
+			)
+	
+	# Wait for buttons to be ready in scene tree
+	await get_tree().process_frame
+	_configure_focus_neighbors_with_back(grid)
+
+func _enter_options() -> void:
+	state_nodes[MenuState.OPTIONS].visible = true
+	$UI/Main/Options/General.visible = true
+	$UI/Main/Options/Controls.visible = false
+	$UI/Main/Options/Credits.visible = false
+	$UI/Main/Options/General/CheckBox.grab_focus()
+
+func _enter_options_controls() -> void:
+	state_nodes[MenuState.OPTIONS].visible = true
+	$UI/Main/Options/General.visible = false
+	$UI/Main/Options/Controls.visible = true
+	
+	var keybind_scene = preload("res://scenes/keybind.tscn")
+	var container = $UI/Main/Options/Controls/ScrollContainer/VBoxContainer
+	for child in container.get_children():
+		child.queue_free()
+	
+	for control in Man.controls.keys():
+		var key = keybind_scene.instantiate()
+		key.get_node("HBoxContainer/Label").text = Man.controls[control]
+		key.get_node("HBoxContainer/Key").keycode = str(control)
+		container.add_child(key)
+	
+	# Wait for buttons to be ready, then focus back button
+	await get_tree().process_frame
+	if $UI/Main/Options/Controls.has_node("Back"):
+		$UI/Main/Options/Controls/Back.grab_focus()
+	else:
+		# Fallback: try to find any back button in Options
+		for child in $UI/Main/Options.find_children("Back", "Button", true):
+			child.grab_focus()
+			break
+
+func _enter_options_credits() -> void:
+	state_nodes[MenuState.OPTIONS].visible = true
+	$UI/Main/Options/General.visible = false
+	$UI/Main/Options/Credits.visible = true
+	
+	# Focus the back button
+	if $UI/Main/Options/Credits.has_node("Back"):
+		$UI/Main/Options/Credits/Back.grab_focus()
+	else:
+		# Fallback: try to find any back button in Options
+		for child in $UI/Main/Options.find_children("Back", "Button", true):
+			child.grab_focus()
+			break
+
+func _enter_multiplayer_buttons() -> void:
+	state_nodes[MenuState.MULTIPLAYER_BUTTONS].visible = true
+	$"UI/Main/Multiplayer Buttons/Online".grab_focus()
 	if $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
 		$Demoman/Username.visible = true
 		$Demoman/Username.text = $"UI/Main/Multiplayer Buttons/LineEdit".text
 
-func _on_multiplayer_pressed() -> void:
-	$"UI/Main/Play Buttons".visible = false
-	$"UI/Main/Multiplayer Buttons".visible = true
+func _enter_online_buttons() -> void:
+	state_nodes[MenuState.ONLINE_BUTTONS].visible = true
+	$"UI/Main/Online Buttons/Host".grab_focus()
 
-func _on_back_pressed() -> void:
-	if $UI/Main/Loadout/Panel/Grid.visible:
-		$UI/Main/Loadout/Panel/Grid.visible = false
-		$UI/Main/Loadout/Panel/Main.visible = true 
-		update_loadout()
-		return
-	
-	if $UI/Main/Options.visible and not $UI/Main/Options/General.visible: # doing this instead of adding something that'd make this way more easier for me in the future.
-		$UI/Main/Options/Controls.visible = false
-		$UI/Main/Options/Credits.visible = false
-		$UI/Main/Options/General.visible = true
-	elif $UI/Main/Loadout.visible:
-		$UI/Main/Loadout.visible = false 
-		$UI/Main/Buttons.visible = true
-		$UI/Main/Title.visible = true
-		$UI/Main/Title2.visible = true
-		$UI/Main/Version.visible = true
-	else:
-		$"UI/Main/Play Buttons".visible = false
-		$UI/Main/Mode.text = "-- select your mode --"
-		$UI/Main/Buttons.visible = true
-		$"UI/Main/Singleplayer Mode Selector".visible = false
-		$UI/Main/Join.visible = false
-		$"UI/Main/LAN Buttons".visible = false
-		$UI/Main/Players.visible = false
-		$UI/Main/Options.visible = false
-		$Demoman/Username.visible = false
-		$"UI/Main/Multiplayer Buttons".visible = false
-		$"UI/Main/Online Join".visible = false
-		$"UI/Main/Online Buttons".visible = false
-		$Demoman/Username.text = "Player"
-
-	if multiplayer != null and multiplayer.has_multiplayer_peer():
-		if NetworkManager.update_players.is_connected(_on_update_players):
-			NetworkManager.update_players.disconnect(_on_update_players)
-
-		if multiplayer.peer_connected.is_connected(NetworkManager._player_joined):
-			multiplayer.peer_connected.disconnect(NetworkManager._player_joined)
-
-		if multiplayer.peer_disconnected.is_connected(NetworkManager._player_quit):
-			multiplayer.peer_disconnected.disconnect(NetworkManager._player_quit)
-		NetworkManager.players.clear()
-
-		if multiplayer.multiplayer_peer is EOSGMultiplayerPeer:
-			multiplayer.multiplayer_peer.close()
-		else:
-			multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
-			multiplayer.multiplayer_peer = null
-
-func _on_host_pressed() -> void:
-	if $"UI/Main/Multiplayer Buttons/LineEdit".text != null and $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
-		NetworkManager.player_name = $"UI/Main/Multiplayer Buttons/LineEdit".text
-	else:
-		NetworkManager.player_name = "Player"
+func _enter_lan_buttons() -> void:
+	state_nodes[MenuState.LAN_BUTTONS].visible = true
+	$UI/Main/Mode.text = "-- select your multiplayer mode --"
+	$"UI/Main/LAN Buttons/Host".grab_focus()
+	if $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
 		$Demoman/Username.visible = true
-		$Demoman/Username.text = "Player"
+		$Demoman/Username.text = $"UI/Main/Multiplayer Buttons/LineEdit".text
 
-	NetworkManager.host_server(NetworkManager.PORT)
-	NetworkManager.update_players.connect(_on_update_players)
-	Toast.add("Players can now connect to your game by joining it!")
-	#get_tree().change_scene_to_file("res://scenes/map.tscn")
-	$"UI/Main/LAN Buttons".visible = false
-	$UI/Main/Players.visible = true
-	$"UI/Main/Players/Copy UserID".visible = false
-	$UI/Main/Mode.text = "-- multiplayer game (host) --"
-	$UI/Main/Players/Details.visible = false
-	$UI/Main/Players/Panel2.visible = false 
-	_on_update_players(NetworkManager.players)
+func _enter_online_join() -> void:
+	state_nodes[MenuState.ONLINE_JOIN].visible = true
+	$"UI/Main/Online Join/UserID".grab_focus()
 
-func _on_singleplayer_pressed() -> void:
-	if multiplayer != null and multiplayer.has_multiplayer_peer():
-		if multiplayer.multiplayer_peer is EOSGMultiplayerPeer:
-			multiplayer.multiplayer_peer.close()
-		else:
-			multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
-			multiplayer.multiplayer_peer = null
-		NetworkManager.players = []
-	#Man.start_game()
-	update_mode_selector()
-	$"UI/Main/Singleplayer Mode Selector".visible = true
-	$"UI/Main/Play Buttons".visible = false
-	
-func update_mode_selector() -> void:
-	$"UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode 
-	$"UI/Main/Singleplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map 
-	$"UI/Main/Multiplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode 
-	$"UI/Main/Multiplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map 
-	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-		NetworkManager.send_mode.rpc(Man.selected_mode, Man.selected_map)
-		NetworkManager.update_players.emit(NetworkManager.players)
-
-func _on_update_players(players: Array) -> void:
-	print("updating players")
-	Man.set_rich_presence("#In_Lobby")
-	Man.set_rich_presence_value("players", str(NetworkManager.players.size()))
-	var container = $UI/Main/Players/ScrollContainer/VBoxContainer
-	for children in container.get_children():
-		children.queue_free()
-
-	for player in players:
-		var entry = preload("res://scenes/multiplayer_player_entry.tscn").instantiate()
-		var level_color = Man.get_level_color(player.get("level", 1))
-		var level = player.get("level", 1)
-		entry.get_node("Label").text = "[color=#" + level_color.to_html() + "][" + str(level) + "][/color] " + player["username"]
-		container.add_child(entry, true)
-	$UI/Main/Players/Count.text = "Players (" + str(players.size()) + "/6)"
-	$"UI/Main/Players/Details".text = "Mode: " + Man.selected_mode + "\nMap: " + Man.selected_map
-	$"UI/Main/Players/Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
-	$"UI/Main/Players/Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
- 	
-func _on_online_join_join_pressed() -> void:
-	Toast.add("Connecting to " + $"UI/Main/Online Join/UserID".text + "...")
-	$"UI/Main/Online Join/Join".disabled = true
-	$"UI/Main/Online Join/Back".disabled = true
-
-	var result = await NetworkManager.join_online_server($"UI/Main/Online Join/UserID".text)
-	$"UI/Main/Online Join/Join".disabled = false
-	$"UI/Main/Online Join/Back".disabled = false
-	if result == false:
-		Toast.add("Couldn't connect to the server")
-		play_ui_sfx(preload("res://assets/sounds/deny.wav"))
-	else:
-		NetworkManager.update_players.connect(_on_update_players)
-		Toast.add("Successfully connected to the server!")
-		$UI/Main/Join.visible = false
-		$"UI/Main/Online Join".visible = false
-		$UI/Main/Players.visible = true
-		_on_update_players(NetworkManager.players)
-		$UI/Main/Mode.text = "-- multiplayer game --"
-		$UI/Main/Players/Start.visible = false
-		$"UI/Main/Players/Mode Selector".visible = false
-		$"UI/Main/Players/Copy UserID".visible = false
-		$UI/Main/Players/Details.visible = true
-		$UI/Main/Players/Panel2.visible = true 
-
-func _on_join_pressed() -> void:
-	if $"UI/Main/Multiplayer Buttons/LineEdit".text != null and $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
-		NetworkManager.player_name = $"UI/Main/Multiplayer Buttons/LineEdit".text
-	else:
-		NetworkManager.player_name = "Player"
-	Toast.add("Connecting to " + $UI/Main/Join/Address.text + "...")
-	$"UI/Main/Join/Join".disabled = true
-	$"UI/Main/Join/Back".disabled = true
-	$"UI/Main/Join/Address".editable = false
-	var result = await NetworkManager.join_server($UI/Main/Join/Address.text, NetworkManager.player_name)
-	$"UI/Main/Join/Join".disabled = false
-	$"UI/Main/Join/Back".disabled = false
-	$"UI/Main/Join/Address".editable = true
-	if result == false:
-		Toast.add("Couldn't connect to the server.")
-		play_ui_sfx(preload("res://assets/sounds/deny.wav"))
-		_on_back_pressed()
-	else:
-		NetworkManager.update_players.connect(_on_update_players)
-		Toast.add("Successfully connected to the server!")
-		$UI/Main/Join.visible = false
-		$UI/Main/Players.visible = true
-		_on_update_players(NetworkManager.players)
-		$UI/Main/Mode.text = "-- multiplayer game --"
-		$UI/Main/Players/Start.visible = false
-		$"UI/Main/Players/Mode Selector".visible = false
-		$"UI/Main/Players/Copy UserID".visible = false
-		$UI/Main/Players/Details.visible = true
-		$UI/Main/Players/Panel2.visible = true
-	
-func _on_lan_join_pressed() -> void:
-	$"UI/Main/LAN Buttons".visible = false
-	$UI/Main/Join.visible = true
+func _enter_join() -> void:
+	state_nodes[MenuState.JOIN].visible = true
 	$UI/Main/Mode.text = "-- enter server details --"
+	$"UI/Main/Join/Address".grab_focus()
 
-func _on_online_join_pressed() -> void:
-	$"UI/Main/Online Buttons".visible = false
-	$"UI/Main/Online Join".visible = true
+func _enter_players() -> void:
+	state_nodes[MenuState.PLAYERS].visible = true
+	_on_update_players(NetworkManager.players)
+	_configure_players_focus()
 
-func _on_start_pressed() -> void:
-	if multiplayer.is_server():
-		play_ui_sfx(preload("res://assets/sounds/success.wav"))
-		Man.start_game.rpc(Man.selected_mode, Man.selected_map)
-		Man.set_rich_presence("#Multiplayer")
-		Man.set_rich_presence_value("map", Man.selected_map)
+func _show_title_elements(show: bool) -> void:
+	$UI/Main/Title.visible = show
+	$UI/Main/Title2.visible = show
+	$UI/Main/Version.visible = show
+
+# ============================================================================
+# BUTTON HANDLERS (now use state transitions)
+# ============================================================================
+
+func _on_play_pressed() -> void:
+	transition_to(MenuState.PLAY_BUTTONS)
+
+func _on_loadout_pressed() -> void:
+	transition_to(MenuState.LOADOUT)
+
+func _on_options_pressed() -> void:
+	transition_to(MenuState.OPTIONS)
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
 
-func _on_username_text_changed(new_text: String) -> void:
-	if new_text == "":
-		$Demoman/Username.visible = false
-	else:
-		$Demoman/Username.text = new_text
-		$Demoman/Username.visible = true
-	HAuth.display_name = new_text
+func _on_singleplayer_pressed() -> void:
+	if multiplayer != null and multiplayer.has_multiplayer_peer():
+		_cleanup_multiplayer()
+	transition_to(MenuState.SINGLEPLAYER_MODE_SELECTOR)
 
-func _on_dev_online_pressed() -> void:
-	HAuth.login_devtool_async($"UI/Main/Multiplayer Buttons/Address".text, $"UI/Main/Multiplayer Buttons/Name".text)
+func _on_multiplayer_pressed() -> void:
+	transition_to(MenuState.MULTIPLAYER_BUTTONS)
 
 func _on_online_pressed() -> void:
 	if HAuth.product_user_id == "":
@@ -316,56 +373,378 @@ func _on_online_pressed() -> void:
 			if result == false:
 				Toast.add("An error occurred while attempting to sign in.")
 				play_ui_sfx(preload("res://assets/sounds/deny.wav"))
+				return
 		else:
 			NetworkManager.initiate_steam_login_to_eos()
-	else:
-		$"UI/Main/Multiplayer Buttons".visible = false
-		init_online_buttons()
-
-func _on_address_text_submitted(new_text:String) -> void:
-	$UI/Main/Join/Join.emit_signal("pressed")
-
-func _on_userid_text_submitted(new_text:String) -> void:
-	$"UI/Main/Online Join/Join".emit_signal("pressed")
-
-func _on_copy_userid_pressed() -> void:
-	DisplayServer.clipboard_set(HAuth.product_user_id)
-	Toast.add("Copied your user ID to your clipboard. Send it to friends so they can join your game.")
-
-func _on_options_pressed() -> void:
-	$UI/Main/Buttons.visible = false
-	$UI/Main/Options.visible = true
-
-func _on_fullscreen_check_box_toggled(toggled_on: bool) -> void:
-	var mode: int = 0
-	if toggled_on:
-		mode = 3
-	DisplayServer.window_set_mode(mode)
-	Man.fullscreen = toggled_on
-
-func _on_volume_slider_drag_ended(value_changed: bool) -> void:
-	play_ui_sfx(preload("res://assets/sounds/f_slash.wav"))
 	
-func _on_volume_slider_value_changed(value: float) -> void:
-	Man.sfx_volume = value
-	if value <= 0.0:
-		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), true)
+	transition_to(MenuState.ONLINE_BUTTONS)
+
+func _on_lan_pressed() -> void:
+	transition_to(MenuState.LAN_BUTTONS)
+
+func _on_online_host_pressed() -> void:
+	NetworkManager.host_online_server()
+	NetworkManager.update_players.connect(_on_update_players)
+	Toast.add("Players can now connect to your game by joining it!")
+	
+	$UI/Main/Mode.text = "-- multiplayer game (host) --"
+	$UI/Main/Players/Details.visible = false
+	$UI/Main/Players/Panel2.visible = false
+	$"UI/Main/Players/Copy UserID".visible = true
+	$UI/Main/Players/Start.visible = true
+	$"UI/Main/Players/Mode Selector".visible = true
+	
+	transition_to(MenuState.PLAYERS)
+
+func _on_online_join_pressed() -> void:
+	transition_to(MenuState.ONLINE_JOIN)
+
+func _on_host_pressed() -> void:
+	if $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
+		NetworkManager.player_name = $"UI/Main/Multiplayer Buttons/LineEdit".text
 	else:
-		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), false)
-		var db_value = lerp(-55.0, 0.0, value / 100.0)
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
+		NetworkManager.player_name = "Player"
+		$Demoman/Username.visible = true
+		$Demoman/Username.text = "Player"
+	
+	NetworkManager.host_server(NetworkManager.PORT)
+	NetworkManager.update_players.connect(_on_update_players)
+	Toast.add("Players can now connect to your game by joining it!")
+	
+	$UI/Main/Mode.text = "-- multiplayer game (host) --"
+	$"UI/Main/Players/Copy UserID".visible = false
+	$UI/Main/Players/Details.visible = false
+	$UI/Main/Players/Panel2.visible = false
+	$UI/Main/Players/Start.visible = true
+	$"UI/Main/Players/Mode Selector".visible = true
+	
+	transition_to(MenuState.PLAYERS)
+
+func _on_lan_join_pressed() -> void:
+	transition_to(MenuState.JOIN)
+
+func _on_online_join_join_pressed() -> void:
+	Toast.add("Connecting to " + $"UI/Main/Online Join/UserID".text + "...")
+	$"UI/Main/Online Join/Join".disabled = true
+	$"UI/Main/Online Join/Back".disabled = true
+	
+	var result = await NetworkManager.join_online_server($"UI/Main/Online Join/UserID".text)
+	$"UI/Main/Online Join/Join".disabled = false
+	$"UI/Main/Online Join/Back".disabled = false
+	
+	if result == false:
+		Toast.add("Couldn't connect to the server")
+		play_ui_sfx(preload("res://assets/sounds/deny.wav"))
+		$"UI/Main/Online Join/UserID".grab_focus()
+	else:
+		NetworkManager.update_players.connect(_on_update_players)
+		Toast.add("Successfully connected to the server!")
+		
+		$UI/Main/Mode.text = "-- multiplayer game --"
+		$UI/Main/Players/Start.visible = false
+		$"UI/Main/Players/Mode Selector".visible = false
+		$"UI/Main/Players/Copy UserID".visible = false
+		$UI/Main/Players/Details.visible = true
+		$UI/Main/Players/Panel2.visible = true
+		
+		transition_to(MenuState.PLAYERS)
+
+func _on_join_pressed() -> void:
+	if $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
+		NetworkManager.player_name = $"UI/Main/Multiplayer Buttons/LineEdit".text
+	else:
+		NetworkManager.player_name = "Player"
+	
+	Toast.add("Connecting to " + $UI/Main/Join/Address.text + "...")
+	$"UI/Main/Join/Join".disabled = true
+	$"UI/Main/Join/Back".disabled = true
+	$"UI/Main/Join/Address".editable = false
+	
+	var result = await NetworkManager.join_server($UI/Main/Join/Address.text, NetworkManager.player_name)
+	
+	$"UI/Main/Join/Join".disabled = false
+	$"UI/Main/Join/Back".disabled = false
+	$"UI/Main/Join/Address".editable = true
+	
+	if result == false:
+		Toast.add("Couldn't connect to the server.")
+		play_ui_sfx(preload("res://assets/sounds/deny.wav"))
+		$"UI/Main/Join/Address".grab_focus()
+	else:
+		NetworkManager.update_players.connect(_on_update_players)
+		Toast.add("Successfully connected to the server!")
+		
+		$UI/Main/Mode.text = "-- multiplayer game --"
+		$UI/Main/Players/Start.visible = false
+		$"UI/Main/Players/Mode Selector".visible = false
+		$"UI/Main/Players/Copy UserID".visible = false
+		$UI/Main/Players/Details.visible = true
+		$UI/Main/Players/Panel2.visible = true
+		
+		transition_to(MenuState.PLAYERS)
+
+func _on_armor_button_pressed() -> void:
+	await transition_to(MenuState.LOADOUT_ARMOR_GRID)
+
+func _on_weapon_button_pressed() -> void:
+	await transition_to(MenuState.LOADOUT_WEAPON_GRID)
 
 func _on_controls_pressed() -> void:
-	$UI/Main/Options/General.visible = false
-	$UI/Main/Options/Controls.visible = true
-	var keybind_scene = preload("res://scenes/keybind.tscn")
-	for children in $UI/Main/Options/Controls/ScrollContainer/VBoxContainer.get_children():
-		children.queue_free()
-	for control in Man.controls.keys():
-		var key = keybind_scene.instantiate()
-		key.get_node("HBoxContainer/Label").text = Man.controls[control]
-		key.get_node("HBoxContainer/Key").keycode = str(control)
-		$UI/Main/Options/Controls/ScrollContainer/VBoxContainer.add_child(key)
+	transition_to(MenuState.OPTIONS_CONTROLS)
+
+func _on_credits_pressed() -> void:
+	transition_to(MenuState.OPTIONS_CREDITS)
+
+func _on_back_pressed() -> void:
+	# Handle back navigation based on current state
+	match current_state:
+		MenuState.LOADOUT_ARMOR_GRID, MenuState.LOADOUT_WEAPON_GRID:
+			transition_to(MenuState.LOADOUT)
+		MenuState.LOADOUT:
+			transition_to(MenuState.TITLE_SCREEN)
+		MenuState.OPTIONS_CONTROLS, MenuState.OPTIONS_CREDITS:
+			transition_to(MenuState.OPTIONS)
+		MenuState.OPTIONS:
+			transition_to(MenuState.TITLE_SCREEN)
+		MenuState.PLAY_BUTTONS:
+			transition_to(MenuState.TITLE_SCREEN)
+		MenuState.SINGLEPLAYER_MODE_SELECTOR:
+			transition_to(MenuState.PLAY_BUTTONS)
+		MenuState.MULTIPLAYER_BUTTONS:
+			transition_to(MenuState.PLAY_BUTTONS)
+		MenuState.ONLINE_BUTTONS:
+			transition_to(MenuState.MULTIPLAYER_BUTTONS)
+		MenuState.LAN_BUTTONS:
+			transition_to(MenuState.MULTIPLAYER_BUTTONS)
+		MenuState.ONLINE_JOIN:
+			transition_to(MenuState.ONLINE_BUTTONS)
+		MenuState.JOIN:
+			transition_to(MenuState.LAN_BUTTONS)
+		MenuState.PLAYERS:
+			_cleanup_multiplayer()
+			transition_to(MenuState.TITLE_SCREEN)
+		_:
+			transition_to(MenuState.TITLE_SCREEN)
+
+func _on_start_pressed() -> void:
+	if multiplayer.is_server():
+		play_ui_sfx(preload("res://assets/sounds/success.wav"))
+		Man.start_game.rpc(Man.selected_mode, Man.selected_map)
+		Man.set_rich_presence("#Multiplayer")
+		Man.set_rich_presence_value("map", Man.selected_map)
+
+func _on_mode_selector_start_pressed() -> void:
+	play_ui_sfx(preload("res://assets/sounds/success.wav"))
+	Man.start_game(Man.selected_mode, Man.selected_map)
+	Man.set_rich_presence("#Singleplayer")
+	Man.set_rich_presence_value("map", Man.selected_map)
+
+# ============================================================================
+# HELPER FUNCTIONS (unchanged functionality)
+# ============================================================================
+
+func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:
+	var sfx = AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = bus
+	sfx.volume_db = -10.0
+	add_child(sfx)
+	sfx.play()
+	sfx.finished.connect(func(): sfx.queue_free())
+
+func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer:
+	var sfx = AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = "Music"
+	sfx.volume_db = -10.0
+	add_child(sfx)
+	sfx.play()
+	
+	if looping:
+		sfx.finished.connect(func(): sfx.play())
+	else:
+		sfx.finished.connect(func(): sfx.queue_free())
+	
+	return sfx
+
+func _connect_button_sfx(button: Button) -> void:
+	button.mouse_entered.connect(func(): play_ui_sfx(click2))
+	button.pressed.connect(func(): play_ui_sfx(click1))
+
+func _eos_initialized() -> void:
+	HAuth.logged_in.connect(_eos_on_logged_in)
+	$"UI/Main/Multiplayer Buttons/Online".disabled = false
+
+func _eos_on_logged_in() -> void:
+	if current_state == MenuState.MULTIPLAYER_BUTTONS:
+		transition_to(MenuState.ONLINE_BUTTONS)
+
+func init_online_buttons() -> void:
+	$"UI/Main/Online Buttons".visible = true
+
+func _on_update_players(players: Array) -> void:
+	Man.set_rich_presence("#In_Lobby")
+	Man.set_rich_presence_value("players", str(NetworkManager.players.size()))
+	
+	var container = $UI/Main/Players/ScrollContainer/VBoxContainer
+	for child in container.get_children():
+		child.queue_free()
+	
+	for player in players:
+		var entry = preload("res://scenes/multiplayer_player_entry.tscn").instantiate()
+		var level_color = Man.get_level_color(player.get("level", 1))
+		var level = player.get("level", 1)
+		entry.get_node("Label").text = "[color=#" + level_color.to_html() + "][" + str(level) + "][/color] " + player["username"]
+		container.add_child(entry, true)
+	
+	$UI/Main/Players/Count.text = "Players (" + str(players.size()) + "/6)"
+	$"UI/Main/Players/Details".text = "Mode: " + Man.selected_mode + "\nMap: " + Man.selected_map
+	$"UI/Main/Players/Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
+	$"UI/Main/Players/Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
+
+func update_mode_selector() -> void:
+	$"UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
+	$"UI/Main/Singleplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
+	$"UI/Main/Multiplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
+	$"UI/Main/Multiplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
+	
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		NetworkManager.send_mode.rpc(Man.selected_mode, Man.selected_map)
+		NetworkManager.update_players.emit(NetworkManager.players)
+
+func update_loadout() -> void:
+	$UI/Main/Loadout/Panel/Main/ArmorIcon.texture = Man.equipped_armor.texture
+	$UI/Main/Loadout/Panel/Main/WeaponIcon.texture = Man.equipped_weapon.texture
+	
+	var found_armor = 0
+	var found_weapons = 0
+	var total_armor = 0
+	var total_weapons = 0
+	
+	for item in Catalog.items:
+		if item is Weapon:
+			total_weapons += 1
+			if Man.bag.has_item(item):
+				found_weapons += 1
+		if item is Armor:
+			total_armor += 1
+			if Man.bag.has_item(item):
+				found_armor += 1
+	
+	$UI/Main/Loadout/Panel/Main/Armor.text = "Armor (" + str(found_armor) + "/" + str(total_armor) + ")"
+	$UI/Main/Loadout/Panel/Main/Weapon.text = "Weapon (" + str(found_weapons) + "/" + str(total_weapons) + ")"
+	$UI/Main/Loadout/Panel/Main/ArmorMeta.text = Man.equipped_armor.name + "\n" + Man.equipped_armor.description
+	$UI/Main/Loadout/Panel/Main/WeaponMeta.text = Man.equipped_weapon.name + "\n" + Man.equipped_weapon.description
+	$UI/Main/Loadout/Panel/Main/Meta.text = "+" + str(roundi(Man.equipped_weapon.damage)) + " damage\n+" + str(roundi(Man.equipped_armor.defense)) + " defense"
+
+func select_weapon(item: Weapon) -> void:
+	Man.equipped_weapon = item
+	Toast.add("Set your weapon to: " + item.name)
+	Man.save_game("set weapon")
+
+func select_armor(item: Armor) -> void:
+	Man.equipped_armor = item
+	Toast.add("Set your armor to: " + item.name)
+	Man.save_game("set armor")
+
+func _cleanup_multiplayer() -> void:
+	if multiplayer != null and multiplayer.has_multiplayer_peer():
+		if NetworkManager.update_players.is_connected(_on_update_players):
+			NetworkManager.update_players.disconnect(_on_update_players)
+		
+		if multiplayer.peer_connected.is_connected(NetworkManager._player_joined):
+			multiplayer.peer_connected.disconnect(NetworkManager._player_joined)
+		
+		if multiplayer.peer_disconnected.is_connected(NetworkManager._player_quit):
+			multiplayer.peer_disconnected.disconnect(NetworkManager._player_quit)
+		
+		NetworkManager.players.clear()
+		
+		if multiplayer.multiplayer_peer is EOSGMultiplayerPeer:
+			multiplayer.multiplayer_peer.close()
+		else:
+			multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
+			multiplayer.multiplayer_peer = null
+
+func _configure_focus_neighbors(grid: GridContainer) -> void:
+	var buttons := grid.get_children()
+	var cols := grid.columns
+	
+	for i in range(buttons.size()):
+		var b := buttons[i]
+		
+		if i - cols >= 0:
+			b.focus_neighbor_top = b.get_path_to(buttons[i - cols])
+		if i + cols < buttons.size():
+			b.focus_neighbor_bottom = b.get_path_to(buttons[i + cols])
+		if i % cols != 0:
+			b.focus_neighbor_left = b.get_path_to(buttons[i - 1])
+		if (i % cols) != (cols - 1) and (i + 1) < buttons.size():
+			b.focus_neighbor_right = b.get_path_to(buttons[i + 1])
+	
+	if buttons.size() > 0:
+		buttons[0].grab_focus()
+
+func _configure_focus_neighbors_with_back(grid: GridContainer) -> void:
+	"""Configure grid focus neighbors AND link with Back button"""
+	var buttons := grid.get_children()
+	var cols := grid.columns
+	var back_button = $UI/Main/Loadout/Back
+	
+	for i in range(buttons.size()):
+		var b := buttons[i]
+		
+		# Up navigation
+		if i - cols >= 0:
+			b.focus_neighbor_top = b.get_path_to(buttons[i - cols])
+		else:
+			# Top row connects to Back button
+			b.focus_neighbor_top = b.get_path_to(back_button)
+		
+		# Down navigation
+		if i + cols < buttons.size():
+			b.focus_neighbor_bottom = b.get_path_to(buttons[i + cols])
+		
+		# Left navigation
+		if i % cols != 0:
+			b.focus_neighbor_left = b.get_path_to(buttons[i - 1])
+		
+		# Right navigation
+		if (i % cols) != (cols - 1) and (i + 1) < buttons.size():
+			b.focus_neighbor_right = b.get_path_to(buttons[i + 1])
+	
+	# Configure Back button to connect to top row of grid
+	if buttons.size() > 0:
+		# Back button down goes to first item in grid
+		back_button.focus_neighbor_bottom = back_button.get_path_to(buttons[0])
+		back_button.focus_neighbor_top = back_button.get_path_to(buttons[0])
+		
+		# Calculate how many buttons are in the top row
+		var top_row_count = min(cols, buttons.size())
+		
+		# Back button left/right navigate along top row
+		if top_row_count > 1:
+			back_button.focus_neighbor_left = back_button.get_path_to(buttons[top_row_count - 1])
+			back_button.focus_neighbor_right = back_button.get_path_to(buttons[0])
+		
+		# Focus the Back button so user can immediately navigate
+		back_button.grab_focus()
+
+func _reset_loadout_back_button_focus() -> void:
+	"""Reset Back button focus neighbors to default (for Main panel)"""
+	var back_button = $UI/Main/Loadout/Back
+	var armor_button = $UI/Main/Loadout/Panel/Main/ArmorButton
+	var weapon_button = $UI/Main/Loadout/Panel/Main/WeaponButton
+	
+	# Reset to connect with Armor/Weapon buttons
+	back_button.focus_neighbor_top = back_button.get_path_to(weapon_button)
+	back_button.focus_neighbor_bottom = back_button.get_path_to(armor_button)
+	back_button.focus_neighbor_left = back_button.get_path_to(weapon_button)
+	back_button.focus_neighbor_right = back_button.get_path_to(armor_button)
+
+# ============================================================================
+# MODE/MAP SELECTOR HANDLERS
+# ============================================================================
 
 func _on_mode_selector_left_pressed() -> void:
 	var index = Man.modes.find(Man.selected_mode)
@@ -386,7 +765,7 @@ func _on_mode_selector_right_pressed() -> void:
 	var mode_key = Man.selected_mode.to_lower()
 	Man.selected_map = Man.maps[mode_key][0]
 	update_mode_selector()
-	
+
 func _on_map_selector_left_pressed() -> void:
 	var mode_key = Man.selected_mode.to_lower()
 	var maps_for_mode = Man.maps[mode_key]
@@ -396,7 +775,7 @@ func _on_map_selector_left_pressed() -> void:
 	index = (index - 1 + maps_for_mode.size()) % maps_for_mode.size()
 	Man.selected_map = maps_for_mode[index]
 	update_mode_selector()
-	
+
 func _on_map_selector_right_pressed() -> void:
 	var mode_key = Man.selected_mode.to_lower()
 	var maps_for_mode = Man.maps[mode_key]
@@ -406,94 +785,42 @@ func _on_map_selector_right_pressed() -> void:
 	index = (index + 1) % maps_for_mode.size()
 	Man.selected_map = maps_for_mode[index]
 	update_mode_selector()
-	
-func _on_mode_selector_start_pressed() -> void:
-	play_ui_sfx(preload("res://assets/sounds/success.wav"))
-	Man.start_game(Man.selected_mode, Man.selected_map)
-	Man.set_rich_presence("#Singleplayer")
-	Man.set_rich_presence_value("map", Man.selected_map)
 
-func _on_play_pressed() -> void:
-	$UI/Main/Buttons.visible = false 
-	$"UI/Main/Play Buttons".visible = true
+# Players screen mode/map selector handlers (same behavior as singleplayer)
+func _on_players_mode_selector_left_pressed() -> void:
+	_on_mode_selector_left_pressed()
 
-func _on_loadout_pressed() -> void:
-	$UI/Main/Buttons.visible = false 
-	$UI/Main/Title.visible = false
-	$UI/Main/Title2.visible = false
-	$UI/Main/Version.visible = false
-	$UI/Main/Loadout.visible = true
-	update_loadout()
+func _on_players_mode_selector_right_pressed() -> void:
+	_on_mode_selector_right_pressed()
 
-func update_loadout() -> void:
-	$UI/Main/Loadout/Panel/Main/ArmorIcon.texture = Man.equipped_armor.texture
-	$UI/Main/Loadout/Panel/Main/WeaponIcon.texture = Man.equipped_weapon.texture
-	var found_armor = 0
-	var found_weapons = 0
-	var total_armor = 0
-	var total_weapons = 0
-	for item in Catalog.items:
-		if (item is Weapon):
-			total_weapons += 1
-			if Man.bag.has_item(item):
-				found_weapons += 1
-		if (item is Armor):
-			total_armor += 1
-			if Man.bag.has_item(item):
-				found_armor += 1
-	
-	$UI/Main/Loadout/Panel/Main/Armor.text = "Armor (" + str(found_armor) + "/" + str(total_armor) + ")"
-	$UI/Main/Loadout/Panel/Main/Weapon.text = "Weapon (" + str(found_weapons) + "/" + str(total_weapons) + ")"
-	$UI/Main/Loadout/Panel/Main/ArmorMeta.text = Man.equipped_armor.name + "\n" + Man.equipped_armor.description
-	$UI/Main/Loadout/Panel/Main/WeaponMeta.text = Man.equipped_weapon.name + "\n" + Man.equipped_weapon.description
-	$UI/Main/Loadout/Panel/Main/Meta.text = "+" + str(roundi(Man.equipped_weapon.damage)) + " damage\n+" + str(roundi(Man.equipped_armor.defense)) + " defense" 
+func _on_players_map_selector_left_pressed() -> void:
+	_on_map_selector_left_pressed()
 
-func _on_armor_button_pressed() -> void:
-	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
-	$UI/Main/Loadout/Panel/Grid.visible = true
-	$UI/Main/Loadout/Panel/Main.visible = false 
-	$UI/Main/Loadout/Panel/Grid/Title.text = "Armor"
-	for children in $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.get_children():
-		children.queue_free()
-	for item in Man.bag.list:
-		print(item.type)
-		if item.type is Armor:
-			var loadout_button = loadout_button_scene.instantiate()
-			loadout_button.get_node("TextureRect").texture = item.type.texture
-			$UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.add_child(loadout_button, true)
-			loadout_button.connect("pressed", func():
-				select_armor(item.type)
-			)
+func _on_players_map_selector_right_pressed() -> void:
+	_on_map_selector_right_pressed()
 
-func _on_weapon_button_pressed() -> void:
-	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
-	$UI/Main/Loadout/Panel/Grid.visible = true
-	$UI/Main/Loadout/Panel/Main.visible = false 
-	$UI/Main/Loadout/Panel/Grid/Title.text = "Weapons"
-	for children in $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.get_children():
-		children.queue_free()
-	for item in Man.bag.list:
-		if item.type is Weapon:
-			var loadout_button = loadout_button_scene.instantiate()
-			loadout_button.get_node("TextureRect").texture = item.type.texture
-			$UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer.add_child(loadout_button, true)
-			loadout_button.connect("pressed", func():
-				select_weapon(item.type)
-			)
+# ============================================================================
+# OPTIONS HANDLERS
+# ============================================================================
 
-func select_weapon(item: Weapon) -> void:
-	Man.equipped_weapon = item
-	Toast.add("Set your weapon to: " + item.name) 
-	Man.save_game("set weapon")
-	
-func select_armor(item: Armor) -> void:
-	Man.equipped_armor = item
-	Toast.add("Set your armor to: " + item.name) 
-	Man.save_game("set armor")
+func _on_fullscreen_check_box_toggled(toggled_on: bool) -> void:
+	var mode: int = 0
+	if toggled_on:
+		mode = 3
+	DisplayServer.window_set_mode(mode)
+	Man.fullscreen = toggled_on
 
-func _on_credits_pressed() -> void:
-	$UI/Main/Options/General.visible = false
-	$UI/Main/Options/Credits.visible = true
+func _on_volume_slider_drag_ended(value_changed: bool) -> void:
+	play_ui_sfx(preload("res://assets/sounds/f_slash.wav"))
+
+func _on_volume_slider_value_changed(value: float) -> void:
+	Man.sfx_volume = value
+	if value <= 0.0:
+		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), true)
+	else:
+		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), false)
+		var db_value = lerp(-55.0, 0.0, value / 100.0)
+		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
 
 func _on_h_slider_2_value_changed(value: float) -> void:
 	Man.music_volume = value
@@ -506,3 +833,88 @@ func _on_h_slider_2_value_changed(value: float) -> void:
 
 func _on_h_slider_2_drag_ended(value_changed: bool) -> void:
 	play_ui_sfx(preload("res://assets/sounds/f_slash.wav"), "Music")
+
+# ============================================================================
+# MISC HANDLERS
+# ============================================================================
+
+func _on_username_text_changed(new_text: String) -> void:
+	if new_text == "":
+		$Demoman/Username.visible = false
+	else:
+		$Demoman/Username.text = new_text
+		$Demoman/Username.visible = true
+	HAuth.display_name = new_text
+
+func _on_dev_online_pressed() -> void:
+	HAuth.login_devtool_async($"UI/Main/Multiplayer Buttons/Address".text, $"UI/Main/Multiplayer Buttons/Name".text)
+
+func _on_address_text_submitted(new_text: String) -> void:
+	$UI/Main/Join/Join.emit_signal("pressed")
+
+func _on_userid_text_submitted(new_text: String) -> void:
+	$"UI/Main/Online Join/Join".emit_signal("pressed")
+
+func _on_copy_userid_pressed() -> void:
+	DisplayServer.clipboard_set(HAuth.product_user_id)
+	Toast.add("Copied your user ID to your clipboard. Send it to friends so they can join your game.")
+
+# ============================================================================
+# INPUT DETECTION (Controller/Keyboard/Mouse)
+# ============================================================================
+
+var using_controller := false
+
+func _setup_input_detection() -> void:
+	"""Setup the input detection system"""
+	pass  # Already handled in _input
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion or event is InputEventMouseButton:
+		using_controller = false
+		_update_button_focus_styles(false)
+	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		using_controller = true
+		_update_button_focus_styles(true)
+	elif event is InputEventKey:
+		using_controller = true
+		_update_button_focus_styles(true)
+
+func _update_button_focus_styles(show_focus: bool) -> void:
+	"""Update all button focus styles based on input method"""
+	for button in find_children("", "Button", true):
+		if button is Button:
+			if show_focus:
+				button.add_theme_stylebox_override("focus", preload("res://scenes/outline but for ui lol.tres"))
+			else:
+				button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+
+# ============================================================================
+# PLAYERS SCREEN FOCUS CONFIGURATION
+# ============================================================================
+
+func _configure_players_focus() -> void:
+	"""Configure focus neighbors for the Players screen based on host/client status"""
+	var start_button = $UI/Main/Players/Start
+	var back_button = $UI/Main/Players/Back
+	var copy_userid_button = $"UI/Main/Players/Copy UserID"
+	var mode_selector = $"UI/Main/Players/Mode Selector"
+	
+	var is_host = multiplayer.is_server()
+	
+	if is_host:
+		# Host can see mode selector and possibly copy userid
+		if copy_userid_button.visible:
+			# Start -> up -> Copy UserID
+			start_button.focus_neighbor_top = start_button.get_path_to(copy_userid_button)
+			copy_userid_button.focus_neighbor_bottom = copy_userid_button.get_path_to(start_button)
+		else:
+			# Start -> up -> mode selector
+			var mode_left = mode_selector.get_node("Panel/Mode Selector/Left")
+			start_button.focus_neighbor_top = start_button.get_path_to(mode_left)
+	else:
+		# Client - no special up navigation from Start
+		start_button.focus_neighbor_top = NodePath()
+	
+	# Focus the Start button by default
+	start_button.grab_focus()

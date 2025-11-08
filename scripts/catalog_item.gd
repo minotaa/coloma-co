@@ -25,11 +25,9 @@ func _on_button_pressed() -> void:
 					break
 
 			# Allow purchase if there is space OR if they already have a stack of this item
-			if has_stack or bag.list.size() < 3:
+			if has_stack or bag.list.size() < player.get_slots():
 				player.gold -= item.price
 				bag.add_item(ItemStack.new(item, 1))
-				Toast.add("You purchased: " + str(ItemStack.new(item, 1)))
-				Toast.add("-" + str(item.price) + " Gold")
 			else:
 				Toast.add("You don't have the inventory space!")
 		else:

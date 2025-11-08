@@ -1136,6 +1136,9 @@ layout_mode = 2
 [node name="Slot3" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
+[node name="Slot4" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense"]
 layout_mode = 0
 offset_left = 16.0
@@ -1848,6 +1851,9 @@ layout_mode = 2
 [node name="Slot3" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
+[node name="Slot4" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+layout_mode = 2
+
 [node name="Shop" type="Control" parent="UI/Dungeon"]
 visible = false
 layout_mode = 1
@@ -1946,6 +1952,24 @@ offset_right = 188.0
 offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxTexture_hax0n")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
+theme_override_styles/hover = SubResource("StyleBoxTexture_wnwbv")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
+text = "Close"
+
+[node name="Reroll" type="Button" parent="UI/Dungeon/Shop/Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -188.0
+offset_top = 16.0
+offset_right = 188.0
+offset_bottom = 76.0
+grow_horizontal = 2
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_hax0n")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_jc3p3")
@@ -2326,6 +2350,11 @@ keycode = "69"
 text = "E"
 label_settings = SubResource("LabelSettings_hax0n")
 
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 1.5
+autostart = true
+
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
 [connection signal="body_entered" from="SwordHbox" to="." method="_on_sword_hbox_entered"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]
@@ -2333,12 +2362,13 @@ label_settings = SubResource("LabelSettings_hax0n")
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_body_shape_entered"]
 [connection signal="body_shape_exited" from="Area2D" to="." method="_on_body_shape_exited"]
 [connection signal="pressed" from="UI/Defense/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
-[connection signal="pressed" from="UI/Defense/Shop/Panel/Reroll" to="." method="_on_shop_close_button_pressed"]
+[connection signal="pressed" from="UI/Defense/Shop/Panel/Reroll" to="." method="_on_reroll_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
+[connection signal="pressed" from="UI/Dungeon/Shop/Panel/Reroll" to="." method="_on_reroll_pressed"]
 [connection signal="focus_entered" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_entered"]
 [connection signal="focus_exited" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_exited"]
 [connection signal="gui_input" from="UI/Global/ChatBar" to="." method="_on_chatbar_gui_input"]
@@ -2347,5 +2377,6 @@ label_settings = SubResource("LabelSettings_hax0n")
 [connection signal="pressed" from="UI/Global/Pause/Panel/Resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="UI/Global/Pause/Panel/Quit to Main Menu" to="." method="_on_quit_to_main_menu_pressed"]
 [connection signal="pressed" from="UI/Global/Pause/Panel/Quit Game" to="." method="_on_quit_game_pressed"]
+[connection signal="timeout" from="Timer" to="." method="_on_regen_timeout"]
 
 [editable path="Key"]

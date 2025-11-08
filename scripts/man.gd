@@ -5,7 +5,7 @@ extends Node
 var modes: Array[Variant] = ["Defense", "Dungeon"]
 var maps: Dictionary[Variant, Variant] = {
 	"defense": ["Lysawood", "Solmere"],
-	"dungeon": ["Lysawood"],
+	"dungeon": ["Lysawood", "Solmere"],
 	"campaign": ["Joro"]
 }
 
@@ -60,8 +60,19 @@ var enemies_killed: int = 0
 func level_up():
 	current_xp -= calculate_xp_for_level(current_level)
 	current_level += 1
-	if is_in_game():
+	if is_in_game() and get_player() != null:
 		get_player().show_level_up_animation(current_level, current_xp, calculate_xp_for_level(current_level))
+		
+	 # Every 100 XP, give a random item reward
+	var options = []
+	for item in Catalog.items:
+		if (item is Weapon or item is Armor) and not bag.has_item(item):
+			options.append(item)
+
+	if not options.is_empty():
+		var item = options.pick_random()
+		bag.add_item(ItemStack.new(item, 1))
+		Toast.add("You earned: " + item.name + "! Equip it in Loadout in the main menu.")
 	print("Level up! Now level ", current_level)
 
 func calculate_xp_for_level(level: int) -> float:
@@ -99,18 +110,6 @@ func add_xp(amount: float) -> void:
 	# Check if we leveled up (possibly multiple times)
 	while current_xp >= calculate_xp_for_level(current_level):
 		level_up()
-	
-	# Every 100 XP, give a random item reward
-	# if int(current_xp) % 100 == 0:
-	# 	var options = []
-	# 	for item in Catalog.items:
-	# 		if (item is Weapon or item is Armor) and not bag.has_item(item):
-	# 			options.append(item)
-	# 			
-	# 	if not options.is_empty():
-	# 		var item = options.pick_random()
-	# 		bag.add_item(ItemStack.new(item, 1))
-	# 		Toast.add("You earned: " + item.name + "! Equip it in Loadout in the main menu.")
 
 func set_rich_presence(token: String) -> void:
 	if NetworkManager.steam_enabled:
@@ -127,8 +126,16 @@ func set_rich_presence_value(key: String, token: String) -> void:
 		print("Steam is not enabled, not running this.")	
 
 func start_cooldown(item, seconds: float) -> void:  # Accept both Consumable and Tossable
+	var final_seconds = seconds
+	
+	var player = Man.get_player()
+	if player and player.upgrade_bag.has_item(Catalog.get_by_id(34)):
+		var cooldown_level = player.upgrade_bag.get_item_stack(Catalog.get_by_id(34)).data["level"]
+		var cooldown_reduction = cooldown_level * 0.10
+		final_seconds = seconds * (1.0 - cooldown_reduction)
+	
 	cooldowns[item.id] = {
-		"end_time": Time.get_ticks_msec() / 1000.0 + seconds
+		"end_time": Time.get_ticks_msec() / 1000.0 + final_seconds
 	}
 
 func get_cooldown_left(item) -> float:  # Accept both Consumable and Tossable
