@@ -1180,6 +1180,13 @@ func end_shop_phase() -> void:
 		if is_instance_valid(s):
 			s.queue_free()
 	current_shopkeepers.clear()
+	print("Refreshing players' shops.")
+	var chosen_seed = randi()
+	for player in get_tree().get_nodes_in_group("players"):
+		if multiplayer.has_multiplayer_peer():
+			player.refresh_shop.rpc(chosen_seed)
+		else:
+			player.refresh_shop(chosen_seed)
 
 	shop_active = false
 	shop_timer = 0.0

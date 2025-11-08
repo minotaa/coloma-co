@@ -205,4 +205,3 @@ textures/vram_compression/import_etc2_astc=true
 
 initialization/app_id=3951230
 initialization/embed_callbacks=true
-initialization/initialize_on_startup=false

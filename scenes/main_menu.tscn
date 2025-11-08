@@ -5,7 +5,7 @@
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_bqqt6"]
 [ext_resource type="TileSet" uid="uid://d08fetvoicslv" path="res://assets/tilemaps/main.tres" id="2_flqon"]
 [ext_resource type="FontFile" uid="uid://guy3qt670gxi" path="res://assets/fonts/DungeonFont.ttf" id="2_wu84c"]
-[ext_resource type="Script" uid="uid://3rviigfayhl0" path="res://scripts/leaf_particles.gd" id="3_5pajh"]
+[ext_resource type="Script" path="res://scripts/leaf_particles.gd" id="3_5pajh"]
 [ext_resource type="PackedScene" uid="uid://bkcev63ddja1l" path="res://scenes/multiplayer_player_entry.tscn" id="3_bqqt6"]
 [ext_resource type="Script" uid="uid://0u6di6k2ccp2" path="res://scripts/ground.gd" id="3_rcqid"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="5_5dd4i"]

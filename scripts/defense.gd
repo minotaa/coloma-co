@@ -233,11 +233,12 @@ func spawn_wave() -> void:
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.health < player.get_max_health() and player.alive:
 			player.heal(10)
-			if wave % 5 == 0:
-				if multiplayer.has_multiplayer_peer():
-					player.refresh_shop.rpc(chosen_seed)
-				else:
-					player.refresh_shop(chosen_seed)
+		if wave % 5 == 0:
+			print("Refreshing players' shops.")
+			if multiplayer.has_multiplayer_peer():
+				player.refresh_shop.rpc(chosen_seed)
+			else:
+				player.refresh_shop(chosen_seed)
 
 	match wave:
 		1:
@@ -287,7 +288,7 @@ func spawn_wave() -> void:
 			spawn_crabman("north")
 		_:
 			if wave % 5 == 0:
-				var num_crabmen = 1 + wave / 5
+				var num_crabmen = min(8, 1 + wave / 5)
 				for i in range(num_crabmen):
 					spawn_crabman("north")
 
