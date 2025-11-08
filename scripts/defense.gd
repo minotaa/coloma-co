@@ -288,7 +288,7 @@ func spawn_wave() -> void:
 			spawn_crabman("north")
 		_:
 			if wave % 5 == 0:
-				var num_crabmen = min(8, 1 + wave / 5)
+				var num_crabmen = min(4, 1 + wave / 5)
 				for i in range(num_crabmen):
 					spawn_crabman("north")
 
