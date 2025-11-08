@@ -206,7 +206,7 @@ func join_online_server(userid: String) -> bool:
 		return false
 	
 	# Tell the server our username
-	send_info.rpc(multiplayer.get_unique_id(), player_name)
+	send_info.rpc(multiplayer.get_unique_id(), player_name, Man.current_level)
 
 	print("[" + str(multiplayer.get_unique_id()) + "] Connected to the server")
 	return true
@@ -257,7 +257,7 @@ func join_server(address: String, username: String = "Player") -> bool:
 		return false
 	
 	# Tell the server our username
-	send_info.rpc(multiplayer.get_unique_id(), username)
+	send_info.rpc(multiplayer.get_unique_id(), username, Man.current_level)
 
 	print("[" + str(multiplayer.get_unique_id()) + "] Connected to the server")
 	return true
@@ -281,7 +281,8 @@ func host_online_server() -> bool:
 	# Host joins as ID 1
 	players.append({
 		"id": 1,
-		"username": player_name
+		"username": player_name,
+		"level": Man.current_level
 	})
 	update_players.emit(players)
 	# Value is HAuth.product_user_id
@@ -306,7 +307,8 @@ func host_server(port: int) -> bool:
 	# Host joins as ID 1
 	players.append({
 		"id": 1,
-		"username": player_name
+		"username": player_name,
+		"level": Man.current_level
 	})
 	update_players.emit(players)
 
@@ -342,7 +344,7 @@ func send_mode(mode: String, map: String) -> void:
 	update_players.emit(players)
 
 @rpc("any_peer", "call_local", "reliable")
-func send_info(id: int, username: String) -> void:
+func send_info(id: int, username: String, current_level: int) -> void:
 	if multiplayer.is_server():
 		print("[server] Received username from peer " + str(id) + ": " + username)
 		# Add or update the player
@@ -350,7 +352,8 @@ func send_info(id: int, username: String) -> void:
 		if not existing:
 			players.append({
 				"id": id,
-				"username": username
+				"username": username,
+				"level": current_level
 			})
 			print("[server] Updated players list:")
 			for p in players:

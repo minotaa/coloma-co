@@ -225,6 +225,9 @@ func spawn_wave() -> void:
 
 	if multiplayer.has_multiplayer_peer():
 		update_wave.rpc(wave)
+		Man.add_xp.rpc(25)
+	else:
+		Man.add_xp(25)
 
 	var chosen_seed = randi()
 	for player in get_tree().get_nodes_in_group("players"):

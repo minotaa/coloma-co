@@ -579,6 +579,10 @@ func spawn_current_wave() -> void:
 	
 	var subwave = current_wave.content[current_subwave_index]
 	print("[WAVE] Spawning subwave ", current_subwave_index, ": ", subwave)
+	if multiplayer.has_multiplayer_peer():
+		Man.add_xp.rpc(8)
+	else:
+		Man.add_xp(8)
 	
 	# Store total waves for this room when we start the first subwave
 	if current_subwave_index == 0:
@@ -730,6 +734,9 @@ func complete_room() -> void:
 	completed_rooms += 1
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		send_rooms.rpc(completed_rooms)
+		Man.add_xp.rpc(25)
+	else:
+		Man.add_xp(25)
 	current_subwave_index = 0
 	completed_subwaves = 0  # Reset for next room
 	

@@ -7,6 +7,7 @@ var reroll_cost = 50  # Gold cost per reroll
 var type: String = ""
 var current_log_path: String
 var original_zoom := Vector2(4.0, 4.0)
+var leveling_bar_rest_position: Vector2
 var zoom_multiplier := 1.0
 var directions := {
 	"left": Vector2.LEFT,
@@ -253,6 +254,8 @@ func _enter_tree() -> void:
 		set_multiplayer_authority(name.to_int())
 
 func _ready() -> void:	
+	leveling_bar_rest_position = $UI/Global/Leveling.position
+	$UI/Global/Leveling.position.y = leveling_bar_rest_position.y - 200
 	for button in find_children("", "Button", true):
 		if button is Button:
 			_connect_button_sfx(button)
@@ -307,7 +310,34 @@ func refresh_shop(new_seed: int):
 	if shop_node.visible:
 		populate_shop_ui()
 		update_shop_ui()
-		
+
+func show_level_up_animation(new_level: int, overflow_xp: float = 0.0, max_xp: float = 100.0):
+	var leveling_bar = $UI/Global/Leveling
+	
+	var level_label = leveling_bar.get_node("Level")
+	var xp_bar = leveling_bar.get_node("XP")
+	level_label.text = "LEVEL " + str(new_level - 1)
+	xp_bar.value = xp_bar.max_value
+	var tween = create_tween()
+	tween.set_parallel(false)
+	tween.tween_property(leveling_bar, "position:y", leveling_bar_rest_position.y, 0.5)\
+		.set_ease(Tween.EASE_OUT)\
+		.set_trans(Tween.TRANS_BACK)
+	tween.tween_interval(0.3)
+	tween.tween_callback(func():
+		level_label.text = "LEVEL " + str(new_level)
+		xp_bar.value = 0
+	)
+
+	tween.tween_interval(0.2)
+	if overflow_xp > 0:
+		var overflow_percent = (overflow_xp / max_xp) * xp_bar.max_value
+		tween.tween_property(xp_bar, "value", overflow_percent, 0.4)
+	tween.tween_interval(1.0)
+	tween.tween_property(leveling_bar, "position:y", leveling_bar_rest_position.y - 200, 0.4)\
+		.set_ease(Tween.EASE_IN)\
+		.set_trans(Tween.TRANS_BACK)
+
 @rpc("any_peer", "call_local", "reliable")
 func setup_ui(type: String) -> void:
 	#if is_multiplayer_authority():

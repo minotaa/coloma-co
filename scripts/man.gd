@@ -49,24 +49,47 @@ var equipped_weapon: Weapon = Catalog.get_by_id(1)
 var equipped_armor: Armor = Catalog.get_by_id(2)
 var game_loaded: bool = false
 var cooldowns: Dictionary[Variant, Variant] = {}
+var current_level: int = 0
+var current_xp: float = 0.0
+var xp_scaling: float = 1.5
 
 var highest_wave: int = 0
 var highest_rooms: int = 0
 var enemies_killed: int = 0
 
+func level_up():
+	current_xp -= calculate_xp_for_level(current_level)
+	current_level += 1
+	if is_in_game():
+		get_player().show_level_up_animation(current_level, current_xp, calculate_xp_for_level(current_level))
+	print("Level up! Now level ", current_level)
+
+func calculate_xp_for_level(level: int) -> float:
+	# Formula: base_xp * (scaling ^ (level - 1))
+	# Level 1->2: 100 XP
+	# Level 2->3: 150 XP
+	# Level 3->4: 225 XP, etc.
+	return 100.0 * pow(xp_scaling, level - 1)
+
 @rpc("authority", "call_local")
-func add_playtime_points(amount: int) -> void:
-	playtime_points += amount
-	if playtime_points % 100 == 0:
-		var options = []
-		for item in Catalog.items:
-			if (item is Weapon or item is Armor) and not bag.has_item(item):
-				options.append(item)
-				
-		if not options.is_empty():
-			var item = options.pick_random()
-			bag.add_item(ItemStack.new(item, 1))
-			Toast.add("You earned: " + item.name + "! Equip it in Loadout in the main menu.")
+func add_xp(amount: float) -> void:
+	current_xp += amount
+	
+	# Check if we leveled up (possibly multiple times)
+	while current_xp >= calculate_xp_for_level(current_level):
+		level_up()
+	
+	# Every 100 XP, give a random item reward
+	# if int(current_xp) % 100 == 0:
+	# 	var options = []
+	# 	for item in Catalog.items:
+	# 		if (item is Weapon or item is Armor) and not bag.has_item(item):
+	# 			options.append(item)
+	# 			
+	# 	if not options.is_empty():
+	# 		var item = options.pick_random()
+	# 		bag.add_item(ItemStack.new(item, 1))
+	# 		Toast.add("You earned: " + item.name + "! Equip it in Loadout in the main menu.")
 
 func set_rich_presence(token: String) -> void:
 	if NetworkManager.steam_enabled:
@@ -167,12 +190,19 @@ func load_game():
 			equipped_armor = Catalog.get_by_id(data["equipped_armor"])
 		if data.has("playtime_points"):
 			playtime_points = data["playtime_points"]
+			if playtime_points > 0:
+				add_xp(roundi(playtime_points * 0.2))
+				playtime_points = 0
 		if data.has("highest_wave"):
 			highest_wave = data["highest_wave"]
 		if data.has("highest_rooms"):
 			highest_rooms = data["highest_rooms"]
 		if data.has("enemies_killed"):
 			enemies_killed = data["enemies_killed"]
+		if data.has("current_level"):
+			current_level = data["current_level"]
+		if data.has("current_xp"):
+			current_xp = data["current_xp"]
 	print("Loaded save data.")
 
 func get_save_data() -> Dictionary:
@@ -186,7 +216,9 @@ func get_save_data() -> Dictionary:
 		"sfx_volume": sfx_volume,
 		"highest_wave": highest_wave,
 		"highest_rooms": highest_rooms,
-		"enemies_killed": enemies_killed
+		"enemies_killed": enemies_killed,
+		"current_level": current_level,
+		"current_xp": current_xp
 	}
 
 func _notification(what: int) -> void:
@@ -203,14 +235,12 @@ func save_game(reason: String) -> void:
 
 func _ready() -> void:
 	load_game()
-	var timer = Timer.new()
-	timer.wait_time = 60.0
-	timer.timeout.connect(_on_minute_passed)
-	add_child(timer)
-	timer.start()
 	
-func _on_minute_passed() -> void:
-	add_playtime_points(5)
+func is_in_game() -> bool:
+	for child in get_tree().current_scene.get_children():
+		if child.name.begins_with("Defense") or child.name.begins_with("Dungeon"):
+			return true
+	return false
 	
 @rpc("authority", "call_local", "reliable")
 func start_game(mode: String, map: String) -> void:
