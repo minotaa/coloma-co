@@ -5,7 +5,7 @@
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_bqqt6"]
 [ext_resource type="TileSet" uid="uid://d08fetvoicslv" path="res://assets/tilemaps/main.tres" id="2_flqon"]
 [ext_resource type="FontFile" uid="uid://guy3qt670gxi" path="res://assets/fonts/DungeonFont.ttf" id="2_wu84c"]
-[ext_resource type="Script" path="res://scripts/leaf_particles.gd" id="3_5pajh"]
+[ext_resource type="Script" uid="uid://3rviigfayhl0" path="res://scripts/leaf_particles.gd" id="3_5pajh"]
 [ext_resource type="PackedScene" uid="uid://bkcev63ddja1l" path="res://scenes/multiplayer_player_entry.tscn" id="3_bqqt6"]
 [ext_resource type="Script" uid="uid://0u6di6k2ccp2" path="res://scripts/ground.gd" id="3_rcqid"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="5_5dd4i"]
@@ -1673,6 +1673,10 @@ offset_top = -258.0
 offset_right = 504.0
 offset_bottom = -184.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Back")
+focus_neighbor_bottom = NodePath("../Join")
+focus_next = NodePath("../Join")
+focus_previous = NodePath("../Back")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/read_only = ExtResource("10_8egab")
@@ -1690,6 +1694,10 @@ offset_top = -178.0
 offset_right = 504.0
 offset_bottom = -104.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Address")
+focus_neighbor_bottom = NodePath("../Back")
+focus_next = NodePath("../Back")
+focus_previous = NodePath("../Address")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
@@ -1708,6 +1716,10 @@ offset_top = -74.0
 offset_right = 504.0
 offset_bottom = -24.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Join")
+focus_neighbor_bottom = NodePath("../Address")
+focus_next = NodePath("../Address")
+focus_previous = NodePath("../Join")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
@@ -1735,6 +1747,10 @@ offset_top = -258.0
 offset_right = 504.0
 offset_bottom = -184.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Back")
+focus_neighbor_bottom = NodePath("../Join")
+focus_next = NodePath("../Join")
+focus_previous = NodePath("../Back")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/read_only = ExtResource("10_8egab")
@@ -1752,6 +1768,10 @@ offset_top = -178.0
 offset_right = 504.0
 offset_bottom = -104.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../UserID")
+focus_neighbor_bottom = NodePath("../Back")
+focus_next = NodePath("../Back")
+focus_previous = NodePath("../UserID")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
@@ -1770,6 +1790,10 @@ offset_top = -74.0
 offset_right = 504.0
 offset_bottom = -24.0
 grow_vertical = 0
+focus_neighbor_top = NodePath("../Join")
+focus_neighbor_bottom = NodePath("../UserID")
+focus_next = NodePath("../UserID")
+focus_previous = NodePath("../Join")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")

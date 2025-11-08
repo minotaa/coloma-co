@@ -639,6 +639,105 @@ func populate_shop_ui():
 		var catalog_item = load("res://scenes/catalog_item.tscn").instantiate()
 		catalog_item.set_item(item)
 		grid.add_child(catalog_item, true)
+	
+	# Wait for items to be added to scene tree
+	await get_tree().process_frame
+	
+	# Configure focus neighbors for the shop grid
+	_configure_shop_focus_neighbors(grid, shop_node)
+
+func _configure_shop_focus_neighbors(hbox: HBoxContainer, shop_node: Node) -> void:
+	"""Configure focus neighbors for shop items in horizontal layout"""
+	var buttons := []
+	
+	# Collect all focusable buttons from catalog items
+	for child in hbox.get_children():
+		# Find the button within each catalog_item Control
+		if child.get_child_count() > 0:
+			for sub_child in child.get_children():
+				if sub_child is Button:
+					# Enable focus mode
+					sub_child.focus_mode = Control.FOCUS_ALL
+					# Apply focus style based on current input method
+					if using_controller:
+						sub_child.add_theme_stylebox_override("focus", preload("res://scenes/outline but for ui lol.tres"))
+					else:
+						sub_child.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+					buttons.append(sub_child)
+					break
+	
+	if buttons.is_empty():
+		return
+	
+	# Configure horizontal navigation (left/right only)
+	for i in range(buttons.size()):
+		var b = buttons[i]
+		
+		# Left navigation
+		if i > 0:
+			b.focus_neighbor_left = b.get_path_to(buttons[i - 1])
+		
+		# Right navigation
+		if i < buttons.size() - 1:
+			b.focus_neighbor_right = b.get_path_to(buttons[i + 1])
+	
+	# Find Reroll and Close buttons
+	var reroll_button = shop_node.find_child("Reroll", true, false)
+	var close_button = shop_node.find_child("Close", true, false)
+	if not close_button:
+		close_button = shop_node.find_child("Back", true, false)
+	
+	# Enable focus on control buttons and apply style
+	if reroll_button and reroll_button is Button:
+		reroll_button.focus_mode = Control.FOCUS_ALL
+		if using_controller:
+			reroll_button.add_theme_stylebox_override("focus", preload("res://scenes/outline but for ui lol.tres"))
+		else:
+			reroll_button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+			
+	if close_button and close_button is Button:
+		close_button.focus_mode = Control.FOCUS_ALL
+		if using_controller:
+			close_button.add_theme_stylebox_override("focus", preload("res://scenes/outline but for ui lol.tres"))
+		else:
+			close_button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	
+	# Connect all items to Reroll button (up)
+	if reroll_button and reroll_button is Button:
+		for button in buttons:
+			button.focus_neighbor_top = button.get_path_to(reroll_button)
+		
+		# Reroll button down goes to first item
+		reroll_button.focus_neighbor_bottom = reroll_button.get_path_to(buttons[0])
+		
+		# Reroll button left/right navigate along the row
+		reroll_button.focus_neighbor_left = reroll_button.get_path_to(buttons[buttons.size() - 1])
+		reroll_button.focus_neighbor_right = reroll_button.get_path_to(buttons[0])
+	
+	# Connect all items to Close button (down)
+	if close_button and close_button is Button:
+		for button in buttons:
+			button.focus_neighbor_bottom = button.get_path_to(close_button)
+		
+		# Close button up goes to first item
+		close_button.focus_neighbor_top = close_button.get_path_to(buttons[0])
+		
+		# Close button left/right navigate along the row
+		close_button.focus_neighbor_left = close_button.get_path_to(buttons[buttons.size() - 1])
+		close_button.focus_neighbor_right = close_button.get_path_to(buttons[0])
+	
+	# Connect Reroll and Close buttons to each other
+	if reroll_button and close_button:
+		reroll_button.focus_neighbor_top = reroll_button.get_path_to(close_button)
+		close_button.focus_neighbor_bottom = close_button.get_path_to(reroll_button)
+	
+	# Focus Reroll button by default
+	if reroll_button:
+		reroll_button.grab_focus()
+	elif close_button:
+		close_button.grab_focus()
+	elif buttons.size() > 0:
+		buttons[0].grab_focus()
 
 func reroll_shop():
 	if gold >= reroll_cost and rerolls_available > 0:
@@ -664,8 +763,6 @@ func update_shop_ui():
 	if reroll_btn:
 		reroll_btn.text = "Reroll (%d left - %d gold)" % [rerolls_available, reroll_cost]
 		reroll_btn.disabled = gold < reroll_cost or rerolls_available <= 0
-
-
 
 func _process_input(delta) -> void:
 	# Handle movement input
@@ -988,7 +1085,7 @@ func create_throwable(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_
 func press_inventory_slot(index: int) -> void:
 	if type == "Defense":
 		var slots = $UI/Defense/Inventory.get_children()
-		if index < 0 or index >= slots.size():
+		if index < 0 or index >= get_slots():
 			return
 
 		var slot = slots[index]
@@ -1000,7 +1097,7 @@ func press_inventory_slot(index: int) -> void:
 			slot.get_node("Button").emit_signal("pressed")
 	elif type == "Dungeon":
 		var slots = $UI/Dungeon/Inventory.get_children()
-		if index < 0 or index >= slots.size():
+		if index < 0 or index >= get_slots():
 			return
 
 		var slot = slots[index]
@@ -1025,6 +1122,8 @@ func _update_camera_zoom() -> void:
 func _on_zoom_timeout() -> void:
 	$UI/Global/Zoom.visible = false
 	
+var using_controller := false
+	
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and not $UI/Global/ChatBar.has_focus() and not $UI/Defense/Shop.visible and not $UI/Dungeon/Shop.visible:
 		match event.button_index:
@@ -1041,6 +1140,24 @@ func _input(event: InputEvent) -> void:
 			$UI/Global/Pause.visible = false
 		else:
 			$UI/Global/Pause.visible = true
+	if event is InputEventMouseMotion or event is InputEventMouseButton:
+		using_controller = false
+		_update_button_focus_styles(false)
+	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		using_controller = true
+		_update_button_focus_styles(true)
+	elif event is InputEventKey:
+		using_controller = true
+		_update_button_focus_styles(true)
+
+func _update_button_focus_styles(show_focus: bool) -> void:
+	"""Update all button focus styles based on input method"""
+	for button in find_children("", "Button", true):
+		if button is Button:
+			if show_focus:
+				button.add_theme_stylebox_override("focus", preload("res://scenes/outline but for ui lol.tres"))
+			else:
+				button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	
 func _unhandled_input(event: InputEvent) -> void:
 	if multiplayer.has_multiplayer_peer() and !is_multiplayer_authority():
@@ -1053,8 +1170,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				press_inventory_slot(1)
 			51:
 				press_inventory_slot(2)
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
-		$UI/Global/ChatBar.grab_focus()
+			52:
+				press_inventory_slot(3)
+	if (not $UI/Defense/Shop.visible and not $UI/Dungeon/Shop.visible) and (not $"UI/Defense/Game Over".visible and not $"UI/Dungeon/Game Over".visible):
+		if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
+			$UI/Global/ChatBar.grab_focus()
 
 @rpc("any_peer", "call_local", "reliable")
 func knockback(from_player) -> void:
