@@ -14,7 +14,7 @@ config/name="Myrkwood: Offshoot"
 config/name_localized={
 "en": "Myrkwood: Offshoot"
 }
-config/version="6"
+config/version="7"
 run/main_scene="uid://bow6ppc3d127l"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Offshoot"

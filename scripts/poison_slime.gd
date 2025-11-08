@@ -34,10 +34,6 @@ func get_gold_reward() -> int:
 func get_kill_type() -> String:
 	return "poison_slime"
 
-func on_death(killer_name: String) -> void:
-	# Just remove entity and fade out
-	collision.disabled = true
-
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	if not alive:
 		return

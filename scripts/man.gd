@@ -71,6 +71,27 @@ func calculate_xp_for_level(level: int) -> float:
 	# Level 3->4: 225 XP, etc.
 	return 100.0 * pow(xp_scaling, level - 1)
 
+func get_level_color(level: int) -> Color:
+	match level:
+		var l when l < 5:
+			return Color.GRAY  # Beginner (1-4)
+		var l when l < 10:
+			return Color.WHITE  # Novice (5-9)
+		var l when l < 20:
+			return Color.GREEN  # Experienced (10-19)
+		var l when l < 30:
+			return Color.CYAN  # Skilled (20-29)
+		var l when l < 40:
+			return Color.BLUE  # Expert (30-39)
+		var l when l < 50:
+			return Color.PURPLE  # Master (40-49)
+		var l when l < 75:
+			return Color.ORANGE  # Legend (50-74)
+		var l when l < 100:
+			return Color.RED  # Mythic (75-99)
+		_:
+			return Color.GOLD  # Divine (100+)
+
 @rpc("authority", "call_local")
 func add_xp(amount: float) -> void:
 	current_xp += amount

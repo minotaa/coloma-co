@@ -1,4 +1,4 @@
-[gd_scene load_steps=155 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=150 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -656,32 +656,6 @@ radius = 48.0
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_d2wvv"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ujl30"]
-texture = ExtResource("14_i4ail")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-modulate_color = Color(1, 1, 1, 0.854902)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_j2b1d"]
-texture = ExtResource("14_a38lo")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-modulate_color = Color(1, 1, 1, 0.854902)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cs1tg"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2dvfe"]
-texture = ExtResource("21_t4otl")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
-modulate_color = Color(1, 1, 1, 0.854902)
-
 [sub_resource type="LabelSettings" id="LabelSettings_f1ej7"]
 font = ExtResource("11_d2wvv")
 font_size = 22
@@ -695,13 +669,6 @@ texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
 modulate_color = Color(1, 1, 1, 0.811765)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_l71n6"]
-texture = ExtResource("15_a38lo")
-texture_margin_left = 32.0
-texture_margin_top = 16.0
-texture_margin_right = 32.0
-texture_margin_bottom = 16.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_oprun"]
 font_size = 22
@@ -1062,7 +1029,7 @@ offset_bottom = -216.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="HealthBar" type="ProgressBar" parent="UI/Defense"]
+[node name="HealthBar" type="TextureProgressBar" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1075,11 +1042,15 @@ offset_right = 168.0
 offset_bottom = -136.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxTexture_ujl30")
-theme_override_styles/fill = SubResource("StyleBoxTexture_j2b1d")
-show_percentage = false
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("14_a38lo")
 
-[node name="OverhealBar" type="ProgressBar" parent="UI/Defense"]
+[node name="OverhealBar" type="TextureProgressBar" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1092,10 +1063,13 @@ offset_right = 168.0
 offset_bottom = -136.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxEmpty_cs1tg")
-theme_override_styles/fill = SubResource("StyleBoxTexture_2dvfe")
-value = 2.98
-show_percentage = false
+fill_mode = 1
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_progress = ExtResource("21_t4otl")
 
 [node name="Health Label" type="Label" parent="UI/Defense"]
 layout_mode = 1
@@ -1115,7 +1089,7 @@ label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SprintBar" type="ProgressBar" parent="UI/Defense"]
+[node name="SprintBar" type="TextureProgressBar" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1128,10 +1102,14 @@ offset_right = 172.0
 offset_bottom = -184.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxTexture_4ni07")
-theme_override_styles/fill = SubResource("StyleBoxTexture_l71n6")
 max_value = 220.0
-show_percentage = false
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("15_a38lo")
 
 [node name="Inventory" type="HBoxContainer" parent="UI/Defense"]
 layout_mode = 1
@@ -1845,76 +1823,6 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Main Menu"
 
-[node name="HealthBar" type="ProgressBar" parent="UI/Dungeon"]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -168.0
-offset_top = -184.0
-offset_right = 168.0
-offset_bottom = -136.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxTexture_ujl30")
-theme_override_styles/fill = SubResource("StyleBoxTexture_j2b1d")
-show_percentage = false
-
-[node name="OverhealBar" type="ProgressBar" parent="UI/Dungeon"]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -168.0
-offset_top = -184.0
-offset_right = 168.0
-offset_bottom = -136.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxEmpty_cs1tg")
-theme_override_styles/fill = SubResource("StyleBoxTexture_2dvfe")
-show_percentage = false
-
-[node name="Health Label" type="Label" parent="UI/Dungeon"]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -42.0
-offset_top = -175.0
-offset_right = 42.0
-offset_bottom = -147.0
-grow_horizontal = 2
-grow_vertical = 0
-text = "Uh oh!"
-label_settings = SubResource("LabelSettings_f1ej7")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="SprintBar" type="ProgressBar" parent="UI/Dungeon"]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -172.0
-offset_top = -216.0
-offset_right = 172.0
-offset_bottom = -184.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxTexture_4ni07")
-theme_override_styles/fill = SubResource("StyleBoxTexture_l71n6")
-max_value = 220.0
-show_percentage = false
-
 [node name="Inventory" type="HBoxContainer" parent="UI/Dungeon"]
 layout_mode = 1
 anchors_preset = 7
@@ -2045,6 +1953,88 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_wnwbv")
 theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
 text = "Close"
+
+[node name="HealthBar" type="TextureProgressBar" parent="UI/Dungeon"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -184.0
+offset_right = 168.0
+offset_bottom = -136.0
+grow_horizontal = 2
+grow_vertical = 0
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("14_a38lo")
+
+[node name="OverhealBar" type="TextureProgressBar" parent="UI/Dungeon"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -184.0
+offset_right = 168.0
+offset_bottom = -136.0
+grow_horizontal = 2
+grow_vertical = 0
+fill_mode = 1
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_progress = ExtResource("21_t4otl")
+
+[node name="Health Label" type="Label" parent="UI/Dungeon"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -42.0
+offset_top = -175.0
+offset_right = 42.0
+offset_bottom = -147.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Uh oh!"
+label_settings = SubResource("LabelSettings_f1ej7")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeon"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -172.0
+offset_top = -216.0
+offset_right = 172.0
+offset_bottom = -184.0
+grow_horizontal = 2
+grow_vertical = 0
+max_value = 220.0
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("15_a38lo")
 
 [node name="Global" type="Control" parent="UI"]
 layout_mode = 3

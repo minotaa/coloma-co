@@ -45,6 +45,9 @@ func _connect_button_sfx(button: Button):
 	)
 
 func _ready() -> void:
+	$UI/Main/Buttons/Bag/TextureProgressBar.value = Man.current_xp
+	$UI/Main/Buttons/Bag/TextureProgressBar.max_value = Man.calculate_xp_for_level(Man.current_level + 1)
+	$UI/Main/Buttons/Bag/Label.text = str(Man.current_level)
 	Man.set_rich_presence("#In_MainMenu")
 	play_music(preload("res://assets/sounds/MO_titlescreen.wav"), true)
 	
@@ -126,7 +129,7 @@ func _on_back_pressed() -> void:
 		$UI/Main/Loadout.visible = false 
 		$UI/Main/Buttons.visible = true
 		$UI/Main/Title.visible = true
-		$UI/Main/Subtitle.visible = true
+		$UI/Main/Title2.visible = true
 		$UI/Main/Version.visible = true
 	else:
 		$"UI/Main/Play Buttons".visible = false
@@ -212,7 +215,9 @@ func _on_update_players(players: Array) -> void:
 
 	for player in players:
 		var entry = preload("res://scenes/multiplayer_player_entry.tscn").instantiate()
-		entry.get_node("Label").text = player["username"]
+		var level_color = Man.get_level_color(player.get("level", 1))
+		var level = player.get("level", 1)
+		entry.get_node("Label").text = "[color=#" + level_color.to_html() + "][" + str(level) + "][/color] " + player["username"]
 		container.add_child(entry, true)
 	$UI/Main/Players/Count.text = "Players (" + str(players.size()) + "/6)"
 	$"UI/Main/Players/Details".text = "Mode: " + Man.selected_mode + "\nMap: " + Man.selected_map
@@ -415,7 +420,7 @@ func _on_play_pressed() -> void:
 func _on_loadout_pressed() -> void:
 	$UI/Main/Buttons.visible = false 
 	$UI/Main/Title.visible = false
-	$UI/Main/Subtitle.visible = false
+	$UI/Main/Title2.visible = false
 	$UI/Main/Version.visible = false
 	$UI/Main/Loadout.visible = true
 	update_loadout()
@@ -423,7 +428,22 @@ func _on_loadout_pressed() -> void:
 func update_loadout() -> void:
 	$UI/Main/Loadout/Panel/Main/ArmorIcon.texture = Man.equipped_armor.texture
 	$UI/Main/Loadout/Panel/Main/WeaponIcon.texture = Man.equipped_weapon.texture
+	var found_armor = 0
+	var found_weapons = 0
+	var total_armor = 0
+	var total_weapons = 0
+	for item in Catalog.items:
+		if (item is Weapon):
+			total_weapons += 1
+			if Man.bag.has_item(item):
+				found_weapons += 1
+		if (item is Armor):
+			total_armor += 1
+			if Man.bag.has_item(item):
+				found_armor += 1
 	
+	$UI/Main/Loadout/Panel/Main/Armor.text = "Armor (" + str(found_armor) + "/" + str(total_armor) + ")"
+	$UI/Main/Loadout/Panel/Main/Weapon.text = "Weapon (" + str(found_weapons) + "/" + str(total_weapons) + ")"
 	$UI/Main/Loadout/Panel/Main/ArmorMeta.text = Man.equipped_armor.name + "\n" + Man.equipped_armor.description
 	$UI/Main/Loadout/Panel/Main/WeaponMeta.text = Man.equipped_weapon.name + "\n" + Man.equipped_weapon.description
 	$UI/Main/Loadout/Panel/Main/Meta.text = "+" + str(roundi(Man.equipped_weapon.damage)) + " damage\n+" + str(roundi(Man.equipped_armor.defense)) + " defense" 

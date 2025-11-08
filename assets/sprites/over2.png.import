@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ci68j2n551172"
-path="res://.godot/imported/over.png-dbc64036c2a64c24c37370879a93a378.ctex"
+uid="uid://c2m5vh2c5qlfd"
+path="res://.godot/imported/over2.png-e16575e9fc1ebdafd83c73383d33bce0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/over.png"
-dest_files=["res://.godot/imported/over.png-dbc64036c2a64c24c37370879a93a378.ctex"]
+source_file="res://assets/sprites/over2.png"
+dest_files=["res://.godot/imported/over2.png-e16575e9fc1ebdafd83c73383d33bce0.ctex"]
 
 [params]
 
