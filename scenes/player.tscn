@@ -1,4 +1,4 @@
-[gd_scene load_steps=150 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=151 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -38,6 +38,7 @@
 [ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="33_bj30b"]
 [ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="34_jc3p3"]
 [ext_resource type="PackedScene" uid="uid://cr5ypwn2b5ncm" path="res://scenes/key.tscn" id="37_hax0n"]
+[ext_resource type="Texture2D" uid="uid://b6x2ks8yfiru2" path="res://assets/sprites/caret.png" id="39_j2b1d"]
 
 [sub_resource type="Curve" id="Curve_gl8cc"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.532508, 0.515848), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -2370,6 +2371,10 @@ label_settings = SubResource("LabelSettings_hax0n")
 process_callback = 0
 wait_time = 1.5
 autostart = true
+
+[node name="Cursor2" type="Sprite2D" parent="."]
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("39_j2b1d")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
 [connection signal="body_entered" from="SwordHbox" to="." method="_on_sword_hbox_entered"]

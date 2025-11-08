@@ -28,6 +28,7 @@ var knockback_velocity := Vector2.ZERO
 var knockback_friction := 800.0
 var hit_cooldown := 0.0
 var max_hit_cooldown := 0.35
+var last_cursor_angle := 0.0
 
 const FADE_SPEED := 5.0
 const SPEED := 120.0
@@ -772,6 +773,40 @@ func _process_input(delta) -> void:
 		play_idle_animation()
 	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible or $UI/Global/Pause.visible:
 		return
+		
+	if using_controller:
+		# Get right stick input
+		var right_stick_x = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+		var right_stick_y = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+		
+		# Check if stick is being moved (deadzone)
+		var stick_magnitude = Vector2(right_stick_x, right_stick_y).length()
+		if stick_magnitude > 0.2:  # Deadzone threshold
+			# Calculate angle from stick input
+			var angle = atan2(right_stick_y, right_stick_x)
+			last_cursor_angle = angle  # Store for attacks
+			
+			# Set orbit radius (distance from player)
+			var orbit_radius = 28  # Adjust this value as needed
+			
+			# Position cursor in orbit around player
+			$Cursor2.position = Vector2(
+				cos(angle) * orbit_radius,
+				sin(angle) * orbit_radius
+			)
+			
+			# Rotate cursor to face away from player (tangent to orbit)
+			$Cursor2.rotation = angle + PI / 2
+			
+			# Make cursor visible
+			$Cursor2.visible = true
+		else:
+			# Hide cursor when stick is neutral
+			$Cursor2.visible = false
+	else:
+		# Hide cursor when using keyboard/mouse
+		$Cursor2.visible = false
+
 	if Input.is_action_just_pressed("interact"):
 		print("interacted")
 		var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
@@ -832,8 +867,15 @@ func _process_input(delta) -> void:
 		elif Input.is_action_just_pressed("attack_right"):
 			attack_dir = "right"
 		elif Input.is_action_just_pressed("attack"):
-			var mouse_pos = get_global_mouse_position()
-			var direction_vec = (mouse_pos - global_position).normalized()
+			var direction_vec: Vector2
+			
+			if using_controller:
+				# Use cursor angle for controller
+				direction_vec = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
+			else:
+				# Use mouse for keyboard/mouse
+				var mouse_pos = get_global_mouse_position()
+				direction_vec = (mouse_pos - global_position).normalized()
 
 			if abs(direction_vec.x) > abs(direction_vec.y):
 				if direction_vec.x > 0.0:
@@ -860,8 +902,13 @@ func _process_input(delta) -> void:
 	elif Man.equipped_weapon.type == "BOOMERANG":
 		if Input.is_action_just_pressed("attack") and has_boomerang:
 			play_animation("throw_" + last_direction)
-			var mouse_pos = get_global_mouse_position()
-			var direction = (mouse_pos - global_position).normalized()
+			var direction: Vector2
+			
+			if using_controller:
+				direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
+			else:
+				var mouse_pos = get_global_mouse_position()
+				direction = (mouse_pos - global_position).normalized()
 			
 			if multiplayer.has_multiplayer_peer():
 				create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
@@ -894,8 +941,14 @@ func _process_input(delta) -> void:
 		if clip > 0:
 			if Input.is_action_just_pressed("attack"):
 				play_animation("throw_" + last_direction)
-				var mouse_pos = get_global_mouse_position()
-				var direction = (mouse_pos - global_position).normalized()
+				var direction: Vector2
+				
+				if using_controller:
+					direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
+				else:
+					var mouse_pos = get_global_mouse_position()
+					direction = (mouse_pos - global_position).normalized()
+				
 				if multiplayer.has_multiplayer_peer():
 					create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
 				else:
@@ -931,8 +984,13 @@ func _process_input(delta) -> void:
 		if clip > 0:
 			if Input.is_action_just_pressed("attack"):
 				play_animation("throw_" + last_direction)
-				var mouse_pos = get_global_mouse_position()
-				var direction = (mouse_pos - global_position).normalized()
+				var direction: Vector2
+				
+				if using_controller:
+					direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
+				else:
+					var mouse_pos = get_global_mouse_position()
+					direction = (mouse_pos - global_position).normalized()
 				
 				# Shoot 3 projectiles with spread
 				var spread_angle = deg_to_rad(15)  # Adjust this for wider/tighter spread
@@ -981,7 +1039,7 @@ func _process_input(delta) -> void:
 					reload_time = Man.equipped_weapon.data["reload_time"]
 				play_sfx("shoot", global_position, 10.0)
 				screen_shake(2.0, 0.15)
-
+	
 	# Apply velocity and move
 	velocity *= SPEED
 	if upgrade_bag.has_item(Catalog.get_by_id(33)):
@@ -1135,11 +1193,12 @@ func _input(event: InputEvent) -> void:
 		change_zoom(0.25)
 	elif event.is_action_pressed("zoom_out") and not $UI/Global/ChatBar.has_focus():
 		change_zoom(-0.25)
-	if not $UI/Global/ChatBar.has_focus() and event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+	if not $UI/Global/ChatBar.has_focus() and Input.is_action_pressed("pause"):
 		if $UI/Global/Pause.visible: 
 			$UI/Global/Pause.visible = false
 		else:
 			$UI/Global/Pause.visible = true
+			$UI/Global/Pause/Panel/Resume.grab_focus()
 	if event is InputEventMouseMotion or event is InputEventMouseButton:
 		using_controller = false
 		_update_button_focus_styles(false)
@@ -1384,6 +1443,7 @@ func _physics_process(delta: float) -> void:
 	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+
 	if lifesteal_cooldown > 0.0:
 		lifesteal_cooldown -= delta
 	if active_effects.size() > 0:
