@@ -107,7 +107,6 @@ func get_retreat_position_away_from(player_pos: Vector2) -> Vector2:
 			var candidate = global_position + offset
 
 			agent.target_position = candidate
-			await get_tree().process_frame
 
 			if not agent.is_target_reachable():
 				continue

@@ -232,7 +232,10 @@ func spawn_wave() -> void:
 	var chosen_seed = randi()
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.health < player.get_max_health() and player.alive:
-			player.heal(10)
+			if multiplayer.has_multiplayer_peer():
+				player.heal.rpc(10)
+			else:
+				player.heal(10)
 		if wave % 5 == 0:
 			print("Refreshing players' shops.")
 			if multiplayer.has_multiplayer_peer():

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cawr5j58w04h6"]
 
-[ext_resource type="Script" uid="uid://3x6dnmu5ilod" path="res://scripts/explosive_bullet.gd" id="1_osed2"]
+[ext_resource type="Script" path="res://scripts/explosive_bullet.gd" id="1_osed2"]
 [ext_resource type="Texture2D" uid="uid://beru2ro5bdws4" path="res://assets/sprites/explosive_star.png" id="2_h4gk1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_eoqba"]

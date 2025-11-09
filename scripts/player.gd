@@ -384,7 +384,8 @@ func setup_ui(type: String) -> void:
 	else:
 		print("Type is empty, no specific UI shown")
 	$UI/Global.visible = true
-		
+	
+@rpc("any_peer", "call_local", "reliable")
 func heal(amount: float) -> void:	
 	if alive:
 		var old_health = health
@@ -1203,9 +1204,6 @@ func _input(event: InputEvent) -> void:
 		using_controller = false
 		_update_button_focus_styles(false)
 	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
-		using_controller = true
-		_update_button_focus_styles(true)
-	elif event is InputEventKey:
 		using_controller = true
 		_update_button_focus_styles(true)
 

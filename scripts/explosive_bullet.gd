@@ -10,12 +10,16 @@ func _physics_process(delta: float) -> void:
 	# Check for player collision
 	for body in get_overlapping_bodies():
 		if body.is_in_group("players") and body.alive:
-			explode()
+			if multiplayer.has_multiplayer_peer():
+				explode.rpc()
+			else:
+				explode()
 			return
 		
 		explode()
 		return
 
+@rpc("any_peer", "call_local", "reliable")
 func explode() -> void:
 	var explosion_scene = preload("res://scenes/lethal_explosion.tscn")
 	var explosion = explosion_scene.instantiate()
