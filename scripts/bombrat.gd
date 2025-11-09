@@ -64,7 +64,7 @@ func explode() -> void:
 	var explosion = explosion_scene.instantiate()
 	explosion.global_position = global_position
 	explosion.emitting = true
-	get_parent().add_child(explosion)
+	get_parent().add_child(explosion, true)
 
 	# Damage gems in range (same as original logic)
 	for area in $Hurtbox.get_overlapping_areas():

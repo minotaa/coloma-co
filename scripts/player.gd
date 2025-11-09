@@ -67,7 +67,7 @@ var kills: int = 0
 
 var active_effects: Array = []
 
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func add_gold_notification(amount: int) -> void:
 	if has_effect("Prosperity"):
 		amount *= 2
@@ -389,6 +389,7 @@ func setup_ui(type: String) -> void:
 func heal(amount: float) -> void:	
 	if alive:
 		var old_health = health
+		
 		health = min(health + amount, get_max_health())
 		var healed = roundi(health - old_health)
 		damage_healed += healed

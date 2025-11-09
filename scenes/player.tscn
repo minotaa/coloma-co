@@ -2373,6 +2373,7 @@ wait_time = 1.5
 autostart = true
 
 [node name="Cursor2" type="Sprite2D" parent="."]
+visible = false
 scale = Vector2(0.45, 0.45)
 texture = ExtResource("39_j2b1d")
 
