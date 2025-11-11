@@ -823,7 +823,8 @@ func _process_input(delta) -> void:
 					update_shop_ui()
 					break
 		else:
-			shop_node.visible = false
+			if not using_controller:
+				shop_node.visible = false
 			
 	if $UI/Defense/Shop.visible:
 		return
@@ -1043,7 +1044,7 @@ func _process_input(delta) -> void:
 				screen_shake(2.0, 0.15)
 	
 	# Apply velocity and move
-	velocity *= SPEED
+	velocity = velocity.normalized() * SPEED
 	if upgrade_bag.has_item(Catalog.get_by_id(33)):
 		velocity *= 1.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(33)).data["level"]
 	#play_sfx(walking_sounds.pick_random(), randf_range(-5.0, 5.0))

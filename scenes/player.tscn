@@ -909,6 +909,7 @@ shape = SubResource("RectangleShape2D_qfm1y")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3.75, 3.75)
+position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 
 [node name="Cursor" type="Sprite2D" parent="."]

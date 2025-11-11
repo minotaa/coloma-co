@@ -96,18 +96,22 @@ func _ready() -> void:
 func auto_login_async() -> void:
 	if HAuth.product_user_id != "":
 		return  # Already logged in
-
-	# Step 1: Persistent device login
+		
+		
+	# Step 1: Attempt Steam login if available
+	if steam_enabled:
+		print("Initiating Steam login to EOS...")
+		initiate_steam_login_to_eos()
+		return
+		
+	# Step 2: Persistent device login
 	print("Logging in with persistent device...")
 	var device_login_result = await login_persistent_device_async()
 	if not device_login_result:
 		Toast.add("Failed to login with device ID.")
 		return
 
-	# Step 2: Attempt Steam login if available
-	if steam_enabled:
-		print("Initiating Steam login to EOS...")
-		initiate_steam_login_to_eos()
+
 
 func login_persistent_device_async() -> bool:
 	var user_display_name = HAuth.display_name.strip_edges()
