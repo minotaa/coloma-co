@@ -1823,6 +1823,19 @@ offset_bottom = -104.0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
 
+[node name="FSLabel" type="Label" parent="UI/Main/Options/General"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -202.0
+offset_top = 32.0
+offset_right = 8.0
+offset_bottom = 74.0
+grow_horizontal = 2
+text = "Fullscreen"
+label_settings = SubResource("LabelSettings_flqon")
+
 [node name="CheckBox" type="CheckBox" parent="UI/Main/Options/General"]
 layout_mode = 1
 anchors_preset = 5
@@ -1843,15 +1856,48 @@ theme_override_icons/checked = ExtResource("10_flqon")
 theme_override_icons/unchecked = ExtResource("11_flqon")
 icon_alignment = 2
 
+[node name="FCLabel" type="Label" parent="UI/Main/Options/General"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -201.0
+offset_top = 88.0
+offset_right = 72.0
+offset_bottom = 130.0
+grow_horizontal = 2
+text = "Flick control"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="CheckBox2" type="CheckBox" parent="UI/Main/Options/General"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 169.0
+offset_top = 90.0
+offset_right = 306.0
+offset_bottom = 240.0
+grow_horizontal = 2
+scale = Vector2(0.25, 0.25)
+theme_override_constants/outline_size = 24
+theme_override_constants/h_separation = 52
+theme_override_constants/align_to_largest_stylebox = 0
+theme_override_font_sizes/font_size = 99
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8egab")
+theme_override_icons/checked = ExtResource("10_flqon")
+theme_override_icons/unchecked = ExtResource("11_flqon")
+icon_alignment = 2
+
 [node name="VLabel" type="Label" parent="UI/Main/Options/General"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -200.0
-offset_top = 88.0
+offset_top = 142.0
 offset_right = -74.0
-offset_bottom = 130.0
+offset_bottom = 184.0
 grow_horizontal = 2
 text = "Volume"
 label_settings = SubResource("LabelSettings_flqon")
@@ -1862,24 +1908,11 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -200.0
-offset_top = 146.0
+offset_top = 200.0
 offset_right = -74.0
-offset_bottom = 188.0
+offset_bottom = 242.0
 grow_horizontal = 2
 text = "Music"
-label_settings = SubResource("LabelSettings_flqon")
-
-[node name="FSLabel" type="Label" parent="UI/Main/Options/General"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -202.0
-offset_top = 32.0
-offset_right = 8.0
-offset_bottom = 74.0
-grow_horizontal = 2
-text = "Fullscreen"
 label_settings = SubResource("LabelSettings_flqon")
 
 [node name="HSlider" type="HSlider" parent="UI/Main/Options/General"]
@@ -1888,9 +1921,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -56.0
-offset_top = 96.0
+offset_top = 150.0
 offset_right = 200.0
-offset_bottom = 128.0
+offset_bottom = 182.0
 grow_horizontal = 2
 theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")
@@ -1904,9 +1937,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -56.0
-offset_top = 154.0
+offset_top = 208.0
 offset_right = 200.0
-offset_bottom = 186.0
+offset_bottom = 240.0
 grow_horizontal = 2
 theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")
@@ -1920,9 +1953,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 24.0
-offset_top = -192.0
+offset_top = -138.0
 offset_right = 440.0
-offset_bottom = -132.0
+offset_bottom = -78.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
@@ -1938,9 +1971,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 24.0
-offset_top = -129.0
+offset_top = -75.0
 offset_right = 440.0
-offset_bottom = -69.0
+offset_bottom = -15.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
@@ -2150,6 +2183,7 @@ horizontal_alignment = 2
 [connection signal="pressed" from="UI/Main/Online Join/Join" to="." method="_on_online_join_join_pressed"]
 [connection signal="pressed" from="UI/Main/Online Join/Back" to="." method="_on_back_pressed"]
 [connection signal="toggled" from="UI/Main/Options/General/CheckBox" to="." method="_on_fullscreen_check_box_toggled"]
+[connection signal="toggled" from="UI/Main/Options/General/CheckBox2" to="." method="_on_flick_control_check_box_toggled"]
 [connection signal="drag_ended" from="UI/Main/Options/General/HSlider" to="." method="_on_volume_slider_drag_ended"]
 [connection signal="value_changed" from="UI/Main/Options/General/HSlider" to="." method="_on_volume_slider_value_changed"]
 [connection signal="drag_ended" from="UI/Main/Options/General/HSlider2" to="." method="_on_h_slider_2_drag_ended"]

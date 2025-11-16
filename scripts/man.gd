@@ -42,6 +42,7 @@ var controls: Dictionary[Variant, Variant] = {
 }
 
 var fullscreen: bool = false
+var flick_control: bool = false
 var sfx_volume: float = 100.0
 var music_volume: float = 100.0
 var bag = Bag.new()
@@ -231,6 +232,8 @@ func load_game():
 			current_level = data["current_level"]
 		if data.has("current_xp"):
 			current_xp = data["current_xp"]
+		if data.has("flick_control"):
+			flick_control = data["flick_control"]
 	print("Loaded save data.")
 
 func get_save_data() -> Dictionary:
@@ -246,7 +249,8 @@ func get_save_data() -> Dictionary:
 		"highest_rooms": highest_rooms,
 		"enemies_killed": enemies_killed,
 		"current_level": current_level,
-		"current_xp": current_xp
+		"current_xp": current_xp,
+		"flick_control": flick_control
 	}
 
 func _notification(what: int) -> void:

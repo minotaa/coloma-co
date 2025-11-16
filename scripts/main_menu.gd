@@ -63,6 +63,7 @@ func _setup_initial_values() -> void:
 	$UI/Main/Buttons/Bag/Label.text = str(Man.current_level)
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
 	$UI/Main/Options/General/CheckBox.button_pressed = Man.fullscreen
+	$UI/Main/Options/General/CheckBox2.button_pressed = Man.flick_control
 	$UI/Main/Options/General/HSlider.value = Man.sfx_volume
 	$UI/Main/Options/General/HSlider2.value = Man.music_volume
 	
@@ -918,3 +919,7 @@ func _configure_players_focus() -> void:
 	
 	# Focus the Start button by default
 	start_button.grab_focus()
+
+
+func _on_flick_control_check_box_toggled(toggled_on: bool) -> void:
+	Man.flick_control = toggled_on

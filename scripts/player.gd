@@ -7,6 +7,7 @@ var reroll_cost = 50  # Gold cost per reroll
 var type: String = ""
 var guaranteed_crit = false
 var current_log_path: String
+var focused_inventory_slot: int = 0 
 var original_zoom := Vector2(4.0, 4.0)
 var leveling_bar_rest_position: Vector2
 var zoom_multiplier := 1.0
@@ -767,6 +768,15 @@ func update_shop_ui():
 		reroll_btn.text = "Reroll (%d left - %d gold)" % [rerolls_available, reroll_cost]
 		reroll_btn.disabled = gold < reroll_cost or rerolls_available <= 0
 
+func update_inventory_focus() -> void:
+	var inventory = $UI/Defense/Inventory if type == "Defense" else $UI/Dungeon/Inventory
+	var slots = inventory.get_children()
+	
+	if focused_inventory_slot >= 0 and focused_inventory_slot < slots.size():
+		var focused_slot = slots[focused_inventory_slot]
+		if focused_slot.has_node("Button"):
+			focused_slot.get_node("Button").grab_focus()
+
 func _process_input(delta) -> void:
 	# Handle movement input
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
@@ -776,7 +786,99 @@ func _process_input(delta) -> void:
 	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible or $UI/Global/Pause.visible:
 		return
 		
+	# Controller inventory navigation
 	if using_controller:
+		# Navigate inventory slots
+		if Input.is_action_just_pressed("left_inventory"):
+			focused_inventory_slot = max(0, focused_inventory_slot - 1)
+			update_inventory_focus()
+		elif Input.is_action_just_pressed("right_inventory"):
+			focused_inventory_slot = min(get_slots() - 1, focused_inventory_slot + 1)
+			update_inventory_focus()
+		
+		# Use focused item
+		if Input.is_action_just_pressed("use"):
+			press_inventory_slot(focused_inventory_slot)
+		
+	if using_controller and Man.flick_control:
+		# Get right stick input
+		var right_stick_x = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+		var right_stick_y = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+		
+		# Check if stick is being moved (deadzone)
+		var stick_magnitude = Vector2(right_stick_x, right_stick_y).length()
+		if stick_magnitude > 0.5:  # Higher threshold for flick detection
+			# Calculate angle from stick input
+			var angle = atan2(right_stick_y, right_stick_x)
+			last_cursor_angle = angle
+			
+			# Trigger attack based on weapon type
+			if Man.equipped_weapon.type == "SWORD":
+				var direction_vec = Vector2(cos(angle), sin(angle))
+				var attack_dir = ""
+				
+				if abs(direction_vec.x) > abs(direction_vec.y):
+					attack_dir = "right" if direction_vec.x > 0.0 else "left"
+				else:
+					attack_dir = "down" if direction_vec.y > 0.0 else "up"
+				
+				if multiplayer.has_multiplayer_peer():
+					play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
+				else:
+					play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
+				play_animation("sword_" + attack_dir)
+				_enable_sword_hitbox(attack_dir)
+				sword_hitbox_timer = SWORD_HITBOX_TIME
+				sword_hitbox_active = true
+				
+			elif Man.equipped_weapon.type == "BOOMERANG":
+				if has_boomerang:
+					play_animation("throw_" + last_direction)
+					var direction = Vector2(cos(angle), sin(angle))
+					
+					if multiplayer.has_multiplayer_peer():
+						create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
+					else:
+						create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
+					has_boomerang = false
+					
+			elif Man.equipped_weapon.type == "THROWABLE":
+				if clip > 0:
+					play_animation("throw_" + last_direction)
+					var direction = Vector2(cos(angle), sin(angle))
+					
+					if multiplayer.has_multiplayer_peer():
+						create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
+					else:
+						create_throwable(Man.equipped_weapon.id, global_position, direction, name)
+					clip -= 1
+					if clip <= 0:
+						reload_time = Man.equipped_weapon.data["reload_time"]
+					play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
+					
+			elif Man.equipped_weapon.type == "BLUNDERBUSS":
+				if clip > 0:
+					play_animation("throw_" + last_direction)
+					var direction = Vector2(cos(angle), sin(angle))
+					
+					# Shoot 3 projectiles with spread
+					var spread_angle = deg_to_rad(15)
+					for i in range(-1, 2):
+						var angle_offset = i * spread_angle
+						var spread_direction = direction.rotated(angle_offset)
+						
+						if multiplayer.has_multiplayer_peer():
+							create_throwable.rpc(Man.equipped_weapon.id, global_position, spread_direction, name)
+						else:
+							create_throwable(Man.equipped_weapon.id, global_position, spread_direction, name)
+					
+					clip -= 1
+					if clip <= 0:
+						reload_time = Man.equipped_weapon.data["reload_time"]
+					play_sfx("shoot", global_position, 10.0)
+					screen_shake(2.0, 0.15)
+		
+	elif using_controller:
 		# Get right stick input
 		var right_stick_x = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
 		var right_stick_y = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
