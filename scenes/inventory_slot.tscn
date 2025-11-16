@@ -1,7 +1,7 @@
 [gd_scene load_steps=17 format=3 uid="uid://ob7qtnaqlwp2"]
 
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_bxqf6"]
-[ext_resource type="Script" path="res://scripts/inventory_slot.gd" id="1_hddt5"]
+[ext_resource type="Script" uid="uid://cdrjmmn8sndql" path="res://scripts/inventory_slot.gd" id="1_hddt5"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="2_bbig2"]
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_hddt5"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="2_t1mo2"]

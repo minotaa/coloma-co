@@ -772,21 +772,39 @@ func update_inventory_focus() -> void:
 	var inventory = $UI/Defense/Inventory if type == "Defense" else $UI/Dungeon/Inventory
 	var slots = inventory.get_children()
 	
+	# Remove highlight from all slots
+	for i in range(slots.size()):
+		var slot = slots[i]
+		if slot.has_node("Button"):
+			var button = slot.get_node("Button")
+			button.scale = Vector2(1, 1)  # Normal size
+	
+	# Highlight the focused slot
 	if focused_inventory_slot >= 0 and focused_inventory_slot < slots.size():
 		var focused_slot = slots[focused_inventory_slot]
 		if focused_slot.has_node("Button"):
-			focused_slot.get_node("Button").grab_focus()
+			var button = focused_slot.get_node("Button")
+			button.scale = Vector2(1.15, 1.15)  # Slightly bigger
+			print("Highlighted slot ", focused_inventory_slot)
 
 func _process_input(delta) -> void:
 	# Handle movement input
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+		
+	if knockback_velocity.length() > 0.1:
+		velocity = knockback_velocity
+		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
+		move_and_slide()
+	else:
+		knockback_velocity = Vector2.ZERO
+		
 	if $UI/Global/ChatBar.has_focus() and alive:
 		play_idle_animation()
 	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible or $UI/Global/Pause.visible:
 		return
 		
-	# Controller inventory navigation
+		# Controller inventory navigation
 	if using_controller:
 		# Navigate inventory slots
 		if Input.is_action_just_pressed("left_inventory"):
@@ -1150,11 +1168,6 @@ func _process_input(delta) -> void:
 	if upgrade_bag.has_item(Catalog.get_by_id(33)):
 		velocity *= 1.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(33)).data["level"]
 	#play_sfx(walking_sounds.pick_random(), randf_range(-5.0, 5.0))
-	if knockback_velocity.length() > 0.1:
-		velocity += knockback_velocity
-		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
-	else:
-		knockback_velocity = Vector2.ZERO
 	
 	if Input.is_action_pressed("sprint") and sprint > 0 and not exhausted:
 		velocity *= SPRINT_MULTIPLIER
@@ -1246,6 +1259,7 @@ func create_throwable(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_
 	play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), spawn_pos)
 
 func press_inventory_slot(index: int) -> void:
+	print("Pressing inventory slot " , index)
 	if type == "Defense":
 		var slots = $UI/Defense/Inventory.get_children()
 		if index < 0 or index >= get_slots():
