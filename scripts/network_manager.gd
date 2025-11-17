@@ -10,6 +10,7 @@ var player_name: String
 var eos_is_initialized: bool = false
 var steam_enabled: bool = false
 var auth_tickets: Dictionary = {}
+var invitation: String = ""
 
 signal player_joined(peer_id)
 signal update_players(players)
@@ -86,11 +87,20 @@ func _ready() -> void:
 		steam_enabled = false
 	else:
 		steam_enabled = true
+	await auto_login_async()
 	if steam_enabled:
 		print("Steam name: " + Steam.getPersonaName())
 		Steam.get_auth_session_ticket_response.connect(_get_auth_session_ticket_response)
-	await auto_login_async()
-	
+		Steam.join_game_requested.connect(steam_join_game_request)
+		if Steam.getLaunchCommandLine() != null:
+			invitation = Steam.getLaunchCommandLine()
+			print("Found an invitation from the server, setting invitation.")
+
+func steam_join_game_request(user, connect) -> void:
+	print("User attempted to join game from their friends list, setting invitation.")
+	invitation = connect
+	Man.end_game()
+
 func auto_login_async() -> void:
 	if HAuth.product_user_id != "":
 		return  # Already logged in

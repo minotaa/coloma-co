@@ -42,48 +42,46 @@ func _ready() -> void:
 
 func _check_for_auto_join() -> void:
 	"""Check if game was launched with a join parameter and auto-connect"""
-	print (OS.get_cmdline_args())
-	print (Steam.getLaunchCommandLine())
-	var command_line_args = OS.get_cmdline_args()
-	if command_line_args.size() > 0:
-		# Look for +connect_lobby argument
-		for i in range(command_line_args.size()):
-			if command_line_args[i] == "+connect_lobby":
-				if i + 1 < command_line_args.size():
-					var userid = command_line_args[i + 1]
-					print("Auto-joining game with user ID: " + userid)
-					Toast.add("Joining friend's game...")
-					
-					# Wait a moment for EOS to initialize if needed
-					if HAuth.product_user_id == "":
-						var max_wait = 100 # 5 seconds
-						var waited = 0
-						while HAuth.product_user_id == "" and waited < max_wait:
-							await get_tree().create_timer(0.1).timeout
-							waited += 1
-						
-						if HAuth.product_user_id == "":
-							Toast.add("Failed to login before joining")
-							return
-					
-					# Auto-join the server
-					var result = await NetworkManager.join_online_server(userid)
-					
-					if result:
-						NetworkManager.update_players.connect(_on_update_players)
-						Toast.add("Successfully joined friend's game!")
-						
-						$UI/Main/Mode.text = "-- multiplayer game --"
-						$UI/Main/Players/Start.visible = false
-						$"UI/Main/Players/Mode Selector".visible = false
-						$"UI/Main/Players/Copy UserID".visible = false
-						$UI/Main/Players/Details.visible = true
-						$UI/Main/Players/Panel2.visible = true
-						
-						transition_to(MenuState.PLAYERS)
-					else:
-						Toast.add("Failed to join friend's game")
-						play_ui_sfx(preload("res://assets/sounds/deny.wav"))
+	if NetworkManager.invitation != "":
+		var userid = NetworkManager.invitation
+		NetworkManager.invitation = ""
+		print("Auto-joining game with user ID: " + userid)
+		Toast.add("Joining friend's game...")
+		
+		# Wait for EOS to initialize and get display name
+		if HAuth.product_user_id == "" or HAuth.display_name == "" or HAuth.display_name.is_empty():
+			print("Waiting for login and display name...")
+			
+			# Wait for display_name_changed signal with timeout
+			await HAuth.display_name_changed
+			
+			# Add a small delay to ensure everything is ready
+			await get_tree().create_timer(0.5).timeout
+			
+			if HAuth.product_user_id == "" or HAuth.display_name == "" or HAuth.display_name.is_empty():
+				Toast.add("Failed to get username before joining")
+				return
+			
+			print("Display name set to: " + HAuth.display_name)
+		
+		# Auto-join the server
+		var result = await NetworkManager.join_online_server(userid)
+		
+		if result:
+			NetworkManager.update_players.connect(_on_update_players)
+			Toast.add("Successfully joined friend's game!")
+			
+			$UI/Main/Mode.text = "-- multiplayer game --"
+			$UI/Main/Players/Start.visible = false
+			$"UI/Main/Players/Mode Selector".visible = false
+			$"UI/Main/Players/Copy UserID".visible = false
+			$UI/Main/Players/Details.visible = true
+			$UI/Main/Players/Panel2.visible = true
+			
+			transition_to(MenuState.PLAYERS)
+		else:
+			Toast.add("Failed to join friend's game")
+			play_ui_sfx(preload("res://assets/sounds/deny.wav"))
 
 func _cache_state_nodes() -> void:
 	"""Cache references to all state container nodes"""

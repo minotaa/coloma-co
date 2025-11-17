@@ -8,6 +8,7 @@ var maps: Dictionary[Variant, Variant] = {
 	"dungeon": ["Lysawood", "Solmere"],
 	"campaign": ["Joro"]
 }
+var dont_do_this_again: bool = false
 
 var map_paths: Dictionary[Variant, Variant] = {
 	"Defense_Lysawood": "res://scenes/levels/defense/Plains.tscn",
