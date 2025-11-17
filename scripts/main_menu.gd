@@ -42,6 +42,8 @@ func _ready() -> void:
 
 func _check_for_auto_join() -> void:
 	"""Check if game was launched with a join parameter and auto-connect"""
+	print (OS.get_cmdline_args())
+	print (Steam.getLaunchCommandLine())
 	var command_line_args = OS.get_cmdline_args()
 	if command_line_args.size() > 0:
 		# Look for +connect_lobby argument
@@ -54,7 +56,7 @@ func _check_for_auto_join() -> void:
 					
 					# Wait a moment for EOS to initialize if needed
 					if HAuth.product_user_id == "":
-						var max_wait = 50 # 5 seconds
+						var max_wait = 100 # 5 seconds
 						var waited = 0
 						while HAuth.product_user_id == "" and waited < max_wait:
 							await get_tree().create_timer(0.1).timeout
