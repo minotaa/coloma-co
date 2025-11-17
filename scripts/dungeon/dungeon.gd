@@ -17,7 +17,10 @@ var valid_rooms: Dictionary = {
 	],
 	"Solmere": [
 		"res://scenes/levels/dungeon/desert_bigger_hallway.tscn",
-		"res://scenes/levels/dungeon/desert_thin_hallway.tscn"
+		"res://scenes/levels/dungeon/desert_bracket_room.tscn",
+		"res://scenes/levels/dungeon/desert_loop_room.tscn",
+		"res://scenes/levels/dungeon/desert_twisty_turny_room.tscn",
+		"res://scenes/levels/dungeon/desert_puffy_room.tscn",
 	]
 }
 
