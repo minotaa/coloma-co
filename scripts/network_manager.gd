@@ -89,8 +89,6 @@ func _ready() -> void:
 	if steam_enabled:
 		print("Steam name: " + Steam.getPersonaName())
 		Steam.get_auth_session_ticket_response.connect(_get_auth_session_ticket_response)
-		var join_param = Steam.getLaunchQueryParam("join")
-		print("Join param: " + join_param)
 	await auto_login_async()
 	
 func auto_login_async() -> void:
@@ -211,6 +209,8 @@ func join_online_server(userid: String) -> bool:
 	
 	# Tell the server our username
 	send_info.rpc(multiplayer.get_unique_id(), player_name, Man.current_level)
+	Man.set_rich_presence_value("steam_player_group", userid)
+	Man.set_rich_presence_value("connect", "?join=" + userid)
 
 	print("[" + str(multiplayer.get_unique_id()) + "] Connected to the server")
 	return true
@@ -289,8 +289,10 @@ func host_online_server() -> bool:
 		"level": Man.current_level
 	})
 	update_players.emit(players)
+	
 	# Value is HAuth.product_user_id
-	#Man.set_rich_presence_value("connect", str(HAuth.product_user_id)) # Set this later when I figure out what it actually does
+	Man.set_rich_presence_value("steam_player_group", str(HAuth.product_user_id))
+	Man.set_rich_presence_value("connect", "?join=" + str(HAuth.product_user_id)) # Set this later when I figure out what it actually does
 	
 	return true
 
