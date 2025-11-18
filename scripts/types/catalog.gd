@@ -266,12 +266,12 @@ func _init() -> void:
 	mini_enrichment_potion.on_consume = func():
 		var player = Man.get_player()
 		if player != null:
-			var regeneration = Effect.new("Regeneration", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
+			var regeneration = Effect.new("Enrichment", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
 			regeneration.on_effect = func(target):
 				target.heal(5)
 			player.add_status_effect(regeneration)
 			player.play_sfx("glug", player.global_position, 10.0)
-			Toast.add("You have Regeneration for 10 seconds.")
+			Toast.add("You have Enrichment for 10 seconds.")
 	items.append(mini_enrichment_potion)
 	
 	atlas = AtlasTexture.new()
