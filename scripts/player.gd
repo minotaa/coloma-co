@@ -419,13 +419,16 @@ func _on_regen_timeout() -> void:
 		var next_interval = 10.0 - ((regen_level - 1) * 2.0)
 		$Timer.wait_time = next_interval
 	
-func take_damage(amount: float, location: Vector2 = Vector2.ZERO) -> void:
+func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.ZERO) -> void:
 	if hit_cooldown > 0.0 or not alive:
 		return
 		
 	if has_effect("Invulnerability"):
 		hit_cooldown = max_hit_cooldown
 		return
+	
+	if Man.equipped_armor.id == 43 and get_parent().get_node(body_name) != null and get_parent().get_node(body_name).health != null:
+		_process_hit(get_parent().get_node(body_name), (amount * 0.1) + get_bonus_damage())
 		
 	var dodge_chance = 0.0
 	if Man.equipped_armor.id == 11:

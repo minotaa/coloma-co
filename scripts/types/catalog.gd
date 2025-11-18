@@ -743,3 +743,24 @@ func _init() -> void:
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Invulnerability for 10 seconds.")
 	items.append(joros_blessing)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(192.0, 48.0, 16.0, 16.0)
+	var cactus_armor = Armor.new(43, "Cactus Armor", atlas)
+	cactus_armor.description = "Reflect damage back to enemies upon taking damage."
+	cactus_armor.defense = 20.0
+	cactus_armor.health = 15.0
+	items.append(cactus_armor)
+
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(208.0, 48.0, 16.0, 16.0)
+	var stone_longsword = Weapon.new(44, "Stone Longsword", atlas)
+	stone_longsword.damage = 40.0
+	stone_longsword.description = "A stone longsword, has a longer reach than the regular sword."
+	stone_longsword.type = "SWORD"
+	stone_longsword.data = {
+		"reach": 2.08
+	}
+	items.append(stone_longsword)
