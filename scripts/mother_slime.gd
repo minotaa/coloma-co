@@ -101,7 +101,7 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	# Player contact damage
 	for body in $Hurtbox.get_overlapping_bodies():
 		if body != null and body.is_in_group("players") and alive:
-			body.take_damage(20, global_position)
+			body.take_damage(20, name, global_position)
 
 func get_nearest_player() -> Node2D:
 	var players: Array = get_tree().get_nodes_in_group("players")

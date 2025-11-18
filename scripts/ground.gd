@@ -88,7 +88,7 @@ func _create_harmful_area(coords: Vector2i, tile_info: TileData):
 	
 	area.body_entered.connect(func(body):
 		if body.is_in_group("players") and body.has_method("take_damage"):
-			body.take_damage(area.get_meta("damage"), area.global_position)
+			body.take_damage(area.get_meta("damage"), name, area.global_position)
 	)
 
 	harmful_areas[coords] = area

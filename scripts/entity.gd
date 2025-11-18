@@ -108,7 +108,7 @@ func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 
 # Override this to define what happens when touching a player
 func on_player_contact(player: Node) -> void:
-	player.take_damage(10, global_position)
+	player.take_damage(10, name, global_position)
 
 @rpc("any_peer", "call_local")
 func play_sfx(stream_name: String, position: Vector2, volume: float = 0.0, pitch_scale: float = 1.0) -> void:

@@ -36,5 +36,5 @@ func check_and_damage_bodies() -> void:
 			damage_factor = clamp(damage_factor, 0.0, 1.0)
 			var damage = lerp(MIN_DAMAGE, MAX_DAMAGE, damage_factor)
 			
-			body.take_damage(damage, global_position)
+			body.take_damage(damage, name, global_position)
 			damaged_bodies.append(body)
