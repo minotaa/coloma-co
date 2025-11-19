@@ -173,7 +173,7 @@ func check_raycasts_for_player() -> bool:
 # --- Player damage on contact only while charging ---
 func on_player_contact(player: Node) -> void:
 	if move_mode == "charging" and player and player.has_method("take_damage"):
-		player.take_damage(CONTACT_DAMAGE, global_position)
+		player.take_damage(CONTACT_DAMAGE, name, global_position)
 
 # --- Sprite helper ---
 func update_sprite_direction(dir: Vector2, aggro: bool) -> void:

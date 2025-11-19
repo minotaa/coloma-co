@@ -134,7 +134,7 @@ func update_target() -> void:
 #
 func on_player_contact(player: Node) -> void:
 	if player and player.has_method("take_damage"):
-		player.take_damage(8, global_position)
+		player.take_damage(8, name, global_position)
 
 #
 # Sprite animation helper (uses sprite from Entity)

@@ -95,7 +95,6 @@ func get_retreat_position_away_from(player_pos: Vector2) -> Vector2:
 		for radius in [64, 96, 128, 160, 192]:
 			var candidate = global_position + Vector2.RIGHT.rotated(deg_to_rad(angle_deg)) * radius
 			agent.target_position = candidate
-			await get_tree().process_frame
 			if not agent.is_target_reachable():
 				continue
 			var dist = candidate.distance_squared_to(player_pos)

@@ -91,7 +91,7 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 				var poison = Effect.new("Poison", Color.from_rgba8(55, 198, 0, 255), 10.0, 0, 2)
 				var enemy_pos = global_position
 				poison.on_effect = func(target):
-					target.take_damage(2, enemy_pos)
+					target.take_damage(2, name, enemy_pos)
 				body.add_status_effect(poison)
 				if multiplayer.has_multiplayer_peer():
 					Toast.add.rpc_id(int(body.name), "You've been Poisoned for 10 seconds!")

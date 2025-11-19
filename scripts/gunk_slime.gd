@@ -121,4 +121,4 @@ func on_player_contact(player: Node) -> void:
 				Toast.add("You've been Gunked for 8 seconds!")
 			player.add_status_effect(gunked)
 
-		player.take_damage(10, global_position)
+		player.take_damage(10, name, global_position)
