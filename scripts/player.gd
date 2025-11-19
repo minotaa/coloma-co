@@ -434,7 +434,7 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 	if Man.equipped_armor.id == 11:
 		dodge_chance += 0.2
 	if upgrade_bag.has_item(Catalog.get_by_id(31)):
-		dodge_chance += (0.5 * upgrade_bag.get_item_stack(Catalog.get_by_id(31)).data["level"])
+		dodge_chance += (0.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(31)).data["level"])
 	if dodge_chance > 0.0:
 		if randf() < dodge_chance:
 			play_ui_sfx(preload("res://assets/sounds/mama.wav"))
@@ -1748,7 +1748,7 @@ func _physics_process(delta: float) -> void:
 			sprint += 1
 		else:
 			sprint += 0.5
-	if velocity.length() == SPEED and sprint < 220:
+	elif velocity.length() <= SPEED and sprint < 220:
 		sprint += 0.45
 	
 	if type == "Defense":
