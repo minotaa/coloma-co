@@ -100,7 +100,7 @@ func add_gold_notification(amount: int) -> void:
 		
 func get_slots() -> int:
 	var slots = 3
-	if upgrade_bag.has_item(Catalog.get_by_id(41)):
+	if upgrade_bag.has_item(Catalog.get_by_id(35)):
 		slots += 1
 	return slots 
 
@@ -427,8 +427,12 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 		hit_cooldown = max_hit_cooldown
 		return
 	
-	if Man.equipped_armor.id == 43 and get_parent().get_node(body_name) != null and get_parent().get_node(body_name).health != null:
-		_process_hit(get_parent().get_node(body_name), (amount * 0.1) + get_bonus_damage())
+	if (Man.equipped_armor.id == 43 or upgrade_bag.has_item(Catalog.get_by_id(30))) and get_parent().get_node(body_name) != null and get_parent().get_node(body_name).health != null:
+		var damage_reflection = 0.0 
+		damage_reflection += 0.1 * upgrade_bag.get_item_stack(Catalog.get_by_id(30)).data["level"]
+		if Man.equipped_armor.id == 43:
+			damage_reflection += 0.1
+		_process_hit(get_parent().get_node(body_name), (amount * damage_reflection) + get_bonus_damage())
 		
 	var dodge_chance = 0.0
 	if Man.equipped_armor.id == 11:
@@ -628,8 +632,8 @@ func generate_shop_inventory():
 		available_upgrades[i] = available_upgrades[j]
 		available_upgrades[j] = temp
 	
-	if available_upgrades.size() > 0:
-		shop_items.append(available_upgrades[0])
+	for i in range(min(2, available_upgrades.size())):
+		shop_items.append(available_upgrades[i])
 	
 	print("Total shop items: ", shop_items.size())
 
@@ -883,7 +887,7 @@ func _process_input(delta) -> void:
 					var direction = Vector2(cos(angle), sin(angle))
 					
 					# Shoot 3 projectiles with spread
-					var spread_angle = deg_to_rad(15)
+					var spread_angle = deg_to_rad(3)
 					for i in range(-1, 2):
 						var angle_offset = i * spread_angle
 						var spread_direction = direction.rotated(angle_offset)
@@ -1119,7 +1123,7 @@ func _process_input(delta) -> void:
 					direction = (mouse_pos - global_position).normalized()
 				
 				# Shoot 3 projectiles with spread
-				var spread_angle = deg_to_rad(15)  # Adjust this for wider/tighter spread
+				var spread_angle = deg_to_rad(3)  # Adjust this for wider/tighter spread
 				for i in range(-1, 2):  # -1, 0, 1
 					var angle_offset = i * spread_angle
 					var spread_direction = direction.rotated(angle_offset)
@@ -1150,7 +1154,7 @@ func _process_input(delta) -> void:
 				direction = direction.normalized()
 				
 				# Shoot 3 projectiles with spread
-				var spread_angle = deg_to_rad(15)
+				var spread_angle = deg_to_rad(3)
 				for i in range(-1, 2):
 					var angle_offset = i * spread_angle
 					var spread_direction = direction.rotated(angle_offset)
@@ -2043,7 +2047,7 @@ func _process_hit(body, damage: float):
 			var max_chain_hits = chain_level * 3  # Level 1 = 3 hits, Level 4 = 12 hits
 			var effective_chain = min(chain_hit_count, max_chain_hits)
 			var defense_reduction = effective_chain * 5
-			defense = max(defense - defense_reduction, 0)
+			defense = defense - defense_reduction
 
 		var defense_factor = 1.0 - (defense / (defense + 100.0))
 

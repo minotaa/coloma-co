@@ -201,11 +201,11 @@ func _init() -> void:
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(208.0, 16.0, 16.0, 16.0)
 	var blunderbuss = Weapon.new(12, "Blunderbuss", atlas)
-	blunderbuss.damage = 15.0
+	blunderbuss.damage = 20.0
 	blunderbuss.description = "Does pitiful damage from far away but is devastating up close."
 	blunderbuss.type = "BLUNDERBUSS"
 	blunderbuss.data = {
-		"clip": 4,
+		"clip": 5,
 		"reload_time": 1.0,
 		"speed": 350.0,
 		"texture": preload("res://assets/sprites/bullet.png")
@@ -215,11 +215,11 @@ func _init() -> void:
 	atlas = AtlasTexture.new()
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(224.0, 16.0, 16.0, 16.0)
-	var dealmaker = Armor.new(13, "Dealmaker", atlas)
-	dealmaker.description = "Grants 50% more gold."
-	dealmaker.defense = 5.0
-	dealmaker.health = 10.0
-	items.append(dealmaker)
+	var lucky_charm = Armor.new(13, "Lucky Charm", atlas)
+	lucky_charm.description = "Grants 50% more gold."
+	lucky_charm.defense = 5.0
+	lucky_charm.health = 10.0
+	items.append(lucky_charm)
 	
 	atlas = AtlasTexture.new()
 	atlas.atlas = load("res://assets/sprites/items.png")
@@ -479,17 +479,17 @@ func _init() -> void:
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(144.0, 32.0, 16.0, 16.0)  # Adjust region for strength totem sprite
 	var strength_totem = Tossable.new(24, "Strength Totem", atlas)
-	strength_totem.description = "Grants Strength to allies in its radius. Active for 30 seconds."
+	strength_totem.description = "Grants Strength to allies in its radius. Active for 90 seconds."
 	strength_totem.cooldown = true
 	strength_totem.purchasable = true
 	strength_totem.price = 600
 	strength_totem.shop_type = "ANY"
 	strength_totem.cooldown_seconds = 60.0
-	strength_totem.duration = 45.0
+	strength_totem.duration = 90.0
 	strength_totem.infinite = false
-	strength_totem.update_interval = 5.0  # Apply strength every 5 seconds
+	strength_totem.update_interval = 7.5  # Apply strength every 5 seconds
 
-	var strength_range = 80.0
+	var strength_range = 120.0
 
 	strength_totem.on_toss = func(target, location):
 		pass
@@ -512,7 +512,7 @@ func _init() -> void:
 		for result in results:
 			var body = result.collider
 			if body.has_method("add_status_effect"):
-				var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 5.0)
+				var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 15.0)
 				body.add_status_effect(strength)
 				print("Applied Strength effect to ", body.name)
 				
@@ -669,7 +669,7 @@ func _init() -> void:
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(96.0, 48.0, 16.0, 16.0)
 	var gold_from_combat = Upgrade.new(37, "Gold from Combat", atlas)
-	gold_from_combat.description = "Gain more gold from killing enemies. Dealmaker changes this to on-hit."
+	gold_from_combat.description = "Gain more gold from killing enemies."
 	gold_from_combat.max_level = 3
 	gold_from_combat.purchasable = true
 	gold_from_combat.price = 1000
@@ -764,3 +764,9 @@ func _init() -> void:
 		"reach": 2.08
 	}
 	items.append(stone_longsword)
+	
+	#atlas = AtlasTexture.new()
+	#atlas.atlas = load("res://assets/sprites/items.png")
+	#atlas.region = Rect2(176.0, 16.0, 16.0, 16.0)
+	#var bubble_wand = Weapon.new(45, "Bubble Wand", atlas)
+	#bubble_wand.on

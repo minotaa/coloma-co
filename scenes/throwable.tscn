@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://d1v82b631h5jt"]
+[gd_scene load_steps=4 format=3 uid="uid://d1v82b631h5jt"]
 
 [ext_resource type="Script" uid="uid://cx66ldcightui" path="res://scripts/throwable.gd" id="1_ef5ia"]
-[ext_resource type="Texture2D" uid="uid://dho54oiyawykq" path="res://assets/sprites/dagger.png" id="2_ef5ia"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nputv"]
 radius = 8.0
@@ -24,7 +23,6 @@ shape = SubResource("CircleShape2D_nputv")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("2_ef5ia")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_x01h3")

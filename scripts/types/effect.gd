@@ -8,6 +8,7 @@ var potency: int = 0
 var effect_time: float = 0.0 # Interval between triggers (0 = every tick)
 var elapsed_time: float = 0.0
 var effect_elapsed: float = 0.0
+var texture: Texture
 
 var on_apply: Callable = func (_target): pass
 var on_effect: Callable = func (_target): pass
