@@ -2332,13 +2332,13 @@ replication_config = SubResource("SceneReplicationConfig_3v2ag")
 
 [node name="Username" type="Label" parent="."]
 visible = false
-modulate = Color(1, 1, 1, 0.831373)
+modulate = Color(1, 1, 1, 0.6509804)
 offset_left = -80.0
-offset_top = -31.0
+offset_top = -31.000008
 offset_right = 377.0
-offset_bottom = 7.0
+offset_bottom = 6.9999924
 scale = Vector2(0.35, 0.35)
-text = "Minota"
+text = "Blueberry!"
 label_settings = SubResource("LabelSettings_a8ls1")
 horizontal_alignment = 1
 vertical_alignment = 1
