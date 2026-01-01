@@ -17,6 +17,7 @@ anchor_bottom = 0.178
 offset_bottom = -0.160004
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_wy8tx")
 keycode = "46"
 

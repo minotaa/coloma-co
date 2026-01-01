@@ -8,7 +8,7 @@ var type: String = ""
 var guaranteed_crit = false
 var current_log_path: String
 var focused_inventory_slot: int = 0 
-var original_zoom := Vector2(4.0, 4.0)
+var original_zoom := Vector2(3.75, 3.75)
 var leveling_bar_rest_position: Vector2
 var zoom_multiplier := 1.0
 var directions := {
@@ -87,16 +87,16 @@ func add_gold_notification(amount: int) -> void:
 		added_gold += amount
 		added_gold_timeout = 2.0
 		if added_gold > 0:
-			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
-			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
 	elif type == "Dungeon":
 		added_gold += amount
 		added_gold_timeout = 2.0
 		if added_gold > 0:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
 		
 func get_slots() -> int:
 	var slots = 3
@@ -117,6 +117,10 @@ func get_bonus_damage() -> float:
 	if upgrade_bag.has_item(Catalog.get_by_id(8)):
 		bonus_damage += 10 * upgrade_bag.get_item_stack(Catalog.get_by_id(8)).data["level"]
 	return bonus_damage
+
+func get_attack_speed() -> float:
+	var attack_speed := 1.0
+	return attack_speed
 
 func get_defense() -> float:
 	var defense := 0.0
@@ -210,6 +214,7 @@ func reset_game() -> void:
 	$UI/Defense/Death.visible = false
 	$"UI/Dungeon/Game Over".visible = false
 	$UI/Dungeon/Death.visible = false
+	$AnimatedSprite2D.material = null
 	show_ui()
 
 func end_game() -> void:
@@ -231,6 +236,7 @@ func end_game() -> void:
 		if get_parent().wave > Man.highest_wave:
 			Man.highest_wave = get_parent().wave
 		$"UI/Defense/Game Over".visible = true
+		$"UI/Defense/Game Over/Panel/Play Again".grab_focus()
 		$"UI/Defense/Game Over/Panel/Meta".text = stats_text
 		if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
 			$"UI/Defense/Game Over/Panel/Play Again".visible = true
@@ -248,6 +254,7 @@ func end_game() -> void:
 		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "You lost all your lives."
 		stats_text += "\nRooms completed: " + str(roundi(get_parent().completed_rooms))
 		$"UI/Dungeon/Game Over".visible = true
+		$"UI/Dungeon/Game Over/Panel/Play Again".grab_focus()
 		$"UI/Dungeon/Game Over/Panel/Meta".text = stats_text
 		if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
 			$"UI/Dungeon/Game Over/Panel/Play Again".visible = true
@@ -288,6 +295,14 @@ func _enter_tree() -> void:
 		set_multiplayer_authority(name.to_int())
 
 func _ready() -> void:	
+	if not Man.is_mobile():
+		$"UI/Global/Movement Joystick".visible = false
+		$UI/Global/Attack.visible = false
+	else:
+		$UI/Global/Attack/TextureRect.texture = Man.equipped_weapon.texture
+	play_idle_animation()
+	zoom_multiplier = Man.zoom
+	_update_camera_zoom()
 	leveling_bar_rest_position = $UI/Global/Leveling.position
 	$UI/Global/Leveling.position.y = leveling_bar_rest_position.y - 200
 	for button in find_children("", "Button", true):
@@ -368,7 +383,7 @@ func show_level_up_animation(new_level: int, overflow_xp: float = 0.0, max_xp: f
 		var overflow_percent = (overflow_xp / max_xp) * xp_bar.max_value
 		tween.tween_property(xp_bar, "value", overflow_percent, 0.4)
 	tween.tween_interval(1.0)
-	tween.tween_property(leveling_bar, "position:y", leveling_bar_rest_position.y - 200, 0.4)\
+	tween.tween_property(leveling_bar, "position:y", leveling_bar_rest_position.y + 800, 0.4)\
 		.set_ease(Tween.EASE_IN)\
 		.set_trans(Tween.TRANS_BACK)
 
@@ -429,7 +444,8 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 	
 	if (Man.equipped_armor.id == 43 or upgrade_bag.has_item(Catalog.get_by_id(30))) and get_parent().get_node(body_name) != null and get_parent().get_node(body_name).health != null:
 		var damage_reflection = 0.0 
-		damage_reflection += 0.1 * upgrade_bag.get_item_stack(Catalog.get_by_id(30)).data["level"]
+		if upgrade_bag.has_item(Catalog.get_by_id(30)):
+			damage_reflection += 0.1 * upgrade_bag.get_item_stack(Catalog.get_by_id(30)).data["level"]
 		if Man.equipped_armor.id == 43:
 			damage_reflection += 0.1
 		_process_hit(get_parent().get_node(body_name), (amount * damage_reflection) + get_bonus_damage())
@@ -851,9 +867,9 @@ func _process_input(delta) -> void:
 					play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
 				else:
 					play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
-				play_animation("sword_" + attack_dir)
+				play_animation("sword_" + attack_dir, get_attack_speed())
 				_enable_sword_hitbox(attack_dir)
-				sword_hitbox_timer = SWORD_HITBOX_TIME
+				sword_hitbox_timer = SWORD_HITBOX_TIME / get_attack_speed()
 				sword_hitbox_active = true
 				
 			elif Man.equipped_weapon.type == "BOOMERANG":
@@ -996,7 +1012,7 @@ func _process_input(delta) -> void:
 			attack_dir = "left"
 		elif Input.is_action_just_pressed("attack_right"):
 			attack_dir = "right"
-		elif Input.is_action_just_pressed("attack"):
+		elif Input.is_action_just_pressed("attack") and not Man.is_mobile():
 			var direction_vec: Vector2
 			
 			if using_controller:
@@ -1024,13 +1040,13 @@ func _process_input(delta) -> void:
 				play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
 			else:
 				play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
-			play_animation("sword_" + attack_dir)
+			play_animation("sword_" + attack_dir, get_attack_speed())
 			_enable_sword_hitbox(attack_dir)
-			sword_hitbox_timer = SWORD_HITBOX_TIME
+			sword_hitbox_timer = SWORD_HITBOX_TIME / get_attack_speed()
 			sword_hitbox_active = true
 		
 	elif Man.equipped_weapon.type == "BOOMERANG":
-		if Input.is_action_just_pressed("attack") and has_boomerang:
+		if Input.is_action_just_pressed("attack") and not Man.is_mobile() and has_boomerang:
 			play_animation("throw_" + last_direction)
 			var direction: Vector2
 			
@@ -1069,7 +1085,7 @@ func _process_input(delta) -> void:
 			has_boomerang = false
 	elif Man.equipped_weapon.type == "THROWABLE":
 		if clip > 0:
-			if Input.is_action_just_pressed("attack"):
+			if not Man.is_mobile() and Input.is_action_just_pressed("attack"):
 				play_animation("throw_" + last_direction)
 				var direction: Vector2
 				
@@ -1194,38 +1210,6 @@ func _process_input(delta) -> void:
 	else:
 		step_timer = 0.0
 	
-	if Input.is_action_pressed("info") and not $UI/Defense/Shop.visible:
-		$UI/Defense/Tab.visible = true
-		for children in $UI/Defense/Tab/ScrollContainer/VBoxContainer.get_children():
-			children.queue_free()
-		
-		if multiplayer.has_multiplayer_peer():
-			$UI/Defense/Tab/Title.text = "Players (" + str(NetworkManager.players.size()) + ")"
-			for player in NetworkManager.players:
-				var kills = 0
-				if get_parent().kills.has(str(player["id"])) and get_parent().kills[str(player["id"])].has("bombrat"):
-					kills = get_parent().kills[str(player["id"])]["bombrat"]
-				var tab_entry = preload("res://scenes/tab_entry.tscn").instantiate()
-				tab_entry.get_node("Name").text = player["username"]
-				tab_entry.get_node("Kills").text = str(kills)
-				tab_entry.get_node("Gold").text = str(get_parent().get_node(str(player["id"])).gold)
-				$UI/Defense/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
-		else:
-			$UI/Defense/Tab/Title.text = "Player"
-			var tab_entry = preload("res://scenes/tab_entry.tscn").instantiate()
-			tab_entry.get_node("Name").text = "Player"
-			tab_entry.get_node("Gold").text = str(gold)
-			var kills = 0
-			if get_parent().kills.has("Player") and get_parent().kills["Player"].has("bombrat"):
-				var big_bombrat = 0
-				if get_parent().kills["Player"].has("big_bombrat"):
-					big_bombrat = get_parent().kills["Player"]["big_bombrat"]
-				kills = get_parent().kills["Player"]["bombrat"] + big_bombrat
-			tab_entry.get_node("Kills").text = str(kills)
-			$UI/Defense/Tab/ScrollContainer/VBoxContainer.add_child(tab_entry)
-	else:
-		$UI/Defense/Tab.visible = false
-	
 	if has_effect("Gunked"):
 		velocity /= 2 
 	move_and_slide()
@@ -1250,6 +1234,7 @@ func create_boomerang(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_
 	boomerang.global_position = spawn_pos
 	boomerang.direction = throw_dir
 	boomerang.SOURCE = source_path
+	boomerang.BASE_SPEED *= get_attack_speed()
 	
 	get_parent().add_child(boomerang, true)
 	play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), spawn_pos)
@@ -1261,6 +1246,7 @@ func create_throwable(w_id: int, spawn_pos: Vector2, throw_dir: Vector2, source_
 	throwable.global_position = spawn_pos
 	throwable.direction = throw_dir
 	throwable.SOURCE = source_path
+	throwable.SPEED *= get_attack_speed()
 	
 	get_parent().add_child(throwable, true)
 	play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), spawn_pos)
@@ -1291,9 +1277,10 @@ func press_inventory_slot(index: int) -> void:
 
 		if alive and not cooldown_active:
 			slot.get_node("Button").emit_signal("pressed")
-		
+
 func change_zoom(delta: float) -> void:
 	zoom_multiplier = clamp(zoom_multiplier + delta, 0.50, 2.0)
+	Man.zoom = zoom_multiplier
 	_update_camera_zoom()
 
 	$UI/Global/Zoom/Label.text = "x%.2f" % zoom_multiplier
@@ -1324,11 +1311,21 @@ func _input(event: InputEvent) -> void:
 			$UI/Global/Pause.visible = false
 		else:
 			$UI/Global/Pause.visible = true
+			$UI/Global/Pause/Panel/Resume.visible = true
+			$UI/Global/Pause/Panel/Options.visible = true
+			$"UI/Global/Pause/Panel/Quit to Main Menu".visible = true
+			$"UI/Global/Pause/Panel/Quit Game".visible = true
+			$UI/Global/Pause/Panel/Back.visible = false
+			$UI/Global/Pause/Panel/Options2.visible = false
+
 			$UI/Global/Pause/Panel/Resume.grab_focus()
 	if event is InputEventMouseMotion or event is InputEventMouseButton:
 		using_controller = false
 		_update_button_focus_styles(false)
 	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		using_controller = true
+		_update_button_focus_styles(true)
+	elif event is InputEventKey:
 		using_controller = true
 		_update_button_focus_styles(true)
 
@@ -1354,7 +1351,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				press_inventory_slot(2)
 			52:
 				press_inventory_slot(3)
-	if (not $UI/Defense/Shop.visible and not $UI/Dungeon/Shop.visible) and (not $"UI/Defense/Game Over".visible and not $"UI/Dungeon/Game Over".visible):
+	if (not $UI/Defense/Shop.visible and not $UI/Dungeon/Shop.visible) and (not $"UI/Defense/Game Over".visible and not $"UI/Dungeon/Game Over".visible) and (not $UI/Global/Pause.visible):
 		if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
 			$UI/Global/ChatBar.grab_focus()
 
@@ -1366,7 +1363,7 @@ func knockback(from_player) -> void:
 	if player == null:
 		return
 	# Calculate knockback direction and apply it
-	var knockback_strength = 180.0  # Adjust this value to control knockback power
+	var knockback_strength = 90.0  # Adjust this value to control knockback power
 	apply_knockback(player.position, knockback_strength)
 	
 	# Optional: Play a light impact sound
@@ -1516,7 +1513,6 @@ func hide_ui() -> void:
 		$UI/Defense/SprintBar.visible = false
 		$UI/Defense/Inventory.visible = false
 		$UI/Defense/HBoxContainer.visible = false
-		$UI/Defense/Tab.visible = false
 		$UI/Defense/Shop.visible = false
 	else:
 		$UI/Dungeon/HealthBar.visible = false
@@ -1574,6 +1570,9 @@ func _physics_process(delta: float) -> void:
 		$Potion.process_material.color = get_blended_effect_color()
 	else:
 		$Potion.emitting = false
+	if Man.zoom != zoom_multiplier:
+		zoom_multiplier = Man.zoom
+		_update_camera_zoom()
 	if Man.selected_map == "Lysawood" and Man.selected_mode == "Defense":
 		if global_position.x < (-30.5 * 16):
 			global_position.x = 30.15 * 16
@@ -1632,15 +1631,16 @@ func _physics_process(delta: float) -> void:
 				$UI/Defense/SprintBar.visible = true
 			$"UI/Defense/Health Label".text = str(roundi(health + overheal)) + "/" + str(roundi(get_max_health()))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
+	
 	if $"UI/Defense/Death".visible:
 		$"UI/Defense/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
 	if $UI/Dungeon/Death.visible:
 		$"UI/Dungeon/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
-	if $UI/Dungeon.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
-		$UI/Dungeon/HBoxContainer/Room/Label.text = "Room: " + str(get_parent().completed_rooms + 1)
-		$UI/Dungeon/HBoxContainer/Lives/Label.text = "Lives: " + str(lives)
-		$UI/Dungeon/HBoxContainer/Progress/Label.text = str(get_parent().progress)
-		$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+	if type == "Dungeon" and $UI/Dungeon.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
+		$UI/Dungeon/HBoxContainer/Room/HBoxContainer/Label.text = "Room: " + str(get_parent().completed_rooms + 1)
+		$UI/Dungeon/HBoxContainer/Lives/HBoxContainer/Label.text = "Lives: " + str(lives)
+		#$UI/Dungeon/HBoxContainer/Progress/Label.text = str(get_parent().progress)
+		$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: "+ str(gold)
 
 		if added_gold_timeout > 0.0:
 			added_gold_timeout -= delta
@@ -1658,9 +1658,9 @@ func _physics_process(delta: float) -> void:
 
 		# Show the added gold in the same label
 		if added_gold > 0:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
 					
 		$UI/Dungeon/HealthBar.max_value = get_max_health()
 		$UI/Dungeon/HealthBar.value = health
@@ -1677,9 +1677,9 @@ func _physics_process(delta: float) -> void:
 		
 		
 	if $UI/Defense/Shop.visible:
-		$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+		$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
 	if $UI/Dungeon/Shop.visible:
-		$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+		$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
 		
 	if not alive and revival_time != -1:
 		revival_time -= delta
@@ -1714,11 +1714,11 @@ func _physics_process(delta: float) -> void:
 			if type == "Defense":
 				global_position = Vector2.ZERO
 				if $UI/Defense/Shop.visible:
-					$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+					$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
 					
 			elif type == "Dungeon":
 				if $UI/Dungeon/Shop.visible:
-					$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+					$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
 					
 				var safe_position = Vector2.ZERO
 
@@ -1837,15 +1837,27 @@ func _physics_process(delta: float) -> void:
 			hit_enemies.clear()
 			_disable_all_sword_hitboxes()
 	var count := 0
+	var boss_exists = false
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		if enemy.id == 1 or enemy.id == 4:
 			count += 1
+		if enemy.id == 13:
+			boss_exists = true
+			$UI/Defense/Boss.visible = true
+			$UI/Defense/Boss/Health.max_value = enemy.max_health
+			$UI/Defense/Boss/Health.value = enemy.health
+			$UI/Defense/Boss/Title.text = enemy.entity_name
+			$UI/Defense/Boss/Phase.value = (enemy.enrage_timer / enemy.TIMER_DURATION) * 100.0
+	
+	if not boss_exists:
+		$UI/Defense/Boss.visible = false
+	
 	if count > 0:
-		bombrat_counter.text = "%d" % count
+		bombrat_counter.text = "Bombrats: " + "%d" % count
 
 	if type == "Defense" and $UI/Defense.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
-		$UI/Defense/HBoxContainer/Wave/Label.text = "Wave: " + str(get_parent().wave)
-		$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+		$UI/Defense/HBoxContainer/Wave/HBoxContainer/Label.text = "Wave: " + str(get_parent().wave)
+		$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
 
 		if added_gold_timeout > 0.0:
 			added_gold_timeout -= delta
@@ -1863,9 +1875,9 @@ func _physics_process(delta: float) -> void:
 
 		# Show the added gold in the same label
 		if added_gold > 0:
-			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold) + " (+" + str(added_gold) + ")"
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
-			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = str(gold)
+			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
 					
 		for bombrat in get_bombrats_to_track():
 			if not is_instance_valid(bombrat):
@@ -2184,3 +2196,116 @@ func _on_quit_to_main_menu_pressed() -> void:
 
 func _on_reroll_pressed() -> void:
 	reroll_shop()
+
+func _on_options_pressed() -> void:
+	$UI/Global/Pause/Panel/Resume.visible = false
+	$UI/Global/Pause/Panel/Options.visible = false
+	$"UI/Global/Pause/Panel/Quit to Main Menu".visible = false
+	$"UI/Global/Pause/Panel/Quit Game".visible = false
+	$UI/Global/Pause/Panel/Back.visible = true
+	$UI/Global/Pause/Panel/Options2.visible = true
+
+func _on_back_options_pressed() -> void:
+	if ($UI/Global/Pause/Panel/Options2/Credits.visible or $UI/Global/Pause/Panel/Options2/Controls.visible):
+		$UI/Global/Pause/Panel/Options2/Credits.visible = false
+		$UI/Global/Pause/Panel/Options2/Controls.visible = false
+		$UI/Global/Pause/Panel/Options2/General.visible = true
+		return
+	$UI/Global/Pause/Panel/Resume.visible = true
+	$UI/Global/Pause/Panel/Options.visible = true
+	$"UI/Global/Pause/Panel/Quit to Main Menu".visible = true
+	$"UI/Global/Pause/Panel/Quit Game".visible = true
+	$UI/Global/Pause/Panel/Back.visible = false
+	$UI/Global/Pause/Panel/Options2.visible = false
+
+func _on_attack_button_pressed() -> void:
+	if Man.equipped_weapon.type == "SWORD":
+		# Use last_direction for attack direction
+		if multiplayer.has_multiplayer_peer():
+			play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
+		else:
+			play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
+		play_animation("sword_" + last_direction, get_attack_speed())
+		_enable_sword_hitbox(last_direction)
+		sword_hitbox_timer = SWORD_HITBOX_TIME / get_attack_speed()
+		sword_hitbox_active = true
+		
+	elif Man.equipped_weapon.type == "BOOMERANG":
+		if has_boomerang:
+			play_animation("throw_" + last_direction)
+			
+			# Convert last_direction to Vector2
+			var direction = Vector2.ZERO
+			match last_direction:
+				"up":
+					direction = Vector2(0, -1)
+				"down":
+					direction = Vector2(0, 1)
+				"left":
+					direction = Vector2(-1, 0)
+				"right":
+					direction = Vector2(1, 0)
+			
+			if multiplayer.has_multiplayer_peer():
+				create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
+			else:
+				create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
+			has_boomerang = false
+		
+	elif Man.equipped_weapon.type == "THROWABLE":
+		if clip > 0:
+			play_animation("throw_" + last_direction)
+			
+			# Convert last_direction to Vector2
+			var direction = Vector2.ZERO
+			match last_direction:
+				"up":
+					direction = Vector2(0, -1)
+				"down":
+					direction = Vector2(0, 1)
+				"left":
+					direction = Vector2(-1, 0)
+				"right":
+					direction = Vector2(1, 0)
+			
+			if multiplayer.has_multiplayer_peer():
+				create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
+			else:
+				create_throwable(Man.equipped_weapon.id, global_position, direction, name)
+			clip -= 1
+			if clip <= 0:
+				reload_time = Man.equipped_weapon.data["reload_time"]
+			play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
+			
+	elif Man.equipped_weapon.type == "BLUNDERBUSS":
+		if clip > 0:
+			play_animation("throw_" + last_direction)
+			
+			# Convert last_direction to Vector2
+			var direction = Vector2.ZERO
+			match last_direction:
+				"up":
+					direction = Vector2(0, -1)
+				"down":
+					direction = Vector2(0, 1)
+				"left":
+					direction = Vector2(-1, 0)
+				"right":
+					direction = Vector2(1, 0)
+			
+			# Shoot 3 projectiles with spread
+			var spread_angle = deg_to_rad(3)  # Adjust this for wider/tighter spread
+			for i in range(-1, 2):  # -1, 0, 1
+				var angle_offset = i * spread_angle
+				var spread_direction = direction.rotated(angle_offset)
+				
+				if multiplayer.has_multiplayer_peer():
+					create_throwable.rpc(Man.equipped_weapon.id, global_position, spread_direction, name)
+				else:
+					create_throwable(Man.equipped_weapon.id, global_position, spread_direction, name)
+			
+			clip -= 1
+			if clip <= 0:
+				reload_time = Man.equipped_weapon.data["reload_time"]
+			play_sfx("shoot", global_position, 10.0)
+			screen_shake(2.0, 0.15)

@@ -1,9 +1,9 @@
 extends Node2D
 
-const MAX_RADIUS: float = 24.0 / 3  # Maximum explosion radius
-const MIN_DAMAGE: float = 10.0  # Damage at edge of explosion
-const MAX_DAMAGE: float = 50.0  # Damage at epicenter
-const EXPANSION_TIME: float = 0.4  # How long the explosion takes to expand
+var MAX_RADIUS: float = 24.0 / 3  # Maximum explosion radius
+var MIN_DAMAGE: float = 20.0  # Damage at edge of explosion
+var MAX_DAMAGE: float = 80.0  # Damage at epicenter
+var EXPANSION_TIME: float = 0.4  # How long the explosion takes to expand
 
 @onready var area: Area2D = $Area2D
 var damaged_bodies: Array = []  # Track who we've already damaged

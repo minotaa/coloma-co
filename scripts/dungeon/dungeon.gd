@@ -550,7 +550,6 @@ func get_all_room_ids() -> Array:
 # Wave system functions
 func start_wave_system() -> void:
 	spawning_active = true
-	update_barrier_label()
 	spawn_current_wave()
 
 var progress: String = ""
@@ -558,16 +557,7 @@ var progress: String = ""
 @rpc("authority", "call_local")
 func set_progress(_progress: String) -> void:
 	progress = _progress
-
-func update_barrier_label() -> void:
-	var current_wave = get_current_wave()
-	if not current_wave.is_empty():
-		var total_waves = current_wave.content.size()
-		$Barrier.get_node("Label").text = str(completed_subwaves) + "/" + str(total_waves)
-		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-			set_progress.rpc(str(completed_subwaves) + "/" + str(total_waves))
-		else:
-			set_progress(str(completed_subwaves) + "/" + str(total_waves))
+	$Barrier.get_node("Label").text = _progress
 
 func get_current_wave() -> Dictionary:
 	var applicable_waves = []
@@ -599,12 +589,7 @@ func spawn_current_wave() -> void:
 	if current_subwave_index == 0:
 		var total_waves = current_wave.content.size()
 		# Update label to show initial 0/total state
-		$Barrier.get_node("Label").text = "0/" + str(total_waves)
-		if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-			set_progress.rpc("0/" + str(total_waves))
-		else:
-			set_progress("0/" + str(total_waves))
-	
+
 	# Increment wave index BEFORE spawning
 	current_subwave_index += 1
 	
@@ -716,7 +701,11 @@ func check_wave_completion() -> void:
 		return
 		
 	var enemies = get_tree().get_nodes_in_group("enemies")
-	
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		set_progress.rpc(str(enemies.size()) + " enemies")
+	else:
+		set_progress(str(enemies.size()) + " enemies")
+
 	if enemies.size() == 0:
 		print("[WAVE] Wave complete, spawning next...")
 		# Increment completed subwaves and update label with current wave's total
@@ -724,12 +713,7 @@ func check_wave_completion() -> void:
 		var current_wave = get_current_wave()
 		if not current_wave.is_empty():
 			var total_waves = current_wave.content.size()
-			$Barrier.get_node("Label").text = str(completed_subwaves) + "/" + str(total_waves)
-			if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-				set_progress.rpc(str(completed_subwaves) + "/" + str(total_waves))
-			else:
-				set_progress(str(completed_subwaves) + "/" + str(total_waves))
-		
+
 		# All enemies defeated, spawn next wave after brief delay
 		currently_spawning = true  # Prevent multiple triggers
 		await get_tree().create_timer(1.0).timeout
@@ -917,25 +901,25 @@ func position_barrier_fallback(room_id: int, exit_direction: String) -> void:
 	$Barrier.global_position = barrier_pos
 
 func countdown_and_spawn_room() -> void:
-	# Countdown from 3 to spawn room
-	$Barrier.get_node("Label").text = "3"
-	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-		set_progress.rpc("3")
-	else:
-		set_progress("3")
-	await get_tree().create_timer(1.0).timeout
-	$Barrier.get_node("Label").text = "2"
-	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-		set_progress.rpc("2")
-	else:
-		set_progress("2")
-	await get_tree().create_timer(1.0).timeout
-	$Barrier.get_node("Label").text = "1"
-	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-		set_progress.rpc("1")
-	else:
-		set_progress("1")
-	await get_tree().create_timer(1.0).timeout
+	## Countdown from 3 to spawn room
+	#$Barrier.get_node("Label").text = "3"
+	#if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		#set_progress.rpc("3")
+	#else:
+		#set_progress("3")
+	#await get_tree().create_timer(1.0).timeout
+	#$Barrier.get_node("Label").text = "2"
+	#if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		#set_progress.rpc("2")
+	#else:
+		#set_progress("2")
+	#await get_tree().create_timer(1.0).timeout
+	#$Barrier.get_node("Label").text = "1"
+	#if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		#set_progress.rpc("1")
+	#else:
+		#set_progress("1")
+	await get_tree().create_timer(0.5).timeout
 	
 	# Poof effect and spawn room
 	var smoke = smoke_scene.instantiate()
@@ -953,7 +937,6 @@ func countdown_and_spawn_room() -> void:
 	spawning_active = true
 	current_subwave_index = 0
 	completed_subwaves = 0
-	update_barrier_label()
 	spawn_current_wave()
 
 func check_players_for_void() -> void:

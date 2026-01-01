@@ -80,20 +80,23 @@ func _ready() -> void:
 
 	# Only on mobile device (Login without any credentials)
 	# await HAuth.login_anonymous_async()
-	
-	var initialize_response = Steam.steamInitEx(ProjectSettings.get_setting("steam/initialization/app_id"), true)
-	if initialize_response.status > Steam.STEAM_API_INIT_RESULT_OK:
-		print("Failed to initialize Steam, disabling Steam functionality: " + str(initialize_response))
+	if not Engine.has_singleton("Steam"):
 		steam_enabled = false
 	else:
-		steam_enabled = true
+		var initialize_response = Engine.get_singleton("Steam").steamInitEx(ProjectSettings.get_setting("steam/initialization/app_id"), true)
+		if initialize_response.status > Engine.get_singleton("Steam").STEAM_API_INIT_RESULT_OK:
+			print("Failed to initialize Steam, disabling Steam functionality: " + str(initialize_response))
+			steam_enabled = false
+		else:
+			steam_enabled = true
+		
 	await auto_login_async()
 	if steam_enabled:
-		print("Steam name: " + Steam.getPersonaName())
-		Steam.get_auth_session_ticket_response.connect(_get_auth_session_ticket_response)
-		Steam.join_game_requested.connect(steam_join_game_request)
-		if Steam.getLaunchCommandLine() != null:
-			invitation = Steam.getLaunchCommandLine()
+		print("Steam name: " + Engine.get_singleton("Steam").getPersonaName())
+		Engine.get_singleton("Steam").get_auth_session_ticket_response.connect(_get_auth_session_ticket_response)
+		Engine.get_singleton("Steam").join_game_requested.connect(steam_join_game_request)
+		if Engine.get_singleton("Steam").getLaunchCommandLine() != null:
+			invitation = Engine.get_singleton("Steam").getLaunchCommandLine()
 			print("Found an invitation from the server, setting invitation.")
 
 func steam_join_game_request(user, connect) -> void:
@@ -170,7 +173,7 @@ func _get_auth_session_ticket_response(this_auth_ticket: int, result: int) -> vo
 		Toast.add("An error occurred while attempting to sign in.")
 
 func initiate_steam_login_to_eos() -> void:
-	var ticket = Steam.getAuthSessionTicket()
+	var ticket = Engine.get_singleton("Steam").getAuthSessionTicket()
 	auth_tickets[ticket["id"]] = ticket["buffer"].hex_encode()
 
 func _eos_display_name_changed():
@@ -350,8 +353,14 @@ func _player_quit(id: int) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func send_message(message: String, player_name: String) -> void:
-	for player in get_tree().get_nodes_in_group("players"):
-		player.add_message(message, player_name)
+	if Man.is_in_game():
+		for player in get_tree().get_nodes_in_group("players"):
+			player.add_message(message, player_name)
+	else:
+		print(get_tree().current_scene.name)
+		for child in get_tree().current_scene.get_children():
+			if child.name.begins_with("Main Menu"):
+				child.add_message(message, player_name)
 
 @rpc("authority", "call_local", "reliable")
 func send_mode(mode: String, map: String) -> void:

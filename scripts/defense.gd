@@ -7,6 +7,11 @@ var started: bool = false
 var spawning_wave: bool = false
 var kills = {}
 
+# Boss wave variables
+var boss_wave_mode: bool = false
+var boss_wave_spawn_timer: float = 0.0
+const BOSS_WAVE_SPAWN_DELAY: float = 2.5  # Delay between bombrat spawns during boss wave
+
 var smoke_scene = preload("res://scenes/smoke.tscn")
 
 var rapid_bauble = preload("res://scenes/rapid_bauble.tscn")
@@ -22,8 +27,13 @@ var player_scene = preload("res://scenes/player.tscn")
 var ghost = preload("res://scenes/ghost.tscn")
 var gunk_slime = preload("res://scenes/gunk_slime.tscn")
 var explosive_bauble = preload("res://scenes/explosive_bauble.tscn")
+var bombrat_king = preload("res://scenes/bombrat_king.tscn")
 
 @onready var spawner_layer = $Spawner
+
+func set_boss_wave_mode(enabled: bool) -> void:
+	boss_wave_mode = enabled
+	boss_wave_spawn_timer = 0.0
 
 func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer:
 	var sfx = AudioStreamPlayer.new()
@@ -64,6 +74,7 @@ func end() -> void:
 	started = false
 	wave = 0
 	kills = {}
+	boss_wave_mode = false
 
 @rpc("authority", "call_local")
 func reset() -> void:
@@ -74,6 +85,7 @@ func reset() -> void:
 	started = true
 	$Gem.alive = true
 	$Gem.entity.health = $Gem.entity.max_health
+	boss_wave_mode = false
 	
 func _ready() -> void:
 	play_music(preload("res://assets/sounds/MO_ingame_v2.wav"), true)
@@ -138,7 +150,37 @@ func _process(delta: float) -> void:
 	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		return
 
-	if not started or spawning_wave:
+	if not started:
+		return
+
+	# Boss wave spawning logic
+	if boss_wave_mode:
+		boss_wave_spawn_timer -= delta
+		if boss_wave_spawn_timer <= 0.0:
+			var directions = ["north", "south", "west", "east"]
+			spawn_bombrat(directions.pick_random())
+			boss_wave_spawn_timer = BOSS_WAVE_SPAWN_DELAY
+		
+		# Check if boss is still alive
+		var boss_alive = false
+		for enemy in get_tree().get_nodes_in_group("enemies"):
+			if enemy.id == 13:  # Bombrat King ID
+				boss_alive = true
+				break
+		
+		if not boss_alive:
+			# Boss defeated, end boss wave mode
+			boss_wave_mode = false
+			if multiplayer.has_multiplayer_peer():
+				Toast.add.rpc("Boss defeated! Wave complete!")
+				play_sfx.rpc("wavefinished")
+			else:
+				Toast.add("Boss defeated! Wave complete!")
+				play_sfx("wavefinished")
+			spawn_wave()
+		return
+	
+	if spawning_wave:
 		return
 
 	var bombrats_left := 0
@@ -232,17 +274,23 @@ func spawn_wave() -> void:
 
 	var chosen_seed = randi()
 	for player in get_tree().get_nodes_in_group("players"):
-		if player.health < player.get_max_health() and player.alive:
+		if player.alive:
 			if multiplayer.has_multiplayer_peer():
 				player.heal.rpc(10)
 			else:
-				player.heal(10)
+				player.heal(10)	
 		if wave % 5 == 0:
 			print("Refreshing players' shops.")
 			if multiplayer.has_multiplayer_peer():
 				player.refresh_shop.rpc(chosen_seed)
 			else:
 				player.refresh_shop(chosen_seed)
+
+	# Check for boss wave (every 20 waves)
+	if wave % 20 == 0:
+		spawn_boss_wave()
+		spawning_wave = false
+		return
 
 	match wave:
 		1:
@@ -314,6 +362,41 @@ func spawn_wave() -> void:
 			if baubles_to_spawn > 0:
 				await spawn_baubles(baubles_to_spawn)
 	spawning_wave = false
+
+func spawn_boss_wave() -> void:
+	if multiplayer.has_multiplayer_peer():
+		Toast.add.rpc("BOSS WAVE! A Bombrat King has spawned!")
+	else:
+		Toast.add("BOSS WAVE! A Bombrat King has spawned!")
+	
+	# Spawn the Bombrat King
+	var matching_cells: Array[Vector2i] = []
+	var cells = spawner_layer.get_used_cells()
+	
+	# Find corner spawn points
+	for cell_loc in cells:
+		var data = spawner_layer.get_cell_tile_data(cell_loc)
+		if not data:
+			continue
+		if data.get_custom_data("spawner_type") == "corner":
+			matching_cells.append(cell_loc)
+	
+	if matching_cells.is_empty():
+		matching_cells = cells.filter(func(c):
+			var d = spawner_layer.get_cell_tile_data(c)
+			return d and d.get_custom_data("spawner_type") == "main"
+		)
+	
+	if matching_cells:
+		var selected_cell = matching_cells.pick_random()
+		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		var king = bombrat_king.instantiate()
+		king.global_position = spawn_pos
+		add_child(king, true)
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = spawn_pos
+		smoke.emitting = true
+		add_child(smoke, true)
 
 func spawn_bombrats(count: int) -> void:
 	for i in count:
@@ -520,7 +603,7 @@ func spawn_bombrat(direction: String) -> void:
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
-		if wave >= 10 and randf() <= 0.3:
+		if wave >= 10 and randf() <= 0.3 and not boss_wave_mode:
 			var bomb = big_bombrat.instantiate()
 			bomb.global_position = spawn_pos
 			add_child(bomb, true)

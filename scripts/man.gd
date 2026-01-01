@@ -46,6 +46,7 @@ var fullscreen: bool = false
 var flick_control: bool = false
 var sfx_volume: float = 100.0
 var music_volume: float = 100.0
+var zoom: float = 1.0
 var bag = Bag.new()
 var equipped_weapon: Weapon = Catalog.get_by_id(1)
 var equipped_armor: Armor = Catalog.get_by_id(2)
@@ -58,6 +59,15 @@ var xp_scaling: float = 1.5
 var highest_wave: int = 0
 var highest_rooms: int = 0
 var enemies_killed: int = 0
+
+func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:
+	var sfx = AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = bus
+	sfx.volume_db = -10.0
+	add_child(sfx)
+	sfx.play()
+	sfx.finished.connect(func(): sfx.queue_free())
 
 func level_up():
 	current_xp -= calculate_xp_for_level(current_level)
@@ -115,14 +125,14 @@ func add_xp(amount: float) -> void:
 
 func set_rich_presence(token: String) -> void:
 	if NetworkManager.steam_enabled:
-		var setting_presence = Steam.setRichPresence("steam_display", token)
+		var setting_presence = Engine.get_singleton("Steam").setRichPresence("steam_display", token)
 		print("Setting rich presence to "+str(token)+": "+str(setting_presence))
 	else:
 		print("Steam is not enabled, not running this.")
 		
 func set_rich_presence_value(key: String, token: String) -> void:
 	if NetworkManager.steam_enabled:
-		var setting_presence = Steam.setRichPresence(key, token)
+		var setting_presence = Engine.get_singleton("Steam").setRichPresence(key, token)
 		print("Setting rich presence value " + key + " to "+str(token)+": "+str(setting_presence))
 	else:
 		print("Steam is not enabled, not running this.")	
@@ -162,6 +172,12 @@ func take_screenshot() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == Key.KEY_BACKSLASH:
 		take_screenshot()
+
+func is_mobile() -> bool:
+	return OS.get_name() == "Android" or OS.get_name() == "iOS"
+
+func is_desktop() -> bool:
+	return not is_mobile()
 
 func load_game():
 	game_loaded = true
@@ -235,6 +251,8 @@ func load_game():
 			current_xp = data["current_xp"]
 		if data.has("flick_control"):
 			flick_control = data["flick_control"]
+		if data.has("zoom"):
+			zoom = data["zoom"]
 	print("Loaded save data.")
 
 func get_save_data() -> Dictionary:
@@ -251,7 +269,8 @@ func get_save_data() -> Dictionary:
 		"enemies_killed": enemies_killed,
 		"current_level": current_level,
 		"current_xp": current_xp,
-		"flick_control": flick_control
+		"flick_control": flick_control,
+		"zoom": zoom
 	}
 
 func _notification(what: int) -> void:
@@ -262,8 +281,9 @@ func _notification(what: int) -> void:
 func save_game(reason: String) -> void:
 	var save_file: FileAccess = FileAccess.open("user://game.mewo", FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(get_save_data()))
-	HStats.ingest_stat_async("rooms", highest_rooms)
-	HStats.ingest_stat_async("waves", highest_wave)
+	if HAuth.product_user_id != "":
+		HStats.ingest_stat_async("rooms", highest_rooms)
+		HStats.ingest_stat_async("waves", highest_wave)
 	print("Saved the game. " + "(" + reason + ")")
 
 func _ready() -> void:

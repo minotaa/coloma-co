@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpuu4kwxvepvg"
-path="res://.godot/imported/icon2_desktop.png-7773dc94a0ac0c96b0a2ecf9ff296ca6.ctex"
+uid="uid://daqflawjp8184"
+path="res://.godot/imported/bombrat-king-down.png-13ac40b2faf4fcc05f32cf5bec0e153a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/icon2_desktop.png"
-dest_files=["res://.godot/imported/icon2_desktop.png-7773dc94a0ac0c96b0a2ecf9ff296ca6.ctex"]
+source_file="res://assets/sprites/bombrat-king-down.png"
+dest_files=["res://.godot/imported/bombrat-king-down.png-13ac40b2faf4fcc05f32cf5bec0e153a.ctex"]
 
 [params]
 

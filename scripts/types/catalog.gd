@@ -765,6 +765,15 @@ func _init() -> void:
 	}
 	items.append(stone_longsword)
 	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(224.0, 48.0, 16.0, 16.0)
+	var rebound_boomerang = Weapon.new(45, "Rebound Boomerang", atlas)
+	rebound_boomerang.description = "Like a regular boomerang, targets an enemy after hitting one."
+	rebound_boomerang.type = "BOOMERANG"
+	rebound_boomerang.damage = 45.0
+	items.append(rebound_boomerang)
+	
 	#atlas = AtlasTexture.new()
 	#atlas.atlas = load("res://assets/sprites/items.png")
 	#atlas.region = Rect2(176.0, 16.0, 16.0, 16.0)

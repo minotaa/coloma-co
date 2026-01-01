@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpuu4kwxvepvg"
-path="res://.godot/imported/icon2_desktop.png-7773dc94a0ac0c96b0a2ecf9ff296ca6.ctex"
+uid="uid://biqu7127ux414"
+path="res://.godot/imported/bombrat-king-up.png-089bd639a55761a5a92d713f4e6bd065.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/icon2_desktop.png"
-dest_files=["res://.godot/imported/icon2_desktop.png-7773dc94a0ac0c96b0a2ecf9ff296ca6.ctex"]
+source_file="res://assets/sprites/bombrat-king-up.png"
+dest_files=["res://.godot/imported/bombrat-king-up.png-089bd639a55761a5a92d713f4e6bd065.ctex"]
 
 [params]
 

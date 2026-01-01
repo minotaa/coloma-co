@@ -88,7 +88,6 @@ func _cache_state_nodes() -> void:
 	state_nodes[MenuState.TITLE_SCREEN] = $UI/Main/Buttons
 	state_nodes[MenuState.PLAY_BUTTONS] = $"UI/Main/Play Buttons"
 	state_nodes[MenuState.SINGLEPLAYER_MODE_SELECTOR] = $"UI/Main/Singleplayer Mode Selector"
-	state_nodes[MenuState.MULTIPLAYER_MODE_SELECTOR] = $"UI/Main/Multiplayer Mode Selector"
 	state_nodes[MenuState.LOADOUT] = $UI/Main/Loadout
 	state_nodes[MenuState.OPTIONS] = $UI/Main/Options
 	state_nodes[MenuState.MULTIPLAYER_BUTTONS] = $"UI/Main/Multiplayer Buttons"
@@ -106,11 +105,7 @@ func _setup_initial_values() -> void:
 	$UI/Main/Buttons/Bag/TextureProgressBar.max_value = Man.calculate_xp_for_level(Man.current_level + 1)
 	$UI/Main/Buttons/Bag/Label.text = str(Man.current_level)
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
-	$UI/Main/Options/General/CheckBox.button_pressed = Man.fullscreen
-	$UI/Main/Options/General/CheckBox2.button_pressed = Man.flick_control
-	$UI/Main/Options/General/HSlider.value = Man.sfx_volume
-	$UI/Main/Options/General/HSlider2.value = Man.music_volume
-	
+	$Demoman/Camera2D.zoom = Vector2(6.0 * Man.zoom, 6.0 * Man.zoom)
 	Man.set_rich_presence("#In_MainMenu")
 	
 	# Dev mode visibility
@@ -120,6 +115,10 @@ func _setup_initial_values() -> void:
 		$"UI/Main/Multiplayer Buttons/Address".visible = true
 	if NetworkManager.steam_enabled:
 		$"UI/Main/Multiplayer Buttons/LineEdit".visible = false
+
+func _physics_process(delta: float) -> void:
+	if ($Demoman/Camera2D.zoom.x / 6.0) != Man.zoom:
+		$Demoman/Camera2D.zoom = Vector2(6.0 * Man.zoom, 6.0 * Man.zoom)
 
 func _connect_all_buttons() -> void:
 	"""Connect all button signals to their handlers"""
@@ -157,13 +156,12 @@ func _enter_state(state: MenuState) -> void:
 	
 	match state:
 		MenuState.TITLE_SCREEN:
+			_show_title_elements(true)
 			_enter_title_screen()
 		MenuState.PLAY_BUTTONS:
 			_enter_play_buttons()
 		MenuState.SINGLEPLAYER_MODE_SELECTOR:
 			_enter_singleplayer_mode_selector()
-		MenuState.MULTIPLAYER_MODE_SELECTOR:
-			_enter_multiplayer_mode_selector()
 		MenuState.LOADOUT:
 			_enter_loadout()
 		MenuState.LOADOUT_ARMOR_GRID:
@@ -207,6 +205,7 @@ func _enter_title_screen() -> void:
 	state_nodes[MenuState.TITLE_SCREEN].visible = true
 	$UI/Main/Buttons/Play.grab_focus()
 	$UI/Main/Mode.text = "-- select your mode --"
+	_update_button_focus_styles(false)
 	_show_title_elements(true)
 
 func _enter_play_buttons() -> void:
@@ -217,11 +216,6 @@ func _enter_singleplayer_mode_selector() -> void:
 	state_nodes[MenuState.SINGLEPLAYER_MODE_SELECTOR].visible = true
 	update_mode_selector()
 	$"UI/Main/Singleplayer Mode Selector/Start".grab_focus()
-
-func _enter_multiplayer_mode_selector() -> void:
-	state_nodes[MenuState.MULTIPLAYER_MODE_SELECTOR].visible = true
-	update_mode_selector()
-	$"UI/Main/Multiplayer Mode Selector/Panel/Start".grab_focus()
 
 func _enter_loadout() -> void:
 	state_nodes[MenuState.LOADOUT].visible = true
@@ -304,15 +298,15 @@ func _enter_loadout_weapon_grid() -> void:
 
 func _enter_options() -> void:
 	state_nodes[MenuState.OPTIONS].visible = true
-	$UI/Main/Options/General.visible = true
-	$UI/Main/Options/Controls.visible = false
-	$UI/Main/Options/Credits.visible = false
-	$UI/Main/Options/General/CheckBox.grab_focus()
+	$UI/Main/Options/Options/General.visible = true
+	$UI/Main/Options/Options/Controls.visible = false
+	$UI/Main/Options/Options/Credits.visible = false
+	$UI/Main/Options/Options/General/ScrollContainer/VBoxContainer/Fullscreen/CheckBox.grab_focus()
 
 func _enter_options_controls() -> void:
 	state_nodes[MenuState.OPTIONS].visible = true
-	$UI/Main/Options/General.visible = false
-	$UI/Main/Options/Controls.visible = true
+	$UI/Main/Options/Options/General.visible = false
+	$UI/Main/Options/Options/Controls.visible = true
 	
 	var keybind_scene = preload("res://scenes/keybind.tscn")
 	var container = $UI/Main/Options/Controls/ScrollContainer/VBoxContainer
@@ -327,8 +321,8 @@ func _enter_options_controls() -> void:
 	
 	# Wait for buttons to be ready, then focus back button
 	await get_tree().process_frame
-	if $UI/Main/Options/Controls.has_node("Back"):
-		$UI/Main/Options/Controls/Back.grab_focus()
+	if $UI/Main/Options/Options/Controls.has_node("Back"):
+		$UI/Main/Options/Options/Controls/Back.grab_focus()
 	else:
 		# Fallback: try to find any back button in Options
 		for child in $UI/Main/Options.find_children("Back", "Button", true):
@@ -337,12 +331,12 @@ func _enter_options_controls() -> void:
 
 func _enter_options_credits() -> void:
 	state_nodes[MenuState.OPTIONS].visible = true
-	$UI/Main/Options/General.visible = false
-	$UI/Main/Options/Credits.visible = true
+	$UI/Main/Options/Options/General.visible = false
+	$UI/Main/Options/Options/Credits.visible = true
 	
 	# Focus the back button
-	if $UI/Main/Options/Credits.has_node("Back"):
-		$UI/Main/Options/Credits/Back.grab_focus()
+	if $UI/Main/Options/Options/Credits.has_node("Back"):
+		$UI/Main/Options/Options/Credits/Back.grab_focus()
 	else:
 		# Fallback: try to find any back button in Options
 		for child in $UI/Main/Options.find_children("Back", "Button", true):
@@ -438,11 +432,17 @@ func _on_online_host_pressed() -> void:
 	$"UI/Main/Players/Copy UserID".visible = true
 	$UI/Main/Players/Start.visible = true
 	$"UI/Main/Players/Mode Selector".visible = true
+	$UI/Main/Version.visible = false
+	$UI/Main/Players/Back.text = "Disband"
 	
 	transition_to(MenuState.PLAYERS)
 
 func _on_online_join_pressed() -> void:
 	transition_to(MenuState.ONLINE_JOIN)
+
+#func _notification(what: int) -> void:
+	#if what == NOTIFICATION_WM_SIZE_CHANGED:
+		#dumb = 
 
 func _on_host_pressed() -> void:
 	if $"UI/Main/Multiplayer Buttons/LineEdit".text != "":
@@ -462,6 +462,8 @@ func _on_host_pressed() -> void:
 	$UI/Main/Players/Panel2.visible = false
 	$UI/Main/Players/Start.visible = true
 	$"UI/Main/Players/Mode Selector".visible = true
+	$UI/Main/Version.visible = false
+	$UI/Main/Players/Back.text = "Disband"
 	
 	transition_to(MenuState.PLAYERS)
 
@@ -485,12 +487,14 @@ func _on_online_join_join_pressed() -> void:
 		NetworkManager.update_players.connect(_on_update_players)
 		Toast.add("Successfully connected to the server!")
 		
+		$UI/Main/Players/Back.text = "Leave"
 		$UI/Main/Mode.text = "-- multiplayer game --"
 		$UI/Main/Players/Start.visible = false
 		$"UI/Main/Players/Mode Selector".visible = false
 		$"UI/Main/Players/Copy UserID".visible = false
 		$UI/Main/Players/Details.visible = true
 		$UI/Main/Players/Panel2.visible = true
+		$UI/Main/Version.visible = false
 		
 		transition_to(MenuState.PLAYERS)
 
@@ -519,12 +523,14 @@ func _on_join_pressed() -> void:
 		NetworkManager.update_players.connect(_on_update_players)
 		Toast.add("Successfully connected to the server!")
 		
+		$UI/Main/Players/Back.text = "Leave"
 		$UI/Main/Mode.text = "-- multiplayer game --"
 		$UI/Main/Players/Start.visible = false
 		$"UI/Main/Players/Mode Selector".visible = false
 		$"UI/Main/Players/Copy UserID".visible = false
 		$UI/Main/Players/Details.visible = true
 		$UI/Main/Players/Panel2.visible = true
+		$UI/Main/Version.visible = false
 		
 		transition_to(MenuState.PLAYERS)
 
@@ -650,8 +656,6 @@ func _on_update_players(players: Array) -> void:
 func update_mode_selector() -> void:
 	$"UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
 	$"UI/Main/Singleplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
-	$"UI/Main/Multiplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
-	$"UI/Main/Multiplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
 	
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		NetworkManager.send_mode.rpc(Man.selected_mode, Man.selected_map)
@@ -844,40 +848,6 @@ func _on_players_map_selector_left_pressed() -> void:
 func _on_players_map_selector_right_pressed() -> void:
 	_on_map_selector_right_pressed()
 
-# ============================================================================
-# OPTIONS HANDLERS
-# ============================================================================
-
-func _on_fullscreen_check_box_toggled(toggled_on: bool) -> void:
-	var mode: int = 0
-	if toggled_on:
-		mode = 3
-	DisplayServer.window_set_mode(mode)
-	Man.fullscreen = toggled_on
-
-func _on_volume_slider_drag_ended(value_changed: bool) -> void:
-	play_ui_sfx(preload("res://assets/sounds/f_slash.wav"))
-
-func _on_volume_slider_value_changed(value: float) -> void:
-	Man.sfx_volume = value
-	if value <= 0.0:
-		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), true)
-	else:
-		AudioServer.set_bus_mute(AudioServer.get_bus_index("SFX"), false)
-		var db_value = lerp(-55.0, 0.0, value / 100.0)
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), db_value)
-
-func _on_h_slider_2_value_changed(value: float) -> void:
-	Man.music_volume = value
-	if value <= 0.0:
-		AudioServer.set_bus_mute(AudioServer.get_bus_index("Music"), true)
-	else:
-		AudioServer.set_bus_mute(AudioServer.get_bus_index("Music"), false)
-		var db_value = lerp(-55.0, 0.0, value / 100.0)
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), db_value)
-
-func _on_h_slider_2_drag_ended(value_changed: bool) -> void:
-	play_ui_sfx(preload("res://assets/sounds/f_slash.wav"), "Music")
 
 # ============================================================================
 # MISC HANDLERS
@@ -921,9 +891,14 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		using_controller = true
 		_update_button_focus_styles(true)
-	elif event is InputEventKey:
-		using_controller = true
-		_update_button_focus_styles(true)
+	#elif event is InputEventKey:
+		#using_controller = true
+		#_update_button_focus_styles(true)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
+		print("yup")
+		$UI/Main/Players/ChatBar.grab_focus()
 
 func _update_button_focus_styles(show_focus: bool) -> void:
 	"""Update all button focus styles based on input method"""
@@ -967,3 +942,72 @@ func _configure_players_focus() -> void:
 
 func _on_flick_control_check_box_toggled(toggled_on: bool) -> void:
 	Man.flick_control = toggled_on
+
+func _on_chatbar_gui_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		if $UI/Main/Players/ChatBar.has_focus():
+			$UI/Main/Players/ChatBar.text = ""
+			$UI/Main/Players/ChatBar.release_focus()
+			get_viewport().set_input_as_handled()
+			
+func add_message(message: String, player_name: String) -> void:
+	if multiplayer.has_multiplayer_peer():
+		print("[" + str(multiplayer.get_unique_id()) + "] Received message: ", message)
+	var chat_message = load("res://scenes/chat_message.tscn").instantiate()
+	chat_message.text = player_name + ": " + message
+	chat_message.visible = true
+	chat_message.modulate = Color(1, 1, 1, 1)
+	$UI/Main/Players/Chat/VBoxContainer.add_child(chat_message, true)
+	_write_chat_log(player_name, message)
+	await get_tree().process_frame
+	$UI/Main/Players/Chat.scroll_vertical = $UI/Main/Players/Chat.get_v_scroll_bar().max_value
+
+func _write_chat_log(player_name: String, message: String) -> void:
+	if not DirAccess.dir_exists_absolute("user://chats"):
+		DirAccess.make_dir_absolute("user://chats")
+		
+	var timestamp = Time.get_datetime_string_from_system().replace(":", "-")
+	var current_log_path = "user://chats/%s.log" % timestamp
+	var log_line = "[%s] %s: %s" % [
+		Time.get_datetime_string_from_system(),
+		player_name,
+		message
+	]
+	var file = FileAccess.open(current_log_path, FileAccess.READ_WRITE)
+	if file:
+		file.seek_end()
+		file.store_line(log_line)
+		file.close()
+		
+func _on_chat_bar_submitted(new_text: String) -> void:
+	$UI/Main/Players/ChatBar.text = ""
+	$UI/Main/Players/ChatBar.release_focus()
+	if new_text == "":
+		return
+
+	var player_name = NetworkManager.player_name if NetworkManager.player_name != "" else "Player"
+	if multiplayer.has_multiplayer_peer():
+		NetworkManager.send_message.rpc(new_text, player_name)
+	else:
+		add_message(new_text, player_name)
+
+func _on_chat_bar_focus_entered() -> void:
+	for child in $UI/Main/Players/Chat/VBoxContainer.get_children():
+		child.visible = true
+		child.modulate = Color(1, 1, 1, 1)
+		for node in child.get_children():
+			if node is Timer:
+				node.stop()
+	await get_tree().process_frame
+	$UI/Main/Players/Chat.scroll_vertical = $UI/Main/Players/Chat.get_v_scroll_bar().max_value
+
+func _on_chat_bar_focus_exited() -> void:
+	for child in $UI/Main/Players/Chat/VBoxContainer.get_children():
+		if child.should_fade:
+			child.visible = true
+			child.modulate = Color(1, 1, 1, 1)
+			for node in child.get_children():
+				if node is Timer:
+					node.start()
+		else:
+			child.visible = false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://ob7qtnaqlwp2"]
+[gd_scene load_steps=16 format=3 uid="uid://ob7qtnaqlwp2"]
 
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="1_bxqf6"]
 [ext_resource type="Script" uid="uid://cdrjmmn8sndql" path="res://scripts/inventory_slot.gd" id="1_hddt5"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="2_t1mo2"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="3_st3ap"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="4_6eu8d"]
+[ext_resource type="Texture2D" uid="uid://bw3lecgjeqv5d" path="res://assets/sprites/box6.png" id="8_st3ap"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_c13kb"]
 texture = ExtResource("2_bbig2")
@@ -52,15 +53,6 @@ font_size = 22
 outline_color = Color(0, 0, 0, 1)
 shadow_color = Color(0, 0, 0, 0.729412)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_68j0h"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_54d7y"]
-bg_color = Color(1, 1, 1, 0.537255)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
-
 [node name="Inventory Slot" type="Control"]
 custom_minimum_size = Vector2(105, 105)
 layout_mode = 3
@@ -70,6 +62,7 @@ offset_right = -0.320007
 offset_bottom = -0.240005
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(60, 60)
 script = ExtResource("1_hddt5")
 
 [node name="Button" type="Button" parent="."]
@@ -118,18 +111,22 @@ horizontal_alignment = 1
 vertical_alignment = 2
 autowrap_mode = 2
 
-[node name="ProgressBar" type="ProgressBar" parent="."]
+[node name="ProgressBar" type="TextureProgressBar" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -4.0000076
+offset_top = -4.000004
+offset_right = 4.0000076
+offset_bottom = 4.0000076
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_styles/background = SubResource("StyleBoxEmpty_68j0h")
-theme_override_styles/fill = SubResource("StyleBoxFlat_54d7y")
 fill_mode = 3
-show_percentage = false
+nine_patch_stretch = true
+texture_progress = ExtResource("8_st3ap")
+tint_progress = Color(1, 1, 1, 0.7411765)
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true

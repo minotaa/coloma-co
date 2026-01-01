@@ -1,0 +1,307 @@
+[gd_scene load_steps=18 format=3 uid="uid://dcaaf1u5gja6x"]
+
+[ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="1_e6vpq"]
+[ext_resource type="Script" uid="uid://cfi4wafuotkxe" path="res://scripts/options.gd" id="1_o7i7e"]
+[ext_resource type="Texture2D" uid="uid://cjxxd4ytt5jpu" path="res://assets/sprites/box11.png" id="2_o7i7e"]
+[ext_resource type="Texture2D" uid="uid://ch8fdwcqfb1jn" path="res://assets/sprites/box10.png" id="3_uon5e"]
+[ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="4_85aq5"]
+[ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="5_gycth"]
+[ext_resource type="StyleBox" uid="uid://cdtblkm5lh8ew" path="res://scenes/outline but for ui lol.tres" id="6_gyu1t"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tbmy8"]
+texture = ExtResource("1_e6vpq")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_flqon"]
+font_size = 33
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8egab"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_flqon"]
+bg_color = Color(0.219501, 0.219501, 0.219501, 1)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+expand_margin_top = 7.0
+expand_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rcqid"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ajci"]
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+expand_margin_top = 8.0
+expand_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7b55j"]
+texture = ExtResource("4_85aq5")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1ajci"]
+texture = ExtResource("5_gycth")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hstxw"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_j7ex8"]
+font_size = 22
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Options" type="Control"]
+custom_minimum_size = Vector2(512, 440)
+layout_mode = 3
+anchor_right = 0.4
+anchor_bottom = 0.611
+offset_bottom = 0.07998657
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_o7i7e")
+
+[node name="General" type="Panel" parent="."]
+custom_minimum_size = Vector2(512, 440)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="General"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.052
+anchor_top = 0.055000003
+anchor_right = 0.966
+anchor_bottom = 0.96400005
+offset_left = -0.12800026
+offset_top = -0.20000076
+offset_right = 1.4079895
+offset_bottom = -0.16003418
+
+[node name="VBoxContainer" type="VBoxContainer" parent="General/ScrollContainer"]
+custom_minimum_size = Vector2(416, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Fullscreen" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(416, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 174
+
+[node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Fullscreen"]
+layout_mode = 2
+text = "Fullscreen"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="CheckBox" type="CheckBox" parent="General/ScrollContainer/VBoxContainer/Fullscreen"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/outline_size = 24
+theme_override_constants/h_separation = 52
+theme_override_constants/align_to_largest_stylebox = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8egab")
+theme_override_icons/checked = ExtResource("2_o7i7e")
+theme_override_icons/unchecked = ExtResource("3_uon5e")
+icon_alignment = 2
+
+[node name="Zoom" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(416, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 77
+
+[node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Zoom"]
+layout_mode = 2
+text = "Zoom"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="HSlider" type="HSlider" parent="General/ScrollContainer/VBoxContainer/Zoom"]
+custom_minimum_size = Vector2(256, 46.07)
+layout_mode = 2
+theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_1ajci")
+min_value = 0.5
+max_value = 2.0
+step = 0.25
+value = 2.0
+tick_count = 7
+ticks_position = 3
+
+[node name="Flick Control" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(416, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 111
+
+[node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Flick Control"]
+layout_mode = 2
+text = "Flick control"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="CheckBox2" type="CheckBox" parent="General/ScrollContainer/VBoxContainer/Flick Control"]
+layout_mode = 2
+theme_override_constants/outline_size = 24
+theme_override_constants/h_separation = 52
+theme_override_constants/align_to_largest_stylebox = 0
+theme_override_font_sizes/font_size = 99
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8egab")
+theme_override_icons/checked = ExtResource("2_o7i7e")
+theme_override_icons/unchecked = ExtResource("3_uon5e")
+icon_alignment = 2
+
+[node name="SFX" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(416, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 97
+
+[node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/SFX"]
+layout_mode = 2
+text = "SFX"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="HSlider" type="HSlider" parent="General/ScrollContainer/VBoxContainer/SFX"]
+custom_minimum_size = Vector2(256, 46.07)
+layout_mode = 2
+theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_1ajci")
+value = 100.0
+ticks_on_borders = true
+
+[node name="Music" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(416, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 61
+
+[node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Music"]
+layout_mode = 2
+text = "Music"
+label_settings = SubResource("LabelSettings_flqon")
+
+[node name="HSlider" type="HSlider" parent="General/ScrollContainer/VBoxContainer/Music"]
+custom_minimum_size = Vector2(256, 46.07)
+layout_mode = 2
+theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_1ajci")
+value = 100.0
+ticks_on_borders = true
+
+[node name="Controls" type="Button" parent="General/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/disabled = ExtResource("6_gyu1t")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+text = "Controls"
+
+[node name="Credits" type="Button" parent="General/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/disabled = ExtResource("6_gyu1t")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hstxw")
+text = "Credits"
+
+[node name="Credits" type="Panel" parent="."]
+visible = false
+custom_minimum_size = Vector2(512, 440)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="Credits" type="Label" parent="Credits"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031000001
+anchor_top = 0.036000002
+anchor_right = 0.96900004
+anchor_bottom = 0.96400005
+offset_left = 0.1279974
+offset_top = 0.15999508
+offset_right = -0.12802124
+offset_bottom = -0.16003418
+grow_horizontal = 2
+grow_vertical = 2
+text = "Programming, design & art by Juan Pichardo
+Music by Jorel Simpson
+Additional help by April
+Sound effects provided by freesound.org and bfxr.net"
+label_settings = SubResource("LabelSettings_j7ex8")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Controls" type="Panel" parent="."]
+visible = false
+custom_minimum_size = Vector2(512, 440)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Controls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.052
+anchor_top = 0.06
+anchor_right = 0.948
+anchor_bottom = 0.94
+offset_left = -0.128
+offset_right = 0.12796
+offset_bottom = -3.05176e-05
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[connection signal="toggled" from="General/ScrollContainer/VBoxContainer/Fullscreen/CheckBox" to="." method="_on_fullscreen_check_box_toggled"]
+[connection signal="drag_ended" from="General/ScrollContainer/VBoxContainer/Zoom/HSlider" to="." method="_on_zoom_slider_drag_ended"]
+[connection signal="value_changed" from="General/ScrollContainer/VBoxContainer/Zoom/HSlider" to="." method="_on_zoom_slider_value_changed"]
+[connection signal="drag_ended" from="General/ScrollContainer/VBoxContainer/SFX/HSlider" to="." method="_on_sfx_slider_drag_ended"]
+[connection signal="value_changed" from="General/ScrollContainer/VBoxContainer/SFX/HSlider" to="." method="_on_sfx_slider_value_changed"]
+[connection signal="drag_ended" from="General/ScrollContainer/VBoxContainer/Music/HSlider" to="." method="_on_music_slider_drag_ended"]
+[connection signal="value_changed" from="General/ScrollContainer/VBoxContainer/Music/HSlider" to="." method="_on_music_slider_value_changed"]
+[connection signal="pressed" from="General/ScrollContainer/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
+[connection signal="pressed" from="General/ScrollContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]

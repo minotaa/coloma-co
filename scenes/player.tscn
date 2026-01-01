@@ -1,4 +1,4 @@
-[gd_scene load_steps=151 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=156 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -23,7 +23,6 @@
 [ext_resource type="Texture2D" uid="uid://bw3lecgjeqv5d" path="res://assets/sprites/box6.png" id="15_a38lo"]
 [ext_resource type="Texture2D" uid="uid://cxrfcsaofv4cw" path="res://assets/sprites/throw-left.png" id="15_j2b1d"]
 [ext_resource type="Texture2D" uid="uid://ckwubckjl6ssl" path="res://assets/sprites/bombrat-down.png" id="15_qfm1y"]
-[ext_resource type="PackedScene" uid="uid://d2i53glql5uik" path="res://scenes/tab_entry.tscn" id="16_a8ls1"]
 [ext_resource type="Texture2D" uid="uid://css6budcibphr" path="res://assets/sprites/throw-right.png" id="16_cs1tg"]
 [ext_resource type="Texture2D" uid="uid://bntstpnc7js3q" path="res://assets/sprites/throw-up.png" id="17_2dvfe"]
 [ext_resource type="FontFile" uid="uid://xkj243blxgh7" path="res://assets/fonts/slkscr.ttf" id="17_qfm1y"]
@@ -31,12 +30,16 @@
 [ext_resource type="Texture2D" uid="uid://b0ttalh388lui" path="res://assets/sprites/box8.png" id="21_t4otl"]
 [ext_resource type="Texture2D" uid="uid://c0u3gx2foxenm" path="res://assets/sprites/box4.png" id="23_ke2ow"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="24_ujl30"]
+[ext_resource type="Texture2D" uid="uid://bfoim4nmtc857" path="res://assets/sprites/flag.png" id="25_2dvfe"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="26_dt7fs"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="27_wqfne"]
 [ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="32_md1ol"]
 [ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="33_bj30b"]
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="34_cs1tg"]
+[ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="34_giy8y"]
 [ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="34_jc3p3"]
+[ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="37_fdfoy"]
 [ext_resource type="PackedScene" uid="uid://cr5ypwn2b5ncm" path="res://scenes/key.tscn" id="37_hax0n"]
 [ext_resource type="Texture2D" uid="uid://b6x2ks8yfiru2" path="res://assets/sprites/caret.png" id="39_j2b1d"]
 
@@ -657,6 +660,22 @@ radius = 48.0
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_d2wvv"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_giy8y"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_t4otl"]
+font = ExtResource("17_qfm1y")
+font_size = 24
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.796078)
+shadow_offset = Vector2(4, 4)
+
 [sub_resource type="LabelSettings" id="LabelSettings_f1ej7"]
 font = ExtResource("11_d2wvv")
 font_size = 22
@@ -669,10 +688,12 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-modulate_color = Color(1, 1, 1, 0.811765)
+modulate_color = Color(1, 1, 1, 0.76862746)
 
 [sub_resource type="LabelSettings" id="LabelSettings_oprun"]
 font_size = 22
+shadow_size = 6
+shadow_color = Color(0, 0, 0, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_487ah"]
 atlas = ExtResource("15_qfm1y")
@@ -692,17 +713,6 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 modulate_color = Color(1, 1, 1, 0.768627)
-
-[sub_resource type="LabelSettings" id="LabelSettings_fulsm"]
-font = ExtResource("11_d2wvv")
-font_size = 44
-shadow_size = 0
-shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
-shadow_offset = Vector2(4, 4)
-
-[sub_resource type="LabelSettings" id="LabelSettings_qfm1y"]
-font = ExtResource("11_d2wvv")
-font_size = 22
 
 [sub_resource type="LabelSettings" id="LabelSettings_60mlk"]
 font = ExtResource("11_d2wvv")
@@ -793,6 +803,17 @@ texture_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wnwbv"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ha2mi"]
+atlas = ExtResource("34_giy8y")
+region = Rect2(160, 16, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_giy8y"]
+size = Vector2(120, 120)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_apa73"]
+atlas = ExtResource("34_giy8y")
+region = Rect2(32, 48, 16, 16)
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dt7fs"]
 texture = ExtResource("24_ujl30")
 texture_margin_left = 32.0
@@ -817,15 +838,6 @@ font_size = 22
 font = ExtResource("17_qfm1y")
 font_size = 60
 font_color = Color(1, 0.8666667, 0, 1)
-outline_size = 12
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 4
-shadow_color = Color(0, 0, 0, 0.796078)
-shadow_offset = Vector2(4, 4)
-
-[sub_resource type="LabelSettings" id="LabelSettings_t4otl"]
-font = ExtResource("17_qfm1y")
-font_size = 24
 outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 4
@@ -901,7 +913,7 @@ texture = ExtResource("2_3v2ag")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_u8hee")
-animation = &"throw_up"
+animation = &"sword_up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -1.375)
@@ -971,6 +983,62 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Boss" type="Control" parent="UI/Defense"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Health" type="TextureProgressBar" parent="UI/Defense/Boss"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -247.0
+offset_top = 88.0
+offset_right = 247.0
+offset_bottom = 144.0
+grow_horizontal = 2
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("15_a38lo")
+tint_progress = Color(0.050980393, 0.8901961, 0.1254902, 1)
+
+[node name="Phase" type="ProgressBar" parent="UI/Defense/Boss"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -240.0
+offset_top = 147.0
+offset_right = 240.0
+offset_bottom = 163.0
+grow_horizontal = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_giy8y")
+value = 100.0
+show_percentage = false
+
+[node name="Title" type="Label" parent="UI/Defense/Boss"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -236.0
+offset_top = 99.0
+offset_right = 236.0
+offset_bottom = 132.0
+grow_horizontal = 2
+text = "BOMBRAT KING"
+label_settings = SubResource("LabelSettings_t4otl")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Markers" type="Control" parent="UI/Defense"]
 layout_mode = 1
 anchor_left = -0.006
@@ -1033,17 +1101,15 @@ grow_vertical = 0
 
 [node name="HealthBar" type="TextureProgressBar" parent="UI/Defense"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.77800006
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.77800006
 offset_left = -168.0
-offset_top = -184.0
+offset_top = -24.160034
 offset_right = 168.0
-offset_bottom = -136.0
-grow_horizontal = 2
-grow_vertical = 0
+offset_bottom = 23.839966
 nine_patch_stretch = true
 stretch_margin_left = 16
 stretch_margin_top = 16
@@ -1054,15 +1120,15 @@ texture_progress = ExtResource("14_a38lo")
 
 [node name="OverhealBar" type="TextureProgressBar" parent="UI/Defense"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.77800006
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.77800006
 offset_left = -168.0
-offset_top = -184.0
+offset_top = -24.160034
 offset_right = 168.0
-offset_bottom = -136.0
+offset_bottom = 23.839966
 grow_horizontal = 2
 grow_vertical = 0
 fill_mode = 1
@@ -1075,15 +1141,14 @@ texture_progress = ExtResource("21_t4otl")
 
 [node name="Health Label" type="Label" parent="UI/Defense"]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -42.0
-offset_top = -175.0
-offset_right = 42.0
-offset_bottom = -147.0
+anchors_preset = -1
+anchor_left = 0.381
+anchor_top = 0.757
+anchor_right = 0.619
+anchor_bottom = 0.8
+offset_left = 0.3199768
+offset_top = -0.040039063
+offset_right = -0.32000732
 grow_horizontal = 2
 grow_vertical = 0
 text = "Uh oh!"
@@ -1093,15 +1158,15 @@ vertical_alignment = 1
 
 [node name="SprintBar" type="TextureProgressBar" parent="UI/Defense"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.72200006
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.72200006
 offset_left = -172.0
-offset_top = -216.0
+offset_top = -15.840027
 offset_right = 172.0
-offset_bottom = -184.0
+offset_bottom = 16.159973
 grow_horizontal = 2
 grow_vertical = 0
 max_value = 220.0
@@ -1115,15 +1180,15 @@ texture_progress = ExtResource("15_a38lo")
 
 [node name="Inventory" type="HBoxContainer" parent="UI/Defense"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.89400005
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.89400005
 offset_left = -164.0
-offset_top = -124.0
+offset_top = -47.680054
 offset_right = 164.0
-offset_bottom = -24.0
+offset_bottom = 52.319946
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 12
@@ -1139,30 +1204,45 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Slot4" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 256.0
-offset_bottom = 56.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -136.0
+offset_top = 15.0
+offset_right = 140.0
+offset_bottom = 75.0
+grow_horizontal = 2
 theme_override_constants/separation = 12
 alignment = 1
 
 [node name="Wave" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Wave"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Wave"]
 layout_mode = 2
-text = "Wave: 0"
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Wave/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("25_2dvfe")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Wave/HBoxContainer"]
+layout_mode = 2
+text = "0"
 label_settings = SubResource("LabelSettings_oprun")
-horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Bombrats" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
@@ -1183,7 +1263,7 @@ label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
 [node name="Gold" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
@@ -1220,115 +1300,6 @@ grow_vertical = 2
 label_settings = SubResource("LabelSettings_4r5pv")
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Tab" type="Control" parent="UI/Defense"]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -576.0
-offset_top = -224.0
-offset_right = 576.0
-offset_bottom = 224.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="Panel" parent="UI/Defense/Tab"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
-
-[node name="Title" type="Label" parent="UI/Defense/Tab"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -116.0
-offset_top = 16.0
-offset_right = 116.0
-offset_bottom = 72.0
-grow_horizontal = 2
-size_flags_vertical = 0
-text = "Players"
-label_settings = SubResource("LabelSettings_fulsm")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Kills" type="Label" parent="UI/Defense/Tab"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 462.0
-offset_top = 78.0
-offset_right = 532.0
-offset_bottom = 120.0
-grow_horizontal = 2
-size_flags_vertical = 0
-text = "Kills"
-label_settings = SubResource("LabelSettings_qfm1y")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Gold" type="Label" parent="UI/Defense/Tab"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 349.0
-offset_top = 78.0
-offset_right = 419.0
-offset_bottom = 120.0
-grow_horizontal = 2
-size_flags_vertical = 0
-text = "Gold"
-label_settings = SubResource("LabelSettings_qfm1y")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Players" type="Label" parent="UI/Defense/Tab"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -452.0
-offset_top = 78.0
-offset_right = -256.0
-offset_bottom = 120.0
-grow_horizontal = 2
-size_flags_vertical = 0
-text = "Player"
-label_settings = SubResource("LabelSettings_qfm1y")
-vertical_alignment = 1
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Defense/Tab"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -560.0
-offset_top = -128.0
-offset_right = 560.0
-offset_bottom = 208.0
-grow_horizontal = 2
-grow_vertical = 2
-horizontal_scroll_mode = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Defense/Tab/ScrollContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="Tab Entry" parent="UI/Defense/Tab/ScrollContainer/VBoxContainer" instance=ExtResource("16_a8ls1")]
-layout_mode = 2
 
 [node name="Shop" type="Control" parent="UI/Defense"]
 visible = false
@@ -1635,15 +1606,20 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon"]
-layout_mode = 0
-offset_left = 16.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -122.0
 offset_top = 16.0
-offset_right = 419.0
+offset_right = 124.0
 offset_bottom = 76.0
+grow_horizontal = 2
 theme_override_constants/separation = 6
 alignment = 1
 
 [node name="Progress" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
@@ -1655,30 +1631,49 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Room" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Room"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon/HBoxContainer/Room"]
 layout_mode = 2
-text = "Room: 0"
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="UI/Dungeon/HBoxContainer/Room/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("25_2dvfe")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Room/HBoxContainer"]
+layout_mode = 2
+text = "0"
 label_settings = SubResource("LabelSettings_oprun")
-horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Lives" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Lives"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon/HBoxContainer/Lives"]
 layout_mode = 2
-text = "Lives: 0"
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="UI/Dungeon/HBoxContainer/Lives/HBoxContainer"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_ha2mi")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Lives/HBoxContainer"]
+layout_mode = 2
+text = "0"
 label_settings = SubResource("LabelSettings_oprun")
-horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Gold" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
@@ -1846,15 +1841,15 @@ text = "Main Menu"
 
 [node name="Inventory" type="HBoxContainer" parent="UI/Dungeon"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.89400005
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.89400005
 offset_left = -164.0
-offset_top = -124.0
+offset_top = -47.680054
 offset_right = 164.0
-offset_bottom = -24.0
+offset_bottom = 52.319946
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 12
@@ -1998,15 +1993,15 @@ text = "Close"
 
 [node name="HealthBar" type="TextureProgressBar" parent="UI/Dungeon"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.77800006
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.77800006
 offset_left = -168.0
-offset_top = -184.0
+offset_top = -24.160034
 offset_right = 168.0
-offset_bottom = -136.0
+offset_bottom = 23.839966
 grow_horizontal = 2
 grow_vertical = 0
 nine_patch_stretch = true
@@ -2019,15 +2014,15 @@ texture_progress = ExtResource("14_a38lo")
 
 [node name="OverhealBar" type="TextureProgressBar" parent="UI/Dungeon"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.77800006
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.77800006
 offset_left = -168.0
-offset_top = -184.0
+offset_top = -24.160034
 offset_right = 168.0
-offset_bottom = -136.0
+offset_bottom = 23.839966
 grow_horizontal = 2
 grow_vertical = 0
 fill_mode = 1
@@ -2040,15 +2035,15 @@ texture_progress = ExtResource("21_t4otl")
 
 [node name="Health Label" type="Label" parent="UI/Dungeon"]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -42.0
-offset_top = -175.0
-offset_right = 42.0
-offset_bottom = -147.0
+anchors_preset = -1
+anchor_left = 0.381
+anchor_top = 0.757
+anchor_right = 0.619
+anchor_bottom = 0.79600006
+offset_left = 0.3199768
+offset_top = -0.040039063
+offset_right = -0.32000732
+offset_bottom = -0.12005615
 grow_horizontal = 2
 grow_vertical = 0
 text = "Uh oh!"
@@ -2058,15 +2053,15 @@ vertical_alignment = 1
 
 [node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeon"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.72200006
 anchor_right = 0.5
-anchor_bottom = 1.0
+anchor_bottom = 0.72200006
 offset_left = -172.0
-offset_top = -216.0
+offset_top = -15.840027
 offset_right = 172.0
-offset_bottom = -184.0
+offset_bottom = 16.159973
 grow_horizontal = 2
 grow_vertical = 0
 max_value = 220.0
@@ -2086,6 +2081,86 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Movement Joystick" parent="UI/Global" instance=ExtResource("34_cs1tg")]
+layout_mode = 1
+offset_left = 8.0
+offset_top = -320.0
+offset_right = 360.0
+
+[node name="Attack" type="Control" parent="UI/Global"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -40.0
+offset_right = -48.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Button" type="TouchScreenButton" parent="UI/Global/Attack"]
+position = Vector2(-273, -249)
+scale = Vector2(1.95, 1.95)
+texture_normal = ExtResource("27_wqfne")
+texture_pressed = ExtResource("26_dt7fs")
+shape = SubResource("RectangleShape2D_giy8y")
+
+[node name="TextureRect" type="TextureRect" parent="UI/Global/Attack"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -216.0
+offset_right = -56.0
+offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Sprint" type="Control" parent="UI/Global"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -40.0
+offset_right = -48.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Button" type="TouchScreenButton" parent="UI/Global/Sprint"]
+position = Vector2(-215.99997, -425.00012)
+scale = Vector2(1.383, 1.326)
+texture_normal = ExtResource("27_wqfne")
+texture_pressed = ExtResource("26_dt7fs")
+shape = SubResource("RectangleShape2D_giy8y")
+action = "sprint"
+
+[node name="TextureRect" type="TextureRect" parent="UI/Global/Sprint"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -192.0
+offset_top = -400.0
+offset_right = -64.0
+offset_bottom = -280.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_apa73")
 
 [node name="ChatBar" type="LineEdit" parent="UI/Global"]
 layout_mode = 1
@@ -2173,122 +2248,20 @@ horizontal_scroll_mode = 3
 layout_mode = 2
 alignment = 2
 
-[node name="Pause" type="Control" parent="UI/Global"]
+[node name="Leveling" type="Control" parent="UI/Global"]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="Panel" parent="UI/Global/Pause"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
-
-[node name="Title" type="Label" parent="UI/Global/Pause/Panel"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -288.0
-offset_top = -134.5
-offset_right = 288.0
-offset_bottom = -73.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "GAME MENU"
-label_settings = SubResource("LabelSettings_jc3p3")
-horizontal_alignment = 1
-
-[node name="Subtitle" type="Label" parent="UI/Global/Pause/Panel"]
-layout_mode = 0
-offset_left = 64.0
-offset_top = 128.0
-offset_right = 1216.0
-offset_bottom = 193.0
-label_settings = SubResource("LabelSettings_ke2ow")
-vertical_alignment = 1
-
-[node name="Resume" type="Button" parent="UI/Global/Pause/Panel"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -232.0
-offset_top = -37.0
-offset_right = 232.0
-offset_bottom = 37.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 33
-theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
-theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
-text = "Resume"
-
-[node name="Quit to Main Menu" type="Button" parent="UI/Global/Pause/Panel"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -232.0
-offset_top = 51.0
-offset_right = 232.0
-offset_bottom = 125.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 33
-theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
-theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
-text = "Quit to Main Menu"
-
-[node name="Quit Game" type="Button" parent="UI/Global/Pause/Panel"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -232.0
-offset_top = 139.0
-offset_right = 232.0
-offset_bottom = 213.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 33
-theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
-theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
-text = "Quit Game"
-
-[node name="Leveling" type="Control" parent="UI/Global"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
 offset_left = -304.0
+offset_top = -296.0
 offset_right = 304.0
-offset_bottom = 104.0
+offset_bottom = -192.0
 grow_horizontal = 2
+grow_vertical = 0
 
 [node name="XP" type="TextureProgressBar" parent="UI/Global/Leveling"]
 layout_mode = 1
@@ -2326,6 +2299,186 @@ text = "Level 0"
 label_settings = SubResource("LabelSettings_t4otl")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Pause" type="Control" parent="UI/Global"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="UI/Global/Pause"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
+
+[node name="Options2" parent="UI/Global/Pause/Panel" instance=ExtResource("37_fdfoy")]
+visible = false
+layout_mode = 1
+anchor_left = 0.3
+anchor_top = 0.261
+anchor_right = 0.70000005
+anchor_bottom = 0.87200004
+offset_top = -15.919998
+offset_right = -6.1035156e-05
+offset_bottom = -15.840027
+
+[node name="Back" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = 254.0
+offset_right = 256.0
+offset_bottom = 328.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_top = NodePath("../Resume")
+focus_neighbor_bottom = NodePath("../Quit to Main Menu")
+focus_next = NodePath("../Quit to Main Menu")
+focus_previous = NodePath("../Resume")
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Back"
+
+[node name="Title" type="Label" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -250.5
+offset_right = 288.0
+offset_bottom = -189.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "GAME MENU"
+label_settings = SubResource("LabelSettings_jc3p3")
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="UI/Global/Pause/Panel"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 128.0
+offset_right = 1216.0
+offset_bottom = 193.0
+label_settings = SubResource("LabelSettings_ke2ow")
+vertical_alignment = 1
+
+[node name="Resume" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = -125.0
+offset_right = 232.0
+offset_bottom = -51.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_top = NodePath("../Quit Game")
+focus_neighbor_bottom = NodePath("../Options")
+focus_next = NodePath("../Options")
+focus_previous = NodePath("../Quit Game")
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Resume"
+
+[node name="Options" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = -37.0
+offset_right = 232.0
+offset_bottom = 37.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_top = NodePath("../Resume")
+focus_neighbor_bottom = NodePath("../Quit to Main Menu")
+focus_next = NodePath("../Quit to Main Menu")
+focus_previous = NodePath("../Resume")
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Settings"
+
+[node name="Quit to Main Menu" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = 51.0
+offset_right = 232.0
+offset_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_top = NodePath("../Options")
+focus_neighbor_bottom = NodePath("../Quit Game")
+focus_next = NodePath("../Quit Game")
+focus_previous = NodePath("../Options")
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Quit to Main Menu"
+
+[node name="Quit Game" type="Button" parent="UI/Global/Pause/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.0
+offset_top = 139.0
+offset_right = 232.0
+offset_bottom = 213.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_top = NodePath("../Quit to Main Menu")
+focus_neighbor_bottom = NodePath("../Resume")
+focus_next = NodePath("../Resume")
+focus_previous = NodePath("../Quit to Main Menu")
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
+theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
+text = "Quit Game"
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
@@ -2392,12 +2545,15 @@ texture = ExtResource("39_j2b1d")
 [connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Shop/Panel/Reroll" to="." method="_on_reroll_pressed"]
+[connection signal="pressed" from="UI/Global/Attack/Button" to="." method="_on_attack_button_pressed"]
 [connection signal="focus_entered" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_entered"]
 [connection signal="focus_exited" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_exited"]
 [connection signal="gui_input" from="UI/Global/ChatBar" to="." method="_on_chatbar_gui_input"]
 [connection signal="text_submitted" from="UI/Global/ChatBar" to="." method="_on_chat_bar_submitted"]
 [connection signal="timeout" from="UI/Global/Zoom/Timer" to="." method="_on_zoom_timeout"]
+[connection signal="pressed" from="UI/Global/Pause/Panel/Back" to="." method="_on_back_options_pressed"]
 [connection signal="pressed" from="UI/Global/Pause/Panel/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="UI/Global/Pause/Panel/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="UI/Global/Pause/Panel/Quit to Main Menu" to="." method="_on_quit_to_main_menu_pressed"]
 [connection signal="pressed" from="UI/Global/Pause/Panel/Quit Game" to="." method="_on_quit_game_pressed"]
 [connection signal="timeout" from="Timer" to="." method="_on_regen_timeout"]
