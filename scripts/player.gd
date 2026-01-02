@@ -1607,6 +1607,8 @@ func _physics_process(delta: float) -> void:
 			show_mobile_controls()
 		else:
 			hide_mobile_controls()
+	elif not Man.is_mobile():
+		hide_mobile_controls()
 
 	if lifesteal_cooldown > 0.0:
 		lifesteal_cooldown -= delta

@@ -2,7 +2,7 @@ extends Entity
 
 const WANDER_SPEED := 25.0
 const CHARGE_SPEED := 80.0
-const SHOCKWAVE_INTERVAL := 6.0
+const SHOCKWAVE_INTERVAL := 12.0
 const TIMER_DURATION := 120.0  # Time before enrage/charge
 const KING_EXPLOSION_RADIUS := 30.0  # Big explosions for the king
 const KING_EXPLOSION_TIME := 3.0  # Slower, more dramatic expansion
@@ -17,8 +17,8 @@ var game_node: Node = null  # Reference to the Defense game node
 
 func initialize_entity() -> void:
 	entity_name = "Bombrat King"
-	health = 2500.0
-	max_health = 2500.0
+	health = 2250.0
+	max_health = 2250.0
 	defense = 25.0
 	id = 13  # Unique ID for boss
 	speed = WANDER_SPEED
@@ -237,6 +237,11 @@ func on_death(killer_name: String) -> void:
 		final_explosion.rpc()
 	else:
 		final_explosion()
+		
+	if multiplayer.has_multiplayer_peer():
+		Toast.add.rpc("The Bombrat King has died!")
+	else:
+		Toast.add("The Bombrat King has died!")
 	
 	# Call parent death logic for rewards
 	super.on_death(killer_name)

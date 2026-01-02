@@ -82,7 +82,7 @@ texture_margin_bottom = 16.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_hstxw"]
 font = ExtResource("7_5pajh")
-font_size = 17
+font_size = 33
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
@@ -235,7 +235,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Buttons" type="Control" parent="UI/Main"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -289,19 +288,20 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = ExtResource("10_8egab")
-text = "Loadout  "
+text = "Loadout"
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="UI/Main/Buttons/Bag"]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.629
 anchor_top = 0.187
 anchor_right = 0.73700005
-anchor_bottom = 0.8
+anchor_bottom = 0.81200004
 offset_left = 0.14398193
 offset_top = 0.03999901
 offset_right = 0.031982422
-offset_bottom = 1.0
+offset_bottom = 0.039993286
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
@@ -314,15 +314,16 @@ tint_under = Color(0.043137256, 0.043137256, 0.043137256, 1)
 tint_over = Color(1, 1, 1, 0.78431374)
 
 [node name="Label" type="Label" parent="UI/Main/Buttons/Bag"]
+visible = false
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.638
-anchor_top = 0.25
-anchor_right = 0.72800004
-anchor_bottom = 0.77500004
-offset_left = -0.03201294
-offset_right = 0.2079773
-text = "999"
+anchor_left = 0.62100005
+anchor_top = 0.3
+anchor_right = 0.91400003
+anchor_bottom = 0.82500005
+offset_left = -0.14401245
+offset_right = -3.0960083
+text = "Lv 999"
 label_settings = SubResource("LabelSettings_hstxw")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -1261,6 +1262,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_flqon")
 text = "Back"
 
 [node name="Players" type="Control" parent="UI/Main"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1957,8 +1959,8 @@ horizontal_alignment = 2
 [connection signal="pressed" from="UI/Main/Players/Mode Selector/Panel/Map Selector/Right" to="." method="_on_map_selector_right_pressed"]
 [connection signal="focus_entered" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_focus_entered"]
 [connection signal="focus_exited" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_focus_exited"]
-[connection signal="gui_input" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_gui_input"]
 [connection signal="gui_input" from="UI/Main/Players/ChatBar" to="." method="_on_chatbar_gui_input"]
+[connection signal="gui_input" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_gui_input"]
 [connection signal="text_submitted" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_submitted"]
 [connection signal="text_submitted" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_text_submitted"]
 [connection signal="text_submitted" from="UI/Main/Join/Address" to="." method="_on_address_text_submitted"]

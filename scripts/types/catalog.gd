@@ -777,5 +777,18 @@ func _init() -> void:
 	#atlas = AtlasTexture.new()
 	#atlas.atlas = load("res://assets/sprites/items.png")
 	#atlas.region = Rect2(176.0, 16.0, 16.0, 16.0)
-	#var bubble_wand = Weapon.new(45, "Bubble Wand", atlas)
-	#bubble_wand.on
+	#var bubble_wand = Weapon.new(46, "Bubble Wand", atlas)
+	#bubble_wand.damage = 25.0
+	#bubble_wand.type = "THROWABLE"
+	#bubble_wand.data = {
+		#"clip": 25,
+		#"reload_time": 5.0,
+		#"speed": -5.0,
+		#"texture": preload("res://assets/sprites/bubble.png")
+	#}
+	#bubble_wand.on_hit = func(target):
+		#if target.is_in_group("players"):
+			#if not target.has_effect("Gunked"):
+				#var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
+				#target.add_status_effect(gunked)
+	#items.append(bubble_wand)

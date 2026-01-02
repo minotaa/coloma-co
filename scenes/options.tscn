@@ -87,11 +87,11 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.052
 anchor_top = 0.055000003
-anchor_right = 0.966
+anchor_right = 0.95300007
 anchor_bottom = 0.96400005
 offset_left = -0.12800026
 offset_top = -0.20000076
-offset_right = 1.4079895
+offset_right = 0.063964844
 offset_bottom = -0.16003418
 
 [node name="VBoxContainer" type="VBoxContainer" parent="General/ScrollContainer"]

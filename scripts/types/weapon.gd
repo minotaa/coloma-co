@@ -4,3 +4,5 @@ class_name Weapon
 var damage: float = 25.0
 var type: String
 var data: Dictionary = {}
+
+var on_hit: Callable = func(enemy): pass

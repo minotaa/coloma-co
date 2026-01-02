@@ -49,12 +49,6 @@ func on_death(killer_name: String) -> void:
 		get_parent().add_child(new_slime, true)
 	queue_free()
 
-func can_navigate_to(pos: Vector2) -> bool:
-	agent.target_position = pos
-
-	return agent.is_navigation_finished() == false \
-		and agent.get_current_navigation_path().size() > 1
-
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	if not alive:
 		return
@@ -66,19 +60,15 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 			var target = get_nearest_player()
 			if target:
 				var offset = Vector2(randf_range(-8, 8), randf_range(-8, 8))
-				var desired_pos = target.global_position + offset
 
+				agent.target_position = target.global_position + offset
 				hop_start_pos = global_position
-
-				if can_navigate_to(desired_pos):
-					hop_target_pos = agent.get_next_path_position()
-				else:
-					# Standing on nothing / invalid nav → hop in place
+				hop_target_pos = agent.get_next_path_position()
+				if hop_start_pos.distance_to(hop_target_pos) > 200.0:
 					hop_target_pos = hop_start_pos
-
-				if target_indicator:
-					target_indicator.global_position = hop_target_pos
-					target_indicator.visible = true
+					print("Cancelling this hop, it's too far away.")
+				$Target.global_position = hop_target_pos
+				$Target.visible = true
 
 				is_winding_up = true
 				windup_timer = HOP_WINDUP_TIME
