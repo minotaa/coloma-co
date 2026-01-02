@@ -1,4 +1,4 @@
-[gd_scene load_steps=156 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=159 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -39,6 +39,9 @@
 [ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="34_cs1tg"]
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="34_giy8y"]
 [ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="34_jc3p3"]
+[ext_resource type="Texture2D" uid="uid://d2rqelte7tux8" path="res://assets/sprites/cog.png" id="35_fdfoy"]
+[ext_resource type="Texture2D" uid="uid://bkjv5kqw0q1px" path="res://assets/sprites/cursorHand_grey.png" id="35_g5jhy"]
+[ext_resource type="Texture2D" uid="uid://cqma52jcmc74j" path="res://assets/sprites/chat.png" id="36_hhpqf"]
 [ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="37_fdfoy"]
 [ext_resource type="PackedScene" uid="uid://cr5ypwn2b5ncm" path="res://scenes/key.tscn" id="37_hax0n"]
 [ext_resource type="Texture2D" uid="uid://b6x2ks8yfiru2" path="res://assets/sprites/caret.png" id="39_j2b1d"]
@@ -2088,7 +2091,25 @@ offset_left = 8.0
 offset_top = -320.0
 offset_right = 360.0
 
+[node name="Attack Joystick" parent="UI/Global" instance=ExtResource("34_cs1tg")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -384.0
+offset_top = -312.0
+offset_right = -32.0
+offset_bottom = 0.0
+grow_horizontal = 0
+joystick_mode = 0
+use_input_actions = false
+action_left = "attack_left"
+action_right = "attack_right"
+action_up = "attack_up"
+action_down = "attack_down"
+
 [node name="Attack" type="Control" parent="UI/Global"]
+visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -2161,6 +2182,107 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("AtlasTexture_apa73")
+
+[node name="Use" type="Control" parent="UI/Global"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -224.0
+offset_top = -25.0
+offset_right = -224.0
+offset_bottom = -25.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Button" type="TouchScreenButton" parent="UI/Global/Use"]
+position = Vector2(-191.99997, -408)
+scale = Vector2(1.008, 1.060373)
+texture_normal = ExtResource("27_wqfne")
+texture_pressed = ExtResource("26_dt7fs")
+shape = SubResource("RectangleShape2D_giy8y")
+action = "interact"
+
+[node name="TextureRect" type="TextureRect" parent="UI/Global/Use"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -168.0
+offset_top = -376.0
+offset_right = -88.0
+offset_bottom = -304.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("35_g5jhy")
+
+[node name="SettingsButton" type="Control" parent="UI/Global"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Button" type="TouchScreenButton" parent="UI/Global/SettingsButton"]
+position = Vector2(25.00003, 23.000008)
+scale = Vector2(0.585, 0.6)
+texture_normal = ExtResource("27_wqfne")
+texture_pressed = ExtResource("26_dt7fs")
+shape = SubResource("RectangleShape2D_giy8y")
+action = "pause"
+
+[node name="TextureRect" type="TextureRect" parent="UI/Global/SettingsButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 39.0
+offset_top = 39.000122
+offset_right = 87.0
+offset_bottom = 87.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("35_fdfoy")
+
+[node name="ChatButton" type="Control" parent="UI/Global"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 112.0
+offset_top = 8.0
+offset_right = 112.0
+offset_bottom = 8.0
+
+[node name="Button" type="TouchScreenButton" parent="UI/Global/ChatButton"]
+position = Vector2(25.00003, 23.000008)
+scale = Vector2(0.585, 0.6)
+texture_normal = ExtResource("27_wqfne")
+texture_pressed = ExtResource("26_dt7fs")
+shape = SubResource("RectangleShape2D_giy8y")
+
+[node name="TextureRect" type="TextureRect" parent="UI/Global/ChatButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 39.0
+offset_top = 39.000122
+offset_right = 87.0
+offset_bottom = 87.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("36_hhpqf")
 
 [node name="ChatBar" type="LineEdit" parent="UI/Global"]
 layout_mode = 1
@@ -2546,6 +2668,7 @@ texture = ExtResource("39_j2b1d")
 [connection signal="pressed" from="UI/Dungeon/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
 [connection signal="pressed" from="UI/Dungeon/Shop/Panel/Reroll" to="." method="_on_reroll_pressed"]
 [connection signal="pressed" from="UI/Global/Attack/Button" to="." method="_on_attack_button_pressed"]
+[connection signal="pressed" from="UI/Global/ChatButton/Button" to="." method="_on_chat_button_pressed"]
 [connection signal="focus_entered" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_entered"]
 [connection signal="focus_exited" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_exited"]
 [connection signal="gui_input" from="UI/Global/ChatBar" to="." method="_on_chatbar_gui_input"]

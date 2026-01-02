@@ -28,6 +28,8 @@ func update(delta: float, target) -> bool:
 
 	# Trigger effect based on effect_time
 	if effect_time == 0.0 or effect_elapsed >= effect_time:
+		if not target:
+			return false
 		on_effect.call(target)
 		effect_elapsed = 0.0
 

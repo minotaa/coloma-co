@@ -62,6 +62,8 @@ var shop_active = false
 var shop_timer = 0.0
 var shop_duration = 60.0
 var current_shopkeepers = []
+var queued_players = []
+var max_players = 0
 
 # Wave system
 var completed_rooms = 0
@@ -182,6 +184,12 @@ func reset() -> void:
 		countdown_and_spawn_room()
 	return
 
+func _barrier_body_entered(body: Node2D) -> void:
+	if shop_active and not queued_players.has(body.name):
+		queued_players.append(body.name)
+		if queued_players.size() >= max_players:
+			end_shop_phase()
+
 func _ready() -> void:
 	play_music(preload("res://assets/sounds/MO_ingame_v2.wav"), true)
 	var file = FileAccess.open("res://waves.json", FileAccess.READ)
@@ -191,6 +199,7 @@ func _ready() -> void:
 	waves = JSON.parse_string(file.get_as_text())
 	file.close()
 	
+	$Barrier.get_node("Area2D").connect("body_entered", _barrier_body_entered)
 	$TileMapLayer.clear()
 	
 	# Only spawn the start room initially
@@ -1067,11 +1076,16 @@ func find_nearest_safe_position(from_position: Vector2) -> Vector2:
 	return Vector2(128, 128)  # Original spawn position
 
 # --- SHOP SYSTEM ---
-
 func start_shop_phase() -> void:
 	shop_timer = shop_duration
 	shop_active = true
+	$Barrier/Area2D/Rectangle.visible = true
 	update_barrier_label_for_shop()
+	if multiplayer.has_multiplayer_peer():
+		max_players = NetworkManager.players.size()
+	else:
+		max_players = 1
+	
 
 	# Spawn Shopkeeper(s) on sewer spawners in the latest room
 	var latest_room_id = room_ids_in_order[-1]
@@ -1163,6 +1177,8 @@ func spawn_shop_room() -> void:
 
 func end_shop_phase() -> void:
 	# Despawn Shopkeepers
+	queued_players = []
+	$Barrier/Area2D/Rectangle.visible = false
 	for s in current_shopkeepers:
 		if is_instance_valid(s):
 			s.queue_free()
@@ -1182,8 +1198,8 @@ func end_shop_phase() -> void:
 
 func update_barrier_label_for_shop() -> void:
 	var seconds_left = int(shop_timer)
-	$Barrier.get_node("Label").text = "Shop: " + str(seconds_left)
+	$Barrier.get_node("Label").text = "Shop: "
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
-		set_progress.rpc("Shop: " + str(seconds_left))
+		set_progress.rpc("Shop: " + str(seconds_left) + "\n" + str(queued_players.size()) + "/" + str(max_players))
 	else:
-		set_progress("Shop: " + str(seconds_left))
+		set_progress("Shop: " + str(seconds_left) + "\n" + str(queued_players.size()) + "/" + str(max_players))

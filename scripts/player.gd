@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+var stupid_arbitrary_attack_cooldown: float = 0.0
+var max_stupid_arbitrary_attack_cooldown: float = 0.2
 var shop_items = []  # Current shop inventory
 var current_shop_seed = 0  # Seed from server for deterministic random selection
 var rerolls_available = 3  # Number of rerolls player can use
@@ -224,7 +226,7 @@ func end_game() -> void:
 	revival_time = -1
 	hide_ui()
 	Man.enemies_killed += total_kills
-	var stats_text := "Your final stats:\n"
+	var stats_text := "Your final stats:"
 	stats_text += "\nGold:\t " + str(gold_collected) + " (" + percent(gold_collected, total_gold_collected) + ")\n"
 	stats_text += "Kills:\t " + str(kills) + " (" + percent(kills, total_kills) + ")\n"
 	stats_text += "Damage Dealt:\t " + str(roundi(damage_dealt)) + " (" + percent(damage_dealt, total_damage_dealt) + ")\n"
@@ -232,7 +234,7 @@ func end_game() -> void:
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
 	if type == "Defense":
 		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "The gem has broken."
-		stats_text += "\nFinal wave:\t " + str(get_parent().wave)
+		stats_text += "\nFinal Wave:\t " + str(get_parent().wave)
 		if get_parent().wave > Man.highest_wave:
 			Man.highest_wave = get_parent().wave
 		$"UI/Defense/Game Over".visible = true
@@ -252,7 +254,7 @@ func end_game() -> void:
 		if get_parent().completed_rooms:
 			Man.highest_rooms = get_parent().completed_rooms
 		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "You lost all your lives."
-		stats_text += "\nRooms completed: " + str(roundi(get_parent().completed_rooms))
+		stats_text += "\nRooms Completed: " + str(roundi(get_parent().completed_rooms))
 		$"UI/Dungeon/Game Over".visible = true
 		$"UI/Dungeon/Game Over/Panel/Play Again".grab_focus()
 		$"UI/Dungeon/Game Over/Panel/Meta".text = stats_text
@@ -294,11 +296,24 @@ func _enter_tree() -> void:
 	if multiplayer.has_multiplayer_peer():
 		set_multiplayer_authority(name.to_int())
 
+func hide_mobile_controls() -> void:
+	$"UI/Global/Movement Joystick".visible = false
+	$"UI/Global/Attack Joystick".visible = false
+	$UI/Global/Sprint.visible = false
+	$UI/Global/ChatButton.visible = false
+	$UI/Global/SettingsButton.visible = false
+	$UI/Global/Use.visible = false
+
+func show_mobile_controls() -> void:
+	$"UI/Global/Movement Joystick".visible = true
+	$"UI/Global/Attack Joystick".visible = true
+	$UI/Global/Sprint.visible = true
+	$UI/Global/ChatButton.visible = true
+	$UI/Global/SettingsButton.visible = true
+	$UI/Global/Use.visible = true
+
 func _ready() -> void:	
-	if not Man.is_mobile():
-		$"UI/Global/Movement Joystick".visible = false
-		$UI/Global/Attack.visible = false
-	else:
+	if Man.is_mobile():
 		$UI/Global/Attack/TextureRect.texture = Man.equipped_weapon.texture
 	play_idle_animation()
 	zoom_multiplier = Man.zoom
@@ -1000,6 +1015,9 @@ func _process_input(delta) -> void:
 		if $AnimatedSprite2D.animation.begins_with("walk_"):
 			play_idle_animation()
 
+	if stupid_arbitrary_attack_cooldown > 0.0:
+		stupid_arbitrary_attack_cooldown -= delta
+
 	# Determine attack direction
 	if Man.equipped_weapon.type == "SWORD":
 		var attack_dir := ""
@@ -1012,7 +1030,7 @@ func _process_input(delta) -> void:
 			attack_dir = "left"
 		elif Input.is_action_just_pressed("attack_right"):
 			attack_dir = "right"
-		elif Input.is_action_just_pressed("attack") and not Man.is_mobile():
+		elif Input.is_action_just_pressed("attack"):
 			var direction_vec: Vector2
 			
 			if using_controller:
@@ -1033,9 +1051,27 @@ func _process_input(delta) -> void:
 					attack_dir = "down"
 				else:
 					attack_dir = "up"
+		elif Man.is_mobile() and not using_controller:
+			
+			if $"UI/Global/Attack Joystick".is_pressed:
+				var direction_vec: Vector2 = $"UI/Global/Attack Joystick".output
+				
+				if abs(direction_vec.x) > abs(direction_vec.y):
+					if direction_vec.x > 0.0:
+						attack_dir = "right"
+					else:
+						attack_dir = "left"
+				else:
+					if direction_vec.y > 0.0:
+						attack_dir = "down"
+					else:
+						attack_dir = "up"
+		if stupid_arbitrary_attack_cooldown > 0.0:
+			attack_dir = ""
 
 		# Perform attack if a direction was determined
 		if attack_dir != "":
+			stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown
 			if multiplayer.has_multiplayer_peer():
 				play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
 			else:
@@ -1563,6 +1599,15 @@ func _physics_process(delta: float) -> void:
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
 
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	if using_controller and Man.is_mobile():
+		hide_mobile_controls()
+	elif not using_controller and Man.is_mobile():
+		if (not shop_node.visible and not $UI/Global/Pause.visible and not $"UI/Defense/Game Over".visible and not $"UI/Dungeon/Game Over".visible):
+			show_mobile_controls()
+		else:
+			hide_mobile_controls()
+
 	if lifesteal_cooldown > 0.0:
 		lifesteal_cooldown -= delta
 	if active_effects.size() > 0:
@@ -1760,7 +1805,13 @@ func _physics_process(delta: float) -> void:
 		for area in $Area2D.get_overlapping_areas():
 			if (area as Area2D).is_in_group("gem"):
 				found_shop = true
-		$Key.visible = found_shop
+		if Man.is_desktop():
+			$Key.visible = found_shop
+		else:
+			if $UI/Global/SettingsButton.visible:
+				$UI/Global/Use.visible = found_shop
+			else: 
+				$UI/Global/Use.visible = false
 			
 		var slots = $UI/Defense/Inventory.get_children()
 		var max_slots = get_slots()  # Get the number of slots player should have
@@ -1792,7 +1843,11 @@ func _physics_process(delta: float) -> void:
 		for area in $Area2D.get_overlapping_areas():
 			if (area as Area2D).is_in_group("gem"):
 				found_shop = true
-		$Key.visible = found_shop
+		if Man.is_desktop():
+			$Key.visible = found_shop
+		else:
+			if not $UI/Global/Pause.visible:
+				$UI/Global/Use.visible = found_shop
 		
 		var slots = $UI/Dungeon/Inventory.get_children()
 		var max_slots = get_slots()  # Get the number of slots player should have
@@ -2309,3 +2364,7 @@ func _on_attack_button_pressed() -> void:
 				reload_time = Man.equipped_weapon.data["reload_time"]
 			play_sfx("shoot", global_position, 10.0)
 			screen_shake(2.0, 0.15)
+
+func _on_chat_button_pressed() -> void:
+	$UI/Global/ChatBar.grab_focus()
+	

@@ -50,6 +50,11 @@ func spawn_slime_trail() -> void:
 	splatter.global_position = global_position
 	trail_parent.add_child(splatter)
 
+func can_navigate_to(pos: Vector2) -> bool:
+	agent.target_position = pos
+
+	return agent.is_navigation_finished() == false \
+		and agent.get_current_navigation_path().size() > 1
 
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	# Slime trail while in air
@@ -63,19 +68,26 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	if not is_hopping and not is_winding_up:
 		hop_timer -= delta
 		if hop_timer <= 0.0:
-			var player = get_nearest_player()
-			if player:
+			var target = get_nearest_player()
+			if target:
 				var offset = Vector2(randf_range(-8, 8), randf_range(-8, 8))
-				agent.target_position = player.global_position + offset
+				var desired_pos = target.global_position + offset
 
 				hop_start_pos = global_position
-				hop_target_pos = agent.get_next_path_position()
 
-				target_indicator.global_position = hop_target_pos
-				target_indicator.visible = true
+				if can_navigate_to(desired_pos):
+					hop_target_pos = agent.get_next_path_position()
+				else:
+					# Standing on nothing / invalid nav → hop in place
+					hop_target_pos = hop_start_pos
+
+				if target_indicator:
+					target_indicator.global_position = hop_target_pos
+					target_indicator.visible = true
 
 				is_winding_up = true
 				windup_timer = HOP_WINDUP_TIME
+
 		return
 
 	if is_winding_up:

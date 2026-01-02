@@ -8,4 +8,3 @@ func _process(delta):
 	float_timer += delta * FLOAT_SPEED
 	var offset_y = FLOAT_AMPLITUDE * sin(float_timer)
 	$Sprite2D.position.y = offset_y
-	$Area2D/CollisionShape2D.position.y = offset_y

@@ -4,6 +4,7 @@ const HOP_INTERVAL = 1.0
 const HOP_DURATION = 0.2
 const HOP_HEIGHT = 6.0
 const HOP_WINDUP_TIME = 0.3
+const MAX_HOP_DISTANCE := 24.0
 
 var hop_timer: float = 0.0
 var is_hopping: bool = false
@@ -34,6 +35,12 @@ func get_gold_reward() -> int:
 func get_kill_type() -> String:
 	return "slime"
 
+func can_navigate_to(pos: Vector2) -> bool:
+	agent.target_position = pos
+
+	return agent.is_navigation_finished() == false \
+		and agent.get_current_navigation_path().size() > 1
+
 func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 	# Cancel hop if knocked back
 	if knockback_velocity.length() > 0.1:
@@ -51,16 +58,24 @@ func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 			var target = get_nearest_player()
 			if target:
 				var offset = Vector2(randf_range(-8, 8), randf_range(-8, 8))
-				agent.target_position = target.global_position + offset
+				var desired_pos = target.global_position + offset
+
 				hop_start_pos = global_position
-				hop_target_pos = agent.get_next_path_position()
-				
+
+				if can_navigate_to(desired_pos):
+					hop_target_pos = agent.get_next_path_position()
+				else:
+					# Standing on nothing / invalid nav → hop in place
+					hop_target_pos = hop_start_pos
+
 				if target_indicator:
 					target_indicator.global_position = hop_target_pos
 					target_indicator.visible = true
 
 				is_winding_up = true
 				windup_timer = HOP_WINDUP_TIME
+
+
 
 	elif is_winding_up:
 		windup_timer -= delta
