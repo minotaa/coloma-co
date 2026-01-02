@@ -981,8 +981,7 @@ func _process_input(delta) -> void:
 					update_shop_ui()
 					break
 		else:
-			if not using_controller:
-				shop_node.visible = false
+			shop_node.visible = false
 			
 	if $UI/Defense/Shop.visible:
 		return
@@ -1820,6 +1819,7 @@ func _physics_process(delta: float) -> void:
 
 		for i in max_slots:  # Only iterate through available slots
 			var slot = slots[i]
+			slot.visible = true
 			var icon = slot.get_node("TextureRect")
 			var amount_label = slot.get_node("Label")
 			var progress_bar = slot.get_node("ProgressBar")
@@ -1856,6 +1856,7 @@ func _physics_process(delta: float) -> void:
 
 		for i in max_slots:  # Only iterate through available slots
 			var slot = slots[i]
+			slot.visible = true
 			var icon = slot.get_node("TextureRect")
 			var amount_label = slot.get_node("Label")
 			var progress_bar = slot.get_node("ProgressBar")
