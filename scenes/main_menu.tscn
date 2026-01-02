@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=4 uid="uid://dej207wipn6fc"]
+[gd_scene load_steps=59 format=4 uid="uid://dej207wipn6fc"]
 
 [ext_resource type="Script" uid="uid://bdf37d301uotm" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="Texture2D" uid="uid://ueokxb8wsx7t" path="res://assets/sprites/leaf.png" id="2_7b55j"]
@@ -18,6 +18,8 @@
 [ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="15_a8gd2"]
 [ext_resource type="Texture2D" uid="uid://c2m5vh2c5qlfd" path="res://assets/sprites/over2.png" id="16_8egab"]
 [ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="16_hstxw"]
+[ext_resource type="Texture2D" uid="uid://ddquoti6b8ear" path="res://assets/sprites/box5.png" id="16_svtp6"]
+[ext_resource type="Texture2D" uid="uid://bw3lecgjeqv5d" path="res://assets/sprites/box6.png" id="17_1dfpl"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="17_8egab"]
 [ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="17_hstxw"]
 
@@ -377,7 +379,6 @@ theme_override_styles/focus = ExtResource("10_8egab")
 text = "Quit"
 
 [node name="Loadout" type="Control" parent="UI/Main"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -606,16 +607,53 @@ anchors_preset = -1
 anchor_left = 0.056
 anchor_top = 0.771
 anchor_right = 0.94400007
-anchor_bottom = 0.989
+anchor_bottom = 0.90400004
 offset_left = -0.19200134
 offset_top = 0.23999023
 offset_right = 0.19198608
-offset_bottom = 0.15997314
+offset_bottom = -0.24002075
 grow_horizontal = 2
 text = "Weapon:"
 label_settings = SubResource("LabelSettings_5pajh")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Level" type="Label" parent="UI/Main/Loadout/Panel/Main"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.019000001
+anchor_top = 0.91400003
+anchor_right = 0.38900003
+anchor_bottom = 1.0
+offset_left = -0.20800018
+offset_top = 0.15997314
+offset_right = -0.04801941
+grow_horizontal = 2
+text = "Level 9999"
+label_settings = SubResource("LabelSettings_5pajh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="XP" type="TextureProgressBar" parent="UI/Main/Loadout/Panel/Main"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.38900003
+anchor_top = 0.929
+anchor_right = 0.98100007
+anchor_bottom = 0.98600006
+offset_left = -0.04801941
+offset_top = -0.23999023
+offset_right = 0.2079773
+offset_bottom = -0.16003418
+grow_horizontal = 2
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("16_svtp6")
+texture_progress = ExtResource("17_1dfpl")
+tint_progress = Color(1.1551381e-06, 0.87540567, 0.78466874, 1)
 
 [node name="Grid" type="Control" parent="UI/Main/Loadout/Panel"]
 layout_mode = 1
@@ -637,10 +675,10 @@ anchor_left = 0.5
 anchor_top = 0.564
 anchor_right = 0.5
 anchor_bottom = 0.564
-offset_left = -200.0
-offset_top = -251.84
-offset_right = 216.0
-offset_bottom = 236.16
+offset_left = -208.0
+offset_top = -259.84
+offset_right = 208.0
+offset_bottom = 228.16
 grow_horizontal = 2
 grow_vertical = 2
 

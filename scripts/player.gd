@@ -1342,7 +1342,7 @@ func _input(event: InputEvent) -> void:
 		change_zoom(0.25)
 	elif event.is_action_pressed("zoom_out") and not $UI/Global/ChatBar.has_focus():
 		change_zoom(-0.25)
-	if not $UI/Global/ChatBar.has_focus() and Input.is_action_pressed("pause"):
+	if not $UI/Global/ChatBar.has_focus() and Input.is_action_just_pressed("pause"):
 		if $UI/Global/Pause.visible: 
 			$UI/Global/Pause.visible = false
 		else:
@@ -2261,6 +2261,7 @@ func _on_options_pressed() -> void:
 	$"UI/Global/Pause/Panel/Quit Game".visible = false
 	$UI/Global/Pause/Panel/Back.visible = true
 	$UI/Global/Pause/Panel/Options2.visible = true
+	$UI/Global/Pause/Panel/Back.grab_focus()
 
 func _on_back_options_pressed() -> void:
 	if ($UI/Global/Pause/Panel/Options2/Credits.visible or $UI/Global/Pause/Panel/Options2/Controls.visible):
@@ -2268,6 +2269,7 @@ func _on_back_options_pressed() -> void:
 		$UI/Global/Pause/Panel/Options2/Controls.visible = false
 		$UI/Global/Pause/Panel/Options2/General.visible = true
 		return
+	$UI/Global/Pause/Panel/Resume.grab_focus()
 	$UI/Global/Pause/Panel/Resume.visible = true
 	$UI/Global/Pause/Panel/Options.visible = true
 	$"UI/Global/Pause/Panel/Quit to Main Menu".visible = true

@@ -222,6 +222,9 @@ func _enter_loadout() -> void:
 	$UI/Main/Loadout/Back.grab_focus()
 	$UI/Main/Loadout/Panel/Main.visible = true
 	$UI/Main/Loadout/Panel/Grid.visible = false
+	$UI/Main/Loadout/Panel/Main/Level.text = "Level " + str(Man.current_level)
+	$UI/Main/Loadout/Panel/Main/XP.value = Man.current_xp
+	$UI/Main/Loadout/Panel/Main/XP.max_value = Man.calculate_xp_for_level(Man.current_level)
 	_show_title_elements(false)
 	update_loadout()
 	_reset_loadout_back_button_focus()

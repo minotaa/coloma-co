@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dcaaf1u5gja6x"]
+[gd_scene load_steps=19 format=3 uid="uid://dcaaf1u5gja6x"]
 
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="1_e6vpq"]
 [ext_resource type="Script" uid="uid://cfi4wafuotkxe" path="res://scripts/options.gd" id="1_o7i7e"]
@@ -20,7 +20,7 @@ font_size = 33
 outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8egab"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o7i7e"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_flqon"]
 bg_color = Color(0.219501, 0.219501, 0.219501, 1)
@@ -40,6 +40,8 @@ corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
 expand_margin_top = 8.0
 expand_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8egab"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7b55j"]
 texture = ExtResource("4_85aq5")
@@ -85,17 +87,17 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
 [node name="ScrollContainer" type="ScrollContainer" parent="General"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.052
+anchor_left = 0.047000002
 anchor_top = 0.055000003
 anchor_right = 0.95300007
 anchor_bottom = 0.96400005
-offset_left = -0.12800026
+offset_left = -0.06400108
 offset_top = -0.20000076
 offset_right = 0.063964844
 offset_bottom = -0.16003418
 
 [node name="VBoxContainer" type="VBoxContainer" parent="General/ScrollContainer"]
-custom_minimum_size = Vector2(416, 0)
+custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 1
@@ -120,7 +122,7 @@ theme_override_constants/outline_size = 24
 theme_override_constants/h_separation = 52
 theme_override_constants/align_to_largest_stylebox = 0
 theme_override_font_sizes/font_size = 24
-theme_override_styles/focus = SubResource("StyleBoxEmpty_8egab")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o7i7e")
 theme_override_icons/checked = ExtResource("2_o7i7e")
 theme_override_icons/unchecked = ExtResource("3_uon5e")
 icon_alignment = 2

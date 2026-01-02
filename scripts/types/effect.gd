@@ -1,5 +1,5 @@
 class_name Effect
-extends Object
+extends RefCounted
 
 var name: String
 var duration: float
@@ -28,8 +28,8 @@ func update(delta: float, target) -> bool:
 
 	# Trigger effect based on effect_time
 	if effect_time == 0.0 or effect_elapsed >= effect_time:
-		if not target:
-			return false
+		if not is_instance_valid(on_effect) or not on_effect.is_valid() or not on_effect:
+			return true
 		on_effect.call(target)
 		effect_elapsed = 0.0
 

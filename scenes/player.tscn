@@ -2444,30 +2444,71 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 visible = false
 layout_mode = 1
 anchor_left = 0.3
-anchor_top = 0.261
+anchor_top = 0.23900001
 anchor_right = 0.70000005
-anchor_bottom = 0.87200004
-offset_top = -15.919998
+anchor_bottom = 0.85
+offset_top = -0.08000183
 offset_right = -6.1035156e-05
-offset_bottom = -15.840027
+offset_bottom = 0.0
+
+[node name="CheckBox" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Fullscreen" index="1"]
+focus_neighbor_top = NodePath("../../../../../../Back")
+focus_neighbor_bottom = NodePath("../../Zoom/HSlider")
+focus_next = NodePath("../../Zoom/HSlider")
+focus_previous = NodePath("../../../../../../Back")
+
+[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Zoom" index="1"]
+focus_neighbor_top = NodePath("../../Fullscreen/CheckBox")
+focus_neighbor_bottom = NodePath("../../Flick Control/CheckBox2")
+focus_next = NodePath("../../Flick Control/CheckBox2")
+focus_previous = NodePath("../../Fullscreen/CheckBox")
+
+[node name="CheckBox2" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Flick Control" index="1"]
+focus_neighbor_top = NodePath("../../Zoom/HSlider")
+focus_neighbor_bottom = NodePath("../../SFX/HSlider")
+focus_next = NodePath("../../SFX/HSlider")
+focus_previous = NodePath("../../Zoom/HSlider")
+
+[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/SFX" index="1"]
+focus_neighbor_top = NodePath("../../Flick Control/CheckBox2")
+focus_neighbor_bottom = NodePath("../../Music/HSlider")
+focus_next = NodePath("../../Music/HSlider")
+focus_previous = NodePath("../../Flick Control/CheckBox2")
+
+[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Music" index="1"]
+focus_neighbor_top = NodePath("../../SFX/HSlider")
+focus_neighbor_bottom = NodePath("../../Controls")
+focus_next = NodePath("../../Controls")
+focus_previous = NodePath("../../SFX/HSlider")
+
+[node name="Controls" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer" index="5"]
+focus_neighbor_top = NodePath("../Music/HSlider")
+focus_neighbor_bottom = NodePath("../Credits")
+focus_next = NodePath("../Credits")
+focus_previous = NodePath("../Music/HSlider")
+
+[node name="Credits" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer" index="6"]
+focus_neighbor_top = NodePath("../Controls")
+focus_neighbor_bottom = NodePath("../../../../../Back")
+focus_next = NodePath("../../../../../Back")
+focus_previous = NodePath("../Controls")
 
 [node name="Back" type="Button" parent="UI/Global/Pause/Panel"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -256.0
-offset_top = 254.0
-offset_right = 256.0
-offset_bottom = 328.0
+anchors_preset = -1
+anchor_left = 0.3
+anchor_top = 0.85300004
+anchor_right = 0.70000005
+anchor_bottom = 0.95600003
+offset_top = -0.16003418
+offset_right = -6.1035156e-05
+offset_bottom = -0.32000732
 grow_horizontal = 2
 grow_vertical = 2
-focus_neighbor_top = NodePath("../Resume")
-focus_neighbor_bottom = NodePath("../Quit to Main Menu")
-focus_next = NodePath("../Quit to Main Menu")
-focus_previous = NodePath("../Resume")
+focus_neighbor_top = NodePath("../Options2/General/ScrollContainer/VBoxContainer/Credits")
+focus_neighbor_bottom = NodePath("../Options2/General/ScrollContainer/VBoxContainer/Fullscreen/CheckBox")
+focus_next = NodePath("../Options2/General/ScrollContainer/VBoxContainer/Fullscreen/CheckBox")
+focus_previous = NodePath("../Options2/General/ScrollContainer/VBoxContainer/Credits")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_bj30b")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_md1ol")
@@ -2681,4 +2722,5 @@ texture = ExtResource("39_j2b1d")
 [connection signal="pressed" from="UI/Global/Pause/Panel/Quit Game" to="." method="_on_quit_game_pressed"]
 [connection signal="timeout" from="Timer" to="." method="_on_regen_timeout"]
 
+[editable path="UI/Global/Pause/Panel/Options2"]
 [editable path="Key"]
