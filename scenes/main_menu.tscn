@@ -1,4 +1,4 @@
-[gd_scene load_steps=59 format=4 uid="uid://dej207wipn6fc"]
+[gd_scene load_steps=60 format=4 uid="uid://dej207wipn6fc"]
 
 [ext_resource type="Script" uid="uid://bdf37d301uotm" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="Texture2D" uid="uid://ueokxb8wsx7t" path="res://assets/sprites/leaf.png" id="2_7b55j"]
@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://bw3lecgjeqv5d" path="res://assets/sprites/box6.png" id="17_1dfpl"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="17_8egab"]
 [ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="17_hstxw"]
+[ext_resource type="Script" uid="uid://b28m5a3h03too" path="res://scripts/lineedit.gd" id="18_1dfpl"]
 
 [sub_resource type="Curve" id="Curve_j7ex8"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -54,6 +55,32 @@ turbulence_noise_scale = 100.0
 turbulence_influence_min = 0.5
 turbulence_influence_max = 0.5
 
+[sub_resource type="LabelSettings" id="LabelSettings_wu84c"]
+font = ExtResource("2_wu84c")
+font_size = 116
+outline_size = 24
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_a8gd2"]
+font = ExtResource("7_5pajh")
+font_size = 48
+outline_size = 24
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_bqqt6"]
+font = ExtResource("2_bqqt6")
+font_size = 44
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_8ln24"]
+font = ExtResource("2_bqqt6")
+font_size = 33
+
+[sub_resource type="LabelSettings" id="LabelSettings_ekxnf"]
+font = ExtResource("2_bqqt6")
+font_size = 33
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tbmy8"]
 texture = ExtResource("5_oa1go")
 texture_margin_left = 32.0
@@ -75,18 +102,18 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
+[sub_resource type="LabelSettings" id="LabelSettings_hstxw"]
+font = ExtResource("7_5pajh")
+font_size = 33
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gw5y6"]
 texture = ExtResource("5_5dd4i")
 texture_margin_left = 32.0
 texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
-
-[sub_resource type="LabelSettings" id="LabelSettings_hstxw"]
-font = ExtResource("7_5pajh")
-font_size = 33
-outline_size = 4
-outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_7b55j"]
 font_size = 33
@@ -179,32 +206,6 @@ texture_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qywvv"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_wu84c"]
-font = ExtResource("2_wu84c")
-font_size = 116
-outline_size = 24
-outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_a8gd2"]
-font = ExtResource("7_5pajh")
-font_size = 48
-outline_size = 24
-outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_bqqt6"]
-font = ExtResource("2_bqqt6")
-font_size = 44
-outline_size = 12
-outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_8ln24"]
-font = ExtResource("2_bqqt6")
-font_size = 33
-
-[sub_resource type="LabelSettings" id="LabelSettings_ekxnf"]
-font = ExtResource("2_bqqt6")
-font_size = 33
-
 [node name="Main Menu" type="Node2D"]
 script = ExtResource("1_ekxnf")
 
@@ -236,6 +237,78 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Title" type="Label" parent="UI/Main"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -624.0
+offset_top = 63.0
+offset_right = 624.0
+offset_bottom = 180.0
+grow_horizontal = 2
+text = "Offshoot"
+label_settings = SubResource("LabelSettings_wu84c")
+horizontal_alignment = 1
+
+[node name="Title2" type="Label" parent="UI/Main"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -624.0
+offset_top = 24.0
+offset_right = 624.0
+offset_bottom = 126.0
+grow_horizontal = 2
+text = "Myrkwood"
+label_settings = SubResource("LabelSettings_a8gd2")
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="UI/Main"]
+visible = false
+layout_mode = 1
+offset_left = 43.0
+offset_top = 192.0
+offset_right = 491.0
+offset_bottom = 248.0
+text = "by Minota"
+label_settings = SubResource("LabelSettings_bqqt6")
+
+[node name="Mode" type="Label" parent="UI/Main"]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -424.0
+offset_right = 488.0
+offset_bottom = -368.0
+grow_vertical = 0
+text = "-- select your mode--"
+label_settings = SubResource("LabelSettings_8ln24")
+horizontal_alignment = 1
+
+[node name="Version" type="Label" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -312.0
+offset_top = -66.0
+offset_right = -32.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "v0"
+label_settings = SubResource("LabelSettings_ekxnf")
+horizontal_alignment = 2
+
 [node name="Buttons" type="Control" parent="UI/Main"]
 layout_mode = 1
 anchors_preset = 15
@@ -244,42 +317,38 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Options" type="Button" parent="UI/Main/Buttons"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Buttons"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.031000001
-anchor_top = 0.75600004
+anchor_top = 0.44700003
 anchor_right = 0.39400002
-anchor_bottom = 0.86100006
+anchor_bottom = 0.96700007
 offset_left = 0.3199997
-offset_top = 1.6799927
+offset_top = 30.159973
 offset_right = -0.32003784
-offset_bottom = 0.079956055
+offset_bottom = -0.24005127
 grow_vertical = 0
-focus_neighbor_top = NodePath("../Bag")
-focus_neighbor_bottom = NodePath("../Quit")
-focus_next = NodePath("../Quit")
-focus_previous = NodePath("../Bag")
+alignment = 2
+
+[node name="Play" type="Button" parent="UI/Main/Buttons/VBoxContainer"]
+custom_minimum_size = Vector2(500, 110)
+layout_mode = 2
+focus_neighbor_top = NodePath("../Quit")
+focus_neighbor_bottom = NodePath("../Bag")
+focus_next = NodePath("../Bag")
+focus_previous = NodePath("../Quit")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_gw5y6")
+theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = ExtResource("10_8egab")
-text = "Settings"
+text = "Play"
 
-[node name="Bag" type="Button" parent="UI/Main/Buttons"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.031000001
-anchor_top = 0.64400005
-anchor_right = 0.39400002
-anchor_bottom = 0.75600004
-offset_left = 0.3199997
-offset_top = 0.3199463
-offset_right = -0.32003784
-offset_bottom = -0.32000732
-grow_vertical = 0
+[node name="Bag" type="Button" parent="UI/Main/Buttons/VBoxContainer"]
+custom_minimum_size = Vector2(0, 84)
+layout_mode = 2
 focus_neighbor_top = NodePath("../Play")
 focus_neighbor_bottom = NodePath("../Options")
 focus_next = NodePath("../Options")
@@ -292,7 +361,7 @@ theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = ExtResource("10_8egab")
 text = "Loadout"
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="UI/Main/Buttons/Bag"]
+[node name="TextureProgressBar" type="TextureProgressBar" parent="UI/Main/Buttons/VBoxContainer/Bag"]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -315,7 +384,7 @@ texture_progress = ExtResource("16_hstxw")
 tint_under = Color(0.043137256, 0.043137256, 0.043137256, 1)
 tint_over = Color(1, 1, 1, 0.78431374)
 
-[node name="Label" type="Label" parent="UI/Main/Buttons/Bag"]
+[node name="Label" type="Label" parent="UI/Main/Buttons/VBoxContainer/Bag"]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -330,42 +399,24 @@ label_settings = SubResource("LabelSettings_hstxw")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Play" type="Button" parent="UI/Main/Buttons"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.031000001
-anchor_top = 0.48900002
-anchor_right = 0.39400002
-anchor_bottom = 0.633
-offset_left = 0.3199997
-offset_top = -0.08001709
-offset_right = -0.32003784
-offset_bottom = 0.23999023
-grow_vertical = 0
-focus_neighbor_top = NodePath("../Quit")
-focus_neighbor_bottom = NodePath("../Bag")
-focus_next = NodePath("../Bag")
-focus_previous = NodePath("../Quit")
+[node name="Options" type="Button" parent="UI/Main/Buttons/VBoxContainer"]
+custom_minimum_size = Vector2(0, 84)
+layout_mode = 2
+focus_neighbor_top = NodePath("../Bag")
+focus_neighbor_bottom = NodePath("../Quit")
+focus_next = NodePath("../Quit")
+focus_previous = NodePath("../Bag")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
 theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
-theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gw5y6")
 theme_override_styles/focus = ExtResource("10_8egab")
-text = "Play"
+text = "Settings"
 
-[node name="Quit" type="Button" parent="UI/Main/Buttons"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.031000001
-anchor_top = 0.864
-anchor_right = 0.39400002
-anchor_bottom = 0.96700007
-offset_left = 0.3199997
-offset_top = -0.08001709
-offset_right = -0.32003784
-offset_bottom = -0.24005127
-grow_vertical = 0
+[node name="Quit" type="Button" parent="UI/Main/Buttons/VBoxContainer"]
+custom_minimum_size = Vector2(0, 84)
+layout_mode = 2
 focus_neighbor_top = NodePath("../Options")
 focus_neighbor_bottom = NodePath("../Play")
 focus_next = NodePath("../Play")
@@ -379,6 +430,7 @@ theme_override_styles/focus = ExtResource("10_8egab")
 text = "Quit"
 
 [node name="Loadout" type="Control" parent="UI/Main"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -469,14 +521,14 @@ horizontal_alignment = 1
 [node name="ArmorButton" type="Button" parent="UI/Main/Loadout/Panel/Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.037
-anchor_top = 0.21400002
-anchor_right = 0.296
-anchor_bottom = 0.41400003
-offset_left = 0.015999794
-offset_top = 0.1599884
-offset_right = 0.12799835
-offset_bottom = 0.15997314
+anchor_left = 0.16700001
+anchor_top = 0.314
+anchor_right = 0.16700001
+anchor_bottom = 0.314
+offset_left = -56.144005
+offset_top = -55.84001
+offset_right = 55.855995
+offset_bottom = 56.15999
 focus_neighbor_top = NodePath("../../../Back")
 focus_neighbor_bottom = NodePath("../WeaponButton")
 focus_next = NodePath("../WeaponButton")
@@ -492,14 +544,14 @@ expand_icon = true
 [node name="ArmorIcon" type="TextureRect" parent="UI/Main/Loadout/Panel/Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.074
-anchor_top = 0.24300002
-anchor_right = 0.259
-anchor_bottom = 0.386
-offset_left = 0.031999588
-offset_top = -0.08000183
-offset_right = 0.11199951
-offset_bottom = -0.16000366
+anchor_left = 0.16700001
+anchor_top = 0.314
+anchor_right = 0.16700001
+anchor_bottom = 0.314
+offset_left = -40.144005
+offset_top = -39.84001
+offset_right = 39.855995
+offset_bottom = 40.15999
 mouse_filter = 2
 
 [node name="ArmorMeta" type="RichTextLabel" parent="UI/Main/Loadout/Panel/Main"]
@@ -545,14 +597,14 @@ horizontal_alignment = 1
 [node name="WeaponButton" type="Button" parent="UI/Main/Loadout/Panel/Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.037
-anchor_top = 0.55700004
-anchor_right = 0.296
-anchor_bottom = 0.75000006
-offset_left = 0.015999794
-offset_top = -3.9200134
-offset_right = 0.12799835
-offset_bottom = -3.0517578e-05
+anchor_left = 0.16700001
+anchor_top = 0.65000004
+anchor_right = 0.16700001
+anchor_bottom = 0.65000004
+offset_left = -56.144005
+offset_top = -56.00003
+offset_right = 55.855995
+offset_bottom = 55.99997
 focus_neighbor_top = NodePath("../ArmorButton")
 focus_neighbor_bottom = NodePath("../../../Back")
 focus_next = NodePath("../../../Back")
@@ -568,14 +620,14 @@ expand_icon = true
 [node name="WeaponIcon" type="TextureRect" parent="UI/Main/Loadout/Panel/Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.074
-anchor_top = 0.57900006
-anchor_right = 0.259
-anchor_bottom = 0.721
-offset_left = 0.031999588
-offset_top = -0.24002075
-offset_right = 0.11199951
-offset_bottom = 0.23999023
+anchor_left = 0.16700001
+anchor_top = 0.65000004
+anchor_right = 0.16700001
+anchor_bottom = 0.65000004
+offset_left = -40.144005
+offset_top = -40.00003
+offset_right = 39.855995
+offset_bottom = 39.99997
 mouse_filter = 2
 
 [node name="WeaponMeta" type="RichTextLabel" parent="UI/Main/Loadout/Panel/Main"]
@@ -1174,6 +1226,7 @@ placeholder_text = "Username"
 alignment = 1
 max_length = 16
 caret_blink = true
+script = ExtResource("18_1dfpl")
 
 [node name="Address" type="LineEdit" parent="UI/Main/Multiplayer Buttons"]
 visible = false
@@ -1192,6 +1245,7 @@ theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
 placeholder_text = "Addr."
 alignment = 1
+script = ExtResource("18_1dfpl")
 
 [node name="Name" type="LineEdit" parent="UI/Main/Multiplayer Buttons"]
 visible = false
@@ -1210,6 +1264,7 @@ theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_rcqid")
 placeholder_text = "Name"
 alignment = 1
+script = ExtResource("18_1dfpl")
 
 [node name="Online" type="Button" parent="UI/Main/Multiplayer Buttons"]
 layout_mode = 1
@@ -1660,6 +1715,7 @@ alignment = 1
 max_length = 500
 clear_button_enabled = true
 caret_blink = true
+script = ExtResource("18_1dfpl")
 
 [node name="Chat" type="ScrollContainer" parent="UI/Main/Players"]
 layout_mode = 1
@@ -1712,6 +1768,23 @@ theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_5pajh")
 placeholder_text = "IP Address"
 alignment = 1
+script = ExtResource("18_1dfpl")
+
+[node name="Paste" type="Button" parent="UI/Main/Join/Address"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0170001
+anchor_right = 1.381
+anchor_bottom = 1.0
+offset_left = 0.111968994
+offset_right = 0.21600342
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_a8gd2")
+text = "Paste"
 
 [node name="Join" type="Button" parent="UI/Main/Join"]
 layout_mode = 1
@@ -1792,6 +1865,23 @@ theme_override_styles/read_only = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_5pajh")
 placeholder_text = "User ID"
 alignment = 1
+script = ExtResource("18_1dfpl")
+
+[node name="Paste" type="Button" parent="UI/Main/Online Join/UserID"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0170001
+anchor_right = 1.381
+anchor_bottom = 1.0
+offset_left = 0.111968994
+offset_right = 0.21600342
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_a8gd2")
+text = "Paste"
 
 [node name="Join" type="Button" parent="UI/Main/Online Join"]
 layout_mode = 1
@@ -1882,78 +1972,6 @@ theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_qywvv")
 text = "Back"
 
-[node name="Title" type="Label" parent="UI/Main"]
-texture_filter = 1
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -624.0
-offset_top = 63.0
-offset_right = 624.0
-offset_bottom = 180.0
-grow_horizontal = 2
-text = "Offshoot"
-label_settings = SubResource("LabelSettings_wu84c")
-horizontal_alignment = 1
-
-[node name="Title2" type="Label" parent="UI/Main"]
-texture_filter = 1
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -624.0
-offset_top = 24.0
-offset_right = 624.0
-offset_bottom = 126.0
-grow_horizontal = 2
-text = "Myrkwood"
-label_settings = SubResource("LabelSettings_a8gd2")
-horizontal_alignment = 1
-
-[node name="Subtitle" type="Label" parent="UI/Main"]
-visible = false
-layout_mode = 1
-offset_left = 43.0
-offset_top = 192.0
-offset_right = 491.0
-offset_bottom = 248.0
-text = "by Minota"
-label_settings = SubResource("LabelSettings_bqqt6")
-
-[node name="Mode" type="Label" parent="UI/Main"]
-visible = false
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -424.0
-offset_right = 488.0
-offset_bottom = -368.0
-grow_vertical = 0
-text = "-- select your mode--"
-label_settings = SubResource("LabelSettings_8ln24")
-horizontal_alignment = 1
-
-[node name="Version" type="Label" parent="UI/Main"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -312.0
-offset_top = -66.0
-offset_right = -32.0
-offset_bottom = -24.0
-grow_horizontal = 0
-grow_vertical = 0
-text = "v0"
-label_settings = SubResource("LabelSettings_ekxnf")
-horizontal_alignment = 2
-
 [node name="Demoman" parent="." instance=ExtResource("6_rtw2f")]
 
 [node name="MultiplayerDemo" type="Node2D" parent="."]
@@ -1961,10 +1979,10 @@ horizontal_alignment = 2
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 
 [connection signal="gui_input" from="UI/Main" to="." method="_gui_input"]
-[connection signal="pressed" from="UI/Main/Buttons/Options" to="." method="_on_options_pressed"]
-[connection signal="pressed" from="UI/Main/Buttons/Bag" to="." method="_on_loadout_pressed"]
-[connection signal="pressed" from="UI/Main/Buttons/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="UI/Main/Buttons/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/VBoxContainer/Bag" to="." method="_on_loadout_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/VBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Panel/Main/ArmorButton" to="." method="_on_armor_button_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Panel/Main/WeaponButton" to="." method="_on_weapon_button_pressed"]
@@ -2002,9 +2020,11 @@ horizontal_alignment = 2
 [connection signal="text_submitted" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_submitted"]
 [connection signal="text_submitted" from="UI/Main/Players/ChatBar" to="." method="_on_chat_bar_text_submitted"]
 [connection signal="text_submitted" from="UI/Main/Join/Address" to="." method="_on_address_text_submitted"]
+[connection signal="pressed" from="UI/Main/Join/Address/Paste" to="." method="_on_lan_join_address_paste_pressed"]
 [connection signal="pressed" from="UI/Main/Join/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="UI/Main/Join/Back" to="." method="_on_back_pressed"]
 [connection signal="text_submitted" from="UI/Main/Online Join/UserID" to="." method="_on_userid_text_submitted"]
+[connection signal="pressed" from="UI/Main/Online Join/UserID/Paste" to="." method="_on_online_join_userid_paste_pressed"]
 [connection signal="pressed" from="UI/Main/Online Join/Join" to="." method="_on_online_join_join_pressed"]
 [connection signal="pressed" from="UI/Main/Online Join/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Options/Back" to="." method="_on_back_pressed"]

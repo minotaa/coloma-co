@@ -761,7 +761,8 @@ func _init() -> void:
 	stone_longsword.description = "A stone longsword, has a longer reach than the regular sword."
 	stone_longsword.type = "SWORD"
 	stone_longsword.data = {
-		"reach": 2.08
+		"reach": 2.08,
+		"attack_speed": -0.2
 	}
 	items.append(stone_longsword)
 	

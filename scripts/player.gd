@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 var stupid_arbitrary_attack_cooldown: float = 0.0
-var max_stupid_arbitrary_attack_cooldown: float = 0.2
+var max_stupid_arbitrary_attack_cooldown: float = 0.15
 var shop_items = []  # Current shop inventory
 var current_shop_seed = 0  # Seed from server for deterministic random selection
 var rerolls_available = 3  # Number of rerolls player can use
@@ -122,6 +122,8 @@ func get_bonus_damage() -> float:
 
 func get_attack_speed() -> float:
 	var attack_speed := 1.0
+	if Man.equipped_weapon.data.has("attack_speed"):
+		attack_speed += Man.equipped_weapon.data["attack_speed"]
 	return attack_speed
 
 func get_defense() -> float:
@@ -884,7 +886,7 @@ func _process_input(delta) -> void:
 					play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
 				play_animation("sword_" + attack_dir, get_attack_speed())
 				_enable_sword_hitbox(attack_dir)
-				sword_hitbox_timer = SWORD_HITBOX_TIME / get_attack_speed()
+				sword_hitbox_timer = SWORD_HITBOX_TIME * get_attack_speed()
 				sword_hitbox_active = true
 				
 			elif Man.equipped_weapon.type == "BOOMERANG":
@@ -1070,143 +1072,145 @@ func _process_input(delta) -> void:
 
 		# Perform attack if a direction was determined
 		if attack_dir != "":
-			stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown
+			stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown / get_attack_speed()
 			if multiplayer.has_multiplayer_peer():
 				play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
 			else:
 				play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
 			play_animation("sword_" + attack_dir, get_attack_speed())
 			_enable_sword_hitbox(attack_dir)
-			sword_hitbox_timer = SWORD_HITBOX_TIME / get_attack_speed()
+			sword_hitbox_timer = SWORD_HITBOX_TIME * get_attack_speed()
 			sword_hitbox_active = true
 		
 	elif Man.equipped_weapon.type == "BOOMERANG":
-		if Input.is_action_just_pressed("attack") and not Man.is_mobile() and has_boomerang:
-			play_animation("throw_" + last_direction)
-			var direction: Vector2
-			
-			if using_controller:
-				direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
-			else:
-				var mouse_pos = get_global_mouse_position()
-				direction = (mouse_pos - global_position).normalized()
-			
-			if multiplayer.has_multiplayer_peer():
-				create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
-			else:
-				create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
-			has_boomerang = false
-		
-		# Handle directional keyboard controls
-		elif has_boomerang and (Input.is_action_pressed("attack_up") or Input.is_action_pressed("attack_down") or Input.is_action_pressed("attack_left") or Input.is_action_pressed("attack_right")):
-			play_animation("throw_" + last_direction)
-			# Calculate direction based on pressed keys
+		if has_boomerang:
 			var direction = Vector2.ZERO
-			if Input.is_action_pressed("attack_up"):
+			var should_throw = false
+			
+			# Check directional keyboard controls
+			if Input.is_action_just_pressed("attack_up"):
 				direction.y -= 1
-			if Input.is_action_pressed("attack_down"):
+				should_throw = true
+			elif Input.is_action_just_pressed("attack_down"):
 				direction.y += 1
-			if Input.is_action_pressed("attack_left"):
+				should_throw = true
+			elif Input.is_action_just_pressed("attack_left"):
 				direction.x -= 1
-			if Input.is_action_pressed("attack_right"):
+				should_throw = true
+			elif Input.is_action_just_pressed("attack_right"):
 				direction.x += 1
+				should_throw = true
+			elif Input.is_action_just_pressed("attack") and not Man.is_mobile():
+				if using_controller:
+					direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
+				else:
+					var mouse_pos = get_global_mouse_position()
+					direction = (mouse_pos - global_position).normalized()
+				should_throw = true
+			elif Man.is_mobile() and not using_controller:
+				if $"UI/Global/Attack Joystick".is_pressed:
+					direction = $"UI/Global/Attack Joystick".output
+					should_throw = true
 			
-			direction = direction.normalized()
-			
-			if multiplayer.has_multiplayer_peer():
-				create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
-			else:
-				create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
-			has_boomerang = false
+			if should_throw:
+				direction = direction.normalized()
+				play_animation("throw_" + last_direction)
+				
+				if multiplayer.has_multiplayer_peer():
+					create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
+				else:
+					create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
+				has_boomerang = false
+
 	elif Man.equipped_weapon.type == "THROWABLE":
 		if clip > 0:
-			if not Man.is_mobile() and Input.is_action_just_pressed("attack"):
-				play_animation("throw_" + last_direction)
-				var direction: Vector2
-				
+			var direction = Vector2.ZERO
+			var should_throw = false
+			
+			# Check directional keyboard controls
+			if Input.is_action_just_pressed("attack_up"):
+				direction.y -= 1
+				should_throw = true
+			elif Input.is_action_just_pressed("attack_down"):
+				direction.y += 1
+				should_throw = true
+			elif Input.is_action_just_pressed("attack_left"):
+				direction.x -= 1
+				should_throw = true
+			elif Input.is_action_just_pressed("attack_right"):
+				direction.x += 1
+				should_throw = true
+			elif Input.is_action_just_pressed("attack") and not Man.is_mobile():
 				if using_controller:
 					direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
 				else:
 					var mouse_pos = get_global_mouse_position()
 					direction = (mouse_pos - global_position).normalized()
-				
-				if multiplayer.has_multiplayer_peer():
-					create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
-				else:
-					create_throwable(Man.equipped_weapon.id, global_position, direction, name)
-				clip -= 1
-				if clip <= 0:
-					reload_time = Man.equipped_weapon.data["reload_time"]
-				play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
-			if (Input.is_action_just_pressed("attack_up") or Input.is_action_just_pressed("attack_down") or Input.is_action_just_pressed("attack_left") or Input.is_action_just_pressed("attack_right")):
-				play_animation("throw_" + last_direction)
-				var direction = Vector2.ZERO
-				if Input.is_action_just_pressed("attack_up"):
-					direction.y -= 1
-				if Input.is_action_just_pressed("attack_down"):
-					direction.y += 1
-				if Input.is_action_just_pressed("attack_left"):
-					direction.x -= 1
-				if Input.is_action_just_pressed("attack_right"):
-					direction.x += 1
-				
-				direction = direction.normalized()
-				
-				if multiplayer.has_multiplayer_peer():
-					create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
-				else:
-					create_throwable(Man.equipped_weapon.id, global_position, direction, name)
+				should_throw = true
+			elif Man.is_mobile() and not using_controller:
+				if $"UI/Global/Attack Joystick".is_pressed:
+					direction = $"UI/Global/Attack Joystick".output
+					should_throw = true
 			
+			if stupid_arbitrary_attack_cooldown > 0.0:
+				should_throw = false
+			
+			if should_throw:
+				stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown / get_attack_speed()
+				direction = direction.normalized()
+				play_animation("throw_" + last_direction)
+				
+				if multiplayer.has_multiplayer_peer():
+					create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
+				else:
+					create_throwable(Man.equipped_weapon.id, global_position, direction, name)
+				
 				clip -= 1
 				if clip <= 0:
 					reload_time = Man.equipped_weapon.data["reload_time"]
 				play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
+
 	elif Man.equipped_weapon.type == "BLUNDERBUSS":
 		if clip > 0:
-			if Input.is_action_just_pressed("attack"):
-				play_animation("throw_" + last_direction)
-				var direction: Vector2
-				
+			var direction = Vector2.ZERO
+			var should_shoot = false
+			
+			# Check directional keyboard controls
+			if Input.is_action_just_pressed("attack_up"):
+				direction.y -= 1
+				should_shoot = true
+			elif Input.is_action_just_pressed("attack_down"):
+				direction.y += 1
+				should_shoot = true
+			elif Input.is_action_just_pressed("attack_left"):
+				direction.x -= 1
+				should_shoot = true
+			elif Input.is_action_just_pressed("attack_right"):
+				direction.x += 1
+				should_shoot = true
+			elif Input.is_action_just_pressed("attack"):
 				if using_controller:
 					direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
 				else:
 					var mouse_pos = get_global_mouse_position()
 					direction = (mouse_pos - global_position).normalized()
-				
-				# Shoot 3 projectiles with spread
-				var spread_angle = deg_to_rad(3)  # Adjust this for wider/tighter spread
-				for i in range(-1, 2):  # -1, 0, 1
-					var angle_offset = i * spread_angle
-					var spread_direction = direction.rotated(angle_offset)
-					
-					if multiplayer.has_multiplayer_peer():
-						create_throwable.rpc(Man.equipped_weapon.id, global_position, spread_direction, name)
-					else:
-						create_throwable(Man.equipped_weapon.id, global_position, spread_direction, name)
-				
-				clip -= 1
-				if clip <= 0:
-					reload_time = Man.equipped_weapon.data["reload_time"]
-				play_sfx("shoot", global_position, 10.0)
-				screen_shake(2.0, 0.15)
-				
-			if (Input.is_action_just_pressed("attack_up") or Input.is_action_just_pressed("attack_down") or Input.is_action_just_pressed("attack_left") or Input.is_action_just_pressed("attack_right")):
-				play_animation("throw_" + last_direction)
-				var direction = Vector2.ZERO
-				if Input.is_action_just_pressed("attack_up"):
-					direction.y -= 1
-				if Input.is_action_just_pressed("attack_down"):
-					direction.y += 1
-				if Input.is_action_just_pressed("attack_left"):
-					direction.x -= 1
-				if Input.is_action_just_pressed("attack_right"):
-					direction.x += 1
-				
+				should_shoot = true
+			elif Man.is_mobile() and not using_controller:
+				if $"UI/Global/Attack Joystick".is_pressed:
+					direction = $"UI/Global/Attack Joystick".output
+					should_shoot = true
+			
+			if stupid_arbitrary_attack_cooldown > 0.0:
+				should_shoot = false
+			
+			if should_shoot:
+				stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown / get_attack_speed()
 				direction = direction.normalized()
+				play_animation("throw_" + last_direction)
 				
 				# Shoot 3 projectiles with spread
 				var spread_angle = deg_to_rad(3)
-				for i in range(-1, 2):
+				for i in range(-1, 2):  # -1, 0, 1
 					var angle_offset = i * spread_angle
 					var spread_direction = direction.rotated(angle_offset)
 					
@@ -1341,15 +1345,19 @@ func _input(event: InputEvent) -> void:
 		change_zoom(0.25)
 	elif event.is_action_pressed("zoom_out") and not $UI/Global/ChatBar.has_focus():
 		change_zoom(-0.25)
-	if not $UI/Global/ChatBar.has_focus() and Input.is_action_just_pressed("pause"):
+	if not $UI/Global/ChatBar.has_focus() and ((Man.is_desktop() and Input.is_action_just_pressed("pause")) or (Man.is_mobile() and Input.is_action_pressed("pause"))):
 		if $UI/Global/Pause.visible: 
 			$UI/Global/Pause.visible = false
 		else:
 			$UI/Global/Pause.visible = true
+			
 			$UI/Global/Pause/Panel/Resume.visible = true
 			$UI/Global/Pause/Panel/Options.visible = true
 			$"UI/Global/Pause/Panel/Quit to Main Menu".visible = true
-			$"UI/Global/Pause/Panel/Quit Game".visible = true
+			if Man.is_desktop():
+				$"UI/Global/Pause/Panel/Quit Game".visible = true
+			else:
+				$"UI/Global/Pause/Panel/Quit Game".visible = false
 			$UI/Global/Pause/Panel/Back.visible = false
 			$UI/Global/Pause/Panel/Options2.visible = false
 
@@ -1723,9 +1731,9 @@ func _physics_process(delta: float) -> void:
 		
 		
 	if $UI/Defense/Shop.visible:
-		$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
+		$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 	if $UI/Dungeon/Shop.visible:
-		$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
+		$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 		
 	if not alive and revival_time != -1:
 		revival_time -= delta
@@ -2277,98 +2285,6 @@ func _on_back_options_pressed() -> void:
 	$"UI/Global/Pause/Panel/Quit Game".visible = true
 	$UI/Global/Pause/Panel/Back.visible = false
 	$UI/Global/Pause/Panel/Options2.visible = false
-
-func _on_attack_button_pressed() -> void:
-	if Man.equipped_weapon.type == "SWORD":
-		# Use last_direction for attack direction
-		if multiplayer.has_multiplayer_peer():
-			play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
-		else:
-			play_sfx(["slash1", "slash2"].pick_random(), global_position, -20.0)
-		play_animation("sword_" + last_direction, get_attack_speed())
-		_enable_sword_hitbox(last_direction)
-		sword_hitbox_timer = SWORD_HITBOX_TIME / get_attack_speed()
-		sword_hitbox_active = true
-		
-	elif Man.equipped_weapon.type == "BOOMERANG":
-		if has_boomerang:
-			play_animation("throw_" + last_direction)
-			
-			# Convert last_direction to Vector2
-			var direction = Vector2.ZERO
-			match last_direction:
-				"up":
-					direction = Vector2(0, -1)
-				"down":
-					direction = Vector2(0, 1)
-				"left":
-					direction = Vector2(-1, 0)
-				"right":
-					direction = Vector2(1, 0)
-			
-			if multiplayer.has_multiplayer_peer():
-				create_boomerang.rpc(Man.equipped_weapon.id, global_position, direction, name)
-			else:
-				create_boomerang(Man.equipped_weapon.id, global_position, direction, name)
-			has_boomerang = false
-		
-	elif Man.equipped_weapon.type == "THROWABLE":
-		if clip > 0:
-			play_animation("throw_" + last_direction)
-			
-			# Convert last_direction to Vector2
-			var direction = Vector2.ZERO
-			match last_direction:
-				"up":
-					direction = Vector2(0, -1)
-				"down":
-					direction = Vector2(0, 1)
-				"left":
-					direction = Vector2(-1, 0)
-				"right":
-					direction = Vector2(1, 0)
-			
-			if multiplayer.has_multiplayer_peer():
-				create_throwable.rpc(Man.equipped_weapon.id, global_position, direction, name)
-			else:
-				create_throwable(Man.equipped_weapon.id, global_position, direction, name)
-			clip -= 1
-			if clip <= 0:
-				reload_time = Man.equipped_weapon.data["reload_time"]
-			play_sfx(["fwip1", "fwip2", "fwip3", "fwip4"].pick_random(), global_position)
-			
-	elif Man.equipped_weapon.type == "BLUNDERBUSS":
-		if clip > 0:
-			play_animation("throw_" + last_direction)
-			
-			# Convert last_direction to Vector2
-			var direction = Vector2.ZERO
-			match last_direction:
-				"up":
-					direction = Vector2(0, -1)
-				"down":
-					direction = Vector2(0, 1)
-				"left":
-					direction = Vector2(-1, 0)
-				"right":
-					direction = Vector2(1, 0)
-			
-			# Shoot 3 projectiles with spread
-			var spread_angle = deg_to_rad(3)  # Adjust this for wider/tighter spread
-			for i in range(-1, 2):  # -1, 0, 1
-				var angle_offset = i * spread_angle
-				var spread_direction = direction.rotated(angle_offset)
-				
-				if multiplayer.has_multiplayer_peer():
-					create_throwable.rpc(Man.equipped_weapon.id, global_position, spread_direction, name)
-				else:
-					create_throwable(Man.equipped_weapon.id, global_position, spread_direction, name)
-			
-			clip -= 1
-			if clip <= 0:
-				reload_time = Man.equipped_weapon.data["reload_time"]
-			play_sfx("shoot", global_position, 10.0)
-			screen_shake(2.0, 0.15)
 
 func _on_chat_button_pressed() -> void:
 	$UI/Global/ChatBar.grab_focus()

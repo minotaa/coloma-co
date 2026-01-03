@@ -101,9 +101,6 @@ func _setup_audio() -> void:
 	play_music(preload("res://assets/sounds/MO_titlescreen.wav"), true)
 	
 func _setup_initial_values() -> void:
-	$UI/Main/Buttons/Bag/TextureProgressBar.value = Man.current_xp
-	$UI/Main/Buttons/Bag/TextureProgressBar.max_value = Man.calculate_xp_for_level(Man.current_level + 1)
-	$UI/Main/Buttons/Bag/Label.text = str(Man.current_level)
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
 	$Demoman/Camera2D.zoom = Vector2(6.0 * Man.zoom, 6.0 * Man.zoom)
 	Man.set_rich_presence("#In_MainMenu")
@@ -203,7 +200,9 @@ func _hide_all_states() -> void:
 
 func _enter_title_screen() -> void:
 	state_nodes[MenuState.TITLE_SCREEN].visible = true
-	$UI/Main/Buttons/Play.grab_focus()
+	$UI/Main/Buttons/VBoxContainer/Play.grab_focus()
+	if Man.is_mobile():
+		$UI/Main/Buttons/VBoxContainer/Quit.visible = false
 	$UI/Main/Mode.text = "-- select your mode --"
 	_update_button_focus_styles(false)
 	_show_title_elements(true)
@@ -368,6 +367,10 @@ func _enter_lan_buttons() -> void:
 func _enter_online_join() -> void:
 	state_nodes[MenuState.ONLINE_JOIN].visible = true
 	$"UI/Main/Online Join/UserID".grab_focus()
+	if Man.is_mobile():
+		$"UI/Main/Online Join/UserID/Paste".visible = true
+	else:
+		$"UI/Main/Online Join/UserID/Paste".visible = true
 
 func _enter_join() -> void:
 	state_nodes[MenuState.JOIN].visible = true
@@ -894,12 +897,12 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		using_controller = true
 		_update_button_focus_styles(true)
-	#elif event is InputEventKey:
-		#using_controller = true
-		#_update_button_focus_styles(true)
+	elif event is InputEventKey:
+		using_controller = true
+		_update_button_focus_styles(true)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
+	if (event is InputEventKey and event.pressed and event.keycode == KEY_ENTER) and $UI/Main/Players.visible:
 		print("yup")
 		$UI/Main/Players/ChatBar.grab_focus()
 
@@ -1014,3 +1017,9 @@ func _on_chat_bar_focus_exited() -> void:
 					node.start()
 		else:
 			child.visible = false
+
+func _on_online_join_userid_paste_pressed() -> void:
+	$"UI/Main/Online Join/UserID".text = DisplayServer.clipboard_get()
+
+func _on_lan_join_address_paste_pressed() -> void:
+	$UI/Main/Join/Address.text = DisplayServer.clipboard_get()

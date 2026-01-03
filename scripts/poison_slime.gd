@@ -93,7 +93,7 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	for body in $Hurtbox.get_overlapping_bodies():
 		if body != null and body.is_in_group("players") and alive:
 			body.take_damage(12, name, global_position)
-			if randf() < 0.1 and body.alive and not body.has_effect("Poison"):
+			if randf() < 0.3 and body.alive and not body.has_effect("Poison"):
 				var poison = Effect.new("Poison", Color.from_rgba8(55, 198, 0, 255), 10.0, 0, 2)
 				var enemy_pos = global_position
 				poison.on_effect = func(target):

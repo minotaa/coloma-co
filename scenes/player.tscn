@@ -1,4 +1,4 @@
-[gd_scene load_steps=159 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=160 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -44,6 +44,7 @@
 [ext_resource type="Texture2D" uid="uid://cqma52jcmc74j" path="res://assets/sprites/chat.png" id="36_hhpqf"]
 [ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="37_fdfoy"]
 [ext_resource type="PackedScene" uid="uid://cr5ypwn2b5ncm" path="res://scenes/key.tscn" id="37_hax0n"]
+[ext_resource type="Script" uid="uid://b28m5a3h03too" path="res://scripts/lineedit.gd" id="39_holxr"]
 [ext_resource type="Texture2D" uid="uid://b6x2ks8yfiru2" path="res://assets/sprites/caret.png" id="39_j2b1d"]
 
 [sub_resource type="Curve" id="Curve_gl8cc"]
@@ -2224,13 +2225,13 @@ texture = ExtResource("35_g5jhy")
 [node name="SettingsButton" type="Control" parent="UI/Global"]
 layout_mode = 1
 anchors_preset = 0
-offset_left = 8.0
+offset_left = 16.0
 offset_top = 8.0
-offset_right = 8.0
+offset_right = 16.0
 offset_bottom = 8.0
 
 [node name="Button" type="TouchScreenButton" parent="UI/Global/SettingsButton"]
-position = Vector2(25.00003, 23.000008)
+position = Vector2(24, 24)
 scale = Vector2(0.585, 0.6)
 texture_normal = ExtResource("27_wqfne")
 texture_pressed = ExtResource("26_dt7fs")
@@ -2256,9 +2257,9 @@ texture = ExtResource("35_fdfoy")
 [node name="ChatButton" type="Control" parent="UI/Global"]
 layout_mode = 1
 anchors_preset = 0
-offset_left = 112.0
+offset_left = 104.0
 offset_top = 8.0
-offset_right = 112.0
+offset_right = 104.0
 offset_bottom = 8.0
 
 [node name="Button" type="TouchScreenButton" parent="UI/Global/ChatButton"]
@@ -2303,6 +2304,7 @@ alignment = 1
 max_length = 500
 clear_button_enabled = true
 caret_blink = true
+script = ExtResource("39_holxr")
 
 [node name="Zoom" type="Control" parent="UI/Global"]
 visible = false
