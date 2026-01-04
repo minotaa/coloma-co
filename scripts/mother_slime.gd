@@ -51,6 +51,7 @@ func on_death(killer_name: String) -> void:
 	queue_free()
 
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
+	agent.get_next_path_position()
 	if cooldown > 0.0:
 		cooldown -= delta
 		return

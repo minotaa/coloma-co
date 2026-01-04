@@ -142,6 +142,7 @@ shape = SubResource("CircleShape2D_v5wyi")
 stream = SubResource("AudioStreamPolyphonic_0l8pv")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_postprocessing = 1
 
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 2

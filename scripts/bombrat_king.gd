@@ -16,9 +16,10 @@ var is_charging: bool = false
 var game_node: Node = null  # Reference to the Defense game node
 
 func initialize_entity() -> void:
+	var boost = 250 * NetworkManager.players.size()
 	entity_name = "Bombrat King"
-	health = 2250.0
-	max_health = 2250.0
+	health = 2250.0 + boost
+	max_health = 2250.0 + boost
 	defense = 25.0
 	id = 13  # Unique ID for boss
 	speed = WANDER_SPEED
@@ -118,8 +119,8 @@ func charge_to_gem(delta: float) -> void:
 func choose_new_wander_target() -> void:
 	# Pick a random point within reasonable distance
 	var random_offset = Vector2(
-		randf_range(-200, 200),
-		randf_range(-200, 200)
+		randf_range(-2000, 2000),
+		randf_range(-2000, 2000)
 	)
 	wander_target = global_position + random_offset
 

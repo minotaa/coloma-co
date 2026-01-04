@@ -52,6 +52,7 @@ func spawn_slime_trail() -> void:
 	trail_parent.add_child(splatter)
 
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
+	agent.get_next_path_position()
 	if cooldown > 0.0:
 		cooldown -= delta
 		return

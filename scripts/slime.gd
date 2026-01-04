@@ -37,6 +37,7 @@ func get_kill_type() -> String:
 	return "slime"
 
 func custom_physics_process(delta: float, movement_multiplier: float) -> void:
+	agent.get_next_path_position()
 	if cooldown > 0.0:
 		cooldown -= delta
 		return

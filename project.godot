@@ -26,10 +26,6 @@ boot_splash/use_filter=false
 boot_splash/image="uid://b5o3rft0ai2nl"
 config/icon="uid://cpuu4kwxvepvg"
 
-[audio]
-
-general/ios/session_category=3
-
 [autoload]
 
 Toast="*res://scripts/toastmanager.gd"
