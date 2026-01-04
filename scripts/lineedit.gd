@@ -15,7 +15,7 @@ func _process(_delta):
 	if has_focus() and Man.is_mobile():
 		var keyboard_height = DisplayServer.virtual_keyboard_get_height()
 		if OS.get_name() == "iOS":
-			keyboard_height -= 300
+			keyboard_height -= 250
 		
 		# Check if keyboard state changed
 		if keyboard_height > 0 and not is_keyboard_open:

@@ -80,6 +80,8 @@ func end() -> void:
 func reset() -> void:
 	for player in get_tree().get_nodes_in_group("players"):
 		player.reset_game()
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		enemy.queue_free()
 	spawn_wave()
 	Toast.add("Wave started!")
 	started = true

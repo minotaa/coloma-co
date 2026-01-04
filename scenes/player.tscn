@@ -40,7 +40,7 @@
 [ext_resource type="Texture2D" uid="uid://dih0ll1id3r6" path="res://assets/sprites/items.png" id="34_giy8y"]
 [ext_resource type="Texture2D" uid="uid://cgwo2vb5upp1o" path="res://assets/sprites/progress.png" id="34_jc3p3"]
 [ext_resource type="Texture2D" uid="uid://d2rqelte7tux8" path="res://assets/sprites/cog.png" id="35_fdfoy"]
-[ext_resource type="Texture2D" uid="uid://bkjv5kqw0q1px" path="res://assets/sprites/cursorHand_grey.png" id="35_g5jhy"]
+[ext_resource type="Texture2D" uid="uid://b5x7yote1d7lj" path="res://assets/sprites/use.png" id="35_holxr"]
 [ext_resource type="Texture2D" uid="uid://cqma52jcmc74j" path="res://assets/sprites/chat.png" id="36_hhpqf"]
 [ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="37_fdfoy"]
 [ext_resource type="PackedScene" uid="uid://cr5ypwn2b5ncm" path="res://scenes/key.tscn" id="37_hax0n"]
@@ -2213,14 +2213,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -168.0
-offset_top = -376.0
-offset_right = -88.0
-offset_bottom = -304.0
+offset_left = -176.0
+offset_top = -391.0
+offset_right = -80.0
+offset_bottom = -287.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("35_g5jhy")
+texture = ExtResource("35_holxr")
 
 [node name="SettingsButton" type="Control" parent="UI/Global"]
 layout_mode = 1

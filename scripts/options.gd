@@ -4,6 +4,8 @@ func _ready() -> void:
 	_update_values()
 	
 func _update_values() -> void:
+	if Man.is_mobile():
+		$General/ScrollContainer/VBoxContainer/Fullscreen.visible = false
 	$General/ScrollContainer/VBoxContainer/Fullscreen/CheckBox.button_pressed = Man.fullscreen
 	$"General/ScrollContainer/VBoxContainer/Flick Control/CheckBox2".button_pressed = Man.flick_control
 	$General/ScrollContainer/VBoxContainer/SFX/HSlider.value = Man.sfx_volume

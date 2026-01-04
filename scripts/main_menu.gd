@@ -897,9 +897,9 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		using_controller = true
 		_update_button_focus_styles(true)
-	elif event is InputEventKey:
-		using_controller = true
-		_update_button_focus_styles(true)
+	#elif event is InputEventKey:
+		#using_controller = true
+		#_update_button_focus_styles(true)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if (event is InputEventKey and event.pressed and event.keycode == KEY_ENTER) and $UI/Main/Players.visible:

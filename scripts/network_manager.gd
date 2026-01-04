@@ -193,6 +193,7 @@ func _on_eos_log_msg(msg: EOS.Logging.LogMessage) -> void:
 # -----------------------
 
 func join_online_server(userid: String) -> bool:
+	HAuth.display_name.strip_edges()
 	player_name = HAuth.display_name
 
 	var peer = EOSGMultiplayerPeer.new()

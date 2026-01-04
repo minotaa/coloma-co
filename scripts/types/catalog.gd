@@ -727,7 +727,7 @@ func _init() -> void:
 	atlas = AtlasTexture.new()
 	atlas.atlas = load("res://assets/sprites/items.png")
 	atlas.region = Rect2(176.0, 48.0, 16.0, 16.0)
-	var joros_blessing = Consumable.new(42, "Joro's Blessing", atlas)
+	var joros_blessing = Consumable.new(42, "Golden Heart", atlas)
 	joros_blessing.description = "10 seconds of complete invulnerability."
 	joros_blessing.cooldown = true
 	joros_blessing.purchasable = true

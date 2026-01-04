@@ -8,6 +8,7 @@ const HOP_WINDUP_TIME := 0.3
 
 @onready var target_indicator = $Target
 
+var cooldown: float = 2.5
 var hop_timer := HOP_INTERVAL
 var is_hopping := false
 var hop_start_pos: Vector2
@@ -35,6 +36,9 @@ func get_kill_type() -> String:
 	return "poison_slime"
 
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
+	if cooldown > 0.0:
+		cooldown -= delta
+		return
 	if not alive:
 		return
 
@@ -45,15 +49,13 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 			var target = get_nearest_player()
 			if target:
 				var offset = Vector2(randf_range(-8, 8), randf_range(-8, 8))
-
 				agent.target_position = target.global_position + offset
 				hop_start_pos = global_position
 				hop_target_pos = agent.get_next_path_position()
-				if hop_start_pos.distance_to(hop_target_pos) > 200.0:
-					hop_target_pos = hop_start_pos
-					print("Cancelling this hop, it's too far away.")
-				$Target.global_position = hop_target_pos
-				$Target.visible = true
+				
+				if target_indicator:
+					target_indicator.global_position = hop_target_pos
+					target_indicator.visible = true
 
 				is_winding_up = true
 				windup_timer = HOP_WINDUP_TIME

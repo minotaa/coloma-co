@@ -93,11 +93,11 @@ func _physics_process(delta: float) -> void:
 					second_target = null
 					hit_enemies.clear()
 					
-		if body.is_in_group("players") and body.alive and body != self:
-			if multiplayer.has_multiplayer_peer():
-				body.knockback.rpc_id(body.name.to_int(), SOURCE)
-			else:
-				body.knockback(SOURCE)
+		#if body.is_in_group("players") and body.alive and body != self:
+			#if multiplayer.has_multiplayer_peer():
+				#body.knockback.rpc_id(body.name.to_int(), SOURCE)
+			#else:
+				#body.knockback(SOURCE)
 
 func find_nearest_enemy_target() -> void:
 	var nearest_distance = INF

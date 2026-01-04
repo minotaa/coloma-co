@@ -6,6 +6,7 @@ const HOP_HEIGHT = 6.0
 const HOP_WINDUP_TIME = 0.3
 const MAX_HOP_DISTANCE := 24.0
 
+var cooldown: float = 2.5
 var hop_timer: float = 0.0
 var is_hopping: bool = false
 var hop_start_pos: Vector2
@@ -36,6 +37,12 @@ func get_kill_type() -> String:
 	return "slime"
 
 func custom_physics_process(delta: float, movement_multiplier: float) -> void:
+	if cooldown > 0.0:
+		cooldown -= delta
+		return
+	if not alive:
+		return	
+	
 	# Cancel hop if knocked back
 	if knockback_velocity.length() > 0.1:
 		sprite.position.y = 0
@@ -52,15 +59,13 @@ func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 			var target = get_nearest_player()
 			if target:
 				var offset = Vector2(randf_range(-8, 8), randf_range(-8, 8))
-
 				agent.target_position = target.global_position + offset
 				hop_start_pos = global_position
 				hop_target_pos = agent.get_next_path_position()
-				if hop_start_pos.distance_to(hop_target_pos) > 200.0:
-					hop_target_pos = hop_start_pos
-					print("Cancelling this hop, it's too far away.")
-				$Target.global_position = hop_target_pos
-				$Target.visible = true
+				
+				if target_indicator:
+					target_indicator.global_position = hop_target_pos
+					target_indicator.visible = true
 
 				is_winding_up = true
 				windup_timer = HOP_WINDUP_TIME

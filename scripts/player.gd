@@ -841,7 +841,7 @@ func _process_input(delta) -> void:
 		
 	if $UI/Global/ChatBar.has_focus() and alive:
 		play_idle_animation()
-	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible or $UI/Global/Pause.visible:
+	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible or $UI/Global/Pause.visible or $UI/Defense/Death.visible or $UI/Dungeon/Death.visible:
 		return
 		
 		# Controller inventory navigation
@@ -1368,9 +1368,9 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		using_controller = true
 		_update_button_focus_styles(true)
-	elif event is InputEventKey:
-		using_controller = true
-		_update_button_focus_styles(true)
+	#elif event is InputEventKey:
+		#using_controller = true
+		#_update_button_focus_styles(true)
 
 func _update_button_focus_styles(show_focus: bool) -> void:
 	"""Update all button focus styles based on input method"""
@@ -1891,11 +1891,11 @@ func _physics_process(delta: float) -> void:
 			if body.is_in_group("enemies") and body not in hit_enemies:
 				_process_hit(body, Man.equipped_weapon.damage + get_bonus_damage())
 				hit_enemies.append(body)
-			if body.is_in_group("players") and body.alive and body != self:
-				if multiplayer.has_multiplayer_peer():
-					body.knockback.rpc_id(body.name.to_int(), name)
-				else:
-					body.knockback(name)
+			#if body.is_in_group("players") and body.alive and body != self:
+				#if multiplayer.has_multiplayer_peer():
+					#body.knockback.rpc_id(body.name.to_int(), name)
+				#else:
+					#body.knockback(name)
 		
 		sword_hitbox_timer -= delta
 		if sword_hitbox_timer <= 0.0:
