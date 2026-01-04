@@ -122,6 +122,10 @@ func on_player_contact(player: Node) -> void:
 		# 30% chance to apply Gunked
 		if randf() < 0.3 and not player.has_effect("Gunked"):
 			var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(64.0, 0.0, 16.0, 16.0)
+			gunked.texture = texture
 			if multiplayer.has_multiplayer_peer():
 				Toast.add.rpc_id(int(player.name), "You've been Gunked for 8 seconds!")
 			else:

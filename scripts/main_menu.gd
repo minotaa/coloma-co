@@ -715,8 +715,10 @@ func _cleanup_multiplayer() -> void:
 		
 		NetworkManager.players.clear()
 		
+		print(multiplayer.multiplayer_peer)
 		if multiplayer.multiplayer_peer is EOSGMultiplayerPeer:
 			multiplayer.multiplayer_peer.close()
+			multiplayer.multiplayer_peer = null
 		else:
 			multiplayer.multiplayer_peer.disconnect_peer(multiplayer.multiplayer_peer.get_unique_id())
 			multiplayer.multiplayer_peer = null

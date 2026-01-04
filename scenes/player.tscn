@@ -1,4 +1,4 @@
-[gd_scene load_steps=160 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene load_steps=161 format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -33,6 +33,7 @@
 [ext_resource type="Texture2D" uid="uid://bfoim4nmtc857" path="res://assets/sprites/flag.png" id="25_2dvfe"]
 [ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="25_pf23h"]
 [ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="26_dt7fs"]
+[ext_resource type="PackedScene" uid="uid://cw2moh7p615my" path="res://scenes/status_effect_bubble.tscn" id="26_mx1m4"]
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="27_wqfne"]
 [ext_resource type="Texture2D" uid="uid://8no4uh8eosee" path="res://assets/sprites/under.png" id="32_md1ol"]
 [ext_resource type="Texture2D" uid="uid://ci68j2n551172" path="res://assets/sprites/over.png" id="33_bj30b"]
@@ -1160,19 +1161,28 @@ label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SprintBar" type="TextureProgressBar" parent="UI/Defense"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Defense"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.72200006
-anchor_right = 0.5
-anchor_bottom = 0.72200006
-offset_left = -172.0
-offset_top = -15.840027
-offset_right = 172.0
-offset_bottom = 16.159973
-grow_horizontal = 2
-grow_vertical = 0
+anchor_left = 0.36900002
+anchor_top = 0.611
+anchor_right = 0.63100004
+anchor_bottom = 0.744
+offset_left = -0.32000732
+offset_top = 8.079987
+offset_right = 0.3199463
+offset_bottom = 0.32000732
+alignment = 2
+
+[node name="Status" type="HBoxContainer" parent="UI/Defense/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Status Effect Bubble" parent="UI/Defense/VBoxContainer/Status" instance=ExtResource("26_mx1m4")]
+layout_mode = 2
+
+[node name="SprintBar" type="TextureProgressBar" parent="UI/Defense/VBoxContainer"]
+layout_mode = 2
 max_value = 220.0
 nine_patch_stretch = true
 stretch_margin_left = 16
@@ -2055,19 +2065,28 @@ label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeon"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Dungeon"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.72200006
-anchor_right = 0.5
-anchor_bottom = 0.72200006
-offset_left = -172.0
-offset_top = -15.840027
-offset_right = 172.0
-offset_bottom = 16.159973
-grow_horizontal = 2
-grow_vertical = 0
+anchor_left = 0.36900002
+anchor_top = 0.611
+anchor_right = 0.63100004
+anchor_bottom = 0.744
+offset_left = -0.32000732
+offset_top = 8.079987
+offset_right = 0.3199463
+offset_bottom = 0.32000732
+alignment = 2
+
+[node name="Status" type="HBoxContainer" parent="UI/Dungeon/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Status Effect Bubble" parent="UI/Dungeon/VBoxContainer/Status" instance=ExtResource("26_mx1m4")]
+layout_mode = 2
+
+[node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeon/VBoxContainer"]
+layout_mode = 2
 max_value = 220.0
 nine_patch_stretch = true
 stretch_margin_left = 16

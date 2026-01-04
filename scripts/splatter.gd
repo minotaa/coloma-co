@@ -17,6 +17,10 @@ func _physics_process(delta: float) -> void:
 		if body != null and body.is_in_group("players") and body.alive:
 			if not body.has_effect("Gunked"):
 				var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
+				var texture = AtlasTexture.new()
+				texture.atlas = load("res://assets/sprites/status_effects.png")
+				texture.region = Rect2(64.0, 0.0, 16.0, 16.0)
+				gunked.texture = texture
 				body.add_status_effect(gunked)
 				if multiplayer.has_multiplayer_peer():
 					Toast.add.rpc_id(int(body.name), "You've been Gunked for 8 seconds!")

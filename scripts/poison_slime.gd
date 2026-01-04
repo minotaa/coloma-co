@@ -98,6 +98,10 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 			body.take_damage(12, name, global_position)
 			if randf() < 0.3 and body.alive and not body.has_effect("Poison"):
 				var poison = Effect.new("Poison", Color.from_rgba8(55, 198, 0, 255), 10.0, 0, 2)
+				var texture = AtlasTexture.new()
+				texture.atlas = load("res://assets/sprites/status_effects.png")
+				texture.region = Rect2(16.0, 0.0, 16.0, 16.0)
+				poison.texture = texture
 				var enemy_pos = global_position
 				poison.on_effect = func(target):
 					target.take_damage(2, name, enemy_pos)

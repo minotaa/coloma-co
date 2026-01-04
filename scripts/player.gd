@@ -1228,7 +1228,7 @@ func _process_input(delta) -> void:
 	# Apply velocity and move
 	velocity = velocity.normalized() * SPEED
 	if upgrade_bag.has_item(Catalog.get_by_id(33)):
-		velocity *= 1.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(33)).data["level"]
+		velocity *= 1.02	 * upgrade_bag.get_item_stack(Catalog.get_by_id(33)).data["level"]
 	#play_sfx(walking_sounds.pick_random(), randf_range(-5.0, 5.0))
 	
 	if Input.is_action_pressed("sprint") and sprint > 0 and not exhausted:
@@ -1535,7 +1535,7 @@ func show_ui() -> void:
 		$UI/Defense/HealthBar.visible = true
 		$UI/Defense/OverhealBar.visible = true
 		$"UI/Defense/Health Label".visible = true
-		$UI/Defense/SprintBar.visible = true
+		$UI/Defense/VBoxContainer/SprintBar.visible = true
 		$UI/Defense/Inventory.visible = true
 		$UI/Defense/HBoxContainer.visible = true
 	else:
@@ -1543,7 +1543,7 @@ func show_ui() -> void:
 		$UI/Dungeon/HealthBar.visible = true
 		$UI/Dungeon/OverhealBar.visible = true
 		
-		$UI/Dungeon/SprintBar.visible = true
+		$UI/Dungeon/VBoxContainer/SprintBar.visible = true
 		$UI/Dungeon/Inventory.visible = true
 		$"UI/Dungeon/Health Label".visible = true
 
@@ -1553,7 +1553,7 @@ func hide_ui() -> void:
 		$UI/Defense/OverhealBar.visible = false
 		$"UI/Defense/Health Label".visible = false
 		$UI/Defense/Markers.visible = false
-		$UI/Defense/SprintBar.visible = false
+		$UI/Defense/VBoxContainer/SprintBar.visible = false
 		$UI/Defense/Inventory.visible = false
 		$UI/Defense/HBoxContainer.visible = false
 		$UI/Defense/Shop.visible = false
@@ -1563,7 +1563,7 @@ func hide_ui() -> void:
 		$"UI/Dungeon/Health Label".visible = false
 		$UI/Dungeon/HBoxContainer.visible = false 
 		$UI/Dungeon/HealthBar.visible = false
-		$UI/Dungeon/SprintBar.visible = false
+		$UI/Dungeon/VBoxContainer/SprintBar.visible = false
 		$UI/Dungeon/Inventory.visible = false 
 		$UI/Dungeon/Shop.visible = false
 
@@ -1605,6 +1605,15 @@ func _physics_process(delta: float) -> void:
 	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+	var effects_node = $UI/Defense/VBoxContainer/Status if type == "Defense" else $UI/Dungeon/VBoxContainer/Status
+	for children in effects_node.get_children():
+		children.queue_free()
+	for effect in active_effects:
+		if effect.texture != null:
+			var bubble = preload("res://scenes/status_effect_bubble.tscn").instantiate()
+			bubble.get_node("Texture").texture = effect.texture
+			bubble.get_node("Progress").value = ((effect.duration - effect.elapsed_time) / effect.duration) * 100.0
+			effects_node.add_child(bubble)
 
 	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
 	if using_controller and Man.is_mobile():
@@ -1677,12 +1686,12 @@ func _physics_process(delta: float) -> void:
 			$UI/Defense/OverhealBar.max_value = get_max_health()
 			$UI/Defense/HealthBar.value = health
 			$UI/Defense/OverhealBar.value = overheal
-			$UI/Defense/SprintBar.value = sprint
+			$UI/Defense/VBoxContainer/SprintBar.value = sprint
 			if sprint >= 220:
 				exhausted = false
-				$UI/Defense/SprintBar.visible = false
+				$UI/Defense/VBoxContainer/SprintBar.visible = false
 			else:
-				$UI/Defense/SprintBar.visible = true
+				$UI/Defense/VBoxContainer/SprintBar.visible = true
 			$"UI/Defense/Health Label".text = str(roundi(health + overheal)) + "/" + str(roundi(get_max_health()))
 	hit_cooldown = max(hit_cooldown - delta, 0.0)
 	
@@ -1718,15 +1727,15 @@ func _physics_process(delta: float) -> void:
 					
 		$UI/Dungeon/HealthBar.max_value = get_max_health()
 		$UI/Dungeon/HealthBar.value = health
-		$UI/Dungeon/SprintBar.value = sprint
+		$UI/Dungeon/VBoxContainer/SprintBar.value = sprint
 		$UI/Defense/OverhealBar.max_value = get_max_health()
 		$UI/Dungeon/OverhealBar.value = overheal
 		
 		if sprint >= 220:
 			exhausted = false
-			$UI/Dungeon/SprintBar.visible = false
+			$UI/Dungeon/VBoxContainer/SprintBar.visible = false
 		else:
-			$UI/Dungeon/SprintBar.visible = true
+			$UI/Dungeon/VBoxContainer/SprintBar.visible = true
 		$"UI/Dungeon/Health Label".text = str(roundi(health + overheal)) + "/" + str(roundi(get_max_health()))
 		
 		
@@ -2154,6 +2163,10 @@ func _process_hit(body, damage: float):
 			var slow_chance = 0.1 * upgrade_bag.get_item_stack(Catalog.get_by_id(28)).data["level"]
 			if slow_chance > randf() and not body.has_effect("Gunked"):
 				var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
+				var texture = AtlasTexture.new()
+				texture.atlas = load("res://assets/sprites/status_effects.png")
+				texture.region = Rect2(64.0, 0.0, 16.0, 16.0)
+				gunked.texture = texture
 				body.add_status_effect(gunked)
 
 		if upgrade_bag.has_item(Catalog.get_by_id(38)) and total_damage > body.health:

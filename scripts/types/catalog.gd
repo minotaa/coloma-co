@@ -89,6 +89,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 30.0)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(0.0, 0.0, 16.0, 16.0)
+			strength.texture = texture
 			player.add_status_effect(strength)
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Strength for 30 seconds.")
@@ -133,6 +137,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 15.0)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(0.0, 0.0, 16.0, 16.0)
+			strength.texture = texture
 			player.add_status_effect(strength)
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Strength for 15 seconds.")
@@ -245,6 +253,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var regeneration = Effect.new("Enrichment", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(48.0, 0.0, 16.0, 16.0)
+			regeneration.texture = texture
 			regeneration.on_effect = func(target):
 				target.heal(5)
 			player.add_status_effect(regeneration)
@@ -267,6 +279,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var regeneration = Effect.new("Enrichment", Color.from_rgba8(56, 177, 67, 255), 10.0, 0, 1)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(48.0, 0.0, 16.0, 16.0)
+			regeneration.texture = texture
 			regeneration.on_effect = func(target):
 				target.heal(5)
 			player.add_status_effect(regeneration)
@@ -289,6 +305,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var focus = Effect.new("Focus", Color.from_rgba8(73, 209, 205, 255), 30.0, 0, 1)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(32.0, 0.0, 16.0, 16.0)
+			focus.texture = texture
 			player.add_status_effect(focus)
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Focus for 30 seconds.")
@@ -309,6 +329,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var focus = Effect.new("Focus", Color.from_rgba8(73, 209, 205, 255), 15.0, 0, 1)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(32.0, 0.0, 16.0, 16.0)
+			focus.texture = texture
 			player.add_status_effect(focus)
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Focus for 15 seconds.")
@@ -329,6 +353,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var prosperous = Effect.new("Prosperity", Color.from_rgba8(255, 222, 45, 255), 60.0, 0, 1)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(96.0, 0.0, 16.0, 16.0)
+			prosperous.texture = texture
 			player.add_status_effect(prosperous)
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Prosperity for 60 seconds.")
@@ -513,6 +541,10 @@ func _init() -> void:
 			var body = result.collider
 			if body.has_method("add_status_effect"):
 				var strength = Effect.new("Strength", Color.from_rgba8(255, 145, 41, 255), 15.0)
+				var texture = AtlasTexture.new()
+				texture.atlas = load("res://assets/sprites/status_effects.png")
+				texture.region = Rect2(0.0, 0.0, 16.0, 16.0)
+				strength.texture = texture
 				body.add_status_effect(strength)
 				print("Applied Strength effect to ", body.name)
 				
@@ -739,6 +771,10 @@ func _init() -> void:
 		var player = Man.get_player()
 		if player != null:
 			var invulnerability = Effect.new("Invulnerability", Color.from_rgba8(227, 227, 227, 255), 10.0, 0, 1)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(112.0, 0.0, 16.0, 16.0)
+			invulnerability.texture = texture
 			player.add_status_effect(invulnerability)
 			player.play_sfx("glug", player.global_position, 10.0)
 			Toast.add("You have Invulnerability for 10 seconds.")
