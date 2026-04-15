@@ -176,10 +176,14 @@ func _process(delta: float) -> void:
 			if multiplayer.has_multiplayer_peer():
 				Toast.add.rpc("Boss defeated! Wave complete!")
 				play_sfx.rpc("wavefinished")
+				for player in NetworkManager.players:
+					add_gold(player, 250)
 			else:
 				Toast.add("Boss defeated! Wave complete!")
 				play_sfx("wavefinished")
+				add_gold("Player", 250)
 			spawn_wave()
+				
 		return
 	
 	if spawning_wave:
@@ -194,10 +198,14 @@ func _process(delta: float) -> void:
 		if multiplayer.has_multiplayer_peer():
 			Toast.add.rpc("Wave complete!")
 			play_sfx.rpc("wavefinished")
+			for player in NetworkManager.players:
+				add_gold.rpc_id(player, 100)
 		else:
 			Toast.add("Wave complete!")
 			play_sfx("wavefinished")
+			add_gold("Player", 100)
 		spawn_wave()
+		
 
 @rpc("authority", "call_local")
 func play_sfx(stream_name: String, volume: float = 0.0, pitch_scale: float = 1.0) -> void:

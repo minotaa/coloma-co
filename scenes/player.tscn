@@ -1,4 +1,4 @@
-[gd_scene load_steps=161 format=3 uid="uid://bma6r3uqptx6d"]
+[gd_scene format=3 uid="uid://bma6r3uqptx6d"]
 
 [ext_resource type="Script" uid="uid://cl45hfqrnnxm2" path="res://scripts/player.gd" id="1_oxdyo"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="2_3v2ag"]
@@ -646,7 +646,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qfm1y"]
-size = Vector2(8, 18.75)
+size = Vector2(6, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4r1p"]
 size = Vector2(58, 20.5)
@@ -885,15 +885,16 @@ outline_color = Color(0, 0, 0, 1)
 font = ExtResource("17_qfm1y")
 font_size = 57
 
-[node name="Player" type="CharacterBody2D" groups=["players"]]
+[node name="Player" type="CharacterBody2D" unique_id=2049129285 groups=["players"]]
 z_index = 2
+y_sort_enabled = true
 texture_filter = 1
 collision_layer = 17
 collision_mask = 27
 motion_mode = 1
 script = ExtResource("1_oxdyo")
 
-[node name="Potion" type="GPUParticles2D" parent="."]
+[node name="Potion" type="GPUParticles2D" parent="." unique_id=441117408]
 emitting = false
 amount = 10
 texture = ExtResource("2_wnwbv")
@@ -902,7 +903,7 @@ preprocess = 1.0
 randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_jc3p3")
 
-[node name="Healing" type="GPUParticles2D" parent="."]
+[node name="Healing" type="GPUParticles2D" parent="." unique_id=370612488]
 emitting = false
 amount = 16
 texture = ExtResource("2_dt7fs")
@@ -911,75 +912,75 @@ explosiveness = 0.5
 randomness = 0.5
 process_material = SubResource("ParticleProcessMaterial_wqfne")
 
-[node name="Shadow" type="Sprite2D" parent="."]
+[node name="Shadow" type="Sprite2D" parent="." unique_id=759671595]
+z_index = -1
 position = Vector2(0, 3)
 texture = ExtResource("2_3v2ag")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=628701149]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_u8hee")
 animation = &"sword_up"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -1.375)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=432179891]
 shape = SubResource("RectangleShape2D_qfm1y")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=505807963]
 zoom = Vector2(3.75, 3.75)
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 
-[node name="Cursor" type="Sprite2D" parent="."]
+[node name="Cursor" type="Sprite2D" parent="." unique_id=470168991]
 visible = false
 position = Vector2(-101, -53)
 scale = Vector2(0.0277778, 0.0277778)
 
-[node name="SwordHbox" type="Area2D" parent="."]
+[node name="SwordHbox" type="Area2D" parent="." unique_id=754084993]
 collision_layer = 4
 collision_mask = 7
 
-[node name="up" type="CollisionShape2D" parent="SwordHbox"]
+[node name="up" type="CollisionShape2D" parent="SwordHbox" unique_id=1215721859]
 position = Vector2(0, -20)
 shape = SubResource("RectangleShape2D_y4r1p")
 disabled = true
 
-[node name="down" type="CollisionShape2D" parent="SwordHbox"]
+[node name="down" type="CollisionShape2D" parent="SwordHbox" unique_id=1984914474]
 position = Vector2(0, 20)
 shape = SubResource("RectangleShape2D_d2wvv")
 disabled = true
 
-[node name="right" type="CollisionShape2D" parent="SwordHbox"]
+[node name="right" type="CollisionShape2D" parent="SwordHbox" unique_id=1161433849]
 position = Vector2(20, 0)
 shape = SubResource("RectangleShape2D_3v2ag")
 disabled = true
 
-[node name="left" type="CollisionShape2D" parent="SwordHbox"]
+[node name="left" type="CollisionShape2D" parent="SwordHbox" unique_id=462074029]
 position = Vector2(-20, 0)
 shape = SubResource("RectangleShape2D_jej6c")
 disabled = true
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." unique_id=723079279]
 collision_mask = 11
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=156680261]
 shape = SubResource("CircleShape2D_esh0l")
 
-[node name="PointLight2D" type="PointLight2D" parent="."]
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=378028117]
 visible = false
 energy = 0.25
 shadow_color = Color(0, 0, 0, 0.192157)
 texture = ExtResource("9_fnujr")
 
-[node name="AudioListener2D" type="AudioListener2D" parent="."]
+[node name="AudioListener2D" type="AudioListener2D" parent="." unique_id=365004804]
 current = true
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=282938170]
 stream = SubResource("AudioStreamPolyphonic_d2wvv")
 volume_db = -12.5
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=1600300788]
 
-[node name="Defense" type="Control" parent="UI"]
+[node name="Defense" type="Control" parent="UI" unique_id=354644664]
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
@@ -988,7 +989,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Boss" type="Control" parent="UI/Defense"]
+[node name="Boss" type="Control" parent="UI/Defense" unique_id=1940837137]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -996,7 +997,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Health" type="TextureProgressBar" parent="UI/Defense/Boss"]
+[node name="Health" type="TextureProgressBar" parent="UI/Defense/Boss" unique_id=953715778]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1015,7 +1016,7 @@ texture_under = ExtResource("14_i4ail")
 texture_progress = ExtResource("15_a38lo")
 tint_progress = Color(0.050980393, 0.8901961, 0.1254902, 1)
 
-[node name="Phase" type="ProgressBar" parent="UI/Defense/Boss"]
+[node name="Phase" type="ProgressBar" parent="UI/Defense/Boss" unique_id=570150145]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1029,7 +1030,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_giy8y")
 value = 100.0
 show_percentage = false
 
-[node name="Title" type="Label" parent="UI/Defense/Boss"]
+[node name="Title" type="Label" parent="UI/Defense/Boss" unique_id=1847995086]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1044,7 +1045,7 @@ label_settings = SubResource("LabelSettings_t4otl")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Markers" type="Control" parent="UI/Defense"]
+[node name="Markers" type="Control" parent="UI/Defense" unique_id=154013220]
 layout_mode = 1
 anchor_left = -0.006
 anchor_right = 1.0
@@ -1054,7 +1055,7 @@ offset_right = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Left" type="Control" parent="UI/Defense/Markers"]
+[node name="Left" type="Control" parent="UI/Defense/Markers" unique_id=1885429151]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -1065,7 +1066,7 @@ offset_right = 64.0
 offset_bottom = 352.0
 grow_vertical = 2
 
-[node name="Right" type="Control" parent="UI/Defense/Markers"]
+[node name="Right" type="Control" parent="UI/Defense/Markers" unique_id=1540653032]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -1079,7 +1080,7 @@ offset_bottom = 352.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Up" type="Control" parent="UI/Defense/Markers"]
+[node name="Up" type="Control" parent="UI/Defense/Markers" unique_id=2140878727]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1090,7 +1091,7 @@ offset_right = 632.0
 offset_bottom = 64.0
 grow_horizontal = 2
 
-[node name="Down" type="Control" parent="UI/Defense/Markers"]
+[node name="Down" type="Control" parent="UI/Defense/Markers" unique_id=1171087957]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1104,7 +1105,7 @@ offset_bottom = -216.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="HealthBar" type="TextureProgressBar" parent="UI/Defense"]
+[node name="HealthBar" type="TextureProgressBar" parent="UI/Defense" unique_id=46794285]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1123,7 +1124,7 @@ stretch_margin_bottom = 16
 texture_under = ExtResource("14_i4ail")
 texture_progress = ExtResource("14_a38lo")
 
-[node name="OverhealBar" type="TextureProgressBar" parent="UI/Defense"]
+[node name="OverhealBar" type="TextureProgressBar" parent="UI/Defense" unique_id=44297171]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1144,7 +1145,7 @@ stretch_margin_right = 16
 stretch_margin_bottom = 16
 texture_progress = ExtResource("21_t4otl")
 
-[node name="Health Label" type="Label" parent="UI/Defense"]
+[node name="Health Label" type="Label" parent="UI/Defense" unique_id=688336382]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.381
@@ -1161,7 +1162,7 @@ label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Defense"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Defense" unique_id=961124308]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.36900002
@@ -1174,14 +1175,14 @@ offset_right = 0.3199463
 offset_bottom = 0.32000732
 alignment = 2
 
-[node name="Status" type="HBoxContainer" parent="UI/Defense/VBoxContainer"]
+[node name="Status" type="HBoxContainer" parent="UI/Defense/VBoxContainer" unique_id=1901493171]
 layout_mode = 2
 alignment = 1
 
-[node name="Status Effect Bubble" parent="UI/Defense/VBoxContainer/Status" instance=ExtResource("26_mx1m4")]
+[node name="Status Effect Bubble" parent="UI/Defense/VBoxContainer/Status" unique_id=1973512519 instance=ExtResource("26_mx1m4")]
 layout_mode = 2
 
-[node name="SprintBar" type="TextureProgressBar" parent="UI/Defense/VBoxContainer"]
+[node name="SprintBar" type="TextureProgressBar" parent="UI/Defense/VBoxContainer" unique_id=2024943605]
 layout_mode = 2
 max_value = 220.0
 nine_patch_stretch = true
@@ -1192,7 +1193,7 @@ stretch_margin_bottom = 16
 texture_under = ExtResource("14_i4ail")
 texture_progress = ExtResource("15_a38lo")
 
-[node name="Inventory" type="HBoxContainer" parent="UI/Defense"]
+[node name="Inventory" type="HBoxContainer" parent="UI/Defense" unique_id=964268642]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1208,20 +1209,20 @@ grow_vertical = 0
 theme_override_constants/separation = 12
 alignment = 2
 
-[node name="Slot1" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot1" parent="UI/Defense/Inventory" unique_id=1383962927 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot2" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot2" parent="UI/Defense/Inventory" unique_id=1922153065 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot3" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot3" parent="UI/Defense/Inventory" unique_id=1953733486 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot4" parent="UI/Defense/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot4" parent="UI/Defense/Inventory" unique_id=920012843 instance=ExtResource("14_4r5pv")]
 visible = false
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense" unique_id=499820018]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1234,71 +1235,71 @@ grow_horizontal = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Wave" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
+[node name="Wave" type="PanelContainer" parent="UI/Defense/HBoxContainer" unique_id=985999150]
 custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Wave"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Wave" unique_id=350981823]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Wave/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Wave/HBoxContainer" unique_id=1259799594]
 layout_mode = 2
 texture = ExtResource("25_2dvfe")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Wave/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Wave/HBoxContainer" unique_id=331464139]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Bombrats" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
+[node name="Bombrats" type="PanelContainer" parent="UI/Defense/HBoxContainer" unique_id=1088050697]
 custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Bombrats"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Bombrats" unique_id=351818534]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Bombrats/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Bombrats/HBoxContainer" unique_id=368443258]
 layout_mode = 2
 texture = SubResource("AtlasTexture_487ah")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Bombrats/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Bombrats/HBoxContainer" unique_id=1259489278]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Gold" type="PanelContainer" parent="UI/Defense/HBoxContainer"]
+[node name="Gold" type="PanelContainer" parent="UI/Defense/HBoxContainer" unique_id=500422694]
 custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Gold"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/HBoxContainer/Gold" unique_id=1736032447]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Gold/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/HBoxContainer/Gold/HBoxContainer" unique_id=1447403833]
 layout_mode = 2
 texture = ExtResource("14_a8ls1")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Gold/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Defense/HBoxContainer/Gold/HBoxContainer" unique_id=1537965531]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Title" type="Label" parent="UI/Defense"]
+[node name="Title" type="Label" parent="UI/Defense" unique_id=299959565]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -1315,7 +1316,7 @@ label_settings = SubResource("LabelSettings_4r5pv")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Shop" type="Control" parent="UI/Defense"]
+[node name="Shop" type="Control" parent="UI/Defense" unique_id=1295801976]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1324,7 +1325,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Defense/Shop"]
+[node name="Panel" type="Panel" parent="UI/Defense/Shop" unique_id=1653323531]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1337,7 +1338,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
 
-[node name="Title" type="Label" parent="UI/Defense/Shop/Panel"]
+[node name="Title" type="Label" parent="UI/Defense/Shop/Panel" unique_id=1923312187]
 layout_mode = 1
 offset_left = 32.0
 offset_top = 24.0
@@ -1348,7 +1349,7 @@ text = "Shop"
 label_settings = SubResource("LabelSettings_60mlk")
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/Shop/Panel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense/Shop/Panel" unique_id=191694536]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -1360,12 +1361,12 @@ offset_bottom = 64.0
 grow_horizontal = 0
 alignment = 2
 
-[node name="TextureRect" type="TextureRect" parent="UI/Defense/Shop/Panel/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Defense/Shop/Panel/HBoxContainer" unique_id=693401264]
 layout_mode = 2
 texture = ExtResource("14_a8ls1")
 expand_mode = 2
 
-[node name="Gold" type="Label" parent="UI/Defense/Shop/Panel/HBoxContainer"]
+[node name="Gold" type="Label" parent="UI/Defense/Shop/Panel/HBoxContainer" unique_id=1902761464]
 layout_mode = 2
 size_flags_vertical = 0
 text = "000"
@@ -1373,7 +1374,7 @@ label_settings = SubResource("LabelSettings_60mlk")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="Control" parent="UI/Defense/Shop/Panel"]
+[node name="ScrollContainer" type="Control" parent="UI/Defense/Shop/Panel" unique_id=1357662524]
 layout_mode = 1
 anchor_left = 0.026
 anchor_top = 0.167
@@ -1386,7 +1387,7 @@ offset_bottom = -0.11203003
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="HBoxContainer" parent="UI/Defense/Shop/Panel/ScrollContainer"]
+[node name="GridContainer" type="HBoxContainer" parent="UI/Defense/Shop/Panel/ScrollContainer" unique_id=1112702638]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -1397,7 +1398,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="Close" type="Button" parent="UI/Defense/Shop/Panel"]
+[node name="Close" type="Button" parent="UI/Defense/Shop/Panel" unique_id=925098699]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1418,7 +1419,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
 text = "Close"
 
-[node name="Reroll" type="Button" parent="UI/Defense/Shop/Panel"]
+[node name="Reroll" type="Button" parent="UI/Defense/Shop/Panel" unique_id=966214503]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1436,7 +1437,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
 text = "Close"
 
-[node name="Death" type="Control" parent="UI/Defense"]
+[node name="Death" type="Control" parent="UI/Defense" unique_id=167269847]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1445,7 +1446,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Defense/Death"]
+[node name="Panel" type="Panel" parent="UI/Defense/Death" unique_id=1618257946]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1454,7 +1455,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 
-[node name="You Dead" type="Label" parent="UI/Defense/Death/Panel"]
+[node name="You Dead" type="Label" parent="UI/Defense/Death/Panel" unique_id=2065578091]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 64.0
@@ -1463,7 +1464,7 @@ offset_bottom = 125.0
 text = "You're dead!"
 label_settings = SubResource("LabelSettings_l71n6")
 
-[node name="Respawn Timer" type="Label" parent="UI/Defense/Death/Panel"]
+[node name="Respawn Timer" type="Label" parent="UI/Defense/Death/Panel" unique_id=194656081]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -1473,7 +1474,7 @@ text = "You will respawn in 10 seconds..."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Meta" type="Label" parent="UI/Defense/Death/Panel"]
+[node name="Meta" type="Label" parent="UI/Defense/Death/Panel" unique_id=1643205214]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 200.0
@@ -1483,7 +1484,7 @@ text = "You will respawn in 10 seconds..."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Game Over" type="Control" parent="UI/Defense"]
+[node name="Game Over" type="Control" parent="UI/Defense" unique_id=733490908]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1492,7 +1493,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Defense/Game Over"]
+[node name="Panel" type="Panel" parent="UI/Defense/Game Over" unique_id=1063871394]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1501,7 +1502,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 
-[node name="You Lose" type="Label" parent="UI/Defense/Game Over/Panel"]
+[node name="You Lose" type="Label" parent="UI/Defense/Game Over/Panel" unique_id=1564861870]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 64.0
@@ -1510,7 +1511,7 @@ offset_bottom = 125.0
 text = "Game Over!"
 label_settings = SubResource("LabelSettings_l71n6")
 
-[node name="Subtitle" type="Label" parent="UI/Defense/Game Over/Panel"]
+[node name="Subtitle" type="Label" parent="UI/Defense/Game Over/Panel" unique_id=1924227313]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -1520,7 +1521,7 @@ text = "The gem has broken."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Meta" type="Label" parent="UI/Defense/Game Over/Panel"]
+[node name="Meta" type="Label" parent="UI/Defense/Game Over/Panel" unique_id=352690994]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 200.0
@@ -1529,7 +1530,7 @@ offset_bottom = 688.0
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Play Again" type="Button" parent="UI/Defense/Game Over/Panel"]
+[node name="Play Again" type="Button" parent="UI/Defense/Game Over/Panel" unique_id=1773484584]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1555,7 +1556,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Play Again"
 
-[node name="Main Menu" type="Button" parent="UI/Defense/Game Over/Panel"]
+[node name="Main Menu" type="Button" parent="UI/Defense/Game Over/Panel" unique_id=1018207608]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1581,7 +1582,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Main Menu"
 
-[node name="Dungeon" type="Control" parent="UI"]
+[node name="Dungeons" type="Control" parent="UI" unique_id=690478890]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -1590,7 +1591,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Dead" type="Control" parent="UI/Dungeon"]
+[node name="Dead" type="Control" parent="UI/Dungeons" unique_id=1530376373]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1599,7 +1600,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="You Dead" type="Label" parent="UI/Dungeon/Dead"]
+[node name="You Dead" type="Label" parent="UI/Dungeons/Dead" unique_id=260615703]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 56.0
@@ -1608,7 +1609,7 @@ offset_bottom = 117.0
 text = "GAME OVER!"
 label_settings = SubResource("LabelSettings_l71n6")
 
-[node name="Respawn Timer" type="Label" parent="UI/Dungeon/Dead"]
+[node name="Respawn Timer" type="Label" parent="UI/Dungeons/Dead" unique_id=642848246]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -1619,7 +1620,7 @@ label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeons" unique_id=1166804250]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -1632,83 +1633,83 @@ grow_horizontal = 2
 theme_override_constants/separation = 6
 alignment = 1
 
-[node name="Progress" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
+[node name="Progress" type="PanelContainer" parent="UI/Dungeons/HBoxContainer" unique_id=908710338]
 visible = false
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Progress"]
+[node name="Label" type="Label" parent="UI/Dungeons/HBoxContainer/Progress" unique_id=1843925148]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_oprun")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Room" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
+[node name="Room" type="PanelContainer" parent="UI/Dungeons/HBoxContainer" unique_id=1524414256]
 custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon/HBoxContainer/Room"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeons/HBoxContainer/Room" unique_id=1092134836]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Dungeon/HBoxContainer/Room/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Dungeons/HBoxContainer/Room/HBoxContainer" unique_id=868821047]
 layout_mode = 2
 texture = ExtResource("25_2dvfe")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Room/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Dungeons/HBoxContainer/Room/HBoxContainer" unique_id=1333901101]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Lives" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
+[node name="Lives" type="PanelContainer" parent="UI/Dungeons/HBoxContainer" unique_id=1323597360]
 custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon/HBoxContainer/Lives"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeons/HBoxContainer/Lives" unique_id=124598648]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Dungeon/HBoxContainer/Lives/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Dungeons/HBoxContainer/Lives/HBoxContainer" unique_id=2111130211]
 layout_mode = 2
 texture = SubResource("AtlasTexture_ha2mi")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Lives/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Dungeons/HBoxContainer/Lives/HBoxContainer" unique_id=661882172]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Gold" type="PanelContainer" parent="UI/Dungeon/HBoxContainer"]
+[node name="Gold" type="PanelContainer" parent="UI/Dungeons/HBoxContainer" unique_id=1680464725]
 custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_4ni07")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon/HBoxContainer/Gold"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeons/HBoxContainer/Gold" unique_id=269583557]
 layout_mode = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Dungeon/HBoxContainer/Gold/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Dungeons/HBoxContainer/Gold/HBoxContainer" unique_id=1475139839]
 layout_mode = 2
 texture = ExtResource("14_a8ls1")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UI/Dungeon/HBoxContainer/Gold/HBoxContainer"]
+[node name="Label" type="Label" parent="UI/Dungeons/HBoxContainer/Gold/HBoxContainer" unique_id=575000701]
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_oprun")
 vertical_alignment = 1
 
-[node name="Death" type="Control" parent="UI/Dungeon"]
+[node name="Death" type="Control" parent="UI/Dungeons" unique_id=544526845]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1717,7 +1718,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Dungeon/Death"]
+[node name="Panel" type="Panel" parent="UI/Dungeons/Death" unique_id=1212466008]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1726,7 +1727,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 
-[node name="You Dead" type="Label" parent="UI/Dungeon/Death/Panel"]
+[node name="You Dead" type="Label" parent="UI/Dungeons/Death/Panel" unique_id=1043374664]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 64.0
@@ -1735,7 +1736,7 @@ offset_bottom = 125.0
 text = "You're dead!"
 label_settings = SubResource("LabelSettings_l71n6")
 
-[node name="Respawn Timer" type="Label" parent="UI/Dungeon/Death/Panel"]
+[node name="Respawn Timer" type="Label" parent="UI/Dungeons/Death/Panel" unique_id=218038499]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -1745,7 +1746,7 @@ text = "You will respawn in 10 seconds..."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Meta" type="Label" parent="UI/Dungeon/Death/Panel"]
+[node name="Meta" type="Label" parent="UI/Dungeons/Death/Panel" unique_id=1188970339]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 200.0
@@ -1755,7 +1756,7 @@ text = "You will respawn in 10 seconds..."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Game Over" type="Control" parent="UI/Dungeon"]
+[node name="Game Over" type="Control" parent="UI/Dungeons" unique_id=1724470791]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1764,7 +1765,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Dungeon/Game Over"]
+[node name="Panel" type="Panel" parent="UI/Dungeons/Game Over" unique_id=1127413737]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1773,7 +1774,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 
-[node name="You Lose" type="Label" parent="UI/Dungeon/Game Over/Panel"]
+[node name="You Lose" type="Label" parent="UI/Dungeons/Game Over/Panel" unique_id=968381532]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 64.0
@@ -1782,7 +1783,7 @@ offset_bottom = 125.0
 text = "Game Over!"
 label_settings = SubResource("LabelSettings_l71n6")
 
-[node name="Subtitle" type="Label" parent="UI/Dungeon/Game Over/Panel"]
+[node name="Subtitle" type="Label" parent="UI/Dungeons/Game Over/Panel" unique_id=988947542]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -1792,7 +1793,7 @@ text = "The gem has broken."
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Meta" type="Label" parent="UI/Dungeon/Game Over/Panel"]
+[node name="Meta" type="Label" parent="UI/Dungeons/Game Over/Panel" unique_id=144031948]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 200.0
@@ -1801,7 +1802,7 @@ offset_bottom = 688.0
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Play Again" type="Button" parent="UI/Dungeon/Game Over/Panel"]
+[node name="Play Again" type="Button" parent="UI/Dungeons/Game Over/Panel" unique_id=1602896272]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1827,7 +1828,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Play Again"
 
-[node name="Main Menu" type="Button" parent="UI/Dungeon/Game Over/Panel"]
+[node name="Main Menu" type="Button" parent="UI/Dungeons/Game Over/Panel" unique_id=153574213]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1853,7 +1854,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Main Menu"
 
-[node name="Inventory" type="HBoxContainer" parent="UI/Dungeon"]
+[node name="Inventory" type="HBoxContainer" parent="UI/Dungeons" unique_id=1225397823]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1869,19 +1870,19 @@ grow_vertical = 0
 theme_override_constants/separation = 12
 alignment = 2
 
-[node name="Slot1" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot1" parent="UI/Dungeons/Inventory" unique_id=163738859 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot2" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot2" parent="UI/Dungeons/Inventory" unique_id=494162135 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot3" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot3" parent="UI/Dungeons/Inventory" unique_id=2047873490 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Slot4" parent="UI/Dungeon/Inventory" instance=ExtResource("14_4r5pv")]
+[node name="Slot4" parent="UI/Dungeons/Inventory" unique_id=2105838569 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
-[node name="Shop" type="Control" parent="UI/Dungeon"]
+[node name="Shop" type="Control" parent="UI/Dungeons" unique_id=533902701]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -1890,7 +1891,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Dungeon/Shop"]
+[node name="Panel" type="Panel" parent="UI/Dungeons/Shop" unique_id=90311941]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1903,7 +1904,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
 
-[node name="Title" type="Label" parent="UI/Dungeon/Shop/Panel"]
+[node name="Title" type="Label" parent="UI/Dungeons/Shop/Panel" unique_id=1541074168]
 layout_mode = 1
 offset_left = 32.0
 offset_top = 24.0
@@ -1914,7 +1915,7 @@ text = "Shop"
 label_settings = SubResource("LabelSettings_60mlk")
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeon/Shop/Panel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Dungeons/Shop/Panel" unique_id=2082570885]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -1926,12 +1927,12 @@ offset_bottom = 64.0
 grow_horizontal = 0
 alignment = 2
 
-[node name="TextureRect" type="TextureRect" parent="UI/Dungeon/Shop/Panel/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/Dungeons/Shop/Panel/HBoxContainer" unique_id=56455364]
 layout_mode = 2
 texture = ExtResource("14_a8ls1")
 expand_mode = 2
 
-[node name="Gold" type="Label" parent="UI/Dungeon/Shop/Panel/HBoxContainer"]
+[node name="Gold" type="Label" parent="UI/Dungeons/Shop/Panel/HBoxContainer" unique_id=178087022]
 layout_mode = 2
 size_flags_vertical = 0
 text = "000"
@@ -1939,7 +1940,7 @@ label_settings = SubResource("LabelSettings_60mlk")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="Control" parent="UI/Dungeon/Shop/Panel"]
+[node name="ScrollContainer" type="Control" parent="UI/Dungeons/Shop/Panel" unique_id=137969428]
 layout_mode = 1
 anchor_left = 0.026
 anchor_top = 0.167
@@ -1952,7 +1953,7 @@ offset_bottom = -0.12802124
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="HBoxContainer" parent="UI/Dungeon/Shop/Panel/ScrollContainer"]
+[node name="GridContainer" type="HBoxContainer" parent="UI/Dungeons/Shop/Panel/ScrollContainer" unique_id=1186363131]
 custom_minimum_size = Vector2(1184, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -1966,7 +1967,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="Close" type="Button" parent="UI/Dungeon/Shop/Panel"]
+[node name="Close" type="Button" parent="UI/Dungeons/Shop/Panel" unique_id=1461692843]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1987,7 +1988,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
 text = "Close"
 
-[node name="Reroll" type="Button" parent="UI/Dungeon/Shop/Panel"]
+[node name="Reroll" type="Button" parent="UI/Dungeons/Shop/Panel" unique_id=661417312]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -2005,7 +2006,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
 text = "Close"
 
-[node name="HealthBar" type="TextureProgressBar" parent="UI/Dungeon"]
+[node name="HealthBar" type="TextureProgressBar" parent="UI/Dungeons" unique_id=956830824]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -2026,7 +2027,7 @@ stretch_margin_bottom = 16
 texture_under = ExtResource("14_i4ail")
 texture_progress = ExtResource("14_a38lo")
 
-[node name="OverhealBar" type="TextureProgressBar" parent="UI/Dungeon"]
+[node name="OverhealBar" type="TextureProgressBar" parent="UI/Dungeons" unique_id=427015752]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -2047,7 +2048,7 @@ stretch_margin_right = 16
 stretch_margin_bottom = 16
 texture_progress = ExtResource("21_t4otl")
 
-[node name="Health Label" type="Label" parent="UI/Dungeon"]
+[node name="Health Label" type="Label" parent="UI/Dungeons" unique_id=775029826]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.381
@@ -2065,7 +2066,7 @@ label_settings = SubResource("LabelSettings_f1ej7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Dungeon"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Dungeons" unique_id=1387841113]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.36900002
@@ -2078,14 +2079,14 @@ offset_right = 0.3199463
 offset_bottom = 0.32000732
 alignment = 2
 
-[node name="Status" type="HBoxContainer" parent="UI/Dungeon/VBoxContainer"]
+[node name="Status" type="HBoxContainer" parent="UI/Dungeons/VBoxContainer" unique_id=1795363519]
 layout_mode = 2
 alignment = 1
 
-[node name="Status Effect Bubble" parent="UI/Dungeon/VBoxContainer/Status" instance=ExtResource("26_mx1m4")]
+[node name="Status Effect Bubble" parent="UI/Dungeons/VBoxContainer/Status" unique_id=863380018 instance=ExtResource("26_mx1m4")]
 layout_mode = 2
 
-[node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeon/VBoxContainer"]
+[node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeons/VBoxContainer" unique_id=819968922]
 layout_mode = 2
 max_value = 220.0
 nine_patch_stretch = true
@@ -2096,7 +2097,7 @@ stretch_margin_bottom = 16
 texture_under = ExtResource("14_i4ail")
 texture_progress = ExtResource("15_a38lo")
 
-[node name="Global" type="Control" parent="UI"]
+[node name="Global" type="Control" parent="UI" unique_id=301086061]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -2105,13 +2106,13 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Movement Joystick" parent="UI/Global" instance=ExtResource("34_cs1tg")]
+[node name="Movement Joystick" parent="UI/Global" unique_id=177412095 instance=ExtResource("34_cs1tg")]
 layout_mode = 1
 offset_left = 8.0
 offset_top = -320.0
 offset_right = 360.0
 
-[node name="Attack Joystick" parent="UI/Global" instance=ExtResource("34_cs1tg")]
+[node name="Attack Joystick" parent="UI/Global" unique_id=293381311 instance=ExtResource("34_cs1tg")]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -2128,7 +2129,7 @@ action_right = "attack_right"
 action_up = "attack_up"
 action_down = "attack_down"
 
-[node name="Attack" type="Control" parent="UI/Global"]
+[node name="Attack" type="Control" parent="UI/Global" unique_id=63953677]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -2143,14 +2144,14 @@ offset_bottom = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Button" type="TouchScreenButton" parent="UI/Global/Attack"]
+[node name="Button" type="TouchScreenButton" parent="UI/Global/Attack" unique_id=648397497]
 position = Vector2(-273, -249)
 scale = Vector2(1.95, 1.95)
 texture_normal = ExtResource("27_wqfne")
 texture_pressed = ExtResource("26_dt7fs")
 shape = SubResource("RectangleShape2D_giy8y")
 
-[node name="TextureRect" type="TextureRect" parent="UI/Global/Attack"]
+[node name="TextureRect" type="TextureRect" parent="UI/Global/Attack" unique_id=223182834]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2165,7 +2166,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Sprint" type="Control" parent="UI/Global"]
+[node name="Sprint" type="Control" parent="UI/Global" unique_id=1975783393]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -2179,7 +2180,7 @@ offset_bottom = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Button" type="TouchScreenButton" parent="UI/Global/Sprint"]
+[node name="Button" type="TouchScreenButton" parent="UI/Global/Sprint" unique_id=1596120338]
 position = Vector2(-215.99997, -425.00012)
 scale = Vector2(1.383, 1.326)
 texture_normal = ExtResource("27_wqfne")
@@ -2187,7 +2188,7 @@ texture_pressed = ExtResource("26_dt7fs")
 shape = SubResource("RectangleShape2D_giy8y")
 action = "sprint"
 
-[node name="TextureRect" type="TextureRect" parent="UI/Global/Sprint"]
+[node name="TextureRect" type="TextureRect" parent="UI/Global/Sprint" unique_id=469776269]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2203,7 +2204,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("AtlasTexture_apa73")
 
-[node name="Use" type="Control" parent="UI/Global"]
+[node name="Use" type="Control" parent="UI/Global" unique_id=1974364177]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -2217,7 +2218,7 @@ offset_bottom = -9.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Button" type="TouchScreenButton" parent="UI/Global/Use"]
+[node name="Button" type="TouchScreenButton" parent="UI/Global/Use" unique_id=2014435642]
 position = Vector2(-191.99997, -408)
 scale = Vector2(1.008, 1.060373)
 texture_normal = ExtResource("27_wqfne")
@@ -2225,7 +2226,7 @@ texture_pressed = ExtResource("26_dt7fs")
 shape = SubResource("RectangleShape2D_giy8y")
 action = "interact"
 
-[node name="TextureRect" type="TextureRect" parent="UI/Global/Use"]
+[node name="TextureRect" type="TextureRect" parent="UI/Global/Use" unique_id=829692121]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2241,7 +2242,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("35_holxr")
 
-[node name="SettingsButton" type="Control" parent="UI/Global"]
+[node name="SettingsButton" type="Control" parent="UI/Global" unique_id=301755321]
 layout_mode = 1
 anchors_preset = 0
 offset_left = 16.0
@@ -2249,7 +2250,7 @@ offset_top = 8.0
 offset_right = 16.0
 offset_bottom = 8.0
 
-[node name="Button" type="TouchScreenButton" parent="UI/Global/SettingsButton"]
+[node name="Button" type="TouchScreenButton" parent="UI/Global/SettingsButton" unique_id=281448347]
 position = Vector2(24, 24)
 scale = Vector2(0.585, 0.6)
 texture_normal = ExtResource("27_wqfne")
@@ -2257,7 +2258,7 @@ texture_pressed = ExtResource("26_dt7fs")
 shape = SubResource("RectangleShape2D_giy8y")
 action = "pause"
 
-[node name="TextureRect" type="TextureRect" parent="UI/Global/SettingsButton"]
+[node name="TextureRect" type="TextureRect" parent="UI/Global/SettingsButton" unique_id=603512625]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2273,7 +2274,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("35_fdfoy")
 
-[node name="ChatButton" type="Control" parent="UI/Global"]
+[node name="ChatButton" type="Control" parent="UI/Global" unique_id=2015005380]
 layout_mode = 1
 anchors_preset = 0
 offset_left = 104.0
@@ -2281,14 +2282,14 @@ offset_top = 8.0
 offset_right = 104.0
 offset_bottom = 8.0
 
-[node name="Button" type="TouchScreenButton" parent="UI/Global/ChatButton"]
+[node name="Button" type="TouchScreenButton" parent="UI/Global/ChatButton" unique_id=2096082067]
 position = Vector2(25.00003, 23.000008)
 scale = Vector2(0.585, 0.6)
 texture_normal = ExtResource("27_wqfne")
 texture_pressed = ExtResource("26_dt7fs")
 shape = SubResource("RectangleShape2D_giy8y")
 
-[node name="TextureRect" type="TextureRect" parent="UI/Global/ChatButton"]
+[node name="TextureRect" type="TextureRect" parent="UI/Global/ChatButton" unique_id=1343388446]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2304,7 +2305,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("36_hhpqf")
 
-[node name="ChatBar" type="LineEdit" parent="UI/Global"]
+[node name="ChatBar" type="LineEdit" parent="UI/Global" unique_id=326636536]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -2325,7 +2326,7 @@ clear_button_enabled = true
 caret_blink = true
 script = ExtResource("39_holxr")
 
-[node name="Zoom" type="Control" parent="UI/Global"]
+[node name="Zoom" type="Control" parent="UI/Global" unique_id=1394685734]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -2340,7 +2341,7 @@ offset_bottom = -24.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Panel" type="Panel" parent="UI/Global/Zoom"]
+[node name="Panel" type="Panel" parent="UI/Global/Zoom" unique_id=364614715]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.552
@@ -2351,7 +2352,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_ke2ow")
 
-[node name="Label" type="Label" parent="UI/Global/Zoom"]
+[node name="Label" type="Label" parent="UI/Global/Zoom" unique_id=1943441777]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2368,11 +2369,11 @@ text = "x1"
 label_settings = SubResource("LabelSettings_dt7fs")
 horizontal_alignment = 1
 
-[node name="Timer" type="Timer" parent="UI/Global/Zoom"]
+[node name="Timer" type="Timer" parent="UI/Global/Zoom" unique_id=1313444670]
 wait_time = 5.0
 one_shot = true
 
-[node name="Chat" type="ScrollContainer" parent="UI/Global"]
+[node name="Chat" type="ScrollContainer" parent="UI/Global" unique_id=1361842732]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.012
@@ -2387,11 +2388,11 @@ grow_vertical = 0
 mouse_filter = 2
 horizontal_scroll_mode = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Global/Chat"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Global/Chat" unique_id=144883412]
 layout_mode = 2
 alignment = 2
 
-[node name="Leveling" type="Control" parent="UI/Global"]
+[node name="Leveling" type="Control" parent="UI/Global" unique_id=236843107]
 visible = false
 layout_mode = 1
 anchors_preset = 7
@@ -2406,7 +2407,7 @@ offset_bottom = -192.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="XP" type="TextureProgressBar" parent="UI/Global/Leveling"]
+[node name="XP" type="TextureProgressBar" parent="UI/Global/Leveling" unique_id=1511241465]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -2425,7 +2426,7 @@ texture_under = ExtResource("14_i4ail")
 texture_progress = ExtResource("15_a38lo")
 tint_progress = Color(1.1551381e-06, 0.87540567, 0.78466874, 1)
 
-[node name="Level" type="Label" parent="UI/Global/Leveling"]
+[node name="Level" type="Label" parent="UI/Global/Leveling" unique_id=890914525]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2443,7 +2444,7 @@ label_settings = SubResource("LabelSettings_t4otl")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Pause" type="Control" parent="UI/Global"]
+[node name="Pause" type="Control" parent="UI/Global" unique_id=1950194980]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -2452,7 +2453,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Global/Pause"]
+[node name="Panel" type="Panel" parent="UI/Global/Pause" unique_id=1666767429]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2461,7 +2462,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4ni07")
 
-[node name="Options2" parent="UI/Global/Pause/Panel" instance=ExtResource("37_fdfoy")]
+[node name="Options2" parent="UI/Global/Pause/Panel" unique_id=1091348022 instance=ExtResource("37_fdfoy")]
 visible = false
 layout_mode = 1
 anchor_left = 0.3
@@ -2472,49 +2473,49 @@ offset_top = -0.08000183
 offset_right = -6.1035156e-05
 offset_bottom = 0.0
 
-[node name="CheckBox" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Fullscreen" index="1"]
+[node name="CheckBox" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Fullscreen" parent_id_path=PackedInt32Array(1091348022, 198549745) index="1" unique_id=411547917]
 focus_neighbor_top = NodePath("../../../../../../Back")
 focus_neighbor_bottom = NodePath("../../Zoom/HSlider")
 focus_next = NodePath("../../Zoom/HSlider")
 focus_previous = NodePath("../../../../../../Back")
 
-[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Zoom" index="1"]
+[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Zoom" parent_id_path=PackedInt32Array(1091348022, 1983990964) index="1" unique_id=2132536641]
 focus_neighbor_top = NodePath("../../Fullscreen/CheckBox")
 focus_neighbor_bottom = NodePath("../../Flick Control/CheckBox2")
 focus_next = NodePath("../../Flick Control/CheckBox2")
 focus_previous = NodePath("../../Fullscreen/CheckBox")
 
-[node name="CheckBox2" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Flick Control" index="1"]
+[node name="CheckBox2" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Flick Control" parent_id_path=PackedInt32Array(1091348022, 193773021) index="1" unique_id=1699451148]
 focus_neighbor_top = NodePath("../../Zoom/HSlider")
 focus_neighbor_bottom = NodePath("../../SFX/HSlider")
 focus_next = NodePath("../../SFX/HSlider")
 focus_previous = NodePath("../../Zoom/HSlider")
 
-[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/SFX" index="1"]
+[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/SFX" parent_id_path=PackedInt32Array(1091348022, 895783333) index="1" unique_id=1085904740]
 focus_neighbor_top = NodePath("../../Flick Control/CheckBox2")
 focus_neighbor_bottom = NodePath("../../Music/HSlider")
 focus_next = NodePath("../../Music/HSlider")
 focus_previous = NodePath("../../Flick Control/CheckBox2")
 
-[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Music" index="1"]
+[node name="HSlider" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer/Music" parent_id_path=PackedInt32Array(1091348022, 1810237348) index="1" unique_id=177121553]
 focus_neighbor_top = NodePath("../../SFX/HSlider")
 focus_neighbor_bottom = NodePath("../../Controls")
 focus_next = NodePath("../../Controls")
 focus_previous = NodePath("../../SFX/HSlider")
 
-[node name="Controls" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer" index="5"]
+[node name="Controls" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer" parent_id_path=PackedInt32Array(1091348022, 1115743123) index="5" unique_id=799368930]
 focus_neighbor_top = NodePath("../Music/HSlider")
 focus_neighbor_bottom = NodePath("../Credits")
 focus_next = NodePath("../Credits")
 focus_previous = NodePath("../Music/HSlider")
 
-[node name="Credits" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer" index="6"]
+[node name="Credits" parent="UI/Global/Pause/Panel/Options2/General/ScrollContainer/VBoxContainer" parent_id_path=PackedInt32Array(1091348022, 1115743123) index="6" unique_id=1346865881]
 focus_neighbor_top = NodePath("../Controls")
 focus_neighbor_bottom = NodePath("../../../../../Back")
 focus_next = NodePath("../../../../../Back")
 focus_previous = NodePath("../Controls")
 
-[node name="Back" type="Button" parent="UI/Global/Pause/Panel"]
+[node name="Back" type="Button" parent="UI/Global/Pause/Panel" unique_id=1661191276]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.3
@@ -2538,7 +2539,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Back"
 
-[node name="Title" type="Label" parent="UI/Global/Pause/Panel"]
+[node name="Title" type="Label" parent="UI/Global/Pause/Panel" unique_id=134329874]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2555,7 +2556,7 @@ text = "GAME MENU"
 label_settings = SubResource("LabelSettings_jc3p3")
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="UI/Global/Pause/Panel"]
+[node name="Subtitle" type="Label" parent="UI/Global/Pause/Panel" unique_id=1729973749]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 128.0
@@ -2564,7 +2565,7 @@ offset_bottom = 193.0
 label_settings = SubResource("LabelSettings_ke2ow")
 vertical_alignment = 1
 
-[node name="Resume" type="Button" parent="UI/Global/Pause/Panel"]
+[node name="Resume" type="Button" parent="UI/Global/Pause/Panel" unique_id=567412751]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2589,7 +2590,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Resume"
 
-[node name="Options" type="Button" parent="UI/Global/Pause/Panel"]
+[node name="Options" type="Button" parent="UI/Global/Pause/Panel" unique_id=655497993]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2614,7 +2615,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Settings"
 
-[node name="Quit to Main Menu" type="Button" parent="UI/Global/Pause/Panel"]
+[node name="Quit to Main Menu" type="Button" parent="UI/Global/Pause/Panel" unique_id=596400170]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2639,7 +2640,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Quit to Main Menu"
 
-[node name="Quit Game" type="Button" parent="UI/Global/Pause/Panel"]
+[node name="Quit Game" type="Button" parent="UI/Global/Pause/Panel" unique_id=1317974802]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2664,10 +2665,10 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Quit Game"
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=778394023]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
 
-[node name="Username" type="Label" parent="."]
+[node name="Username" type="Label" parent="." unique_id=2004056344]
 visible = false
 modulate = Color(1, 1, 1, 0.6509804)
 offset_left = -80.0
@@ -2680,7 +2681,7 @@ label_settings = SubResource("LabelSettings_a8ls1")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Clip" type="TextureProgressBar" parent="."]
+[node name="Clip" type="TextureProgressBar" parent="." unique_id=86188091]
 visible = false
 offset_left = -12.0
 offset_top = -19.000002
@@ -2692,7 +2693,7 @@ texture_under = ExtResource("32_md1ol")
 texture_over = ExtResource("33_bj30b")
 texture_progress = ExtResource("34_jc3p3")
 
-[node name="Key" parent="." instance=ExtResource("37_hax0n")]
+[node name="Key" parent="." unique_id=1068521216 instance=ExtResource("37_hax0n")]
 visible = false
 offset_left = -5.999999
 offset_top = 14.000002
@@ -2705,12 +2706,12 @@ keycode = "69"
 text = "E"
 label_settings = SubResource("LabelSettings_hax0n")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1092477499]
 process_callback = 0
 wait_time = 1.5
 autostart = true
 
-[node name="Cursor2" type="Sprite2D" parent="."]
+[node name="Cursor2" type="Sprite2D" parent="." unique_id=342951248]
 visible = false
 scale = Vector2(0.45, 0.45)
 texture = ExtResource("39_j2b1d")
@@ -2725,10 +2726,10 @@ texture = ExtResource("39_j2b1d")
 [connection signal="pressed" from="UI/Defense/Shop/Panel/Reroll" to="." method="_on_reroll_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="UI/Defense/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
-[connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
-[connection signal="pressed" from="UI/Dungeon/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
-[connection signal="pressed" from="UI/Dungeon/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
-[connection signal="pressed" from="UI/Dungeon/Shop/Panel/Reroll" to="." method="_on_reroll_pressed"]
+[connection signal="pressed" from="UI/Dungeons/Game Over/Panel/Play Again" to="." method="_on_play_again_pressed"]
+[connection signal="pressed" from="UI/Dungeons/Game Over/Panel/Main Menu" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="UI/Dungeons/Shop/Panel/Close" to="." method="_on_shop_close_button_pressed"]
+[connection signal="pressed" from="UI/Dungeons/Shop/Panel/Reroll" to="." method="_on_reroll_pressed"]
 [connection signal="pressed" from="UI/Global/Attack/Button" to="." method="_on_attack_button_pressed"]
 [connection signal="pressed" from="UI/Global/ChatButton/Button" to="." method="_on_chat_button_pressed"]
 [connection signal="focus_entered" from="UI/Global/ChatBar" to="." method="_on_chat_bar_focus_entered"]

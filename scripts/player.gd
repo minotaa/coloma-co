@@ -92,13 +92,13 @@ func add_gold_notification(amount: int) -> void:
 			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
 			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
-	elif type == "Dungeon":
+	elif type == "Dungeons":
 		added_gold += amount
 		added_gold_timeout = 2.0
 		if added_gold > 0:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
+			$UI/Dungeons/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
+			$UI/Dungeons/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
 		
 func get_slots() -> int:
 	var slots = 3
@@ -216,8 +216,8 @@ func reset_game() -> void:
 	play_idle_animation()
 	$"UI/Defense/Game Over".visible = false
 	$UI/Defense/Death.visible = false
-	$"UI/Dungeon/Game Over".visible = false
-	$UI/Dungeon/Death.visible = false
+	$"UI/Dungeons/Game Over".visible = false
+	$UI/Dungeons/Death.visible = false
 	$AnimatedSprite2D.material = null
 	show_ui()
 
@@ -235,7 +235,7 @@ func end_game() -> void:
 	stats_text += "Damage Taken:\t " + str(roundi(damage_taken)) + " (" + percent(damage_taken, total_damage_taken) + ")\n"
 	stats_text += "Damage Healed:\t " + str(roundi(damage_healed)) + " (" + percent(damage_healed, total_damage_healed) + ")"
 	if type == "Defense":
-		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "The gem has broken."
+		$"UI/Dungeons/Game Over/Panel/Subtitle".text = "The gem has broken."
 		stats_text += "\nFinal Wave:\t " + str(get_parent().wave)
 		if get_parent().wave > Man.highest_wave:
 			Man.highest_wave = get_parent().wave
@@ -248,24 +248,24 @@ func end_game() -> void:
 		else:
 			$"UI/Defense/Game Over/Panel/Play Again".visible = false
 			$"UI/Defense/Game Over/Panel/Main Menu".visible = false
-	elif type == "Dungeon":
+	elif type == "Dungeons":
 		if multiplayer.has_multiplayer_peer():
 			get_parent().are_we_sure_everyone_is_dead.rpc()
 		else:
 			get_parent().are_we_sure_everyone_is_dead()
 		if get_parent().completed_rooms:
 			Man.highest_rooms = get_parent().completed_rooms
-		$"UI/Dungeon/Game Over/Panel/Subtitle".text = "You lost all your lives."
+		$"UI/Dungeons/Game Over/Panel/Subtitle".text = "You lost all your lives."
 		stats_text += "\nRooms Completed: " + str(roundi(get_parent().completed_rooms))
-		$"UI/Dungeon/Game Over".visible = true
-		$"UI/Dungeon/Game Over/Panel/Play Again".grab_focus()
-		$"UI/Dungeon/Game Over/Panel/Meta".text = stats_text
+		$"UI/Dungeons/Game Over".visible = true
+		$"UI/Dungeons/Game Over/Panel/Play Again".grab_focus()
+		$"UI/Dungeons/Game Over/Panel/Meta".text = stats_text
 		if (not multiplayer.has_multiplayer_peer()) or 1 == multiplayer.get_unique_id():
-			$"UI/Dungeon/Game Over/Panel/Play Again".visible = true
-			$"UI/Dungeon/Game Over/Panel/Main Menu".visible = true
+			$"UI/Dungeons/Game Over/Panel/Play Again".visible = true
+			$"UI/Dungeons/Game Over/Panel/Main Menu".visible = true
 		else:
-			$"UI/Dungeon/Game Over/Panel/Play Again".visible = false
-			$"UI/Dungeon/Game Over/Panel/Main Menu".visible = false
+			$"UI/Dungeons/Game Over/Panel/Play Again".visible = false
+			$"UI/Dungeons/Game Over/Panel/Main Menu".visible = false
 
 func send_title(title: String, delay: float) -> void:
 	print("Showing title \"" + title + "\" to player.")
@@ -372,7 +372,7 @@ func refresh_shop(new_seed: int):
 	generate_shop_inventory()
 	
 	# If shop is currently open, update it
-	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeons/Shop
 	if shop_node.visible:
 		populate_shop_ui()
 		update_shop_ui()
@@ -540,7 +540,7 @@ func die() -> void:
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
 	alive = false
 	hide_ui()
-	if type == "Dungeon" and lives <= 0:
+	if type == "Dungeons" and lives <= 0:
 		Toast.add("You lost all your lives, you're out of the game!")
 		end_game()
 		return
@@ -558,10 +558,10 @@ func die() -> void:
 	if type == "Defense":
 		$"UI/Defense/Death".visible = true	
 		$"UI/Defense/Death/Panel/Meta".text = stats_text
-	if type == "Dungeon":
-		$UI/Dungeon/Death.visible = true
+	if type == "Dungeons":
+		$UI/Dungeons/Death.visible = true
 		stats_text += "\nRooms:\t " + str(roundi(get_parent().completed_rooms))
-		$"UI/Dungeon/Death/Panel/Meta".text = stats_text
+		$"UI/Dungeons/Death/Panel/Meta".text = stats_text
 	
 	reset_status_effects()
 	
@@ -628,7 +628,7 @@ func generate_shop_inventory():
 	shop_rng.seed = current_shop_seed
 	print("Generating shop with seed: ", current_shop_seed)
 	
-	var current_shop_type = "DEFENSE" if type == "Defense" else "DUNGEON"
+	var current_shop_type = "DEFENSE" if type == "Defense" else "DUNGEONS"
 	
 	var available_items = []
 	for item in Catalog.items:
@@ -671,7 +671,7 @@ func generate_shop_inventory():
 	print("Total shop items: ", shop_items.size())
 
 func populate_shop_ui():
-	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeons/Shop
 	var grid = shop_node.get_node("Panel/ScrollContainer/GridContainer")
 	
 	# Clear existing items
@@ -799,7 +799,7 @@ func reroll_shop():
 	return false
 
 func update_shop_ui():
-	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeons/Shop
 	shop_node.get_node("Panel/HBoxContainer/Gold").text = str(gold)
 	
 	# Update reroll button text/availability
@@ -809,7 +809,7 @@ func update_shop_ui():
 		reroll_btn.disabled = gold < reroll_cost or rerolls_available <= 0
 
 func update_inventory_focus() -> void:
-	var inventory = $UI/Defense/Inventory if type == "Defense" else $UI/Dungeon/Inventory
+	var inventory = $UI/Defense/Inventory if type == "Defense" else $UI/Dungeons/Inventory
 	var slots = inventory.get_children()
 	
 	# Remove highlight from all slots
@@ -841,7 +841,7 @@ func _process_input(delta) -> void:
 		
 	if $UI/Global/ChatBar.has_focus() and alive:
 		play_idle_animation()
-	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeon/Game Over".visible or $UI/Global/Pause.visible or $UI/Defense/Death.visible or $UI/Dungeon/Death.visible:
+	if not alive or $UI/Global/ChatBar.has_focus() or $"UI/Defense/Game Over".visible or $"UI/Dungeons/Game Over".visible or $UI/Global/Pause.visible or $UI/Defense/Death.visible or $UI/Dungeons/Death.visible:
 		return
 		
 		# Controller inventory navigation
@@ -971,7 +971,7 @@ func _process_input(delta) -> void:
 
 	if Input.is_action_just_pressed("interact"):
 		print("interacted")
-		var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+		var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeons/Shop
 		
 		if not shop_node.visible:
 			# Check if player is near a gem
@@ -987,7 +987,7 @@ func _process_input(delta) -> void:
 			
 	if $UI/Defense/Shop.visible:
 		return
-	if $UI/Dungeon/Shop.visible:
+	if $UI/Dungeons/Shop.visible:
 		return
 	velocity = Input.get_vector("left", "right", "up", "down", 0.1)
 	var velocity_length = velocity.length_squared()
@@ -1304,8 +1304,8 @@ func press_inventory_slot(index: int) -> void:
 
 		if alive and not cooldown_active:
 			slot.get_node("Button").emit_signal("pressed")
-	elif type == "Dungeon":
-		var slots = $UI/Dungeon/Inventory.get_children()
+	elif type == "Dungeons":
+		var slots = $UI/Dungeons/Inventory.get_children()
 		if index < 0 or index >= get_slots():
 			return
 
@@ -1335,7 +1335,7 @@ func _on_zoom_timeout() -> void:
 var using_controller := false
 	
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and not $UI/Global/ChatBar.has_focus() and not $UI/Defense/Shop.visible and not $UI/Dungeon/Shop.visible:
+	if event is InputEventMouseButton and event.pressed and not $UI/Global/ChatBar.has_focus() and not $UI/Defense/Shop.visible and not $UI/Dungeons/Shop.visible:
 		match event.button_index:
 			MOUSE_BUTTON_WHEEL_UP:
 				change_zoom(0.25)
@@ -1394,7 +1394,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				press_inventory_slot(2)
 			52:
 				press_inventory_slot(3)
-	if (not $UI/Defense/Shop.visible and not $UI/Dungeon/Shop.visible) and (not $"UI/Defense/Game Over".visible and not $"UI/Dungeon/Game Over".visible) and (not $UI/Global/Pause.visible):
+	if (not $UI/Defense/Shop.visible and not $UI/Dungeons/Shop.visible) and (not $"UI/Defense/Game Over".visible and not $"UI/Dungeons/Game Over".visible) and (not $UI/Global/Pause.visible):
 		if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
 			$UI/Global/ChatBar.grab_focus()
 
@@ -1539,13 +1539,13 @@ func show_ui() -> void:
 		$UI/Defense/Inventory.visible = true
 		$UI/Defense/HBoxContainer.visible = true
 	else:
-		$UI/Dungeon/HBoxContainer.visible = true 
-		$UI/Dungeon/HealthBar.visible = true
-		$UI/Dungeon/OverhealBar.visible = true
+		$UI/Dungeons/HBoxContainer.visible = true 
+		$UI/Dungeons/HealthBar.visible = true
+		$UI/Dungeons/OverhealBar.visible = true
 		
-		$UI/Dungeon/VBoxContainer/SprintBar.visible = true
-		$UI/Dungeon/Inventory.visible = true
-		$"UI/Dungeon/Health Label".visible = true
+		$UI/Dungeons/VBoxContainer/SprintBar.visible = true
+		$UI/Dungeons/Inventory.visible = true
+		$"UI/Dungeons/Health Label".visible = true
 
 func hide_ui() -> void:
 	if $UI/Defense.visible:
@@ -1558,14 +1558,14 @@ func hide_ui() -> void:
 		$UI/Defense/HBoxContainer.visible = false
 		$UI/Defense/Shop.visible = false
 	else:
-		$UI/Dungeon/HealthBar.visible = false
-		$UI/Dungeon/OverhealBar.visible = false
-		$"UI/Dungeon/Health Label".visible = false
-		$UI/Dungeon/HBoxContainer.visible = false 
-		$UI/Dungeon/HealthBar.visible = false
-		$UI/Dungeon/VBoxContainer/SprintBar.visible = false
-		$UI/Dungeon/Inventory.visible = false 
-		$UI/Dungeon/Shop.visible = false
+		$UI/Dungeons/HealthBar.visible = false
+		$UI/Dungeons/OverhealBar.visible = false
+		$"UI/Dungeons/Health Label".visible = false
+		$UI/Dungeons/HBoxContainer.visible = false 
+		$UI/Dungeons/HealthBar.visible = false
+		$UI/Dungeons/VBoxContainer/SprintBar.visible = false
+		$UI/Dungeons/Inventory.visible = false 
+		$UI/Dungeons/Shop.visible = false
 
 func _is_mouse_over_chat_bar() -> bool:
 	if not $UI/Global/ChatBar.visible:
@@ -1605,7 +1605,7 @@ func _physics_process(delta: float) -> void:
 	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
-	var effects_node = $UI/Defense/VBoxContainer/Status if type == "Defense" else $UI/Dungeon/VBoxContainer/Status
+	var effects_node = $UI/Defense/VBoxContainer/Status if type == "Defense" else $UI/Dungeons/VBoxContainer/Status
 	for children in effects_node.get_children():
 		children.queue_free()
 	for effect in active_effects:
@@ -1615,11 +1615,11 @@ func _physics_process(delta: float) -> void:
 			bubble.get_node("Progress").value = ((effect.duration - effect.elapsed_time) / effect.duration) * 100.0
 			effects_node.add_child(bubble)
 
-	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeon/Shop
+	var shop_node = $UI/Defense/Shop if type == "Defense" else $UI/Dungeons/Shop
 	if using_controller and Man.is_mobile():
 		hide_mobile_controls()
 	elif not using_controller and Man.is_mobile():
-		if (not shop_node.visible and not $UI/Global/Pause.visible and not $"UI/Defense/Game Over".visible and not $"UI/Dungeon/Game Over".visible):
+		if (not shop_node.visible and not $UI/Global/Pause.visible and not $"UI/Defense/Game Over".visible and not $"UI/Dungeons/Game Over".visible):
 			show_mobile_controls()
 		else:
 			hide_mobile_controls()
@@ -1697,13 +1697,13 @@ func _physics_process(delta: float) -> void:
 	
 	if $"UI/Defense/Death".visible:
 		$"UI/Defense/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
-	if $UI/Dungeon/Death.visible:
-		$"UI/Dungeon/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
-	if type == "Dungeon" and $UI/Dungeon.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
-		$UI/Dungeon/HBoxContainer/Room/HBoxContainer/Label.text = "Room: " + str(get_parent().completed_rooms + 1)
-		$UI/Dungeon/HBoxContainer/Lives/HBoxContainer/Label.text = "Lives: " + str(lives)
-		#$UI/Dungeon/HBoxContainer/Progress/Label.text = str(get_parent().progress)
-		$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: "+ str(gold)
+	if $UI/Dungeons/Death.visible:
+		$"UI/Dungeons/Death/Panel/Respawn Timer".text = "You will respawn in " + str(roundi(revival_time)) + " seconds..."
+	if type == "Dungeons" and $UI/Dungeons.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
+		$UI/Dungeons/HBoxContainer/Room/HBoxContainer/Label.text = "Room: " + str(get_parent().completed_rooms + 1)
+		$UI/Dungeons/HBoxContainer/Lives/HBoxContainer/Label.text = "Lives: " + str(lives)
+		#$UI/Dungeons/HBoxContainer/Progress/Label.text = str(get_parent().progress)
+		$UI/Dungeons/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: "+ str(gold)
 
 		if added_gold_timeout > 0.0:
 			added_gold_timeout -= delta
@@ -1721,28 +1721,28 @@ func _physics_process(delta: float) -> void:
 
 		# Show the added gold in the same label
 		if added_gold > 0:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
+			$UI/Dungeons/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
-			$UI/Dungeon/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
+			$UI/Dungeons/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
 					
-		$UI/Dungeon/HealthBar.max_value = get_max_health()
-		$UI/Dungeon/HealthBar.value = health
-		$UI/Dungeon/VBoxContainer/SprintBar.value = sprint
+		$UI/Dungeons/HealthBar.max_value = get_max_health()
+		$UI/Dungeons/HealthBar.value = health
+		$UI/Dungeons/VBoxContainer/SprintBar.value = sprint
 		$UI/Defense/OverhealBar.max_value = get_max_health()
-		$UI/Dungeon/OverhealBar.value = overheal
+		$UI/Dungeons/OverhealBar.value = overheal
 		
 		if sprint >= 220:
 			exhausted = false
-			$UI/Dungeon/VBoxContainer/SprintBar.visible = false
+			$UI/Dungeons/VBoxContainer/SprintBar.visible = false
 		else:
-			$UI/Dungeon/VBoxContainer/SprintBar.visible = true
-		$"UI/Dungeon/Health Label".text = str(roundi(health + overheal)) + "/" + str(roundi(get_max_health()))
+			$UI/Dungeons/VBoxContainer/SprintBar.visible = true
+		$"UI/Dungeons/Health Label".text = str(roundi(health + overheal)) + "/" + str(roundi(get_max_health()))
 		
 		
 	if $UI/Defense/Shop.visible:
 		$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = str(gold)
-	if $UI/Dungeon/Shop.visible:
-		$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = str(gold)
+	if $UI/Dungeons/Shop.visible:
+		$UI/Dungeons/Shop/Panel/HBoxContainer/Gold.text = str(gold)
 		
 	if not alive and revival_time != -1:
 		revival_time -= delta
@@ -1756,8 +1756,8 @@ func _physics_process(delta: float) -> void:
 			kills = 0
 			if type == "Defense":
 				$"UI/Defense/Death".visible = false
-			if type == "Dungeon":
-				$UI/Dungeon/Death.visible = false
+			if type == "Dungeons":
+				$UI/Dungeons/Death.visible = false
 			health = get_max_health()
 			gold = max(roundi(gold / 2), 0)
 			hit_cooldown = max_hit_cooldown
@@ -1766,7 +1766,7 @@ func _physics_process(delta: float) -> void:
 					Toast.add.rpc_id(int(name), "You respawned! You lost half your gold.")
 				else:
 					Toast.add("You respawned! You lost half your gold.")
-			elif type == "Dungeon":
+			elif type == "Dungeons":
 				lives -= 1
 				if multiplayer.has_multiplayer_peer():
 					Toast.add.rpc_id(int(name), "You respawned! You have " + str(lives) + " lives left.")
@@ -1779,9 +1779,9 @@ func _physics_process(delta: float) -> void:
 				if $UI/Defense/Shop.visible:
 					$UI/Defense/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
 					
-			elif type == "Dungeon":
-				if $UI/Dungeon/Shop.visible:
-					$UI/Dungeon/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
+			elif type == "Dungeons":
+				if $UI/Dungeons/Shop.visible:
+					$UI/Dungeons/Shop/Panel/HBoxContainer/Gold.text = "Gold: " + str(gold)
 					
 				var safe_position = Vector2.ZERO
 
@@ -1857,7 +1857,7 @@ func _physics_process(delta: float) -> void:
 		for i in range(max_slots, slots.size()):
 			var slot = slots[i]
 			slot.visible = false
-	elif type == "Dungeon":
+	elif type == "Dungeons":
 		var found_shop = false
 		for area in $Area2D.get_overlapping_areas():
 			if (area as Area2D).is_in_group("gem"):
@@ -1868,7 +1868,7 @@ func _physics_process(delta: float) -> void:
 			if not $UI/Global/Pause.visible:
 				$UI/Global/Use.visible = found_shop
 		
-		var slots = $UI/Dungeon/Inventory.get_children()
+		var slots = $UI/Dungeons/Inventory.get_children()
 		var max_slots = get_slots()  # Get the number of slots player should have
 
 		for i in max_slots:  # Only iterate through available slots
@@ -2182,7 +2182,7 @@ func _process_hit(body, damage: float):
 
 func _on_shop_close_button_pressed() -> void:
 	$UI/Defense/Shop.visible = false
-	$UI/Dungeon/Shop.visible = false
+	$UI/Dungeons/Shop.visible = false
 	
 
 func add_message(message: String, player_name: String) -> void:

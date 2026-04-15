@@ -219,7 +219,7 @@ func _ready() -> void:
 		# Singleplayer: spawn one player normally
 		var p = player_scene.instantiate()
 		p.name = "Player"
-		p.type = "Dungeon"
+		p.type = "Dungeons"
 		p.global_position = Vector2(128, 128)
 		call_deferred("add_child", p, true)
 		
@@ -227,7 +227,7 @@ func _ready() -> void:
 		smoke.global_position = p.global_position
 		smoke.emitting = true
 		add_child(smoke, true)
-		p.setup_ui("Dungeon")
+		p.setup_ui("Dungeons")
 		p.refresh_shop(randi())
 	
 	# Multiplayer: spawn players from the current list
@@ -242,7 +242,7 @@ func _ready() -> void:
 			var peer_id = player_data["id"]
 			var p = player_scene.instantiate()
 			p.name = str(peer_id)
-			p.type = "Dungeon"
+			p.type = "Dungeons"
 			p.get_node("Username").text = player_data["username"]
 
 			# Random angle around the circle
@@ -258,7 +258,7 @@ func _ready() -> void:
 		
 		await get_tree().create_timer(0.2).timeout
 		for player in get_tree().get_nodes_in_group("players"):
-			player.setup_ui.rpc("Dungeon")
+			player.setup_ui.rpc("Dungeons")
 			player.refresh_shop.rpc(chosen_seed)
 			print("Setting Dungeon UI for " + player.name + ".")
 	
@@ -739,12 +739,20 @@ func complete_room() -> void:
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		send_rooms.rpc(completed_rooms)
 		Man.add_xp.rpc(25)
+		for player in NetworkManager.players:
+			add_gold(player, 25.0)
 	else:
 		Man.add_xp(25)
+		add_gold("Player", 25.0)
 	current_subwave_index = 0
 	completed_subwaves = 0  # Reset for next room
 	
 	print("[ROOM] Room completed! Total completed: ", completed_rooms)
+	
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		Toast.add.rpc("Room complete! Proceed to the next room!")
+	else:
+		Toast.add("Room complete! Proceed to the next room!")
 	
 	if (completed_rooms + 1) % 10 == 0:
 		spawn_shop_room()

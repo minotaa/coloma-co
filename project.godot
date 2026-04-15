@@ -8,20 +8,24 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Myrkwood: Offshoot"
 config/name_localized={
 "en": "Myrkwood: Offshoot"
 }
-config/version="9"
+config/version="10"
 run/main_scene="uid://bow6ppc3d127l"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Offshoot"
-config/features=PackedStringArray("4.5", "Mobile")
+config/features=PackedStringArray("4.6", "Mobile")
 run/max_fps=60
 boot_splash/bg_color=Color(0.0470588, 0.0470588, 0.0470588, 1)
-boot_splash/fullsize=false
+boot_splash/stretch_mode=0
 boot_splash/use_filter=false
 boot_splash/image="uid://b5o3rft0ai2nl"
 config/icon="uid://cpuu4kwxvepvg"
@@ -33,16 +37,18 @@ Entities="*res://scripts/types/entities.gd"
 Catalog="*res://scripts/types/catalog.gd"
 NetworkManager="*res://scripts/network_manager.gd"
 Man="*res://scripts/man.gd"
-EOSGRuntime="*res://addons/epic-online-services-godot/runtime.gd"
-HPlatform="*res://addons/epic-online-services-godot/heos/hplatform.gd"
-HAuth="*res://addons/epic-online-services-godot/heos/hauth.gd"
-HAchievements="*res://addons/epic-online-services-godot/heos/hachievements.gd"
-HFriends="*res://addons/epic-online-services-godot/heos/hfriends.gd"
-HStats="*res://addons/epic-online-services-godot/heos/hstats.gd"
-HLeaderboards="*res://addons/epic-online-services-godot/heos/hleaderboards.gd"
-HLobbies="*res://addons/epic-online-services-godot/heos/hlobbies.gd"
-HP2P="*res://addons/epic-online-services-godot/heos/hp2p.gd"
+EOSGRuntime="*uid://7saywdx0ipep"
+HPlatform="*uid://yl2muvqrdiud"
+HAuth="*uid://786t1jiowvvg"
+HAchievements="*uid://bis404dty5u5c"
+HFriends="*uid://uumqbey8ji5t"
+HStats="*uid://dbckdip83oone"
+HLeaderboards="*uid://b06khhf20mplm"
+HLobbies="*uid://6iqvm33q0tb1"
+HP2P="*uid://u6ae5fpm6l8q"
 Fade="*res://scripts/fade.gd"
+HSessions="*uid://bieh2rxxahuu2"
+Shit="*uid://ccjfy6h1j4tap"
 
 [debug]
 

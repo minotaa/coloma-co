@@ -2,10 +2,16 @@ extends Node
 
 @onready var main_menu_scene: PackedScene = preload("res://scenes/main_menu.tscn")
 
-var modes: Array[Variant] = ["Defense", "Dungeon"]
+var modes: Array[Variant] = ["Defense", "Dungeons"]
+var explanations: Dictionary[String, String] = {
+	"Defense": "Fight off enemies in this wave-based defense mode, building up coins and acquiring perks to help you as the waves get harder! How long will you last?",
+	"Dungeons": "Explore procedurally generated dungeons, going through various rooms and visiting shops to get new items. How far can you make it?",
+	"Tutorial": "Learn how to play the game."
+}
 var maps: Dictionary[Variant, Variant] = {
 	"defense": ["Lysawood", "Solmere"],
-	"dungeon": ["Lysawood", "Solmere"],
+	"dungeons": ["Lysawood", "Solmere"],
+	"tutorial": ["Tutorial"],
 	"campaign": ["Joro"]
 }
 var dont_do_this_again: bool = false
@@ -13,8 +19,9 @@ var dont_do_this_again: bool = false
 var map_paths: Dictionary[Variant, Variant] = {
 	"Defense_Lysawood": "res://scenes/levels/defense/Plains.tscn",
 	"Defense_Solmere": "res://scenes/levels/defense/Desert.tscn",
-	"Dungeon_Lysawood": "res://scenes/levels/dungeon/plains_start_room.tscn",
-	"Campaign_Myrkwood": "res://scenes/levels/campaign/campaign.tscn"
+	"Dungeons_Lysawood": "res://scenes/levels/dungeon/dungeon.tscn",
+	"Dungeons_Solmere": "res://scenes/levels/dungeon/dungeon.tscn"
+	#"Campaign_Myrkwood": "res://scenes/levels/campaign/campaign.tscn" # Unused
 }
 
 var playtime_points: int = 0
@@ -291,7 +298,7 @@ func _ready() -> void:
 	
 func is_in_game() -> bool:
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Defense") or child.name.begins_with("Dungeon"):
+		if child.name.begins_with("Defense") or child.name.begins_with("Dungeons"):
 			return true
 	return false
 	
@@ -299,12 +306,8 @@ func is_in_game() -> bool:
 func start_game(mode: String, map: String) -> void:
 	await Fade.fade_out(0.25)
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Main Menu") or child.name.begins_with("Defense") or child.name.begins_with("Dungeon"):
+		if child.name.begins_with("Main Menu") or child.name.begins_with("Defense") or child.name.begins_with("Dungeons"):
 			child.queue_free()
-	if Man.selected_mode == "Dungeon":
-		get_tree().current_scene.add_child(load("res://scenes/levels/dungeon/dungeon.tscn").instantiate(), true)
-		await Fade.fade_in(0.25)
-		return
 	get_tree().current_scene.add_child(load(map_paths[mode + "_" + map]).instantiate(), true)
 	await Fade.fade_in(0.25)
 	
@@ -325,7 +328,7 @@ func end_game() -> void:
 			multiplayer.multiplayer_peer = null
 	await Fade.fade_out(0.25)
 	for child in get_tree().current_scene.get_children():
-		if child.name.begins_with("Defense") or child.name.begins_with("Main Menu") or child.name.begins_with("Dungeon"):
+		if child.name.begins_with("Defense") or child.name.begins_with("Main Menu") or child.name.begins_with("Dungeons"):
 			child.queue_free()
 	get_tree().current_scene.add_child(main_menu_scene.instantiate(), true)
 	await Fade.fade_in(0.25)

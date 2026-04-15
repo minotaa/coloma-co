@@ -2,6 +2,17 @@ extends Control
 
 var item: ItemType
 
+func to_roman(n: int) -> String:
+	var result = ""
+	var values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+	var romans = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+
+	for i in range(values.size()):
+		while n >= values[i]:
+			n -= values[i]
+			result += romans[i]
+	return result
+
 func set_item(item: ItemType) -> void:
 	self.item = item
 	tooltip_text = item.description
@@ -9,6 +20,19 @@ func set_item(item: ItemType) -> void:
 	$TextureRect.texture = item.texture
 	$HBoxContainer/Gold.text = str(item.price)
 	$Label.text = item.name
+	# Check if the player already has this upgrade
+	var upgrade_bag = Man.get_player().upgrade_bag
+	var has_stack := false
+	for stack in upgrade_bag.list:
+		if stack.type.id == item.id:
+			has_stack = true
+			break
+	if has_stack:
+		var item_stack = upgrade_bag.get_item_stack(item)
+		if item is Upgrade:
+			$Label.text = item.name + " " + to_roman(item_stack.data["level"] + 1)
+	else:
+		$Label.text = item.name + " I"
 
 func _on_button_pressed() -> void:
 	var player = Man.get_player()

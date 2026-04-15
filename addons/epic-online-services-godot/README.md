@@ -5,7 +5,7 @@ Epic Online Services Godot (EOSG)
 ### Easiest way to use Epic Online Services in Godot 4.2+ (includes demo project)
 
 <img alt="Godot3" src="https://img.shields.io/badge/-Godot 4.2+-478CBF?style=for-the-badge&logo=godotengine&logoWidth=20&logoColor=white" />
-&nbsp;&nbsp;&nbsp;<img alt="Epic Online Services 1.17.1.3" src="https://img.shields.io/badge/-Epic Online Services 1.17.1.3-313131?style=for-the-badge&logo=epic-games&logoWidth=20&logoColor=white" />
+&nbsp;&nbsp;&nbsp;<img alt="Epic Online Services 1.18.1.2" src="https://img.shields.io/badge/-Epic Online Services 1.17.1.3-313131?style=for-the-badge&logo=epic-games&logoWidth=20&logoColor=white" />
 
 > Supports Windows x64, Linux x64/arm64, Android x64/arm64, MacOS, iOS arm64 (iphone/simulator)
 
@@ -26,18 +26,19 @@ Epic Online Services Godot (EOSG)
 - ### GDExtension EOS
   The GDExtension EOS provides advanced EOS usage not recommended for beginners. See `EOS` and `IEOS` classes.
 
-
 ## [🚀 Check out out GDAI MCP from the creator of EOSG](https://gdaimcp.com?ref=eosg-readme)
+
 <a href="https://gdaimcp.com?ref=eosg-readme" target="_blank">
 <img src="https://gdaimcp.com/images/og/gdai-mcp.png" width="400" />
 </a>
 
-Supercharge your Godot 4.2+ workflow with GDAI MCP – the ultimate Godot MCP server that lets AI tools like Claude, Cursor, Windsurf, VSCode and more automate scene creation, node editing, reading godot errors, creating scripts, debugging, and more.
+Supercharge your Godot 4.2+ workflow with GDAI MCP – the ultimate Godot MCP server that lets AI tools like Claude,
+Cursor, Windsurf, VSCode and more automate scene creation, node editing, reading godot errors, creating scripts,
+debugging, and more.
 
 Vibe code like never before!
 
 ### 🔗 **[https://gdaimcp.com](https://gdaimcp.com?ref=eosg-readme)**
-
 
 # High Level Epic Online Services
 
@@ -308,6 +309,10 @@ and:
 
 ## Exporting for Android
 
+Use a community created [Android Export Plugin](https://github.com/uno1982/EOSG-android-exporter)
+
+Or follow the steps below to manually export for Android.
+
 ### Pre-requisites
 
 1. Setup the `Android Build Template` in your Godot project by following the
@@ -469,6 +474,7 @@ device and iOS arm64 simulator.
     - UI Interface
     - Lobby Interface (Also sample for manual audio input/output)
     - RTC Interface
+    - RTCAudio Interface
     - P2P Interface
     - Version Interface
 

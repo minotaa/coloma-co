@@ -663,6 +663,9 @@ func update_mode_selector() -> void:
 	$"UI/Main/Singleplayer Mode Selector/Panel/Mode Selector/Label".text = Man.selected_mode
 	$"UI/Main/Singleplayer Mode Selector/Panel/Map Selector/Label".text = Man.selected_map
 	
+	$"UI/Main/Singleplayer Mode Selector/Panel2/Title".text = Man.selected_mode
+	$"UI/Main/Singleplayer Mode Selector/Panel2/ScrollContainer/Description".text = Man.explanations[Man.selected_mode]
+	
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		NetworkManager.send_mode.rpc(Man.selected_mode, Man.selected_map)
 		NetworkManager.update_players.emit(NetworkManager.players)

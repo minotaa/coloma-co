@@ -152,12 +152,11 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_v5wyi"]
-radius = 16.03122
+radius = 10.049875
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_0l8pv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n6pvg"]
-radius = 17.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_hebxe"]
 properties/0/path = NodePath(".:position")
