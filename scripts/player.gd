@@ -1088,19 +1088,19 @@ func _process_input(delta) -> void:
 			var should_throw = false
 			
 			# Check directional keyboard controls
-			if Input.is_action_just_pressed("attack_up"):
+			if Input.is_action_pressed("attack_up"):
 				direction.y -= 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack_down"):
+			elif Input.is_action_pressed("attack_down"):
 				direction.y += 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack_left"):
+			elif Input.is_action_pressed("attack_left"):
 				direction.x -= 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack_right"):
+			elif Input.is_action_pressed("attack_right"):
 				direction.x += 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack") and not Man.is_mobile():
+			elif Input.is_action_pressed("attack") and not Man.is_mobile():
 				if using_controller:
 					direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
 				else:
@@ -1128,19 +1128,19 @@ func _process_input(delta) -> void:
 			var should_throw = false
 			
 			# Check directional keyboard controls
-			if Input.is_action_just_pressed("attack_up"):
+			if Input.is_action_pressed("attack_up"):
 				direction.y -= 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack_down"):
+			elif Input.is_action_pressed("attack_down"):
 				direction.y += 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack_left"):
+			elif Input.is_action_pressed("attack_left"):
 				direction.x -= 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack_right"):
+			elif Input.is_action_pressed("attack_right"):
 				direction.x += 1
 				should_throw = true
-			elif Input.is_action_just_pressed("attack") and not Man.is_mobile():
+			elif Input.is_action_pressed("attack") and not Man.is_mobile():
 				if using_controller:
 					direction = Vector2(cos(last_cursor_angle), sin(last_cursor_angle))
 				else:
@@ -1928,7 +1928,7 @@ func _physics_process(delta: float) -> void:
 		$UI/Defense/Boss.visible = false
 	
 	if count > 0:
-		bombrat_counter.text = "Bombrats: " + "%d" % count
+		bombrat_counter.text = "Bombrats: " + "%d/%d" % [count, get_parent().bombrats_to_expect]
 
 	if type == "Defense" and $UI/Defense.visible and (not multiplayer.has_multiplayer_peer() or is_multiplayer_authority()):
 		$UI/Defense/HBoxContainer/Wave/HBoxContainer/Label.text = "Wave: " + str(get_parent().wave)

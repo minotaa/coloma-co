@@ -3,6 +3,7 @@ extends Node2D
 var rng = RandomNumberGenerator.new()
 var wave: int = 0
 var bombrats_left: int = 0
+var bombrats_to_expect: int = 0
 var started: bool = false
 var spawning_wave: bool = false
 var kills = {}
@@ -296,28 +297,50 @@ func spawn_wave() -> void:
 			else:
 				player.refresh_shop(chosen_seed)
 
+	var bombrat_amount = 0
+
 	# Check for boss wave (every 20 waves)
 	if wave % 20 == 0:
 		spawn_boss_wave()
 		spawning_wave = false
 		return
-
+		
 	match wave:
 		1:
+			bombrat_amount = 2
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 		2:
+			bombrat_amount = 4
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 			spawn_bombrat("west")
 			spawn_bombrat("east")
 		3:
+			bombrat_amount = 6
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 			spawn_bombrat("west")
 			spawn_bombrat("east")
 			await spawn_bombrats(2)
 		4:
+			bombrat_amount = 7
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			spawn_bombrat("north")
 			spawn_bombrat("south")
 			spawn_bombrat("west")
@@ -326,29 +349,64 @@ func spawn_wave() -> void:
 			spawn_slime("north")
 			spawn_slime("south")
 		5:
+			bombrat_amount = 5
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			await spawn_bombrats(5)
 			await spawn_slimes(3)
 		6:
+			bombrat_amount = 5
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			await spawn_bombrats(5)
 			await spawn_slimes(4)
 		7:
+			bombrat_amount = 4
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			await spawn_bombrats(4)
 			await spawn_slimes(4)
 			spawn_bauble("north")
 		8:
+			bombrat_amount = 8
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			await spawn_bombrats(4)
 			await spawn_slimes(5)
 			await spawn_baubles(2)
 		9:
+			bombrat_amount = 5
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			await spawn_bombrats(5)
 			await spawn_slimes(5)
 			await spawn_baubles(3)
 		10:
+			bombrat_amount = 5
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			await spawn_bombrats(5)
 			await spawn_slimes(5)
 			await spawn_baubles(4)
 			spawn_crabman("north")
 		_:
+			bombrat_amount = 4 + wave
+			if multiplayer.has_multiplayer_peer():
+				send_bombrats.rpc(bombrat_amount)
+			else:
+				send_bombrats(bombrat_amount)
 			if wave % 5 == 0:
 				var num_crabmen = min(4, 1 + wave / 5)
 				for i in range(num_crabmen):
@@ -372,6 +430,10 @@ func spawn_wave() -> void:
 			if baubles_to_spawn > 0:
 				await spawn_baubles(baubles_to_spawn)
 	spawning_wave = false
+
+@rpc("authority", "call_local")
+func send_bombrats(bombrat_amount) -> void:
+	bombrats_to_expect = bombrat_amount
 
 func spawn_boss_wave() -> void:
 	if multiplayer.has_multiplayer_peer():
