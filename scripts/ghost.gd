@@ -170,11 +170,21 @@ func check_raycasts_for_player() -> bool:
 				return true
 	return false
 
-# --- Player damage on contact only while charging ---
 func on_player_contact(player: Node) -> void:
-	if move_mode == "charging" and player and player.has_method("take_damage"):
-		player.take_damage(CONTACT_DAMAGE, name, global_position)
-
+	if move_mode == "charging" and player and player.alive:
+		if not player.has_effect("Weak"):
+			var brittle = Effect.new("Weak", Color.from_rgba8(200, 200, 255, 255), 10.0, 0, 0)
+			var texture = AtlasTexture.new()
+			texture.atlas = load("res://assets/sprites/status_effects.png")
+			texture.region = Rect2(128.0, 0.0, 16.0, 16.0)
+			brittle.texture = texture
+			if multiplayer.has_multiplayer_peer():
+				Toast.add.rpc_id(int(player.name), "You've been Weakened for 10 seconds!")
+			else:
+				Toast.add("You've been Weakened for 10 seconds!")
+			player.add_status_effect(brittle)
+		player.take_damage(0, name, global_position)
+			
 # --- Sprite helper ---
 func update_sprite_direction(dir: Vector2, aggro: bool) -> void:
 	var suffix = "-aggro" if aggro else ""

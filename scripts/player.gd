@@ -2039,7 +2039,6 @@ func _physics_process(delta: float) -> void:
 			if not is_instance_valid(tracked) or not get_bombrats_to_track().has(tracked):
 				_remove_marker(tracked)
 
-
 func _remove_marker(bombrat):
 	if active_markers.has(bombrat):
 		active_markers[bombrat].queue_free()
@@ -2152,6 +2151,9 @@ func _process_hit(body, damage: float):
 
 		# Final damage after defense
 		var total_damage = damage_before_defense * defense_factor
+
+		if has_effect("Weak"): # Apply Brittle.
+			total_damage /= 2
 
 		# Positioning and visuals
 		var direction = body.global_position - global_position
