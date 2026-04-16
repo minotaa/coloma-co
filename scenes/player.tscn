@@ -812,6 +812,13 @@ texture_margin_bottom = 16.0
 atlas = ExtResource("34_giy8y")
 region = Rect2(160, 16, 16, 16)
 
+[sub_resource type="LabelSettings" id="LabelSettings_mx1m4"]
+font = ExtResource("11_d2wvv")
+font_size = 44
+shadow_size = 0
+shadow_color = Color(0.181798, 0.181798, 0.181798, 0.945098)
+shadow_offset = Vector2(4, 4)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_giy8y"]
 size = Vector2(120, 120)
 
@@ -981,6 +988,7 @@ volume_db = -12.5
 [node name="UI" type="CanvasLayer" parent="." unique_id=1600300788]
 
 [node name="Defense" type="Control" parent="UI" unique_id=354644664]
+visible = false
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
@@ -1583,7 +1591,6 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Main Menu"
 
 [node name="Dungeons" type="Control" parent="UI" unique_id=690478890]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -2096,6 +2103,25 @@ stretch_margin_right = 16
 stretch_margin_bottom = 16
 texture_under = ExtResource("14_i4ail")
 texture_progress = ExtResource("15_a38lo")
+
+[node name="Title" type="Label" parent="UI/Dungeons" unique_id=581117548]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.363
+anchor_top = 0.096
+anchor_right = 0.637
+anchor_bottom = 0.193
+offset_left = 0.35998535
+offset_top = -0.12000275
+offset_right = -0.3600464
+offset_bottom = 0.039993286
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(175, 35)
+text = "LAST LIFE!"
+label_settings = SubResource("LabelSettings_mx1m4")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Global" type="Control" parent="UI" unique_id=301086061]
 layout_mode = 3
