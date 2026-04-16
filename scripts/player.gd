@@ -1252,6 +1252,10 @@ func _process_input(delta) -> void:
 	if has_effect("Gunked"):
 		velocity /= 2 
 	move_and_slide()
+	if Input.is_action_pressed("sprint"):
+		global_position = round(global_position / 0.1) * 0.1
+	else:
+		global_position = round(global_position / 2.0) * 2.0
 
 func screen_shake(intensity: float, duration: float):
 	var original_offset = $Camera2D.offset
@@ -1600,11 +1604,19 @@ func get_blended_effect_color() -> Color:
 		1.0
 	)
 
+var pulse_timer = 0.0
+
 func _physics_process(delta: float) -> void:
 	#position = clamp_player_position(position)
 	#print($AudioListener2D.is_current())
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
+	if type == "Dungeons" and lives <= 0:
+		pulse_timer += delta
+		var t = fmod(pulse_timer, 2.5) / 2.5
+		$UI/Dungeons/Title.scale = Vector2.ONE * (1.0 + 0.1 * sin(t * TAU))
+	else:
+		$UI/Dungeons/Title.visible = false
 	var effects_node = $UI/Defense/VBoxContainer/Status if type == "Defense" else $UI/Dungeons/VBoxContainer/Status
 	for children in effects_node.get_children():
 		children.queue_free()
