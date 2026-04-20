@@ -11,7 +11,6 @@ var explanations: Dictionary[String, String] = {
 var maps: Dictionary[Variant, Variant] = {
 	"defense": ["Lysawood", "Solmere"],
 	"dungeons": ["Lysawood", "Solmere"],
-	"tutorial": ["Tutorial"],
 	"campaign": ["Joro"]
 }
 var dont_do_this_again: bool = false
@@ -62,10 +61,28 @@ var cooldowns: Dictionary[Variant, Variant] = {}
 var current_level: int = 0
 var current_xp: float = 0.0
 var xp_scaling: float = 1.5
+var kills = {}
 
 var highest_wave: int = 0
 var highest_rooms: int = 0
 var enemies_killed: int = 0
+
+var enemies = {
+	"rapid_bauble": preload("res://scenes/rapid_bauble.tscn"),
+	"angry_bauble": preload("res://scenes/angry_bauble.tscn"),
+	"bombrat": preload("res://scenes/bombrat.tscn"),
+	"big_bombrat": preload("res://scenes/big_bombrat.tscn"),
+	"slime": preload("res://scenes/slime.tscn"),
+	"mother_slime": preload("res://scenes/mother_slime.tscn"),
+	"poison_slime": preload("res://scenes/poison_slime.tscn"),
+	"bauble": preload("res://scenes/bauble.tscn"),
+	"crabthing": preload("res://scenes/crabman.tscn"),
+	"ghost": preload("res://scenes/ghost.tscn"),
+	"gunk_slime": preload("res://scenes/gunk_slime.tscn"),
+	"explosive_bauble": preload("res://scenes/explosive_bauble.tscn"),
+	"bombrat_king": preload("res://scenes/bombrat_king.tscn"),
+	"jumper_slime": preload("res://scenes/jumper_slime.tscn"),
+}
 
 func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:
 	var sfx = AudioStreamPlayer.new()
@@ -260,7 +277,16 @@ func load_game():
 			flick_control = data["flick_control"]
 		if data.has("zoom"):
 			zoom = data["zoom"]
+		if data.has("kills"):
+			kills = data["kills"]
 	print("Loaded save data.")
+
+@rpc("any_peer", "call_local", "reliable")
+func send_kill(enemy_type: String) -> void:
+	if not kills.has(enemy_type):
+		kills[enemy_type] = 0
+	kills[enemy_type] += 1
+	print("Added kill for " + enemy_type + " (" + str(kills[enemy_type]) + " kills).")
 
 func get_save_data() -> Dictionary:
 	return {
@@ -277,7 +303,8 @@ func get_save_data() -> Dictionary:
 		"current_level": current_level,
 		"current_xp": current_xp,
 		"flick_control": flick_control,
-		"zoom": zoom
+		"zoom": zoom,
+		"kills": kills
 	}
 
 func _notification(what: int) -> void:
@@ -293,8 +320,16 @@ func save_game(reason: String) -> void:
 		HStats.ingest_stat_async("waves", highest_wave)
 	print("Saved the game. " + "(" + reason + ")")
 
+func get_enemy(enemy_type) -> Entity:
+	var enemy = enemies[enemy_type].instantiate()
+	get_tree().current_scene.get_node("Main Menu").add_child(enemy)
+	await get_tree().process_frame
+	enemy.queue_free()
+	return enemy
+
 func _ready() -> void:
 	load_game()
+	print((await get_enemy("bombrat")).bestiary_description)
 	
 func is_in_game() -> bool:
 	for child in get_tree().current_scene.get_children():

@@ -67,6 +67,9 @@ func add_kill(player_id: String, enemy_type: String) -> void:
 	get_node(str(player_id)).total_kills += 1
 	if multiplayer.has_multiplayer_peer():
 		update_kills.rpc(kills)
+		Man.send_kill.rpc_id(int(player_id), enemy_type)
+	else:
+		Man.send_kill(enemy_type)
 
 func end() -> void:
 	for player in get_tree().get_nodes_in_group("players"):

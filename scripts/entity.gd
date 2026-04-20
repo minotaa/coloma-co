@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name Entity 
 
+signal entity_initialized
+
 # Entity properties
 var entity_name: String = "Entity"
 var bestiary_description: String = "This is where the description for the enemy would be written."
@@ -60,6 +62,7 @@ func _ready() -> void:
 	
 	# Call custom initialization
 	initialize_entity()
+	emit_signal("entity_initialized")
 
 # Override this in child classes for custom initialization
 func initialize_entity() -> void:

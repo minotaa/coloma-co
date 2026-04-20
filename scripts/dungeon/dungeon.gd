@@ -133,6 +133,8 @@ func add_kill(player_id: String, enemy_type: String) -> void:
 	get_node(str(player_id)).total_kills += 1
 	if multiplayer.has_multiplayer_peer():
 		update_kills.rpc(kills)
+		Man.send_kill.rpc_id(int(player_id), enemy_type)
+	Man.send_kill(enemy_type)
 
 @rpc("authority", "call_remote")
 func update_kills(kills: Dictionary) -> void:
