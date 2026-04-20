@@ -287,7 +287,7 @@ func spawn_wave() -> void:
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.alive:
 			if multiplayer.has_multiplayer_peer():
-				player.heal.rpc(10)
+				player.heal.rpc_id(int(player.name), 10)
 			else:
 				player.heal(10)	
 		if wave % 5 == 0:
