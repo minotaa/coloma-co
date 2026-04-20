@@ -1,10 +1,11 @@
 extends Node2D
 
 @onready var area: Area2D = $Area2D
+@onready var lifetime = 6.5 
 
 func _ready() -> void:
 	rotation += randi_range(0, 180)
-	await get_tree().create_timer(6.5).timeout
+	await get_tree().create_timer(lifetime).timeout
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, 1.0)
