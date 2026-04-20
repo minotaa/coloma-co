@@ -12,6 +12,9 @@ var shoot_timer := 0.0
 var move_mode := "idle"
 var float_timer := 0.0
 
+func get_kill_type() -> String:
+	return "rapid_bauble"
+
 func initialize_entity() -> void:
 	agent = $NavigationAgent2D
 	sprite = $AnimatedSprite2D

@@ -327,9 +327,20 @@ func get_enemy(enemy_type) -> Entity:
 	enemy.queue_free()
 	return enemy
 
+func get_bestiary_completion() -> float:
+	var completed := 0.0
+
+	for enemy_name in Man.enemies.keys():
+		if not Man.kills.has(enemy_name):
+			continue
+		var enemy = await Man.get_enemy(enemy_name)
+		var kills: int = Man.kills[enemy_name]
+		completed += 1 if kills >= enemy.dev_commentary_requirement else 0.5
+
+	return float(completed) / float(Man.enemies.size()) * 100.0
+
 func _ready() -> void:
 	load_game()
-	print((await get_enemy("bombrat")).bestiary_description)
 	
 func is_in_game() -> bool:
 	for child in get_tree().current_scene.get_children():

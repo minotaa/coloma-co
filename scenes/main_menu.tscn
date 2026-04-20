@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="17_hstxw"]
 [ext_resource type="Script" uid="uid://b28m5a3h03too" path="res://scripts/lineedit.gd" id="18_1dfpl"]
 [ext_resource type="Texture2D" uid="uid://dfic0j1riy3u2" path="res://assets/sprites/box9.png" id="18_qywvv"]
+[ext_resource type="PackedScene" uid="uid://cic403f37by1h" path="res://scenes/bestiary_entry.tscn" id="19_qywvv"]
 
 [sub_resource type="Curve" id="Curve_j7ex8"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -152,6 +153,12 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_3wgol"]
+font_size = 33
+
+[sub_resource type="LabelSettings" id="LabelSettings_1acrt"]
+font_size = 22
 
 [sub_resource type="LabelSettings" id="LabelSettings_flqon"]
 font_size = 33
@@ -468,7 +475,6 @@ theme_override_styles/focus = ExtResource("10_8egab")
 text = "Quit"
 
 [node name="Loadout" type="Control" parent="UI/Main" unique_id=1611448595]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -488,9 +494,9 @@ offset_top = 23.92
 offset_right = -0.320038
 offset_bottom = -0.240051
 grow_vertical = 0
-focus_neighbor_top = NodePath("../Panel/Main/WeaponButton")
+focus_neighbor_top = NodePath("../Panel/Main/Bestiary")
 focus_next = NodePath("../Panel/Main/ArmorButton")
-focus_previous = NodePath("../Panel/Main/WeaponButton")
+focus_previous = NodePath("../Panel/Main/Bestiary")
 theme_override_font_sizes/font_size = 33
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
@@ -513,6 +519,7 @@ offset_bottom = -0.32006836
 theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
 
 [node name="Main" type="Control" parent="UI/Main/Loadout/Panel" unique_id=1293659931]
+visible = false
 layout_mode = 1
 anchor_left = 0.034
 anchor_top = 0.027
@@ -644,8 +651,8 @@ offset_top = -80.00003
 offset_right = 55.855995
 offset_bottom = 31.99997
 focus_neighbor_top = NodePath("../ArmorButton")
-focus_neighbor_bottom = NodePath("../../../Back")
-focus_next = NodePath("../../../Back")
+focus_neighbor_bottom = NodePath("../Bestiary")
+focus_next = NodePath("../Bestiary")
 focus_previous = NodePath("../ArmorButton")
 theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
@@ -714,13 +721,12 @@ vertical_alignment = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.31500003
-anchor_top = 0.71400005
+anchor_top = 0.725
 anchor_right = 0.68500006
-anchor_bottom = 0.771
+anchor_bottom = 0.78200006
 offset_left = -0.08001709
-offset_top = 2.1599731
 offset_right = 0.07998657
-offset_bottom = 2.2399902
+offset_bottom = 0.079956055
 grow_horizontal = 2
 text = "Level 9999"
 label_settings = SubResource("LabelSettings_5pajh")
@@ -731,13 +737,13 @@ vertical_alignment = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.019000001
-anchor_top = 0.771
-anchor_right = 0.98100007
-anchor_bottom = 0.82900006
-offset_left = -0.20800018
-offset_top = 2.2399902
-offset_right = 0.2079773
-offset_bottom = 1.7599792
+anchor_top = 0.78900003
+anchor_right = 0.97200006
+anchor_bottom = 0.846
+offset_left = 3.7919998
+offset_top = 0.15997314
+offset_right = 0.09597778
+offset_bottom = 0.23999023
 grow_horizontal = 2
 value = 50.0
 nine_patch_stretch = true
@@ -750,7 +756,7 @@ texture_progress = ExtResource("17_1dfpl")
 tint_under = Color(0.21230483, 0.21230483, 0.21230483, 1)
 tint_progress = Color(1.1551381e-06, 0.87540567, 0.78466874, 1)
 
-[node name="Back" type="Button" parent="UI/Main/Loadout/Panel/Main" unique_id=94619947]
+[node name="Bestiary" type="Button" parent="UI/Main/Loadout/Panel/Main" unique_id=94619947]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.031
@@ -762,9 +768,9 @@ offset_top = -1.5600586
 offset_right = -0.016021729
 offset_bottom = -1.4801025
 grow_vertical = 0
-focus_neighbor_top = NodePath("../Panel/Main/WeaponButton")
-focus_next = NodePath("../Panel/Main/ArmorButton")
-focus_previous = NodePath("../Panel/Main/WeaponButton")
+focus_neighbor_top = NodePath("../WeaponButton")
+focus_next = NodePath("../../../Back")
+focus_previous = NodePath("../WeaponButton")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_1acrt")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_vr8o3")
@@ -774,6 +780,7 @@ theme_override_styles/focus = ExtResource("10_8egab")
 text = "Bestiary (99%)"
 
 [node name="Grid" type="Control" parent="UI/Main/Loadout/Panel" unique_id=357510178]
+visible = false
 layout_mode = 1
 anchor_left = 0.034
 anchor_top = 0.027
@@ -818,6 +825,107 @@ grow_horizontal = 2
 text = "Loadout"
 label_settings = SubResource("LabelSettings_7b55j")
 horizontal_alignment = 1
+
+[node name="Bestiary" type="Control" parent="UI/Main/Loadout/Panel" unique_id=892417149]
+layout_mode = 1
+anchor_left = 0.034
+anchor_top = 0.027
+anchor_right = 0.966
+anchor_bottom = 0.97300005
+offset_left = 0.22399902
+offset_top = 0.015999794
+offset_right = 407.776
+offset_bottom = -0.016052246
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Loadout/Panel/Bestiary" unique_id=338909229]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.514
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -7.76001
+
+[node name="VBoxContainer" type="GridContainer" parent="UI/Main/Loadout/Panel/Bestiary/ScrollContainer" unique_id=1074183990]
+custom_minimum_size = Vector2(416, 560)
+layout_mode = 2
+
+[node name="Button" parent="UI/Main/Loadout/Panel/Bestiary/ScrollContainer/VBoxContainer" unique_id=876868244 instance=ExtResource("19_qywvv")]
+custom_minimum_size = Vector2(415, 0)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="UI/Main/Loadout/Panel/Bestiary" unique_id=442920637]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.55200005
+anchor_right = 1.01
+anchor_bottom = 1.0
+offset_left = 0.3199463
+offset_right = -8.399963
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="Title" type="Label" parent="UI/Main/Loadout/Panel/Bestiary/Panel" unique_id=1150290372]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -164.0
+offset_top = 24.0
+offset_right = 164.0
+offset_bottom = 88.0
+grow_horizontal = 2
+text = "Bauble"
+label_settings = SubResource("LabelSettings_3wgol")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Description" type="ScrollContainer" parent="UI/Main/Loadout/Panel/Bestiary/Panel" unique_id=1358098660]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 88.0
+offset_right = 352.0
+offset_bottom = 264.0
+
+[node name="Label" type="Label" parent="UI/Main/Loadout/Panel/Bestiary/Panel/Description" unique_id=387777166]
+custom_minimum_size = Vector2(328, 0)
+layout_mode = 2
+text = "Bauble"
+label_settings = SubResource("LabelSettings_1acrt")
+autowrap_mode = 2
+
+[node name="DevDescription" type="ScrollContainer" parent="UI/Main/Loadout/Panel/Bestiary/Panel" unique_id=1500727749]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 280.0
+offset_right = 352.0
+offset_bottom = 448.0
+
+[node name="Label" type="Label" parent="UI/Main/Loadout/Panel/Bestiary/Panel/DevDescription" unique_id=2107857902]
+custom_minimum_size = Vector2(328, 0)
+layout_mode = 2
+text = "Bauble"
+label_settings = SubResource("LabelSettings_1acrt")
+autowrap_mode = 2
+
+[node name="Stats" type="ScrollContainer" parent="UI/Main/Loadout/Panel/Bestiary/Panel" unique_id=2107384594]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 472.0
+offset_right = 352.0
+offset_bottom = 536.0
+
+[node name="Label" type="Label" parent="UI/Main/Loadout/Panel/Bestiary/Panel/Stats" unique_id=847049859]
+custom_minimum_size = Vector2(328, 64)
+layout_mode = 2
+text = "Bauble"
+label_settings = SubResource("LabelSettings_1acrt")
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 2
 
 [node name="Play Buttons" type="Control" parent="UI/Main" unique_id=58305926]
 visible = false
@@ -2099,6 +2207,7 @@ text = "Back"
 [connection signal="pressed" from="UI/Main/Loadout/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Panel/Main/ArmorButton" to="." method="_on_armor_button_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Panel/Main/WeaponButton" to="." method="_on_weapon_button_pressed"]
+[connection signal="pressed" from="UI/Main/Loadout/Panel/Main/Bestiary" to="." method="_enter_bestiary"]
 [connection signal="pressed" from="UI/Main/Play Buttons/Singleplayer" to="." method="_on_singleplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Play Buttons/Multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Play Buttons/Back" to="." method="_on_back_pressed"]

@@ -13,6 +13,7 @@ enum MenuState {
 	LOADOUT,
 	LOADOUT_ARMOR_GRID,
 	LOADOUT_WEAPON_GRID,
+	LOADOUT_BESTIARY,
 	OPTIONS,
 	OPTIONS_CONTROLS,
 	OPTIONS_CREDITS,
@@ -165,6 +166,8 @@ func _enter_state(state: MenuState) -> void:
 			_enter_loadout_armor_grid()
 		MenuState.LOADOUT_WEAPON_GRID:
 			_enter_loadout_weapon_grid()
+		MenuState.LOADOUT_BESTIARY:
+			_enter_bestiary()
 		MenuState.OPTIONS:
 			_enter_options()
 		MenuState.OPTIONS_CONTROLS:
@@ -220,13 +223,48 @@ func _enter_loadout() -> void:
 	state_nodes[MenuState.LOADOUT].visible = true
 	$UI/Main/Loadout/Back.grab_focus()
 	$UI/Main/Loadout/Panel/Main.visible = true
+	$UI/Main/Loadout/Panel/Bestiary.visible = false
 	$UI/Main/Loadout/Panel/Grid.visible = false
+	$UI/Main/Loadout/Panel/Main/Bestiary.text = "Bestiary (" + str(roundi(await Man.get_bestiary_completion())) + "%)"
 	$UI/Main/Loadout/Panel/Main/Level.text = "Level " + str(Man.current_level)
 	$UI/Main/Loadout/Panel/Main/XP.value = Man.current_xp
 	$UI/Main/Loadout/Panel/Main/XP.max_value = Man.calculate_xp_for_level(Man.current_level)
 	_show_title_elements(false)
 	update_loadout()
 	_reset_loadout_back_button_focus()
+
+func _enter_bestiary() -> void:
+	state_nodes[MenuState.LOADOUT].visible = true
+	_show_title_elements(false)
+	
+	$UI/Main/Loadout/Panel/Grid.visible = false
+	$UI/Main/Loadout/Panel/Main.visible = false
+	$UI/Main/Loadout/Panel/Bestiary.visible = true
+	for child in $UI/Main/Loadout/Panel/Bestiary/ScrollContainer/VBoxContainer.get_children():
+		child.queue_free()
+	$UI/Main/Loadout/Panel/Bestiary/Panel.visible = false
+	$UI/Main/Loadout/Back.grab_focus()
+	for e in Man.kills.keys():
+		var enemy = await Man.get_enemy(e)
+		var entry = preload("res://scenes/bestiary_entry.tscn").instantiate()
+		entry.text = enemy.name + "   " + str(int(Man.kills[e])) + " kills"
+		$UI/Main/Loadout/Panel/Bestiary/ScrollContainer/VBoxContainer.add_child(entry)
+		entry.connect("pressed", Callable(_select_bestiary_entry).bind(e))
+	_configure_focus_neighbors_with_back($UI/Main/Loadout/Panel/Bestiary/ScrollContainer/VBoxContainer)
+	_connect_all_buttons()
+
+func _select_bestiary_entry(enemy_name) -> void:
+	if not $UI/Main/Loadout/Panel/Bestiary/Panel.visible:
+		$UI/Main/Loadout/Panel/Bestiary/Panel.visible = true
+	var enemy = await Man.get_enemy(enemy_name)
+	$UI/Main/Loadout/Panel/Bestiary/Panel/Title.text = enemy.name
+	$UI/Main/Loadout/Panel/Bestiary/Panel/Description/Label.text = enemy.bestiary_description
+	if Man.kills[enemy_name] >= enemy.dev_commentary_requirement:
+		$UI/Main/Loadout/Panel/Bestiary/Panel/DevDescription/Label.text = enemy.developer_commentary
+	else:
+		$UI/Main/Loadout/Panel/Bestiary/Panel/DevDescription/Label.text = "Kill " + str(int(enemy.dev_commentary_requirement - Man.kills[enemy_name])) + " more of this enemy to get a developer description."
+	$UI/Main/Loadout/Panel/Bestiary/Panel/Stats/Label.text = "ID: " + str(int(enemy.id)) + " - HP: " + str(int(enemy.health)) + " - DEF: " + str(int(enemy.defense))
+	print(enemy)
 
 func _enter_loadout_armor_grid() -> void:
 	state_nodes[MenuState.LOADOUT].visible = true
@@ -235,6 +273,7 @@ func _enter_loadout_armor_grid() -> void:
 	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
 	$UI/Main/Loadout/Panel/Grid.visible = true
 	$UI/Main/Loadout/Panel/Main.visible = false
+	$UI/Main/Loadout/Panel/Bestiary.visible = false
 	$UI/Main/Loadout/Panel/Grid/Title.text = "Armor"
 	
 	var grid = $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer
@@ -263,6 +302,8 @@ func _enter_loadout_armor_grid() -> void:
 	await get_tree().process_frame
 	_configure_focus_neighbors_with_back(grid)
 
+
+
 func _enter_loadout_weapon_grid() -> void:
 	state_nodes[MenuState.LOADOUT].visible = true
 	_show_title_elements(false)
@@ -270,6 +311,7 @@ func _enter_loadout_weapon_grid() -> void:
 	var loadout_button_scene = preload("res://scenes/loadout_button.tscn")
 	$UI/Main/Loadout/Panel/Grid.visible = true
 	$UI/Main/Loadout/Panel/Main.visible = false
+	$UI/Main/Loadout/Panel/Bestiary.visible = false
 	$UI/Main/Loadout/Panel/Grid/Title.text = "Weapons"
 	
 	var grid = $UI/Main/Loadout/Panel/Grid/ScrollContainer/GridContainer
@@ -555,7 +597,7 @@ func _on_credits_pressed() -> void:
 func _on_back_pressed() -> void:
 	# Handle back navigation based on current state
 	match current_state:
-		MenuState.LOADOUT_ARMOR_GRID, MenuState.LOADOUT_WEAPON_GRID:
+		MenuState.LOADOUT_ARMOR_GRID, MenuState.LOADOUT_WEAPON_GRID, MenuState.LOADOUT_BESTIARY:
 			transition_to(MenuState.LOADOUT)
 		MenuState.LOADOUT:
 			transition_to(MenuState.TITLE_SCREEN)
@@ -795,11 +837,12 @@ func _reset_loadout_back_button_focus() -> void:
 	var back_button = $UI/Main/Loadout/Back
 	var armor_button = $UI/Main/Loadout/Panel/Main/ArmorButton
 	var weapon_button = $UI/Main/Loadout/Panel/Main/WeaponButton
+	var bestiary_button = $UI/Main/Loadout/Panel/Main/Bestiary
 	
 	# Reset to connect with Armor/Weapon buttons
-	back_button.focus_neighbor_top = back_button.get_path_to(weapon_button)
+	back_button.focus_neighbor_top = back_button.get_path_to(bestiary_button)
 	back_button.focus_neighbor_bottom = back_button.get_path_to(armor_button)
-	back_button.focus_neighbor_left = back_button.get_path_to(weapon_button)
+	back_button.focus_neighbor_left = back_button.get_path_to(bestiary_button)
 	back_button.focus_neighbor_right = back_button.get_path_to(armor_button)
 
 # ============================================================================

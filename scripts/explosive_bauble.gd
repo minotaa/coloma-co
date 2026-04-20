@@ -100,6 +100,9 @@ func get_retreat_position_away_from(player_pos: Vector2) -> Vector2:
 	agent.target_position = original_target
 	return best_pos
 
+func get_kill_type() -> String:
+	return "explosive_bauble"
+
 # --- Sprite facing ---
 func update_sprite_direction(dir: Vector2) -> void:
 	if abs(dir.x) > abs(dir.y):

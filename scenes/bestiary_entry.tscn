@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://cic403f37by1h"]
+
+[ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="1_338ub"]
+[ext_resource type="Texture2D" uid="uid://mohgts2gaa6y" path="res://assets/sprites/box3.png" id="2_p3vtw"]
+[ext_resource type="Texture2D" uid="uid://cqo2if4kav5ch" path="res://assets/sprites/box2.png" id="3_rrygy"]
+[ext_resource type="Texture2D" uid="uid://dfic0j1riy3u2" path="res://assets/sprites/box9.png" id="4_7txxr"]
+[ext_resource type="StyleBox" uid="uid://cdtblkm5lh8ew" path="res://scenes/outline but for ui lol.tres" id="5_g2ttb"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1acrt"]
+texture = ExtResource("1_338ub")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vr8o3"]
+texture = ExtResource("2_p3vtw")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1a85y"]
+texture = ExtResource("3_rrygy")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hl5e0"]
+texture = ExtResource("4_7txxr")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[node name="Button" type="Button" unique_id=876868244]
+custom_minimum_size = Vector2(428, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxTexture_1acrt")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_vr8o3")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1a85y")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_hl5e0")
+theme_override_styles/focus = ExtResource("5_g2ttb")
+text = "Bauble   0 kills"
