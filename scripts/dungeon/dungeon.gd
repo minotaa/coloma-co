@@ -66,6 +66,8 @@ var queued_players = []
 var max_players = 0
 
 # Wave system
+var subwave_timer = 0.0
+var subwave_duration = 8.0 
 var completed_rooms = 0
 var current_wave_index = 0
 var current_subwave_index = 0
@@ -283,10 +285,7 @@ func _physics_process(delta: float) -> void:
 			if shop_timer <= 0:
 				end_shop_phase()
 		else:
-			wave_check_counter += 1
-			if wave_check_counter >= 30:
-				wave_check_counter = 0
-				check_wave_completion()
+			check_wave_completion(delta)
 
 func is_server_or_singleplayer() -> bool:
 	return not multiplayer.has_multiplayer_peer() or multiplayer.is_server()
@@ -576,6 +575,7 @@ func get_current_wave() -> Dictionary:
 	return applicable_waves.pick_random()
 
 func spawn_current_wave() -> void:
+	subwave_timer = subwave_duration
 	var current_wave = get_current_wave()
 	if current_wave.is_empty():
 		print("[WAVE] No valid wave found for requirement: ", completed_rooms)
@@ -610,10 +610,7 @@ func spawn_current_wave() -> void:
 			var count = enemy_data[enemy_type]
 			for i in range(count):
 				spawn_enemy(enemy_type)
-				# Add 1.5 second delay between each enemy spawn
-				if i < count - 1:  # Don't wait after the last enemy
-					await get_tree().create_timer(1.5).timeout
-	
+
 	# Done spawning enemies
 	currently_spawning = false
 
@@ -665,7 +662,8 @@ func spawn_enemy(enemy_type: String) -> void:
 		
 	var selected_cell = matching_cells.pick_random()
 	var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
-	
+	spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
+
 	var enemy_scene
 	match enemy_type:
 		"slime":
@@ -705,7 +703,7 @@ func spawn_enemy(enemy_type: String) -> void:
 	smoke.emitting = true
 	add_child(smoke, true)
 
-func check_wave_completion() -> void:
+func check_wave_completion(delta) -> void:
 	if not spawning_active or currently_spawning:
 		return
 		
