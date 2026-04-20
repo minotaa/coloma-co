@@ -26,6 +26,9 @@ func initialize_entity() -> void:
 	agent = $NavigationAgent2D
 	sprite = $AnimatedSprite2D
 	entity_name = "Gunk Slime"
+	bestiary_description = "Thick, denser variants of the regular slimes. So gooey that they leave behind trails of their slime, touching them or the slime will slow down anyone who crosses upon it."
+	developer_commentary = "Honestly, they were a blast to make, the splatter effect & the effect was fun and I'm honestly sad they don't show up sooner."
+	dev_commentary_requirement = 50
 	health = 500.0
 	max_health = 500.0
 	defense = 0.0

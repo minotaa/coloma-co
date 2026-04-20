@@ -13,6 +13,9 @@ var current_target: Node2D = null
 func initialize_entity() -> void:
 	knockback_friction = 1.0
 	entity_name = "Crabthing"
+	bestiary_description = "Species of sea creature that crawls in shells. Targets a player and relentlessly pursues it, walks faster than the player. Gets staggered when hit too much."
+	developer_commentary = "These were a monstrosity to draw, I did not like drawing these at all. I literally just drew the Crabthing over Clementine."
+	dev_commentary_requirement = 25
 	health = 1250.0
 	max_health = 1250.0
 	defense = 0.0

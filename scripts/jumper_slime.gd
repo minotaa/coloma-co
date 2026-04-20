@@ -1,12 +1,14 @@
 extends Entity
 
-const SPEED := 40
-const HOP_INTERVAL := 1.2
-const HOP_DURATION := 0.8
-const HOP_HEIGHT := 12.0
+const SPEED := 20
+const HOP_INTERVAL := 2.0
+const HOP_DURATION := 0.5
+const HOP_HEIGHT := 6.0
+const HOP_WINDUP_TIME := 0.5
 const MAX_HOP_DISTANCE := 24.0
-const HOP_WINDUP_TIME := 0.3
+const SLIME_TRAIL_INTERVAL := 1.0
 
+@onready var trail_parent = $".."
 @onready var target_indicator = $Target
 
 var cooldown: float = 2.5
@@ -17,22 +19,24 @@ var hop_target_pos: Vector2
 var hop_progress := 0.0
 var is_winding_up := false
 var windup_timer := 0.0
+var trail_timer := 0.0
 var ready_to_hop := false
 
 func initialize_entity() -> void:
 	agent = $NavigationAgent2D
 	sprite = $AnimatedSprite2D
-	entity_name = "Mother Slime"
-	dev_commentary_requirement = 25
-	bestiary_description = "Slower, fatter variants of slimes. These slimes do more damage, but move slower. They will spawn slimes upon dying. Good for collecting gold."
-	developer_commentary = "This slime variant was more of a cliche if anything. Though the concept of slimes having a fat mama seems amusing."
-	health = 250.0
-	max_health = 250.0
-	defense = 0.0
-	id = 6
+	entity_name = "Jumper Slime"
+	bestiary_description = "Magic imbued slimes that shoot out stars upon landing on the ground, particularly lethal."
+	developer_commentary = "This was so easy to make... it's a crime. May contain a The Binding of Isaac reference."
+	dev_commentary_requirement = 50
+	health = 125.0
+	max_health = 125.0
+	defense = 15.0
+	id = 14
 	speed = SPEED
+	if sprite:
+		sprite.play("default")
 	hop_timer = HOP_INTERVAL
-	sprite.play("default")
 	target_indicator.visible = false
 	await get_tree().physics_frame
 	await get_tree().physics_frame
@@ -41,25 +45,19 @@ func initialize_entity() -> void:
 	ready_to_hop = true
 
 func get_gold_reward() -> int:
-	return 20
+	return 100
 
 func get_kill_type() -> String:
-	return "mother_slime"
+	return "jumper_slime"
 
-func on_death(killer_name: String) -> void:
-	for i in range(randi_range(2, 6)):
-		var slime_scene: PackedScene
-		var rand = randf()
-		if rand <= 0.33:
-			slime_scene = preload("res://scenes/gunk_slime.tscn")
-		elif rand <= 0.66:
-			slime_scene = preload("res://scenes/poison_slime.tscn")
-		else:
-			slime_scene = preload("res://scenes/slime.tscn")
-		var new_slime = slime_scene.instantiate()
-		new_slime.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
-		get_parent().add_child(new_slime, true)
-	queue_free()
+func shoot_stars() -> void:
+	var angles = [45, 135, 225, 315]
+	for angle in angles:
+		var bullet = preload("res://scenes/bullet.tscn").instantiate()
+		bullet.global_position = global_position
+		bullet.direction = Vector2.RIGHT.rotated(deg_to_rad(angle))
+		bullet.scale = Vector2(0.8, 0.8)
+		get_tree().current_scene.add_child(bullet)
 
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	if not ready_to_hop:
@@ -69,6 +67,13 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 		return
 	if not alive:
 		return
+	agent.get_next_path_position()
+
+	if is_hopping:
+		trail_timer -= delta
+		if trail_timer <= 0.0:
+			shoot_stars()
+			trail_timer = SLIME_TRAIL_INTERVAL
 
 	# HOP LOGIC ----------------------------------
 	if not is_hopping and not is_winding_up:
@@ -96,14 +101,11 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 			is_winding_up = false
 			is_hopping = true
 			hop_progress = 0.0
-			if multiplayer.has_multiplayer_peer():
-				play_sfx.rpc("bigjump", global_position)
-			else:
-				play_sfx("bigjump", global_position)
+			play_sfx("jump", global_position, -10.0)
 		return
 
 	if is_hopping:
-		hop_progress += delta / HOP_DURATION / _movement_multiplier
+		hop_progress += delta / (HOP_DURATION / _movement_multiplier)
 		if hop_progress >= 1.0:
 			hop_progress = 1.0
 			is_hopping = false
@@ -120,20 +122,8 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 	else:
 		sprite.position.y = 0
 
-	for body in $Hurtbox.get_overlapping_bodies():
-		if body != null and body.is_in_group("players") and alive:
-			body.take_damage(20, name, global_position)
-
-func get_nearest_player() -> Node2D:
-	var players: Array = get_tree().get_nodes_in_group("players")
-	var nearest: Node2D = null
-	var nearest_distance: float = INF
-
-	for player in players:
-		if player is Node2D and player.alive:
-			var dist: float = global_position.distance_squared_to(player.global_position)
-			if dist < nearest_distance:
-				nearest_distance = dist
-				nearest = player
-
-	return nearest
+func on_player_contact(player: Node) -> void:
+	if not alive:
+		return
+	if player.alive:
+		player.take_damage(10, name, global_position)

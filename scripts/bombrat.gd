@@ -5,6 +5,9 @@ var explosion_scene = preload("res://scenes/explosion.tscn")
 
 func initialize_entity() -> void:
 	entity_name = "Bombrat"
+	dev_commentary_requirement = 100
+	bestiary_description = "Objectives of the Defense gamemode, will ignore players and beeline towards the Gem. Destroy them to progress in the wave."
+	developer_commentary = "They're described as cats that look like bombs, which I honestly see, pixel art and art in general is not my strongest suite, though I will say a certain detail I wanted to add was the fact that their ears always faced the same direction no matter where they were going, like Mickey Mouse. Though, that might just be an excuse for laziness, who knows?"
 	health = 125.0
 	max_health = 125.0
 	defense = 0.0

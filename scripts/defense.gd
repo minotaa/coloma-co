@@ -29,6 +29,7 @@ var ghost = preload("res://scenes/ghost.tscn")
 var gunk_slime = preload("res://scenes/gunk_slime.tscn")
 var explosive_bauble = preload("res://scenes/explosive_bauble.tscn")
 var bombrat_king = preload("res://scenes/bombrat_king.tscn")
+var jumper_slime = preload("res://scenes/jumper_slime.tscn")
 
 @onready var spawner_layer = $Spawner
 
@@ -584,12 +585,14 @@ func spawn_slime(direction: String) -> void:
 		var s: CharacterBody2D
 		if wave >= 15 and randf() <= 0.1: 
 			var rand = randf()
-			if rand <= 0.33:
+			if rand <= 0.25:
 				s = mother_slime.instantiate()
-			elif rand <= 0.66:
+			elif rand <= 0.50:
 				s = poison_slime.instantiate()
-			else:
+			elif rand <= 0.75:
 				s = gunk_slime.instantiate()
+			else:
+				s = jumper_slime.instantiate()
 		else: 
 			s = slime.instantiate()
 		s.global_position = spawn_pos

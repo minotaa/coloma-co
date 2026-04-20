@@ -20,6 +20,8 @@ var ready_to_hop: bool = false
 
 func initialize_entity() -> void:
 	entity_name = "Slime"
+	bestiary_description = "A slow moving enemy, doesn't attack the gem, will attack the player. Doesn't hurt unless it hops on you."
+	developer_commentary = "A throwback to the original Myrkwood. I honestly just put the original sprite in and then figured it out it looked ugly when putting it in until shrinking it down to 16x16. But this enemy is fun."
 	health = 75.0
 	max_health = 75.0
 	defense = 0.0

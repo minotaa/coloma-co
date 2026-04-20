@@ -17,6 +17,9 @@ var explosion_scene = preload("res://scenes/explosion.tscn")
 func initialize_entity() -> void:
 	agent = $NavigationAgent2D
 	entity_name = "Explosive Bauble"
+	bestiary_description = "Bauble variant that specializes in shooting specialized explosive Stars. They can detonate on players or on walls. Stay away if you value your life!"
+	developer_commentary = "Explosive Baubles are designed after grenades, their special stars are meant to give a more distinct appearance from other stars."
+	dev_commentary_requirement = 10
 	health = 250
 	max_health = 250
 	defense = 0

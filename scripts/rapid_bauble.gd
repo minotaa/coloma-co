@@ -17,6 +17,9 @@ func initialize_entity() -> void:
 	sprite = $AnimatedSprite2D
 	collision = $CollisionShape2D
 	entity_name = "Rapid Bauble"
+	bestiary_description = "A faster, stronger variant of the Bauble. These will shoot out rapid amounts of stars."
+	developer_commentary = "These feel fun but aren't really fun when you... play it, maybe that's a problem."
+	dev_commentary_requirement = 50
 	health = 320.0
 	max_health = 320.0
 	defense = 0.0

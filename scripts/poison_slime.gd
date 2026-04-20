@@ -23,6 +23,9 @@ func initialize_entity() -> void:
 	agent = $NavigationAgent2D
 	sprite = $AnimatedSprite2D
 	entity_name = "Poison Slime"
+	bestiary_description = "A stronger variant of the slime that may inflict Poison when touched."
+	developer_commentary = "This is... also a throwback to the original Myrkwood."
+	dev_commentary_requirement = 50
 	health = 225.0
 	max_health = 225.0
 	defense = 0.0

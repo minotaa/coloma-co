@@ -3,6 +3,9 @@ class_name Entity
 
 # Entity properties
 var entity_name: String = "Entity"
+var bestiary_description: String = "This is where the description for the enemy would be written."
+var developer_commentary: String = "This is where the description for the enemy written by the developer would be written."
+var dev_commentary_requirement: int = 0
 var health: float = 100.0
 var max_health: float = 100.0
 var defense: float = 0.0

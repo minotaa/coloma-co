@@ -24,6 +24,9 @@ var float_timer := 0.0
 
 func initialize_entity() -> void:
 	entity_name = "Ghost"
+	bestiary_description = "Apparitions from beyond, can't do anything to mortals, but still watch out, they can still make you feel weak."
+	developer_commentary = "Initially, they dealt damage and were just stronger versions of the slimes, with a gimmick that they were neutral until you stepped in range, I thought it'd be better if they simply did no damage and created Weak to give it the ability to detriment the player."
+	dev_commentary_requirement = 25
 	health = 400.0
 	max_health = 400.0
 	defense = 0.0
