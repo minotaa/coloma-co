@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://c4cpnw410jfl7"]
+[gd_scene format=3 uid="uid://c4cpnw410jfl7"]
 
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_00ijp"]
 [ext_resource type="Script" uid="uid://dbnu5nqrlkiu4" path="res://scripts/angry_bauble.gd" id="2_7v54l"]
@@ -228,45 +228,45 @@ scale_max = 0.4
 color = Color(1, 1, 1, 0.945098)
 alpha_curve = SubResource("CurveTexture_487ah")
 
-[node name="Angry Bauble" type="CharacterBody2D" groups=["enemies"]]
+[node name="Angry Bauble" type="CharacterBody2D" unique_id=210773420 groups=["enemies"]]
 material = SubResource("ShaderMaterial_pjw23")
 collision_layer = 2
-collision_mask = 23
+collision_mask = 21
 motion_mode = 1
 script = ExtResource("2_7v54l")
 
-[node name="Shadow" type="Sprite2D" parent="."]
+[node name="Shadow" type="Sprite2D" parent="." unique_id=63312344]
 position = Vector2(0, 3)
 texture = ExtResource("3_06xgv")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=756475151]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_m3cp2")
 animation = &"bauble-up"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=135056462]
 position = Vector2(0, -7)
 shape = SubResource("CapsuleShape2D_nd4x7")
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1901210208]
 stream = SubResource("AudioStreamPolyphonic_0l8pv")
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=686486597]
 avoidance_enabled = true
 radius = 20.0
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1913603693]
 collision_layer = 2
 collision_mask = 15
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=697626752]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_n6pvg")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1570304866]
 replication_config = SubResource("SceneReplicationConfig_hebxe")
 
-[node name="ProgressBar" type="ProgressBar" parent="."]
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=1592826287]
 offset_left = -9.0
 offset_top = -22.0
 offset_right = 9.0
@@ -275,7 +275,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_hebxe")
 theme_override_styles/fill = SubResource("StyleBoxFlat_svhan")
 show_percentage = false
 
-[node name="Potion" type="GPUParticles2D" parent="."]
+[node name="Potion" type="GPUParticles2D" parent="." unique_id=845930003]
 emitting = false
 amount = 10
 texture = ExtResource("8_7v54l")

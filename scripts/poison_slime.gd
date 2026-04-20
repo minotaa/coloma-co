@@ -5,6 +5,7 @@ const HOP_INTERVAL := 1.0
 const HOP_DURATION := 0.2
 const HOP_HEIGHT := 6.0
 const HOP_WINDUP_TIME := 0.3
+const MAX_HOP_DISTANCE := 24.0
 
 @onready var target_indicator = $Target
 
@@ -16,6 +17,7 @@ var hop_target_pos: Vector2
 var hop_progress := 0.0
 var is_winding_up := false
 var windup_timer := 0.0
+var ready_to_hop := false
 
 func initialize_entity() -> void:
 	agent = $NavigationAgent2D
@@ -28,6 +30,11 @@ func initialize_entity() -> void:
 	speed = SPEED
 	sprite.play("default")
 	target_indicator.visible = false
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	hop_start_pos = global_position
+	hop_target_pos = global_position
+	ready_to_hop = true
 
 func get_gold_reward() -> int:
 	return 20
@@ -36,12 +43,14 @@ func get_kill_type() -> String:
 	return "poison_slime"
 
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
-	agent.get_next_path_position()
+	if not ready_to_hop:
+		return
 	if cooldown > 0.0:
 		cooldown -= delta
 		return
 	if not alive:
 		return
+	agent.get_next_path_position()
 
 	# HOP LOGIC ----------------------------------
 	if not is_hopping and not is_winding_up:
@@ -84,15 +93,15 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 			hop_timer = HOP_INTERVAL
 
 		var move_vec = hop_target_pos - hop_start_pos
+		if move_vec.length() > MAX_HOP_DISTANCE:
+			hop_target_pos = hop_start_pos + move_vec.normalized() * MAX_HOP_DISTANCE
 		global_position = hop_start_pos + move_vec * hop_progress
 
-		# Jump arc
 		var t = hop_progress
 		sprite.position.y = 4 * HOP_HEIGHT * t * (t - 1)
 	else:
 		sprite.position.y = 0
 
-	# Player collision: damage + poison effect
 	for body in $Hurtbox.get_overlapping_bodies():
 		if body != null and body.is_in_group("players") and alive:
 			body.take_damage(12, name, global_position)
@@ -104,7 +113,8 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 				poison.texture = texture
 				var enemy_pos = global_position
 				poison.on_effect = func(target):
-					target.take_damage(2, name, enemy_pos)
+					if target != null:
+						target.take_damage(2, name, enemy_pos)
 				body.add_status_effect(poison)
 				if multiplayer.has_multiplayer_peer():
 					Toast.add.rpc_id(int(body.name), "You've been Poisoned for 10 seconds!")

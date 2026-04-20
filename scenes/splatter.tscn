@@ -1,20 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://4vo582km5kuq"]
+[gd_scene format=3 uid="uid://4vo582km5kuq"]
 
 [ext_resource type="Script" uid="uid://ctqaycyacbd4y" path="res://scripts/splatter.gd" id="1_4gf8v"]
 [ext_resource type="Texture2D" uid="uid://qf57f56lrcda" path="res://assets/sprites/splatter.png" id="2_uw5l4"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hoa2a"]
 
-[node name="Splatter" type="Node2D"]
+[node name="Splatter" type="Node2D" unique_id=241957711]
 z_index = -1
 script = ExtResource("1_4gf8v")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=723849556]
 scale = Vector2(1.2, 1.2)
 texture = ExtResource("2_uw5l4")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." unique_id=1930590244]
 collision_layer = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1219439680]
 shape = SubResource("CircleShape2D_hoa2a")

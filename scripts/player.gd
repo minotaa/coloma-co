@@ -1684,7 +1684,7 @@ func _physics_process(delta: float) -> void:
 			if effect != null and is_instance_valid(effect):
 				if effect.update(delta, self):
 					active_effects.erase(effect)
-			else:
+			else: 
 				active_effects.erase(effect)
 	var focused = $UI/Global/ChatBar.has_focus()
 	var hovered := _is_mouse_over_chat_bar()

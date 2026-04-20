@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://chx40w18vwd46" path="res://scenes/barrier.tscn" id="4_sxffd"]
 
 [node name="Dungeons" type="Node2D" unique_id=1047790173]
-z_index = 2
 y_sort_enabled = true
 script = ExtResource("1_gs0dl")
 

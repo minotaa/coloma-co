@@ -14,11 +14,11 @@ var hop_target_pos: Vector2
 var hop_progress: float = 0.0
 var is_winding_up = false
 var windup_timer = 0.0
+var ready_to_hop: bool = false
 
 @onready var target_indicator = $Target
 
 func initialize_entity() -> void:
-	# Set entity properties
 	entity_name = "Slime"
 	health = 75.0
 	max_health = 75.0
@@ -26,9 +26,15 @@ func initialize_entity() -> void:
 	id = 0
 	speed = 40.0
 	
-	# Play animation
 	if sprite:
 		sprite.play("default")
+	
+	# Wait for the node to fully settle into the world before allowing movement
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	hop_start_pos = global_position
+	hop_target_pos = global_position
+	ready_to_hop = true
 
 func get_gold_reward() -> int:
 	return 12
@@ -37,17 +43,20 @@ func get_kill_type() -> String:
 	return "slime"
 
 func custom_physics_process(delta: float, movement_multiplier: float) -> void:
-	agent.get_next_path_position()
+	if not ready_to_hop:
+		return
 	if cooldown > 0.0:
 		cooldown -= delta
 		return
 	if not alive:
-		return	
+		return
+	agent.get_next_path_position()
 	
 	# Cancel hop if knocked back
 	if knockback_velocity.length() > 0.1:
 		sprite.position.y = 0
 		hop_timer = HOP_INTERVAL
+		is_hopping = false
 		is_winding_up = false
 		if target_indicator:
 			target_indicator.visible = false
@@ -61,8 +70,15 @@ func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 			if target:
 				var offset = Vector2(randf_range(-8, 8), randf_range(-8, 8))
 				agent.target_position = target.global_position + offset
+				
+				# Clamp hop target to MAX_HOP_DISTANCE
+				var next_pos = agent.get_next_path_position()
+				var to_target = next_pos - global_position
+				if to_target.length() > MAX_HOP_DISTANCE:
+					next_pos = global_position + to_target.normalized() * MAX_HOP_DISTANCE
+				
 				hop_start_pos = global_position
-				hop_target_pos = agent.get_next_path_position()
+				hop_target_pos = next_pos
 				
 				if target_indicator:
 					target_indicator.global_position = hop_target_pos
@@ -80,7 +96,7 @@ func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 			play_sfx("jump", global_position, -10.0)
 
 	elif is_hopping:
-		hop_progress += delta / (HOP_DURATION / movement_multiplier) 
+		hop_progress += delta / (HOP_DURATION / movement_multiplier)
 		if hop_progress >= 1.0:
 			hop_progress = 1.0
 			is_hopping = false

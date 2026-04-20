@@ -5,6 +5,7 @@ const HOP_INTERVAL := 1.0
 const HOP_DURATION := 0.2
 const HOP_HEIGHT := 6.0
 const HOP_WINDUP_TIME := 0.3
+const MAX_HOP_DISTANCE := 24.0
 const SLIME_TRAIL_INTERVAL := 0.15
 
 @onready var trail_parent = $".."
@@ -16,11 +17,10 @@ var is_hopping := false
 var hop_start_pos: Vector2
 var hop_target_pos: Vector2
 var hop_progress := 0.0
-
 var is_winding_up := false
 var windup_timer := 0.0
-
 var trail_timer := 0.0
+var ready_to_hop := false
 
 func initialize_entity() -> void:
 	agent = $NavigationAgent2D
@@ -31,13 +31,15 @@ func initialize_entity() -> void:
 	defense = 0.0
 	id = 11
 	speed = SPEED
-
 	if sprite:
 		sprite.play("default")
-
 	hop_timer = HOP_INTERVAL
 	target_indicator.visible = false
-
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	hop_start_pos = global_position
+	hop_target_pos = global_position
+	ready_to_hop = true
 
 func get_gold_reward() -> int:
 	return 24
@@ -52,13 +54,15 @@ func spawn_slime_trail() -> void:
 	trail_parent.add_child(splatter)
 
 func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
-	agent.get_next_path_position()
+	if not ready_to_hop:
+		return
 	if cooldown > 0.0:
 		cooldown -= delta
 		return
 	if not alive:
 		return
-	# Slime trail while in air
+	agent.get_next_path_position()
+
 	if is_hopping:
 		trail_timer -= delta
 		if trail_timer <= 0.0:
@@ -96,7 +100,6 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 
 	if is_hopping:
 		hop_progress += delta / (HOP_DURATION / _movement_multiplier)
-
 		if hop_progress >= 1.0:
 			hop_progress = 1.0
 			is_hopping = false
@@ -104,22 +107,19 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 			hop_timer = HOP_INTERVAL
 
 		var move_vec = hop_target_pos - hop_start_pos
+		if move_vec.length() > MAX_HOP_DISTANCE:
+			hop_target_pos = hop_start_pos + move_vec.normalized() * MAX_HOP_DISTANCE
 		global_position = hop_start_pos + move_vec * hop_progress
 
-		# Jump arc
 		var t = hop_progress
 		sprite.position.y = 4 * HOP_HEIGHT * t * (t - 1)
 	else:
 		sprite.position.y = 0
 
-
-# Player contact → only gunk + damage, no targeting junk
 func on_player_contact(player: Node) -> void:
 	if not alive:
 		return
-
 	if player.alive:
-		# 30% chance to apply Gunked
 		if randf() < 0.3 and not player.has_effect("Gunked"):
 			var gunked = Effect.new("Gunked", Color.from_rgba8(0, 150, 255, 255), 8.0, 0, 0)
 			var texture = AtlasTexture.new()
@@ -131,5 +131,4 @@ func on_player_contact(player: Node) -> void:
 			else:
 				Toast.add("You've been Gunked for 8 seconds!")
 			player.add_status_effect(gunked)
-
 		player.take_damage(10, name, global_position)

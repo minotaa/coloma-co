@@ -1889,6 +1889,97 @@ layout_mode = 2
 [node name="Slot4" parent="UI/Dungeons/Inventory" unique_id=2105838569 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
+[node name="HealthBar" type="TextureProgressBar" parent="UI/Dungeons" unique_id=956830824]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.77800006
+anchor_right = 0.5
+anchor_bottom = 0.77800006
+offset_left = -168.0
+offset_top = -24.160034
+offset_right = 168.0
+offset_bottom = 23.839966
+grow_horizontal = 2
+grow_vertical = 0
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("14_a38lo")
+
+[node name="OverhealBar" type="TextureProgressBar" parent="UI/Dungeons" unique_id=427015752]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.77800006
+anchor_right = 0.5
+anchor_bottom = 0.77800006
+offset_left = -168.0
+offset_top = -24.160034
+offset_right = 168.0
+offset_bottom = 23.839966
+grow_horizontal = 2
+grow_vertical = 0
+fill_mode = 1
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_progress = ExtResource("21_t4otl")
+
+[node name="Health Label" type="Label" parent="UI/Dungeons" unique_id=775029826]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.381
+anchor_top = 0.757
+anchor_right = 0.619
+anchor_bottom = 0.79600006
+offset_left = 0.3199768
+offset_top = -0.040039063
+offset_right = -0.32000732
+offset_bottom = -0.12005615
+grow_horizontal = 2
+grow_vertical = 0
+text = "Uh oh!"
+label_settings = SubResource("LabelSettings_f1ej7")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Dungeons" unique_id=1387841113]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36900002
+anchor_top = 0.611
+anchor_right = 0.63100004
+anchor_bottom = 0.744
+offset_left = -0.32000732
+offset_top = 8.079987
+offset_right = 0.3199463
+offset_bottom = 0.32000732
+alignment = 2
+
+[node name="Status" type="HBoxContainer" parent="UI/Dungeons/VBoxContainer" unique_id=1795363519]
+layout_mode = 2
+alignment = 1
+
+[node name="Status Effect Bubble" parent="UI/Dungeons/VBoxContainer/Status" unique_id=863380018 instance=ExtResource("26_mx1m4")]
+layout_mode = 2
+
+[node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeons/VBoxContainer" unique_id=819968922]
+layout_mode = 2
+max_value = 220.0
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 16
+stretch_margin_right = 16
+stretch_margin_bottom = 16
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("15_a38lo")
+
 [node name="Shop" type="Control" parent="UI/Dungeons" unique_id=533902701]
 visible = false
 layout_mode = 1
@@ -2012,97 +2103,6 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_wnwbv")
 theme_override_styles/disabled = SubResource("StyleBoxTexture_wqfne")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fulsm")
 text = "Close"
-
-[node name="HealthBar" type="TextureProgressBar" parent="UI/Dungeons" unique_id=956830824]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.77800006
-anchor_right = 0.5
-anchor_bottom = 0.77800006
-offset_left = -168.0
-offset_top = -24.160034
-offset_right = 168.0
-offset_bottom = 23.839966
-grow_horizontal = 2
-grow_vertical = 0
-nine_patch_stretch = true
-stretch_margin_left = 16
-stretch_margin_top = 16
-stretch_margin_right = 16
-stretch_margin_bottom = 16
-texture_under = ExtResource("14_i4ail")
-texture_progress = ExtResource("14_a38lo")
-
-[node name="OverhealBar" type="TextureProgressBar" parent="UI/Dungeons" unique_id=427015752]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.77800006
-anchor_right = 0.5
-anchor_bottom = 0.77800006
-offset_left = -168.0
-offset_top = -24.160034
-offset_right = 168.0
-offset_bottom = 23.839966
-grow_horizontal = 2
-grow_vertical = 0
-fill_mode = 1
-nine_patch_stretch = true
-stretch_margin_left = 16
-stretch_margin_top = 16
-stretch_margin_right = 16
-stretch_margin_bottom = 16
-texture_progress = ExtResource("21_t4otl")
-
-[node name="Health Label" type="Label" parent="UI/Dungeons" unique_id=775029826]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.381
-anchor_top = 0.757
-anchor_right = 0.619
-anchor_bottom = 0.79600006
-offset_left = 0.3199768
-offset_top = -0.040039063
-offset_right = -0.32000732
-offset_bottom = -0.12005615
-grow_horizontal = 2
-grow_vertical = 0
-text = "Uh oh!"
-label_settings = SubResource("LabelSettings_f1ej7")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Dungeons" unique_id=1387841113]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.36900002
-anchor_top = 0.611
-anchor_right = 0.63100004
-anchor_bottom = 0.744
-offset_left = -0.32000732
-offset_top = 8.079987
-offset_right = 0.3199463
-offset_bottom = 0.32000732
-alignment = 2
-
-[node name="Status" type="HBoxContainer" parent="UI/Dungeons/VBoxContainer" unique_id=1795363519]
-layout_mode = 2
-alignment = 1
-
-[node name="Status Effect Bubble" parent="UI/Dungeons/VBoxContainer/Status" unique_id=863380018 instance=ExtResource("26_mx1m4")]
-layout_mode = 2
-
-[node name="SprintBar" type="TextureProgressBar" parent="UI/Dungeons/VBoxContainer" unique_id=819968922]
-layout_mode = 2
-max_value = 220.0
-nine_patch_stretch = true
-stretch_margin_left = 16
-stretch_margin_top = 16
-stretch_margin_right = 16
-stretch_margin_bottom = 16
-texture_under = ExtResource("14_i4ail")
-texture_progress = ExtResource("15_a38lo")
 
 [node name="Title" type="Label" parent="UI/Dungeons" unique_id=581117548]
 layout_mode = 1
