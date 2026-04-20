@@ -755,6 +755,12 @@ func complete_room() -> void:
 	else:
 		Toast.add("Room complete! Proceed to the next room!")
 	
+	for player in get_tree().get_nodes_in_group("players"):
+		if multiplayer.has_multiplayer_peer():
+			player.heal.rpc_id(int(player.name), 10.0)
+		else:
+			player.heal(10.0)
+	
 	if (completed_rooms + 1) % 10 == 0:
 		spawn_shop_room()
 		start_shop_phase()

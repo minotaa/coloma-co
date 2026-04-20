@@ -61,12 +61,12 @@ func take_damage(amount: float, from_position: Vector2, source_name: String, cri
 
 	# Calculate knockback + stun (Crab-specific)
 	var kb_dir = (global_position - from_position).normalized()
-	var kb_strength = clamp(final_damage * 40.0, 10.0, 100.0)
+	var kb_strength = 10.0
 	knockback_velocity = kb_dir * kb_strength
 
 	var hp_ratio = clamp(health / max_health, 0.0, 1.0)
 	var base_stun = lerp(0.05, 0.6, 1.0 - hp_ratio) # more stun when lower hp
-	stun_time = base_stun * clamp(final_damage / 20.0, 0.5, 2.0)
+	stun_time = base_stun * clamp(final_damage / 20.0, 0.5, 5.0)
 
 	# Sync floating text and flash across peers (reuse Entity's RPCs)
 	if multiplayer.has_multiplayer_peer():
