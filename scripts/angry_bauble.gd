@@ -19,7 +19,7 @@ func initialize_entity() -> void:
 	entity_name = "Angry Bauble"
 	bestiary_description = "More aggressive version of the Bauble, shoots more stars, shoots faster, what else is there to say?"
 	developer_commentary = "To be honest, can't remember the inspiration for this enemy. But, it's a cool one, I'll give you that, somehow It's more threatening than the Rapid Bauble, which is honestly strange."
-	dev_commentary_requirement = 50
+	dev_commentary_requirement = 100
 	health = 300.0
 	max_health = 300.0
 	defense = 0.0

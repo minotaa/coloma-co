@@ -9,7 +9,7 @@ func initialize_entity() -> void:
 	entity_name = "Big Bombrat"
 	bestiary_description = "A bigger, stronger version of the Bombrat. Will deal double damage to the gem if it makes it to the gem."
 	developer_commentary = "They're more of a distraction if anything, is that a sign of good game design? You're not supposed to fight these things first, you'll find it more easier to kill the regular Bombrats first. Not much of commentary, more of a tip, but whatever."
-	dev_commentary_requirement = 25
+	dev_commentary_requirement = 1250
 	health = 500.0
 	max_health = 500.0
 	defense = 0.0

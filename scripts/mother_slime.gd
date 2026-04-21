@@ -23,7 +23,7 @@ func initialize_entity() -> void:
 	agent = $NavigationAgent2D
 	sprite = $AnimatedSprite2D
 	entity_name = "Mother Slime"
-	dev_commentary_requirement = 25
+	dev_commentary_requirement = 75
 	bestiary_description = "Slower, fatter variants of slimes. These slimes do more damage, but move slower. They will spawn slimes upon dying. Good for collecting gold."
 	developer_commentary = "This slime variant was more of a cliche if anything. Though the concept of slimes having a fat mama seems amusing."
 	health = 250.0

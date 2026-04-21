@@ -203,6 +203,3 @@ func update_sprite_direction(dir: Vector2, aggro: bool) -> void:
 			sprite.play("ghost-down" + suffix)
 		else:
 			sprite.play("ghost-up" + suffix)
-
-# Note: Entity already provides get_nearest_player(), take_damage(), _show_damage_feedback(), _flash_material(), die(), play_sfx(), and hurtbox wiring.
-# This script relies on those implementations.

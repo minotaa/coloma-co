@@ -28,7 +28,7 @@ func initialize_entity() -> void:
 	entity_name = "Jumper Slime"
 	bestiary_description = "Magic imbued slimes that shoot out stars upon landing on the ground, particularly lethal."
 	developer_commentary = "This was so easy to make... it's a crime. May contain a The Binding of Isaac reference."
-	dev_commentary_requirement = 50
+	dev_commentary_requirement = 100
 	health = 125.0
 	max_health = 125.0
 	defense = 15.0

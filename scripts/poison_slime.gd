@@ -25,7 +25,7 @@ func initialize_entity() -> void:
 	entity_name = "Poison Slime"
 	bestiary_description = "A stronger variant of the slime that may inflict Poison when touched."
 	developer_commentary = "This is... also a throwback to the original Myrkwood."
-	dev_commentary_requirement = 50
+	dev_commentary_requirement = 100
 	health = 225.0
 	max_health = 225.0
 	defense = 0.0

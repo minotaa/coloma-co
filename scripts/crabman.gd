@@ -15,9 +15,9 @@ func initialize_entity() -> void:
 	entity_name = "Crabthing"
 	bestiary_description = "Species of sea creature that crawls in shells. Targets a player and relentlessly pursues it, walks faster than the player. Gets staggered when hit too much."
 	developer_commentary = "These were a monstrosity to draw, I did not like drawing these at all. I literally just drew the Crabthing over Clementine."
-	dev_commentary_requirement = 25
-	health = 1250.0
-	max_health = 1250.0
+	dev_commentary_requirement = 85
+	health = 1000.0
+	max_health = 1000.0
 	defense = 0.0
 	id = 5
 	speed = SPEED

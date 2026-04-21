@@ -20,7 +20,7 @@ func initialize_entity() -> void:
 	entity_name = "Bauble"
 	bestiary_description = "Shy enemies that shoot stars towards players. They also retreat when far away."
 	developer_commentary = "Wings are hard to make. Also, honestly the baubles are a pushover if you get too close."
-	dev_commentary_requirement = 75
+	dev_commentary_requirement = 250
 	health = 100.0
 	max_health = 100.0
 	defense = 0.0

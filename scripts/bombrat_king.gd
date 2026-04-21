@@ -17,9 +17,9 @@ var game_node: Node = null  # Reference to the Defense game node
 
 func initialize_entity() -> void:
 	var boost = 250 * NetworkManager.players.size()
-	entity_name = "Buck of the Bombrats"
-	bestiary_description = "The father to most bombrats, has a timer when spawning that requires you to defeat it within a certain amount of time. Spawns shockwaves every so often."
-	developer_commentary = "Hey it's like the Bomb-omb King! I just noticed that, the similarity was not intended, I'll give you that much. I just didn't wanna call it a Mother or a Father like the Mother Slime."
+	entity_name = "Bombrat King"
+	bestiary_description = "The king of most bombrats, has a timer when spawning that requires you to defeat it within a certain amount of time. Spawns shockwaves every so often."
+	developer_commentary = "Hey it's like the Bob-omb King! I just noticed that, the similarity was not intended, I'll give you that much. I just didn't wanna call it a Mother or a Father like the Mother Slime."
 	dev_commentary_requirement = 2
 	health = 2250.0 + boost
 	max_health = 2250.0 + boost
