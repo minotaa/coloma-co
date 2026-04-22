@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal buy_item(item: ItemType)
+
 var stupid_arbitrary_attack_cooldown: float = 0.0
 var max_stupid_arbitrary_attack_cooldown: float = 0.15
 var shop_items = []  # Current shop inventory
@@ -13,6 +15,7 @@ var focused_inventory_slot: int = 0
 var original_zoom := Vector2(3.75, 3.75)
 var leveling_bar_rest_position: Vector2
 var zoom_multiplier := 1.0
+var cached_wave: int = 0
 var directions := {
 	"left": Vector2.LEFT,
 	"right": Vector2.RIGHT,
@@ -315,9 +318,17 @@ func show_mobile_controls() -> void:
 	$UI/Global/SettingsButton.visible = true
 	$UI/Global/Use.visible = true
 
+func _buy_item(item: ItemType) -> void:
+	print("bought " + item.name)
+	if Man.tutorial_active and Man.tutorial_step == 5:
+		$UI/Global/Tutorial/Label.text = "Good choice! That's everything you need to know. Keep defending the gem, defeating waves of enemies, earning gold, and upgrading your build. Each wave will get harder, with new enemies coming in later - let's see how far you can get!"
+		Man.tutorial_step = 6
+		cached_wave = get_parent().wave
+
 func _ready() -> void:	
 	if Man.is_mobile():
 		$UI/Global/Attack/TextureRect.texture = Man.equipped_weapon.texture
+	connect("buy_item", _buy_item)
 	play_idle_animation()
 	zoom_multiplier = Man.zoom
 	_update_camera_zoom()
@@ -415,6 +426,14 @@ func setup_ui(type: String) -> void:
 	if type != "":
 		print("Showing UI for type: %s" % type)
 		$UI.get_node(str(type)).visible = true
+		if type == "Defense" and not Man.tutorial_completed:
+			Man.tutorial_active = true
+			Man.tutorial_step = 0
+			$UI/Global/Tutorial.visible = true
+			if Man.is_mobile() or using_controller:
+				$UI/Global/Tutorial/Label.text = "Welcome to Myrkwood: Offshoot! Try moving around with the Left Joystick." 
+			else:
+				$UI/Global/Tutorial/Label.text = "Welcome to Myrkwood: Offshoot! Try moving around with W, A, S, D." 
 	else:
 		print("Type is empty, no specific UI shown")
 	$UI/Global.visible = true
@@ -873,6 +892,13 @@ func _process_input(delta) -> void:
 			
 			# Trigger attack based on weapon type
 			if Man.equipped_weapon.type == "SWORD":
+				if Man.tutorial_active and Man.tutorial_step == 1:
+					$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+					if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+						$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+						Man.tutorial_step = 2
+						cached_wave = get_parent().wave
+						$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
 				var direction_vec = Vector2(cos(angle), sin(angle))
 				var attack_dir = ""
 				
@@ -892,6 +918,13 @@ func _process_input(delta) -> void:
 				
 			elif Man.equipped_weapon.type == "BOOMERANG":
 				if has_boomerang:
+					if Man.tutorial_active and Man.tutorial_step == 1:
+						$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+						if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+							$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+							Man.tutorial_step = 2
+							cached_wave = get_parent().wave
+							$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
 					play_animation("throw_" + last_direction)
 					var direction = Vector2(cos(angle), sin(angle))
 					
@@ -903,6 +936,13 @@ func _process_input(delta) -> void:
 					
 			elif Man.equipped_weapon.type == "THROWABLE":
 				if clip > 0:
+					if Man.tutorial_active and Man.tutorial_step == 1:
+						$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+						if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+							$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+							Man.tutorial_step = 2
+							cached_wave = get_parent().wave
+							$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
 					play_animation("throw_" + last_direction)
 					var direction = Vector2(cos(angle), sin(angle))
 					
@@ -917,6 +957,13 @@ func _process_input(delta) -> void:
 					
 			elif Man.equipped_weapon.type == "BLUNDERBUSS":
 				if clip > 0:
+					if Man.tutorial_active and Man.tutorial_step == 1:
+						$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+						if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+							$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+							Man.tutorial_step = 2
+							cached_wave = get_parent().wave
+							$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
 					play_animation("throw_" + last_direction)
 					var direction = Vector2(cos(angle), sin(angle))
 					
@@ -979,6 +1026,9 @@ func _process_input(delta) -> void:
 			for area in $Area2D.get_overlapping_areas():
 				if (area as Area2D).is_in_group("gem"):
 					shop_node.visible = true
+					if Man.tutorial_active and Man.tutorial_step == 4:
+						$UI/Global/Tutorial/Label.text = "The shop rotates every 5 waves, and offers various upgrades that will be useful throughout your run. Try getting one of these now."
+						Man.tutorial_step = 5
 					play_idle_animation()
 					populate_shop_ui()
 					update_shop_ui()
@@ -1073,6 +1123,14 @@ func _process_input(delta) -> void:
 
 		# Perform attack if a direction was determined
 		if attack_dir != "":
+			if Man.tutorial_active and Man.tutorial_step == 1:
+				$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+				if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+					$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+					Man.tutorial_step = 2
+					cached_wave = get_parent().wave
+					$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
+			
 			stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown / get_attack_speed()
 			if multiplayer.has_multiplayer_peer():
 				play_sfx.rpc(["slash1", "slash2"].pick_random(), global_position, -20.0)
@@ -1114,6 +1172,13 @@ func _process_input(delta) -> void:
 					should_throw = true
 			
 			if should_throw:
+				if Man.tutorial_active and Man.tutorial_step == 1:
+					$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+					if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+						$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+						Man.tutorial_step = 2
+						cached_wave = get_parent().wave
+						$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
 				direction = direction.normalized()
 				play_animation("throw_" + last_direction)
 				
@@ -1157,6 +1222,13 @@ func _process_input(delta) -> void:
 				should_throw = false
 			
 			if should_throw:
+				if Man.tutorial_active and Man.tutorial_step == 1:
+					$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+					if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+						$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+						Man.tutorial_step = 2
+						cached_wave = get_parent().wave
+						$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
 				stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown / get_attack_speed()
 				direction = direction.normalized()
 				play_animation("throw_" + last_direction)
@@ -1205,6 +1277,13 @@ func _process_input(delta) -> void:
 				should_shoot = false
 			
 			if should_shoot:
+				if Man.tutorial_active and Man.tutorial_step == 1:
+					$UI/Global/Tutorial/Label/TextureProgressBar.value += 25
+					if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100:
+						$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+						Man.tutorial_step = 2
+						cached_wave = get_parent().wave
+						$UI/Global/Tutorial/Label.text = "Enemies will push towards the gem in waves - protect the gem by defeating them!"
 				stupid_arbitrary_attack_cooldown = max_stupid_arbitrary_attack_cooldown / get_attack_speed()
 				direction = direction.normalized()
 				play_animation("throw_" + last_direction)
@@ -1253,6 +1332,15 @@ func _process_input(delta) -> void:
 	if has_effect("Gunked"):
 		velocity /= 2 
 	move_and_slide()
+	if Man.tutorial_step == 0 and Man.tutorial_active:
+		$UI/Global/Tutorial/Label/TextureProgressBar.value += velocity.length() * 0.01
+		if $UI/Global/Tutorial/Label/TextureProgressBar.value >= 100.0:
+			$UI/Global/Tutorial/Label/TextureProgressBar.value = 0.0
+			if using_controller or Man.is_mobile():
+				$UI/Global/Tutorial/Label.text = "Great! Now, use your weapon with the Right Joystick."
+			else:
+				$UI/Global/Tutorial/Label.text = "Great! Now, use your weapon by aiming and clicking with your mouse."
+			Man.tutorial_step = 1
 	if Input.is_action_pressed("sprint"):
 		global_position = round(global_position / 0.1) * 0.1
 	else:
@@ -1353,9 +1441,13 @@ func _input(event: InputEvent) -> void:
 	if not $UI/Global/ChatBar.has_focus() and ((Man.is_desktop() and Input.is_action_just_pressed("pause")) or (Man.is_mobile() and Input.is_action_pressed("pause"))):
 		if $UI/Global/Pause.visible: 
 			$UI/Global/Pause.visible = false
+			if Man.tutorial_active:
+				$UI/Global/Tutorial.visible = true
 		else:
 			$UI/Global/Pause.visible = true
-			
+			if Man.tutorial_active:
+				$UI/Global/Tutorial.visible = false
+				
 			$UI/Global/Pause/Panel/Resume.visible = true
 			$UI/Global/Pause/Panel/Options.visible = true
 			$"UI/Global/Pause/Panel/Quit to Main Menu".visible = true
@@ -1694,6 +1786,15 @@ func _physics_process(delta: float) -> void:
 	else:
 		$UI/Global/ChatBar.modulate.a = lerp($UI/Global/ChatBar.modulate.a, 0.0, FADE_SPEED * delta)
 	if $UI/Defense.visible:
+		if cached_wave != get_parent().wave and Man.tutorial_active and Man.tutorial_step == 2:
+			$UI/Global/Tutorial/Label.text = "Nice job defeating the first wave. Keep defending the gem and save up some gold - you can earn it by defeating enemies and finishing waves."
+			Man.tutorial_step = 3
+			$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+		if cached_wave != get_parent().wave and Man.tutorial_active and Man.tutorial_step == 6:
+			$UI/Global/Tutorial.visible = false
+			Man.tutorial_completed = true
+			Man.tutorial_active = false
+			Man.save_game("completed tutorial")
 		if not multiplayer.has_multiplayer_peer() or is_multiplayer_authority():
 			$UI/Defense/HealthBar.max_value = get_max_health()
 			$UI/Defense/OverhealBar.max_value = get_max_health()
@@ -1724,6 +1825,7 @@ func _physics_process(delta: float) -> void:
 				# Timeout finished - start transferring gold
 				pass
 
+		
 		if added_gold_timeout <= 0.0 and added_gold > 0:
 			# Transfer gold smoothly from added_gold to actual gold
 			var increment = max(1, ceil(added_gold * delta * 5.0))
@@ -1731,7 +1833,6 @@ func _physics_process(delta: float) -> void:
 			
 			gold += increment
 			added_gold -= increment
-
 		# Show the added gold in the same label
 		if added_gold > 0:
 			$UI/Dungeons/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
@@ -1957,9 +2058,24 @@ func _physics_process(delta: float) -> void:
 			# Transfer gold smoothly from added_gold to actual gold
 			var increment = max(1, ceil(added_gold * delta * 5.0))
 			increment = min(increment, added_gold)
-			
+			print(increment)
 			gold += increment
 			added_gold -= increment
+			if Man.tutorial_active and Man.tutorial_step == 3 and type == "Defense":
+				print("a")
+				$UI/Global/Tutorial/Label/TextureProgressBar.value += increment * 0.5
+				print(increment)
+				if $UI/Global/Tutorial/Label/TextureProgressBar.value <= 100.0:
+					$UI/Global/Tutorial/Label/TextureProgressBar.value = 0
+					Man.tutorial_step = 4
+					if Man.is_mobile():
+						$UI/Global/Tutorial/Label.text = "You've got some gold saved up! Make your way to the gem and interact with it using Interact Button to open the shop."
+					elif using_controller:
+						$UI/Global/Tutorial/Label.text = "You've got some gold saved up! Make your way to the gem and interact with it using Right Face Button to open the shop."
+					else:
+						$UI/Global/Tutorial/Label.text = "You've got some gold saved up! Make your way to the gem and interact with it using E to open the shop."
+
+
 
 		# Show the added gold in the same label
 		if added_gold > 0:

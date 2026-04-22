@@ -63,6 +63,9 @@ var current_xp: float = 0.0
 var xp_scaling: float = 1.5
 var kills = {}
 var golem_annoying_thing = {}
+var tutorial_active: bool = false
+var tutorial_step: int = 0
+var tutorial_completed: bool = false
 
 var highest_wave: int = 0
 var highest_rooms: int = 0
@@ -281,6 +284,8 @@ func load_game():
 			zoom = data["zoom"]
 		if data.has("kills"):
 			kills = data["kills"]
+		if data.has("tutorial_completed"):
+			tutorial_completed = data["tutorial_completed"]
 	print("Loaded save data.")
 
 @rpc("any_peer", "call_local", "reliable")
@@ -306,7 +311,8 @@ func get_save_data() -> Dictionary:
 		"current_xp": current_xp,
 		"flick_control": flick_control,
 		"zoom": zoom,
-		"kills": kills
+		"kills": kills,
+		"tutorial_completed": tutorial_completed
 	}
 
 func _notification(what: int) -> void:

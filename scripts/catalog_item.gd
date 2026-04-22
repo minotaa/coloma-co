@@ -52,6 +52,7 @@ func _on_button_pressed() -> void:
 			if has_stack or bag.list.size() < player.get_slots():
 				player.gold -= item.price
 				bag.add_item(ItemStack.new(item, 1))
+				player.emit_signal("buy_item", item)
 			else:
 				Toast.add("You don't have the inventory space!")
 		else:

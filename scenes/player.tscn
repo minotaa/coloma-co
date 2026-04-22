@@ -856,6 +856,16 @@ shadow_size = 4
 shadow_color = Color(0, 0, 0, 0.796078)
 shadow_offset = Vector2(4, 4)
 
+[sub_resource type="LabelSettings" id="LabelSettings_4gjji"]
+font_size = 22
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mx1m4"]
+texture = ExtResource("14_i4ail")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3v2ag"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -2690,6 +2700,81 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_487ah")
 theme_override_styles/disabled = SubResource("StyleBoxTexture_gl8cc")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wnwbv")
 text = "Quit Game"
+
+[node name="Tutorial" type="Control" parent="UI/Global" unique_id=710674691]
+z_index = 129
+y_sort_enabled = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -211.0
+offset_top = -241.5
+offset_right = 211.0
+offset_bottom = -126.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/Global/Tutorial" unique_id=1927767158]
+z_index = 1
+custom_minimum_size = Vector2(386, 95)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.34600002
+anchor_top = -0.19100001
+anchor_right = 1.355
+anchor_bottom = 0.86100006
+offset_left = 0.012008667
+offset_top = -0.03499794
+offset_right = 0.19000244
+offset_bottom = -0.015007019
+text = "Tutorial:
+I jest, I would never do such things.
+Walk em baby"
+label_settings = SubResource("LabelSettings_4gjji")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Panel" type="Panel" parent="UI/Global/Tutorial/Label" unique_id=1273084816]
+z_as_relative = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.034
+anchor_top = -0.136
+anchor_right = 1.034
+anchor_bottom = 1.136
+offset_left = 0.12400055
+offset_top = -0.04399872
+offset_right = -0.12402344
+offset_bottom = 0.04399109
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_mx1m4")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="UI/Global/Tutorial/Label" unique_id=2041239157]
+z_index = -1
+z_as_relative = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.034
+anchor_top = 0.628
+anchor_right = 1.034
+anchor_bottom = 1.2440001
+offset_left = 0.12400055
+offset_top = -7.987999
+offset_right = -0.12402344
+offset_bottom = -8.024002
+nine_patch_stretch = true
+stretch_margin_left = 16
+stretch_margin_top = 32
+stretch_margin_right = 16
+stretch_margin_bottom = 32
+texture_under = ExtResource("14_i4ail")
+texture_progress = ExtResource("14_a38lo")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=778394023]
 replication_config = SubResource("SceneReplicationConfig_3v2ag")
