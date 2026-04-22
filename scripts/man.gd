@@ -62,6 +62,7 @@ var current_level: int = 0
 var current_xp: float = 0.0
 var xp_scaling: float = 1.5
 var kills = {}
+var golem_annoying_thing = {}
 
 var highest_wave: int = 0
 var highest_rooms: int = 0
@@ -82,6 +83,7 @@ var enemies = {
 	"explosive_bauble": preload("res://scenes/explosive_bauble.tscn"),
 	"bombrat_king": preload("res://scenes/bombrat_king.tscn"),
 	"jumper_slime": preload("res://scenes/jumper_slime.tscn"),
+	"protector_golem": preload("res://scenes/protector_golem.tscn")
 }
 
 func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:

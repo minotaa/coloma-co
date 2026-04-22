@@ -30,6 +30,7 @@ var gunk_slime = preload("res://scenes/gunk_slime.tscn")
 var explosive_bauble = preload("res://scenes/explosive_bauble.tscn")
 var bombrat_king = preload("res://scenes/bombrat_king.tscn")
 var jumper_slime = preload("res://scenes/jumper_slime.tscn")
+var protector_golem = preload("res://scenes/protector_golem.tscn")
 
 @onready var spawner_layer = $Spawner
 
@@ -318,6 +319,7 @@ func spawn_wave() -> void:
 				send_bombrats(bombrat_amount)
 			spawn_bombrat("north")
 			spawn_bombrat("south")
+			spawn_slimes(20)
 		2:
 			bombrat_amount = 4
 			if multiplayer.has_multiplayer_peer():
@@ -422,10 +424,14 @@ func spawn_wave() -> void:
 			var bauble_chance := clampf(0.25 + float(wave) / 30.0, 0.25, 0.75)
 			var baubles_to_spawn := 0
 
-			if wave >= 20:
+			if wave >= 15:
 				var ghost_chance := clampf(0.50 + float(wave) / 30.0, 0.50, 0.85)
 				if randf() < ghost_chance:
 					await spawn_ghosts(randi_range(3, 5))
+			if wave >= 20:
+				var golem_chance := clampf(0.25 + float(wave) / 30.0, 0.25, 0.75)
+				if randf() < golem_chance:
+					await spawn_golems(randi_range(1, 2))
 
 			for i in range(5):
 				if randf() < bauble_chance:
@@ -487,6 +493,13 @@ func spawn_crabmen(count: int) -> void:
 		await get_tree().create_timer(delay).timeout
 		var directions = ["north", "south", "west", "east"]
 		spawn_crabman(directions.pick_random())
+
+func spawn_golems(count: int) -> void:
+	for i in count:
+		var delay = randf_range(0.75, 2.25)
+		await get_tree().create_timer(delay).timeout
+		var directions = ["north", "south", "west", "east"]
+		spawn_golem(directions.pick_random())
 
 func spawn_slimes(count: int) -> void:
 	for i in count:
@@ -597,9 +610,53 @@ func spawn_slime(direction: String) -> void:
 			else:
 				s = jumper_slime.instantiate()
 		else: 
-			s = slime.instantiate()
+			s = poison_slime.instantiate()
 		s.global_position = spawn_pos
 		add_child(s, true)
+		var smoke = smoke_scene.instantiate()
+		smoke.global_position = spawn_pos
+		smoke.emitting = true
+		add_child(smoke, true)
+
+func spawn_golem(direction: String) -> void:
+	var matching_cells: Array[Vector2i] = []
+	var cells = spawner_layer.get_used_cells()
+
+	for cell_loc in cells:
+		var data = spawner_layer.get_cell_tile_data(cell_loc)
+		if not data:
+			continue
+		if data.get_custom_data("spawner_type") != "corner":
+			continue
+
+		match direction:
+			"north":
+				if cell_loc.y < 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"south":
+				if cell_loc.y > 0 and abs(cell_loc.y) > abs(cell_loc.x):
+					matching_cells.append(cell_loc)
+			"west":
+				if cell_loc.x < 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+			"east":
+				if cell_loc.x > 0 and abs(cell_loc.x) > abs(cell_loc.y):
+					matching_cells.append(cell_loc)
+
+	if matching_cells.is_empty():
+		matching_cells = cells.filter(func(c):
+			var d = spawner_layer.get_cell_tile_data(c)
+			return d and d.get_custom_data("spawner_type") == "main"
+		)		
+		
+	if matching_cells:
+		var selected_cell = matching_cells.pick_random()
+		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		var g: CharacterBody2D
+		
+		g = protector_golem.instantiate()
+		g.global_position = spawn_pos
+		add_child(g, true)
 		var smoke = smoke_scene.instantiate()
 		smoke.global_position = spawn_pos
 		smoke.emitting = true

@@ -52,6 +52,7 @@ var ghost = preload("res://scenes/ghost.tscn")
 var gunk_slime = preload("res://scenes/gunk_slime.tscn")
 var explosive_bauble = preload("res://scenes/explosive_bauble.tscn")
 var jumper_slime = preload("res://scenes/jumper_slime.tscn")
+var protector_golem = preload("res://scenes/protector_golem.tscn")
 
 # Room tracking system
 var rooms = {}  # Dictionary: room_id -> {bounds: Rect2i, cells: Array[Vector2i], filler_area: Rect2i}
@@ -695,6 +696,8 @@ func spawn_enemy(enemy_type: String) -> void:
 			enemy_scene = explosive_bauble
 		"jumper_slime":
 			enemy_scene = jumper_slime
+		"protector_golem":
+			enemy_scene = protector_golem
 		_:
 			print("[SPAWN] Unknown enemy type: ", enemy_type)
 			return

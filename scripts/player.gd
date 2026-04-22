@@ -157,7 +157,8 @@ func add_status_effect(effect: Effect) -> void:
 		var duration_multiplier = 1.0 + (amplifier_level * 0.15)
 		effect.duration *= duration_multiplier
 	
-	effect.on_apply.call(self)
+	if effect.on_apply != null:
+		effect.on_apply.call(self)
 	active_effects.append(effect)
 
 func has_effect(effect_name: String) -> bool:

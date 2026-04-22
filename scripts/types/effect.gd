@@ -1,5 +1,5 @@
 class_name Effect
-extends RefCounted
+extends Object
 
 var name: String
 var duration: float
@@ -10,9 +10,9 @@ var elapsed_time: float = 0.0
 var effect_elapsed: float = 0.0
 var texture: Texture
 
-var on_apply: Callable = func (_target): pass
-var on_effect: Callable = func (_target): pass
-var on_end: Callable = func (_target): pass
+var on_apply: Callable = func(target): pass
+var on_effect: Callable = func(target): pass
+var on_end: Callable = func(target): pass
 
 func _init(_name: String, _color: Color, _duration: float, _potency: int = 0, _effect_time: float = 0.0):
 	name = _name
@@ -28,6 +28,8 @@ func update(delta: float, target) -> bool:
 
 	# Trigger effect based on effect_time
 	if effect_time == 0.0 or effect_elapsed >= effect_time:
+		if on_effect == null:
+			return true
 		self.on_effect.call(target)
 		effect_elapsed = 0.0
 
