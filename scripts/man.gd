@@ -286,6 +286,8 @@ func load_game():
 			kills = data["kills"]
 		if data.has("tutorial_completed"):
 			tutorial_completed = data["tutorial_completed"]
+		if data.has("selected_map"):
+			selected_map = data["selected_map"]
 	print("Loaded save data.")
 
 @rpc("any_peer", "call_local", "reliable")
@@ -312,7 +314,8 @@ func get_save_data() -> Dictionary:
 		"flick_control": flick_control,
 		"zoom": zoom,
 		"kills": kills,
-		"tutorial_completed": tutorial_completed
+		"tutorial_completed": tutorial_completed,
+		"selected_map": selected_map
 	}
 
 func _notification(what: int) -> void:

@@ -40,6 +40,18 @@ func _ready() -> void:
 	
 	transition_to(MenuState.TITLE_SCREEN)
 	_check_for_auto_join()
+	
+	await Fade.fade_out(0.0)
+	if Man.selected_map == "Solmere":
+		$Demoman.global_position = Vector2(0, 544)
+		$Leaves.emitting = false
+		$Dust.emitting = true
+	else:
+		$Demoman.global_position = Vector2(0, 0)
+		$Leaves.emitting = true
+		$Dust.emitting = false
+	await get_tree().create_timer(0.25).timeout
+	await Fade.fade_in(0.25)
 
 func _check_for_auto_join() -> void:
 	"""Check if game was launched with a join parameter and auto-connect"""
@@ -707,6 +719,16 @@ func update_mode_selector() -> void:
 	
 	$"UI/Main/Singleplayer Mode Selector/Panel2/Title".text = Man.selected_mode
 	$"UI/Main/Singleplayer Mode Selector/Panel2/ScrollContainer/Description".text = Man.explanations[Man.selected_mode]
+	
+	if Man.selected_map == "Solmere":
+		$Demoman.global_position = Vector2(0, 544)
+		$Leaves.emitting = false
+		$Dust.emitting = true
+	else:
+		$Demoman.global_position = Vector2(0, 0)
+		$Leaves.emitting = true
+		$Dust.emitting = false
+
 	
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		NetworkManager.send_mode.rpc(Man.selected_mode, Man.selected_map)

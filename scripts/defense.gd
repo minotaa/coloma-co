@@ -321,7 +321,7 @@ func spawn_wave() -> void:
 				send_bombrats(bombrat_amount)
 			spawn_bombrat("north")
 			spawn_bombrat("south")
-			#spawn_slimes(20)
+			#spawn_golems(2)
 		2:
 			bombrat_amount = 4
 			if multiplayer.has_multiplayer_peer():
@@ -612,7 +612,7 @@ func spawn_slime(direction: String) -> void:
 			else:
 				s = jumper_slime.instantiate()
 		else: 
-			s = poison_slime.instantiate()
+			s = slime.instantiate()
 		s.global_position = spawn_pos
 		add_child(s, true)
 		var smoke = smoke_scene.instantiate()
