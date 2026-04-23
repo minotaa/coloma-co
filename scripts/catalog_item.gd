@@ -18,7 +18,10 @@ func set_item(item: ItemType) -> void:
 	tooltip_text = item.description
 	$Button.tooltip_text = item.description
 	$TextureRect.texture = item.texture
-	$HBoxContainer/Gold.text = str(item.price)
+	if Man.equipped_armor.id == 50:
+		$HBoxContainer/Gold.text = str(item.price / 2)
+	else:
+		$HBoxContainer/Gold.text = str(item.price)
 	$Label.text = item.name
 	# Check if the player already has this upgrade
 	var upgrade_bag = Man.get_player().upgrade_bag
@@ -38,8 +41,11 @@ func _on_button_pressed() -> void:
 	var player = Man.get_player()
 	var bag = player.bag
 	var upgrade_bag = player.upgrade_bag
+	var price = item.price
+	if Man.equipped_armor.id == 51:
+		price /= 2
 
-	if player.gold >= item.price:
+	if player.gold >= price:
 		if not item is Upgrade:
 			# Check if the player already has this item
 			var has_stack := false

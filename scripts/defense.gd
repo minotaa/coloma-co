@@ -206,10 +206,12 @@ func _process(delta: float) -> void:
 			play_sfx.rpc("wavefinished")
 			for player in NetworkManager.players:
 				add_gold.rpc_id(player, 100)
+				get_node(str(player)).emit_signal("new_wave")
 		else:
 			Toast.add("Wave complete!")
 			play_sfx("wavefinished")
 			add_gold("Player", 100)
+			get_node("Player").emit_signal("new_wave")
 		spawn_wave()
 		
 
@@ -292,7 +294,7 @@ func spawn_wave() -> void:
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.alive:
 			if multiplayer.has_multiplayer_peer():
-				player.heal.rpc_id(int(player.name), 10)
+				get_node(str(player.name)).heal.rpc_id(int(player.name), 10)
 			else:
 				player.heal(10)	
 		if wave % 5 == 0:

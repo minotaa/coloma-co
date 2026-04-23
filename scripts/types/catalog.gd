@@ -811,6 +811,70 @@ func _init() -> void:
 	rebound_boomerang.damage = 45.0
 	items.append(rebound_boomerang)
 	
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(0.0, 64.0, 16.0, 16.0)
+	var hearty_cuirass = Armor.new(46, "Hearty Cuirass", atlas)
+	hearty_cuirass.description = "Grants Overheal every 2 rounds."
+	hearty_cuirass.defense = -5.0
+	hearty_cuirass.health = -10.0
+	items.append(hearty_cuirass)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(16.0, 64.0, 16.0, 16.0)
+	var magic_bandage = Armor.new(47, "Magic Bandage", atlas)
+	magic_bandage.description = "Doubles your healing."
+	magic_bandage.defense = 5.0
+	magic_bandage.health = -20.0
+	items.append(magic_bandage)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(32.0, 64.0, 16.0, 16.0)
+	var flighty_feather = Armor.new(48, "Flighty Feather", atlas)
+	flighty_feather.description = "Grants more Dodge as your HP decreases."
+	flighty_feather.defense = -15.0
+	flighty_feather.health = 10.0
+	items.append(flighty_feather)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(64.0, 16.0, 16.0, 16.0)
+	var carapace = Armor.new(49, "Carapace", atlas)
+	carapace.description = "Get more damage as your HP is low."
+	carapace.defense = 50.0
+	carapace.health = 50.0
+	items.append(carapace)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(80.0, 16.0, 16.0, 16.0)
+	var bombrat_shell = Armor.new(50, "Bombrat Shell", atlas)
+	bombrat_shell.description = "Store up damage as you get hit and dump it into your next attack."
+	bombrat_shell.defense = -10.0
+	bombrat_shell.health = 100.0
+	items.append(bombrat_shell)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(48.0, 64.0, 16.0, 16.0)
+	var billionaire_coat = Armor.new(51, "Billionaire's Coat", atlas)
+	billionaire_coat.description = "Shop prices are halved. Gain an extra inventory slot."
+	billionaire_coat.defense = 50.0
+	billionaire_coat.health = 20.0
+	items.append(billionaire_coat)
+	
+	atlas = AtlasTexture.new()
+	atlas.atlas = load("res://assets/sprites/items.png")
+	atlas.region = Rect2(64.0, 64.0, 16.0, 16.0)
+	var cracked_bone_helmet = Armor.new(52, "Cracked Bone Helmet", atlas)
+	cracked_bone_helmet.description = "Gain 125 Defense, lose 15 Defense every hit you take, regenerates after 3 rounds after being broken."
+	cracked_bone_helmet.defense = 0.0
+	cracked_bone_helmet.health = 50.0
+	items.append(cracked_bone_helmet)
+	
 	#atlas = AtlasTexture.new()
 	#atlas.atlas = load("res://assets/sprites/items.png")
 	#atlas.region = Rect2(176.0, 16.0, 16.0, 16.0)

@@ -762,9 +762,11 @@ func complete_room() -> void:
 	
 	for player in get_tree().get_nodes_in_group("players"):
 		if multiplayer.has_multiplayer_peer():
-			player.heal.rpc_id(int(player.name), 10.0)
+			get_node(str(player.name)).heal.rpc_id(int(player.name), 10.0)
+			get_node(str(player.name)).emit_signal("new_room")
 		else:
 			player.heal(10.0)
+			get_node("Player").emit_signal("new_room")
 	
 	if (completed_rooms + 1) % 10 == 0:
 		spawn_shop_room()

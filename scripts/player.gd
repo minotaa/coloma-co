@@ -1,9 +1,13 @@
 extends CharacterBody2D
 
 signal buy_item(item: ItemType)
+signal new_room
+signal new_wave
 
 var stupid_arbitrary_attack_cooldown: float = 0.0
 var max_stupid_arbitrary_attack_cooldown: float = 0.15
+var stored_damage = 0.0
+var bone_defense = 125.0
 var shop_items = []  # Current shop inventory
 var current_shop_seed = 0  # Seed from server for deterministic random selection
 var rerolls_available = 3  # Number of rerolls player can use
@@ -107,6 +111,8 @@ func get_slots() -> int:
 	var slots = 3
 	if upgrade_bag.has_item(Catalog.get_by_id(35)):
 		slots += 1
+	if Man.equipped_armor.id == 51:
+		slots += 1
 	return slots 
 
 func get_crit_chance() -> float:
@@ -131,6 +137,8 @@ func get_attack_speed() -> float:
 
 func get_defense() -> float:
 	var defense := 0.0
+	if Man.equipped_armor.id == 52:
+		defense += bone_defense
 	if upgrade_bag.has_item(Catalog.get_by_id(9)):
 		defense += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(9)).data["level"]
 	defense += Man.equipped_armor.defense
@@ -325,10 +333,35 @@ func _buy_item(item: ItemType) -> void:
 		Man.tutorial_step = 6
 		cached_wave = get_parent().wave
 
+var cuirass_timer = 2
+var bone_timer = 3
+func _new_wave() -> void:
+	print("new wave")
+	if Man.equipped_armor.id == 46:
+		cuirass_timer -= 1
+		if cuirass_timer <= 0:
+			cuirass_timer = 2
+			overheal = min(overheal + 20.0, get_max_overheal())
+	if Man.equipped_armor.id == 52 and bone_defense <= -25:
+		bone_timer -= 1
+		if bone_timer <= 0:
+			bone_timer = 3
+			bone_defense = 125
+
+func _new_room() -> void:
+	print("new room")
+	if Man.equipped_armor.id == 46:
+		cuirass_timer -= 1
+		if cuirass_timer == 0:
+			cuirass_timer = 2
+			overheal = min(overheal + 20.0, get_max_overheal())
+
 func _ready() -> void:	
 	if Man.is_mobile():
 		$UI/Global/Attack/TextureRect.texture = Man.equipped_weapon.texture
 	connect("buy_item", _buy_item)
+	connect("new_wave", _new_wave)
+	connect("new_room", _new_room)
 	play_idle_animation()
 	zoom_multiplier = Man.zoom
 	_update_camera_zoom()
@@ -421,6 +454,7 @@ func setup_ui(type: String) -> void:
 	#if is_multiplayer_authority():
 	self.type = type
 	print("Setting up UI - type: '%s'" % type)
+	$UI/Global/Tutorial.visible = false
 	for children in $UI.get_children():
 		children.visible = false
 	if type != "":
@@ -442,7 +476,8 @@ func setup_ui(type: String) -> void:
 func heal(amount: float) -> void:	
 	if alive:
 		var old_health = health
-		
+		if Man.equipped_armor.id == 47:
+			amount *= 2.0
 		health = min(health + amount, get_max_health())
 		var healed = roundi(health - old_health)
 		damage_healed += healed
@@ -478,6 +513,9 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 	if has_effect("Invulnerability"):
 		hit_cooldown = max_hit_cooldown
 		return
+		
+	if Man.equipped_armor.id == 52:
+		bone_defense -= 15
 	
 	if (Man.equipped_armor.id == 43 or upgrade_bag.has_item(Catalog.get_by_id(30))) and get_parent().get_node(body_name) != null and get_parent().get_node(body_name).health != null:
 		var damage_reflection = 0.0 
@@ -490,12 +528,22 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 	var dodge_chance = 0.0
 	if Man.equipped_armor.id == 11:
 		dodge_chance += 0.2
+	if Man.equipped_armor.id == 48:
+		dodge_chance += 0.1
+		if health < (get_max_health() * 0.75):
+			dodge_chance += 0.1
+		if health < (get_max_health() * 0.5):
+			dodge_chance += 0.1
+		if health < (get_max_health() * 0.25):
+			dodge_chance += 0.1
+		if health < (get_max_health() * 0.1):
+			dodge_chance += 0.1
 	if upgrade_bag.has_item(Catalog.get_by_id(31)):
 		dodge_chance += (0.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(31)).data["level"])
 	if dodge_chance > 0.0:
 		if randf() < dodge_chance:
 			play_ui_sfx(preload("res://assets/sounds/mama.wav"))
-			Toast.add("Your Pajamas negated the damage!")
+			Toast.add("You dodged the damage!")
 			hit_cooldown = max_hit_cooldown
 			return
 			
@@ -530,6 +578,9 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 	health -= final_damage
 	damage_taken += final_damage
 	total_damage_taken += final_damage
+	
+	if Man.equipped_armor.id == 50:
+		stored_damage = min(stored_damage + final_damage, 125.0)
 
 	if multiplayer.has_multiplayer_peer():
 		play_sfx.rpc("hit", global_position, 10.0)
@@ -2214,6 +2265,9 @@ func _process_hit(body, damage: float):
 		else:
 			play_sfx("swoosh2louder", global_position, -8.0, randf_range(0.95, 1.15))
 		
+		if Man.equipped_armor.id == 50 and stored_damage > 0.0:
+			damage += stored_damage
+		
 		# Apply separate Strength buff multiplier if active
 		var strength_multiplier = 2.5 if has_effect("Strength") else 1.0
 
@@ -2227,6 +2281,9 @@ func _process_hit(body, damage: float):
 		if upgrade_bag.has_item(Catalog.get_by_id(32)) and (health / get_max_health()) <= 0.4:
 			crit_multiplier += 0.05 * upgrade_bag.get_item_stack(Catalog.get_by_id(32)).data["level"]
 			s += 5 * upgrade_bag.get_item_stack(Catalog.get_by_id(32)).data["level"]
+		if Man.equipped_armor.id == 49 and (health / get_max_health()) <= 0.5:
+			crit_multiplier += 0.1
+			s += 50 
 		
 		# Overdrive increases damage at full health
 		if upgrade_bag.has_item(Catalog.get_by_id(40)):

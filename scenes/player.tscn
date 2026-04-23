@@ -1240,6 +1240,10 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
+[node name="Slot5" parent="UI/Defense/Inventory" unique_id=1318860119 instance=ExtResource("14_4r5pv")]
+visible = false
+layout_mode = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Defense" unique_id=499820018]
 layout_mode = 1
 anchors_preset = 5
@@ -1897,6 +1901,9 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Slot4" parent="UI/Dungeons/Inventory" unique_id=2105838569 instance=ExtResource("14_4r5pv")]
+layout_mode = 2
+
+[node name="Slot5" parent="UI/Dungeons/Inventory" unique_id=729898400 instance=ExtResource("14_4r5pv")]
 layout_mode = 2
 
 [node name="HealthBar" type="TextureProgressBar" parent="UI/Dungeons" unique_id=956830824]
