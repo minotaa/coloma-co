@@ -445,7 +445,7 @@ func save_game(reason: String) -> void:
 
 func get_enemy(enemy_type) -> Entity:
 	var enemy = enemies[enemy_type].instantiate()
-	get_tree().current_scene.get_node("Main Menu").add_child(enemy)
+	add_child(enemy)
 	await get_tree().process_frame
 	enemy.queue_free()
 	return enemy
