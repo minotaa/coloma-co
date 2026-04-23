@@ -173,8 +173,11 @@ func take_damage(amount: float, from_position: Vector2, source_name: String, cri
 		for enemy in get_tree().get_nodes_in_group("enemies"):
 			if enemy.id == 14 and (enemy as Entity).global_position.distance_to(global_position) <= 100.0:
 				if multiplayer.has_multiplayer_peer():
+					if str(source_name) == Man.get_player().name:
+						Man.golem_stupid_rating += 1
 					Toast.add.rpc_id(int(source_name), "This enemy is currently protected by a Protector Golem! Kill the Golem first!")
 				else:
+					Man.golem_stupid_rating += 1
 					Toast.add("This enemy is currently protected by a Protector Golem! Kill the Golem first!")
 						
 				print(entity_name + " was protected by a Protector Golem.")

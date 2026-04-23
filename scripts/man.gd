@@ -23,6 +23,29 @@ var map_paths: Dictionary[Variant, Variant] = {
 	#"Campaign_Myrkwood": "res://scenes/levels/campaign/campaign.tscn" # Unused
 }
 
+var achievements: Dictionary[String, bool] = {
+	"COMPLETE_BESTIARY_HALFWAY": false,
+	"COMPLETE_BESTIARY_FULL": false,
+	"WAVE_30": false,
+	"WAVE_50": false,
+	"ROOM_30": false,
+	"ROOM_50": false,
+	"DEFEAT_BOMBRAT_KING": false,
+	"COMPLETE_TUTORIAL": false,
+	"GET_ALL_ARMOR": false,
+	"GET_ALL_WEAPON": false,
+	"GET_ALL_WEAPONS_ARMOR": false,
+	"KILL_10_000": false,
+	"KILL_25_000": false,
+	"KILL_50_000": false,
+	"KILL_100_000": false,
+	"LEVEL_5": false,
+	"LEVEL_10": false,
+	"LEVEL_25": false,
+	"HIT_ENEMY_GOLEM_25": false,
+	"HIT_ENEMY_GOLEM_50": false,
+	"PLAY_FULL_LOBBY": false
+}
 var playtime_points: int = 0
 var selected_mode: String = "Defense"
 var selected_map: String  = "Lysawood"
@@ -66,6 +89,7 @@ var golem_annoying_thing = {}
 var tutorial_active: bool = false
 var tutorial_step: int = 0
 var tutorial_completed: bool = false
+var golem_stupid_rating: int = 0
 
 var highest_wave: int = 0
 var highest_rooms: int = 0
@@ -288,8 +312,39 @@ func load_game():
 			tutorial_completed = data["tutorial_completed"]
 		if data.has("selected_map"):
 			selected_map = data["selected_map"]
+		if data.has("golem_stupid_rating"):
+			golem_stupid_rating = data["golem_stupid_rating"]
+	
+	if NetworkManager.steam_enabled:
+		for this_achievement in achievements.keys():
+			var steam_achievement = Steam.getAchievement(this_achievement)
+
+			# Does the achievement actually exist in the Steamworks back-end?
+			if not steam_achievement['ret']:
+				print("Steam does not have this achievement, ignoring it")
+				continue
+			achievements[this_achievement] = steam_achievement['achieved']
 	print("Loaded save data.")
 
+func set_achievement(this_achievement: String) -> void:
+	if not achievements.has(this_achievement):
+		print("This achievement does not exist locally: %s" % this_achievement)
+		return
+	achievements[this_achievement] = true
+
+	if not Steam.setAchievement(this_achievement):
+		print("Failed to set achievement: %s" % this_achievement)
+		return
+
+	print("Set acheivement: %s" % this_achievement)
+	store_steam_data()
+
+func store_steam_data() -> void:
+	if not Steam.storeStats():
+		print("Failed to store data on Steam, should be stored locally")
+		return
+	print("Data successfully sent to Steam")
+	
 @rpc("any_peer", "call_local", "reliable")
 func send_kill(enemy_type: String) -> void:
 	if not kills.has(enemy_type):
@@ -315,7 +370,8 @@ func get_save_data() -> Dictionary:
 		"zoom": zoom,
 		"kills": kills,
 		"tutorial_completed": tutorial_completed,
-		"selected_map": selected_map
+		"selected_map": selected_map,
+		"golem_stupid_rating": golem_stupid_rating
 	}
 
 func _notification(what: int) -> void:
@@ -329,6 +385,62 @@ func save_game(reason: String) -> void:
 	if HAuth.product_user_id != "":
 		HStats.ingest_stat_async("rooms", highest_rooms)
 		HStats.ingest_stat_async("waves", highest_wave)
+	if current_level >= 5:
+		set_achievement("LEVEL_5")
+	if current_level >= 10:
+		set_achievement("LEVEL_10")
+	if current_level >= 25:
+		set_achievement("LEVEL_25")
+	if highest_rooms >= 30:
+		set_achievement("ROOM_30")
+	if highest_rooms >= 50:
+		set_achievement("ROOM_50")
+	if highest_wave >= 30:
+		set_achievement("WAVE_30")
+	if highest_wave >= 50:
+		set_achievement("WAVE_50")
+	if enemies_killed >= 10_000:
+		set_achievement("KILL_10_000")
+	if enemies_killed >= 25_000:
+		set_achievement("KILL_25_000")
+	if enemies_killed >= 50_000:
+		set_achievement("KILL_50_000")
+	if enemies_killed >= 100_000:
+		set_achievement("KILL_100_000")
+	if tutorial_completed:
+		set_achievement("COMPLETE_TUTORIAL")
+	if kills.has("bombrat_king"):
+		set_achievement("DEFEAT_BOMBRAT_KING")
+		
+	var found_armor = 0
+	var found_weapons = 0
+	var total_armor = 0
+	var total_weapons = 0
+	
+	for item in Catalog.items:
+		if item is Weapon:
+			total_weapons += 1
+			if bag.has_item(item):
+				found_weapons += 1
+		if item is Armor:
+			total_armor += 1
+			if bag.has_item(item):
+				found_armor += 1
+	if found_armor == total_armor:
+		set_achievement("GET_ALL_ARMOR")
+	if found_weapons == total_weapons:
+		set_achievement("GET_ALL_WEAPONS")
+	if found_armor == total_armor and found_weapons == total_weapons:
+		set_achievement("GET_ALL_WEAPONS_ARMOR")
+	if roundi(await get_bestiary_completion()) >= 100:
+		set_achievement("COMPLETE_BESTIARY_FULL")
+	if roundi(await get_bestiary_completion()) >= 50:
+		set_achievement("COMPLETE_BESTIARY_HALFWAY")
+	if golem_stupid_rating >= 25:
+		set_achievement("HIT_ENEMY_GOLEM_25")
+	if golem_stupid_rating >= 50:
+		set_achievement("HIT_ENEMY_GOLEM_50")
+	
 	print("Saved the game. " + "(" + reason + ")")
 
 func get_enemy(enemy_type) -> Entity:

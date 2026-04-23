@@ -696,6 +696,8 @@ func init_online_buttons() -> void:
 func _on_update_players(players: Array) -> void:
 	Man.set_rich_presence("#In_Lobby")
 	Man.set_rich_presence_value("players", str(NetworkManager.players.size()))
+	if Man.steam_enabled and players.size() >= 6:
+		Man.set_achievement("PLAY_FULL_LOBBY")
 	
 	var container = $UI/Main/Players/ScrollContainer/VBoxContainer
 	for child in container.get_children():
