@@ -8,6 +8,7 @@ var stupid_arbitrary_attack_cooldown: float = 0.0
 var max_stupid_arbitrary_attack_cooldown: float = 0.15
 var stored_damage = 0.0
 var bone_defense = 125.0
+var regen_paused = 0.0
 var shop_items = []  # Current shop inventory
 var current_shop_seed = 0  # Seed from server for deterministic random selection
 var rerolls_available = 3  # Number of rerolls player can use
@@ -557,11 +558,8 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 	hit_cooldown = max_hit_cooldown
 	
 	if upgrade_bag.has_item(Catalog.get_by_id(41)):
+		regen_paused = 5.0
 		$Timer.stop()
-		await get_tree().create_timer(5.0).timeout
-		var regen_level = upgrade_bag.get_item_stack(Catalog.get_by_id(41)).data["level"]
-		var next_interval = 10.0 - ((regen_level - 1) * 2.0)
-		$Timer.start(next_interval)
 	
 	# Handle overheal absorption
 	if overheal > 0:
@@ -597,6 +595,9 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 	if health <= 0:
 		die()
 
+	flash_material()
+
+func flash_material() -> void:
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
 	await get_tree().create_timer(0.1).timeout
 	$AnimatedSprite2D.material = null
@@ -1392,10 +1393,11 @@ func _process_input(delta) -> void:
 			else:
 				$UI/Global/Tutorial/Label.text = "Great! Now, use your weapon by aiming and clicking with your mouse."
 			Man.tutorial_step = 1
-	if Input.is_action_pressed("sprint"):
-		global_position = round(global_position / 0.1) * 0.1
-	else:
-		global_position = round(global_position / 2.0) * 2.0
+	if not has_effect("Gunked"):
+		if Input.is_action_pressed("sprint"):
+			global_position = round(global_position / 0.1) * 0.1
+		else:
+			global_position = round(global_position / 2.0) * 2.0
 
 func screen_shake(intensity: float, duration: float):
 	var original_offset = $Camera2D.offset
@@ -1784,6 +1786,14 @@ func _physics_process(delta: float) -> void:
 
 	if lifesteal_cooldown > 0.0:
 		lifesteal_cooldown -= delta
+	if regen_paused > 0.0:
+		regen_paused -= delta
+	elif regen_paused < 0.0:
+		regen_paused = 0.0
+		var regen_level = upgrade_bag.get_item_stack(Catalog.get_by_id(41)).data["level"]
+		var next_interval = 10.0 - ((regen_level - 1) * 2.0)
+		$Timer.start(next_interval)
+		
 	if active_effects.size() > 0:
 		$Potion.emitting = true
 		$Potion.process_material.color = get_blended_effect_color()
