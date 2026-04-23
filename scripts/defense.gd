@@ -474,6 +474,7 @@ func spawn_boss_wave() -> void:
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
 		var king = bombrat_king.instantiate()
 		king.global_position = spawn_pos
 		add_child(king, true)
@@ -558,6 +559,7 @@ func spawn_crabman(direction: String) -> void:
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
 		var crabthing = crabman.instantiate()
 		crabthing.global_position = spawn_pos
 		add_child(crabthing, true)
@@ -613,6 +615,7 @@ func spawn_slime(direction: String) -> void:
 				s = jumper_slime.instantiate()
 		else: 
 			s = slime.instantiate()
+		spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
 		s.global_position = spawn_pos
 		add_child(s, true)
 		var smoke = smoke_scene.instantiate()
@@ -657,6 +660,7 @@ func spawn_golem(direction: String) -> void:
 		var g: CharacterBody2D
 		
 		g = protector_golem.instantiate()
+		spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
 		g.global_position = spawn_pos
 		add_child(g, true)
 		var smoke = smoke_scene.instantiate()
@@ -699,6 +703,7 @@ func spawn_ghost(direction: String) -> void:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
 		var g = ghost.instantiate()
+		spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
 		g.global_position = spawn_pos
 		add_child(g, true)
 		var smoke = smoke_scene.instantiate()
@@ -740,6 +745,7 @@ func spawn_bombrat(direction: String) -> void:
 	if matching_cells:
 		var selected_cell = matching_cells.pick_random()
 		var spawn_pos = spawner_layer.map_to_local(selected_cell) + Vector2(spawner_layer.tile_set.tile_size) / 2
+		spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
 		if wave >= 10 and randf() <= 0.3 and not boss_wave_mode:
 			var bomb = big_bombrat.instantiate()
 			bomb.global_position = spawn_pos
@@ -797,6 +803,7 @@ func spawn_bauble(direction: String) -> void:
 				baub = explosive_bauble.instantiate()
 		else: 
 			baub = bauble.instantiate()
+		spawn_pos += Vector2(randf_range(-8, 8), randf_range(-8, 8))	
 		baub.global_position = spawn_pos
 		add_child(baub, true)
 		var smoke = smoke_scene.instantiate()

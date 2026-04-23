@@ -325,7 +325,7 @@ texture = ExtResource("3_lfkcr")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=709865578]
 scale = Vector2(1.2, 1.2)
 sprite_frames = SubResource("SpriteFrames_q6fpe")
-animation = &"golem-curl"
+animation = &"golem-down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=366871798]
 position = Vector2(0, 6)
