@@ -646,7 +646,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qfm1y"]
-size = Vector2(6, 16)
+size = Vector2(6, 19)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4r1p"]
 size = Vector2(58, 20.5)
@@ -940,6 +940,7 @@ sprite_frames = SubResource("SpriteFrames_u8hee")
 animation = &"sword_up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=432179891]
+position = Vector2(0, -1.5)
 shape = SubResource("RectangleShape2D_qfm1y")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=505807963]
