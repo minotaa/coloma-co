@@ -32,7 +32,7 @@ func initialize_entity() -> void:
 	health = 125.0
 	max_health = 125.0
 	defense = 15.0
-	id = 14
+	id = 15
 	speed = SPEED
 	if sprite:
 		sprite.play("default")
