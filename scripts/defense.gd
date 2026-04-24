@@ -426,9 +426,9 @@ func spawn_wave() -> void:
 			var baubles_to_spawn := 0
 
 			if wave >= 15:
-				var ghost_chance := clampf(0.50 + float(wave) / 30.0, 0.50, 0.85)
+				var ghost_chance := clampf(0.10 + float(wave) / 30.0, 0.10, 0.50)
 				if randf() < ghost_chance:
-					await spawn_ghosts(randi_range(3, 5))
+					await spawn_ghosts(randi_range(1, 3))
 			if wave >= 20:
 				var golem_chance := clampf(0.25 + float(wave) / 30.0, 0.25, 0.75)
 				if randf() < golem_chance:
