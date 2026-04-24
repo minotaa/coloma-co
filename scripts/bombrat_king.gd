@@ -23,7 +23,7 @@ func initialize_entity() -> void:
 	dev_commentary_requirement = 2
 	health = 2250.0 + boost
 	max_health = 2250.0 + boost
-	defense = 25.0
+	defense = 20.0
 	id = 13  # Unique ID for boss
 	speed = WANDER_SPEED
 	
