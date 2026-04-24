@@ -117,7 +117,7 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 				var enemy_pos = global_position
 				var enemy_name = name
 				poison.on_effect = func(target):
-					if target != null:
+					if target != null: # a bug used to happen here because we used "name" instead of a saved variable and when the poison slime was killed the variable was null
 						target.take_damage(2, enemy_name, enemy_pos)
 				body.add_status_effect(poison)
 				if multiplayer.has_multiplayer_peer():
