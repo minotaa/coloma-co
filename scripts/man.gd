@@ -44,7 +44,8 @@ var achievements: Dictionary[String, bool] = {
 	"LEVEL_25": false,
 	"HIT_ENEMY_GOLEM_25": false,
 	"HIT_ENEMY_GOLEM_50": false,
-	"PLAY_FULL_LOBBY": false
+	"PLAY_FULL_LOBBY": false,
+	"BREAK_BONE_HELMET": false
 }
 var playtime_points: int = 0
 var selected_mode: String = "Defense"

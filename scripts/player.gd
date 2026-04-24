@@ -516,7 +516,10 @@ func take_damage(amount: float, body_name: String, location: Vector2 = Vector2.Z
 		return
 		
 	if Man.equipped_armor.id == 52:
+		var was_intact = bone_defense > 0
 		bone_defense -= 15
+		if was_intact and bone_defense <= 0:
+			Man.set_achievement("BREAK_BONE_HELMET")
 	
 	if (Man.equipped_armor.id == 43 or upgrade_bag.has_item(Catalog.get_by_id(30))) and get_parent().get_node(body_name) != null and get_parent().get_node(body_name).health != null:
 		var damage_reflection = 0.0 
