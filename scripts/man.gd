@@ -382,6 +382,7 @@ func _notification(what: int) -> void:
 func save_game(reason: String) -> void:
 	var save_file: FileAccess = FileAccess.open("user://game.mewo", FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(get_save_data()))
+	print("Saved the game. " + "(" + reason + ")")
 	if HAuth.product_user_id != "":
 		HStats.ingest_stat_async("rooms", highest_rooms)
 		HStats.ingest_stat_async("waves", highest_wave)
@@ -440,8 +441,6 @@ func save_game(reason: String) -> void:
 		set_achievement("HIT_ENEMY_GOLEM_25")
 	if golem_stupid_rating >= 50:
 		set_achievement("HIT_ENEMY_GOLEM_50")
-	
-	print("Saved the game. " + "(" + reason + ")")
 
 func get_enemy(enemy_type) -> Entity:
 	var enemy = enemies[enemy_type].instantiate()
