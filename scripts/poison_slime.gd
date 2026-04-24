@@ -115,9 +115,10 @@ func custom_physics_process(delta: float, _movement_multiplier: float) -> void:
 				texture.region = Rect2(16.0, 0.0, 16.0, 16.0)
 				poison.texture = texture
 				var enemy_pos = global_position
+				var enemy_name = name
 				poison.on_effect = func(target):
 					if target != null:
-						target.take_damage(2, name, enemy_pos)
+						target.take_damage(2, enemy_name, enemy_pos)
 				body.add_status_effect(poison)
 				if multiplayer.has_multiplayer_peer():
 					Toast.add.rpc_id(int(body.name), "You've been Poisoned for 10 seconds!")

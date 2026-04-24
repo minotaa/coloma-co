@@ -321,7 +321,6 @@ func spawn_wave() -> void:
 				send_bombrats(bombrat_amount)
 			spawn_bombrat("north")
 			spawn_bombrat("south")
-			#spawn_golems(2)
 		2:
 			bombrat_amount = 4
 			if multiplayer.has_multiplayer_peer():
