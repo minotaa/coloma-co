@@ -20,7 +20,7 @@ func initialize_entity() -> void:
 	dev_commentary_requirement = 50
 	health = 500.0
 	max_health = 500.0
-	defense = 150.0
+	defense = 115.0
 	id = 14
 	speed = SPEED
 
