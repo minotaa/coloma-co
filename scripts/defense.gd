@@ -415,7 +415,7 @@ func spawn_wave() -> void:
 			else:
 				send_bombrats(bombrat_amount)
 			if wave % 5 == 0:
-				var num_crabmen = min(4, 1 + wave / 5)
+				var num_crabmen = randi_range(1, 3)
 				for i in range(num_crabmen):
 					spawn_crabman("north")
 
