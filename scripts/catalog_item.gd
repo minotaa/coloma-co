@@ -73,6 +73,8 @@ func _on_button_pressed() -> void:
 				
 				if item_stack.data["level"] >= item.max_level:
 					Toast.add(item.name + " is already at max level!")
+					if item.id == 10:
+						Man.set_achievement("MAX_HEALTH")
 					return
 				
 				item_stack.data["level"] = item_stack.data["level"] + 1
