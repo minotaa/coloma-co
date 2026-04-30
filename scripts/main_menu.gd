@@ -377,8 +377,8 @@ func _enter_options_controls() -> void:
 	
 	# Wait for buttons to be ready, then focus back button
 	await get_tree().process_frame
-	if $UI/Main/Options/Options/Controls.has_node("Back"):
-		$UI/Main/Options/Options/Controls/Back.grab_focus()
+	if $UI/Main/Options.has_node("Back"):
+		$UI/Main/Options/Back.grab_focus()
 	else:
 		# Fallback: try to find any back button in Options
 		for child in $UI/Main/Options.find_children("Back", "Button", true):
@@ -391,8 +391,8 @@ func _enter_options_credits() -> void:
 	$UI/Main/Options/Options/Credits.visible = true
 	
 	# Focus the back button
-	if $UI/Main/Options/Options/Credits.has_node("Back"):
-		$UI/Main/Options/Options/Credits/Back.grab_focus()
+	if $UI/Main/Options.has_node("Back"):
+		$UI/Main/Options/Back.grab_focus()
 	else:
 		# Fallback: try to find any back button in Options
 		for child in $UI/Main/Options.find_children("Back", "Button", true):
