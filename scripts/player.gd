@@ -465,6 +465,7 @@ func setup_ui(type: String) -> void:
 			Man.tutorial_active = true
 			Man.tutorial_step = 0
 			$UI/Global/Tutorial.visible = true
+			await get_tree().process_frame
 			if Man.is_mobile() or using_controller:
 				$UI/Global/Tutorial/Label.text = "Welcome to Myrkwood: Offshoot! Try moving around with the Left Joystick." 
 			else:

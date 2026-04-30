@@ -205,8 +205,8 @@ func _process(delta: float) -> void:
 			Toast.add.rpc("Wave complete!")
 			play_sfx.rpc("wavefinished")
 			for player in NetworkManager.players:
-				add_gold.rpc_id(player, 100)
-				get_node(str(player)).emit_signal("new_wave")
+				add_gold.rpc_id(player.id, 100)
+				get_node(str(player.id)).emit_signal("new_wave")
 		else:
 			Toast.add("Wave complete!")
 			play_sfx("wavefinished")
