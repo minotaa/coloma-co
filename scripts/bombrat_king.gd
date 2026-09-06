@@ -7,13 +7,37 @@ const TIMER_DURATION := 120.0  # Time before enrage/charge
 const KING_EXPLOSION_RADIUS := 30.0  # Big explosions for the king
 const KING_EXPLOSION_TIME := 3.0  # Slower, more dramatic expansion
 
-var wander_target: Vector2
-var wander_timer: float = 0.0
+const MORTAR_COOLDOWN_MIN := 2.5
+const MORTAR_COOLDOWN_MAX := 8.0
+const MORTAR_RANGE := 600.0
+const MORTAR_SCENE := preload("res://scenes/bombrat_mortar.tscn")
+
+const LUNGE_RANGE := 150.0
+const LUNGE_TELEGRAPH_TIME := 1.2
+const LUNGE_SPEED := 400.0
+const LUNGE_DURATION := 0.35
+const LUNGE_DAMAGE := 30.0
+const LUNGE_COOLDOWN := 4.0
+
+var stored_collision_mask: int = 0
+const DECOR_LAYER_BIT := 2
+
+var lunge_cooldown_timer: float = 0.0
+var is_lunging: bool = false
+var is_telegraphing_lunge: bool = false
+var lunge_direction: Vector2 = Vector2.ZERO
+var lunge_timer: float = 0.0
+
+var mortar_cooldown_timer: float = 0.0
 var shockwave_timer: float = 0.0
 var enrage_timer: float = TIMER_DURATION
 var is_enraged: bool = false
 var is_charging: bool = false
 var game_node: Node = null  # Reference to the Defense game node
+
+func get_mortar_cooldown() -> float:
+	var health_pct = clamp(health / max_health, 0.0, 1.0)
+	return lerp(MORTAR_COOLDOWN_MIN, MORTAR_COOLDOWN_MAX, health_pct)
 
 func initialize_entity() -> void:
 	var boost = 250 * NetworkManager.players.size()
@@ -29,21 +53,14 @@ func initialize_entity() -> void:
 	
 	sprite.play("bombrat-down")  # Assuming you'll scale this up in the scene
 	
-	# Get reference to game node
 	game_node = get_parent()
-	
-	# Override wave spawning logic
 	if game_node and game_node.has_method("set_boss_wave_mode"):
 		game_node.set_boss_wave_mode(true)
-	
-	# Announce boss spawn
-	if multiplayer.has_multiplayer_peer():
-		announce_spawn.rpc()
-	else:
-		announce_spawn()
-	
-	# Set initial wander target
-	choose_new_wander_target()
+		# Announce boss spawn
+		if multiplayer.has_multiplayer_peer():
+			announce_spawn.rpc()
+		else:
+			announce_spawn()
 
 @rpc("any_peer", "call_local")
 func announce_spawn() -> void:
@@ -63,11 +80,32 @@ func on_player_contact(player: Node) -> void:
 func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 	if not alive:
 		return
-	
+	if not game_node or not game_node.has_method("set_boss_wave_mode"):
+		return 
+		
+	lunge_cooldown_timer -= delta
+
+	lunge_cooldown_timer -= delta
+	mortar_cooldown_timer -= delta
+
+	if is_telegraphing_lunge or is_lunging:
+		process_lunge(delta)
+		return
+
+	if not is_charging:
+		var target_player = get_nearest_player()
+		if target_player:
+			var dist = global_position.distance_to(target_player.global_position)
+
+			if dist <= LUNGE_RANGE and lunge_cooldown_timer <= 0:
+				start_lunge(target_player)
+				return
+			elif dist <= MORTAR_RANGE and mortar_cooldown_timer <= 0:
+				fire_mortar(target_player)
+				mortar_cooldown_timer = get_mortar_cooldown()
+		
 	# Update timers
 	enrage_timer -= delta
-	shockwave_timer -= delta
-	wander_timer -= delta
 	
 	# Check for enrage
 	if enrage_timer <= 0 and not is_enraged:
@@ -81,19 +119,82 @@ func custom_physics_process(delta: float, movement_multiplier: float) -> void:
 	# Handle movement
 	if is_charging:
 		charge_to_gem(delta)
+		
+func fire_mortar(target_player: Node2D) -> void:
+	if multiplayer.has_multiplayer_peer():
+		if multiplayer.is_server():
+			spawn_mortar.rpc(target_player.global_position)
 	else:
-		wander_around(delta, movement_multiplier)
+		spawn_mortar(target_player.global_position)
 
-func wander_around(delta: float, movement_multiplier: float) -> void:
-	# Choose new target if timer expired or reached destination
-	if wander_timer <= 0 or global_position.distance_to(wander_target) < 10.0:
-		choose_new_wander_target()
-		wander_timer = randf_range(2.0, 4.0)
-	
-	# Move toward wander target
-	var dir = (wander_target - global_position).normalized()
-	velocity = dir * speed * movement_multiplier
-	update_sprite_direction(dir)
+@rpc("any_peer", "call_local", "reliable")
+func spawn_mortar(target_pos: Vector2) -> void:
+	var mortar = MORTAR_SCENE.instantiate()
+	get_parent().add_child(mortar, true)
+	mortar.target_position = target_pos
+
+func start_lunge(target_player: Node2D) -> void:
+	is_telegraphing_lunge = true
+	lunge_timer = LUNGE_TELEGRAPH_TIME
+	lunge_direction = (target_player.global_position - global_position).normalized()
+	velocity = Vector2.ZERO
+	update_sprite_direction(lunge_direction)
+
+	stored_collision_mask = collision_mask
+	set_collision_mask_value(DECOR_LAYER_BIT, false)
+
+	if multiplayer.has_multiplayer_peer():
+		announce_lunge_telegraph.rpc()
+	else:
+		announce_lunge_telegraph()
+
+@rpc("any_peer", "call_local")
+func _flash():
+	if sprite:
+		sprite.material = preload("res://scenes/flash.tres")
+		await get_tree().create_timer(0.1).timeout
+		sprite.material = normal_material
+
+@rpc("any_peer", "call_local")
+func announce_lunge_telegraph() -> void:
+	for i in range(12):
+		if multiplayer.has_multiplayer_peer():
+			_flash.rpc()
+		else:
+			_flash()
+		await get_tree().create_timer(0.1).timeout
+	pass
+
+func process_lunge(delta: float) -> void:
+	if is_telegraphing_lunge:
+		lunge_timer -= delta
+		velocity = Vector2.ZERO
+		if lunge_timer <= 0:
+			is_telegraphing_lunge = false
+			is_lunging = true
+			lunge_timer = LUNGE_DURATION
+		return
+
+	if is_lunging:
+		velocity = lunge_direction * LUNGE_SPEED
+		lunge_timer -= delta
+
+		for body in hurtbox.get_overlapping_bodies():
+			if body.is_in_group("players") and body.alive: 
+				if body and body.has_method("take_damage"):
+					body.take_damage(LUNGE_DAMAGE, name, global_position)
+				end_lunge()
+				return
+
+		if lunge_timer <= 0:
+			end_lunge()
+
+func end_lunge() -> void:
+	is_lunging = false
+	is_telegraphing_lunge = false
+	velocity = Vector2.ZERO
+	lunge_cooldown_timer = LUNGE_COOLDOWN
+	set_collision_mask(stored_collision_mask)
 
 func charge_to_gem(delta: float) -> void:
 	var target = get_nearest_gem()
@@ -119,19 +220,12 @@ func charge_to_gem(delta: float) -> void:
 	else:
 		velocity = Vector2.ZERO
 
-func choose_new_wander_target() -> void:
-	# Pick a random point within reasonable distance
-	var random_offset = Vector2(
-		randf_range(-2000, 2000),
-		randf_range(-2000, 2000)
-	)
-	wander_target = global_position + random_offset
-
 func spawn_shockwave() -> void:
-	if multiplayer.has_multiplayer_peer():
-		create_shockwave.rpc(global_position)
-	else:
-		create_shockwave(global_position)
+	if game_node and game_node.has_method("set_boss_wave_mode"):
+		if multiplayer.has_multiplayer_peer():
+			create_shockwave.rpc(global_position)
+		else:
+			create_shockwave(global_position)
 
 @rpc("any_peer", "call_local", "reliable")
 func create_shockwave(pos: Vector2) -> void:
@@ -151,7 +245,7 @@ func create_shockwave(pos: Vector2) -> void:
 	explosion.MAX_RADIUS = KING_EXPLOSION_RADIUS
 	explosion.EXPANSION_TIME = KING_EXPLOSION_TIME
 	
-	get_parent().add_child(explosion)
+	get_parent().add_child(explosion, true)
 	play_sfx("better5", pos, -5.0)
 
 func trigger_enrage() -> void:
@@ -252,6 +346,10 @@ func on_death(killer_name: String) -> void:
 
 @rpc("any_peer", "call_local")
 func final_explosion() -> void:
+	var spawn_parent = get_parent()
+	if spawn_parent == null:
+		return
+	
 	# Spawn multiple BIG explosions for dramatic effect
 	for i in range(5):
 		var offset = Vector2(randf_range(-30, 30), randf_range(-30, 30))
@@ -264,7 +362,7 @@ func final_explosion() -> void:
 		explosion.MAX_RADIUS = KING_EXPLOSION_RADIUS * 1.5
 		explosion.EXPANSION_TIME = KING_EXPLOSION_TIME
 		
-		get_parent().add_child(explosion)
+		get_parent().add_child(explosion, true)
 		
 		await get_tree().create_timer(0.5).timeout
 	

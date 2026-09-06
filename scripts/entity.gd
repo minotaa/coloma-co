@@ -93,7 +93,7 @@ func _physics_process(delta: float) -> void:
 		progress_bar.visible = health < max_health
 	
 	# Check hurtbox collisions with players
-	if hurtbox and alive:
+	if hurtbox and alive and hurtbox.monitoring:
 		for body in hurtbox.get_overlapping_bodies():
 			if body.is_in_group("players") and body.alive:
 				on_player_contact(body)

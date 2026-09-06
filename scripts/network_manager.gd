@@ -182,6 +182,9 @@ func _eos_display_name_changed():
 
 func _on_eos_logged_in():
 	print("EOS logged in successfully: product_user_id=%s" % HAuth.product_user_id)
+	var records := await HLeaderboards.get_leaderboard_records_async("rooms")
+	for record in records:
+		print("%d. %s — %d" % [record.rank, record.user_display_name, record.score])
 
 func _on_eos_log_msg(msg: EOS.Logging.LogMessage) -> void:
 	print("SDK %s | %s" % [msg.category, msg.message])

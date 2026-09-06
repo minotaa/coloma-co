@@ -96,22 +96,167 @@ var highest_wave: int = 0
 var highest_rooms: int = 0
 var enemies_killed: int = 0
 
-var enemies = {
-	"rapid_bauble": preload("res://scenes/rapid_bauble.tscn"),
-	"angry_bauble": preload("res://scenes/angry_bauble.tscn"),
-	"bombrat": preload("res://scenes/bombrat.tscn"),
-	"big_bombrat": preload("res://scenes/big_bombrat.tscn"),
-	"slime": preload("res://scenes/slime.tscn"),
-	"mother_slime": preload("res://scenes/mother_slime.tscn"),
-	"poison_slime": preload("res://scenes/poison_slime.tscn"),
-	"bauble": preload("res://scenes/bauble.tscn"),
-	"crabthing": preload("res://scenes/crabman.tscn"),
-	"ghost": preload("res://scenes/ghost.tscn"),
-	"gunk_slime": preload("res://scenes/gunk_slime.tscn"),
-	"explosive_bauble": preload("res://scenes/explosive_bauble.tscn"),
-	"bombrat_king": preload("res://scenes/bombrat_king.tscn"),
-	"jumper_slime": preload("res://scenes/jumper_slime.tscn"),
-	"protector_golem": preload("res://scenes/protector_golem.tscn")
+var enemy_data = {
+	"rapid_bauble": {
+		"entity_name": "Rapid Bauble",
+		"dev_commentary_requirement": 50,
+		"bestiary_description": "A faster, stronger variant of the Bauble. These will shoot out rapid amounts of stars.",
+		"developer_commentary": "These feel fun but aren't really fun when you... play it, maybe that's a problem.",
+		"health": 320.0,
+		"max_health": 320.0,
+		"defense": 0.0,
+		"id": 9
+	},
+	"angry_bauble": {
+		"entity_name": "Angry Bauble",
+		"dev_commentary_requirement": 100,
+		"bestiary_description": "More aggressive version of the Bauble, shoots more stars, shoots faster, what else is there to say?",
+		"developer_commentary": "To be honest, can't remember the inspiration for this enemy. But, it's a cool one, I'll give you that, somehow It's more threatening than the Rapid Bauble, which is honestly strange.",
+		"health": 300.0,
+		"max_health": 300.0,
+		"defense": 0.0,
+		"id": 8
+	},
+	"bombrat": {
+		"entity_name": "Bombrat",
+		"dev_commentary_requirement": 2500,
+		"bestiary_description": "Objectives of the Defense gamemode, will ignore players and beeline towards the Gem. Destroy them to progress in the wave.",
+		"developer_commentary": "They're described as cats that look like bombs, which I honestly see, pixel art and art in general is not my strongest suite, though I will say a certain detail I wanted to add was the fact that their ears always faced the same direction no matter where they were going, like Mickey Mouse. Though, that might just be an excuse for laziness, who knows?",
+		"health": 125.0,
+		"max_health": 125.0,
+		"defense": 0.0,
+		"id": 1
+	},
+	"big_bombrat": {
+		"entity_name": "Big Bombrat",
+		"dev_commentary_requirement": 1250,
+		"bestiary_description": "A bigger, stronger version of the Bombrat. Will deal double damage to the gem if it makes it to the gem.",
+		"developer_commentary": "They're more of a distraction if anything, is that a sign of good game design? You're not supposed to fight these things first, you'll find it more easier to kill the regular Bombrats first. Not much of commentary, more of a tip, but whatever.",
+		"health": 500.0,
+		"max_health": 500.0,
+		"defense": 0.0,
+		"id": 4
+	},
+	"bombrat_mortar": {
+		"entity_name": "Bombrat Mortar",
+		"dev_commentary_requirement": 200,
+		"bestiary_description": "Flaming high speed versions of the Bombrats, avoid their targets at all costs.",
+		"developer_commentary": "You ever see marshmallows burning on the fire? That.",
+		"health": 0,
+		"max_health": 0,
+		"defense": 0,
+		"id": 16
+	},
+	"slime": {
+		"entity_name": "Slime",
+		"dev_commentary_requirement": 500,
+		"bestiary_description": "A slow moving enemy, doesn't attack the gem, will attack the player. Doesn't hurt unless it hops on you.",
+		"developer_commentary": "A throwback to the original Myrkwood. I honestly just put the original sprite in and then figured it out it looked ugly when putting it in until shrinking it down to 16x16. But this enemy is fun.",
+		"health": 75.0,
+		"max_health": 75.0,
+		"defense": 0.0,
+		"id": 0
+	},
+	"mother_slime": {
+		"entity_name": "Mother Slime",
+		"dev_commentary_requirement": 75,
+		"bestiary_description": "Slower, fatter variants of slimes. These slimes do more damage, but move slower. They will spawn slimes upon dying. Good for collecting gold.",
+		"developer_commentary": "This slime variant was more of a cliche if anything. Though the concept of slimes having a fat mama seems amusing.",
+		"health": 250.0,
+		"max_health": 250.0,
+		"defense": 0.0,
+		"id": 6
+	},
+	"poison_slime": {
+		"entity_name": "Poison Slime",
+		"dev_commentary_requirement": 100,
+		"bestiary_description": "A stronger variant of the slime that may inflict Poison when touched.",
+		"developer_commentary": "This is... also a throwback to the original Myrkwood.",
+		"health": 225.0,
+		"max_health": 225.0,
+		"defense": 0.0,
+		"id": 7
+	},
+	"bauble": {
+		"entity_name": "Bauble",
+		"dev_commentary_requirement": 250,
+		"bestiary_description": "Shy enemies that shoot stars towards players. They also retreat when far away.",
+		"developer_commentary": "Wings are hard to make. Also, honestly the baubles are a pushover if you get too close.",
+		"health": 100.0,
+		"max_health": 100.0,
+		"defense": 0.0,
+		"id": 3
+	},
+	"crabthing": {
+		"entity_name": "Crabthing",
+		"dev_commentary_requirement": 85,
+		"bestiary_description": "Species of sea creature that crawls in shells. Targets a player and relentlessly pursues it, walks faster than the player. Gets staggered when hit too much.",
+		"developer_commentary": "These were a monstrosity to draw, I did not like drawing these at all. I literally just drew the Crabthing over Clementine.",
+		"health": 1000.0,
+		"max_health": 1000.0,
+		"defense": 0.0,
+		"id": 5
+	},
+	"ghost": {
+		"entity_name": "Ghost",
+		"dev_commentary_requirement": 25,
+		"bestiary_description": "Apparitions from beyond, can't do anything to mortals, but still watch out, they can still make you feel weak.",
+		"developer_commentary": "Initially, they dealt damage and were just stronger versions of the slimes, with a gimmick that they were neutral until you stepped in range, I thought it'd be better if they simply did no damage and created Weak to give it the ability to detriment the player.",
+		"health": 250.0,
+		"max_health": 250.0,
+		"defense": -10.0,
+		"id": 10
+	},
+	"gunk_slime": {
+		"entity_name": "Gunk Slime",
+		"dev_commentary_requirement": 50,
+		"bestiary_description": "Thick, denser variants of the regular slimes. So gooey that they leave behind trails of their slime, touching them or the slime will slow down anyone who crosses upon it.",
+		"developer_commentary": "Honestly, they were a blast to make, the splatter effect & the effect was fun and I'm honestly sad they don't show up sooner.",
+		"health": 500.0,
+		"max_health": 500.0,
+		"defense": 0.0,
+		"id": 11
+	},
+	"explosive_bauble": {
+		"entity_name": "Explosive Bauble",
+		"dev_commentary_requirement": 10,
+		"bestiary_description": "Bauble variant that specializes in shooting specialized explosive Stars. They can detonate on players or on walls. Stay away if you value your life!",
+		"developer_commentary": "Explosive Baubles are designed after grenades, their special stars are meant to give a more distinct appearance from other stars.",
+		"health": 250.0,
+		"max_health": 250.0,
+		"defense": 0.0,
+		"id": 12
+	},
+	"bombrat_king": {
+		"entity_name": "Bombrat King",
+		"dev_commentary_requirement": 2,
+		"bestiary_description": "The king of most bombrats, has a timer when spawning that requires you to defeat it within a certain amount of time. Spawns shockwaves every so often.",
+		"developer_commentary": "Hey it's like the Bob-omb King! I just noticed that, the similarity was not intended, I'll give you that much. I just didn't wanna call it a Mother or a Father like the Mother Slime.",
+		"health": 2250.0,
+		"max_health": 2250.0,
+		"defense": 20.0,
+		"id": 13
+	},
+	"jumper_slime": {
+		"entity_name": "Jumper Slime",
+		"dev_commentary_requirement": 100,
+		"bestiary_description": "Magic imbued slimes that shoot out stars upon landing on the ground, particularly lethal.",
+		"developer_commentary": "This was so easy to make... it's a crime. May contain a The Binding of Isaac reference.",
+		"health": 125.0,
+		"max_health": 125.0,
+		"defense": 15.0,
+		"id": 15
+	},
+	"protector_golem": {
+		"entity_name": "Protector Golem",
+		"dev_commentary_requirement": 50,
+		"bestiary_description": "Constructs of magic akin to totems, gentle creatures that seem to not particularly hold any ill will but will aid the creatures of the land.",
+		"developer_commentary": "No description but pretty good lore right?",
+		"health": 500.0,
+		"max_health": 500.0,
+		"defense": 115.0,
+		"id": 14
+	}
 }
 
 func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:
@@ -443,24 +588,17 @@ func save_game(reason: String) -> void:
 	if golem_stupid_rating >= 50:
 		set_achievement("HIT_ENEMY_GOLEM_50")
 
-func get_enemy(enemy_type) -> Entity:
-	var enemy = enemies[enemy_type].instantiate()
-	add_child(enemy)
-	await get_tree().process_frame
-	enemy.queue_free()
-	return enemy
-
 func get_bestiary_completion() -> float:
 	var completed := 0.0
 
-	for enemy_name in Man.enemies.keys():
+	for enemy_name in Man.enemy_data.keys():
 		if not Man.kills.has(enemy_name):
 			continue
-		var enemy = await Man.get_enemy(enemy_name)
+		var enemy = Man.enemy_data[enemy_name]
 		var kills: int = Man.kills[enemy_name]
 		completed += 1 if kills >= enemy.dev_commentary_requirement else 0.5
 
-	return float(completed) / float(Man.enemies.size()) * 100.0
+	return float(completed) / float(Man.enemy_data.size()) * 100.0
 
 func _ready() -> void:
 	load_game()

@@ -95,7 +95,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qwfka")
 }],
-"loop": true,
+"loop": 1,
 "name": &"bombrat-down",
 "speed": 5.0
 }, {
@@ -112,7 +112,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_400nj")
 }],
-"loop": true,
+"loop": 1,
 "name": &"bombrat-left",
 "speed": 5.0
 }, {
@@ -129,7 +129,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xpucp")
 }],
-"loop": true,
+"loop": 1,
 "name": &"bombrat-right",
 "speed": 5.0
 }, {
@@ -146,7 +146,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gfxm1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"bombrat-up",
 "speed": 5.0
 }]

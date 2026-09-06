@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b03jeu0kqf14q" path="res://scripts/defense.gd" id="1_we6pr"]
 [ext_resource type="TileSet" uid="uid://d08fetvoicslv" path="res://assets/tilemaps/main.tres" id="2_st0ge"]
-[ext_resource type="Script" path="res://scripts/leaf_particles.gd" id="3_kjc2x"]
+[ext_resource type="Script" uid="uid://3rviigfayhl0" path="res://scripts/leaf_particles.gd" id="3_kjc2x"]
 [ext_resource type="Script" uid="uid://0u6di6k2ccp2" path="res://scripts/ground.gd" id="3_st0ge"]
 [ext_resource type="PackedScene" uid="uid://m0qejj1h83sm" path="res://scenes/gem.tscn" id="5_6fsuk"]
 [ext_resource type="PackedScene" uid="uid://bhb5vspn4i4fd" path="res://scenes/multiplayer_spawner.tscn" id="6_ese0r"]

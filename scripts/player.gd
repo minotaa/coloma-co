@@ -199,7 +199,7 @@ var active_markers := {}
 func get_bombrats_to_track():
 	var bombrats = []
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.id == 1 or enemy.id == 4:
+		if enemy.id == 1:
 			bombrats.append(enemy)
 	return bombrats
 	
@@ -209,6 +209,13 @@ func get_big_bombrats_to_track():
 		if enemy.id == 4:
 			bombrats.append(enemy)
 	return bombrats
+	
+func get_bombrat_kings_to_track():
+	var bombrats = []
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy.id == 13:
+			bombrats.append(enemy)
+	return bombrats	
 
 func reset_game() -> void:
 	kills = 0
@@ -1812,7 +1819,7 @@ func _physics_process(delta: float) -> void:
 		elif global_position.x > (30.15 * 16):
 			global_position.x = (-30.5 * 16)
 
-		if global_position.y < (-485.1):
+		if global_position.y < (-484.1):
 			global_position.y = 29.55 * 16
 		elif global_position.y > (477.0):
 			global_position.y = (-485.1)
@@ -2140,86 +2147,63 @@ func _physics_process(delta: float) -> void:
 					else:
 						$UI/Global/Tutorial/Label.text = "You've got some gold saved up! Make your way to the gem and interact with it using E to open the shop."
 
-
-
 		# Show the added gold in the same label
 		if added_gold > 0:
 			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold) + " (+" + str(added_gold) + ")"
 		else:
 			$UI/Defense/HBoxContainer/Gold/HBoxContainer/Label.text = "Gold: " + str(gold)
-					
-		for bombrat in get_bombrats_to_track():
-			if not is_instance_valid(bombrat):
-				continue
-			
-			if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
-				_remove_marker(bombrat)
-				continue
-				
-			var dir = (bombrat.global_position - global_position).normalized()
-			var direction_node = _get_direction_node_from_vector(dir)
-
-			if direction_node == null:
-				_remove_marker(bombrat)
-				continue
-
-			var marker = active_markers.get(bombrat)
-			if marker == null:
-				marker = marker_scene.instantiate()
-				direction_node.add_child(marker)
-				active_markers[bombrat] = marker
-
-			marker.position = _calculate_offset_in_direction_node(dir, direction_node)
-
-			# Snap to cardinal direction
-			match direction_node.name:
-				"Up":
-					marker.rotation = 0
-				"Right":
-					marker.rotation = PI / 2
-				"Down":
-					marker.rotation = PI
-				"Left":
-					marker.rotation = -PI / 2
-
-		for bombrat in get_big_bombrats_to_track():
-			if not is_instance_valid(bombrat):
-				continue
-			
-			if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
-				_remove_marker(bombrat)
-				continue
-				
-			var dir = (bombrat.global_position - global_position).normalized()
-			var direction_node = _get_direction_node_from_vector(dir)
-
-			if direction_node == null:
-				_remove_marker(bombrat)
-				continue
-
-			var marker = active_markers.get(bombrat)
-			if marker == null:
-				marker = marker_scene.instantiate()
-				direction_node.add_child(marker)
-				active_markers[bombrat] = marker
-
-			marker.position = _calculate_offset_in_direction_node(dir, direction_node)
-			marker.scale = Vector2(1.5, 1.5)
-
-			# Snap to cardinal direction
-			match direction_node.name:
-				"Up":
-					marker.rotation = 0
-				"Right":
-					marker.rotation = PI / 2
-				"Down":
-					marker.rotation = PI
-				"Left":
-					marker.rotation = -PI / 2
 		
-		for tracked in active_markers.keys():
-			if not is_instance_valid(tracked) or not get_bombrats_to_track().has(tracked):
-				_remove_marker(tracked)
+		_update_off_screen_indicators()
+
+func _update_off_screen_indicators() -> void:
+	var tracked_this_frame: Dictionary = {}
+
+	_update_marker_group(get_bombrats_to_track(), Vector2.ONE, null, tracked_this_frame)
+	_update_marker_group(get_big_bombrats_to_track(), Vector2(1.5, 1.5), null, tracked_this_frame)
+	_update_marker_group(get_bombrat_kings_to_track(), Vector2(2.0, 2.0), preload("res://assets/sprites/caret-s.png"), tracked_this_frame)
+
+	for tracked in active_markers.keys():
+		if not tracked_this_frame.has(tracked):
+			_remove_marker(tracked)
+
+func _update_marker_group(entities: Array, marker_scale: Vector2, texture: Texture2D, tracked_this_frame: Dictionary) -> void:
+	for bombrat in entities:
+		if not is_instance_valid(bombrat):
+			continue
+
+		if bombrat.get_node("VisibleOnScreenNotifier2D").is_on_screen():
+			_remove_marker(bombrat)
+			continue
+
+		var dir = (bombrat.global_position - global_position).normalized()
+		var direction_node = _get_direction_node_from_vector(dir)
+
+		if direction_node == null:
+			_remove_marker(bombrat)
+			continue
+
+		var marker = active_markers.get(bombrat)
+		if marker == null:
+			marker = marker_scene.instantiate()
+			if texture:
+				marker.texture = texture
+			direction_node.add_child(marker)
+			active_markers[bombrat] = marker
+
+		marker.position = _calculate_offset_in_direction_node(dir, direction_node)
+		marker.scale = marker_scale
+
+		match direction_node.name:
+			"Up":
+				marker.rotation = 0
+			"Right":
+				marker.rotation = PI / 2
+			"Down":
+				marker.rotation = PI
+			"Left":
+				marker.rotation = -PI / 2
+
+		tracked_this_frame[bombrat] = true
 
 func _remove_marker(bombrat):
 	if active_markers.has(bombrat):

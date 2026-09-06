@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://bkcev63ddja1l"]
+[gd_scene format=3 uid="uid://bkcev63ddja1l"]
 
 [ext_resource type="Texture2D" uid="uid://kp8l7mebsxfk" path="res://assets/sprites/box.png" id="1_sv8n8"]
 
@@ -9,7 +9,7 @@ texture_margin_top = 16.0
 texture_margin_right = 32.0
 texture_margin_bottom = 16.0
 
-[node name="Player" type="Control"]
+[node name="Player" type="Control" unique_id=206181549]
 custom_minimum_size = Vector2(511, 64)
 layout_mode = 3
 anchor_right = 0.4
@@ -19,7 +19,7 @@ offset_bottom = -0.0800018
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="RichTextLabel" parent="."]
+[node name="Label" type="RichTextLabel" parent="." unique_id=812501907]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

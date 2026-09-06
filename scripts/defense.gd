@@ -1,7 +1,7 @@
 extends Node2D
 
 var rng = RandomNumberGenerator.new()
-var wave: int = 0
+var wave: int = 9
 var bombrats_left: int = 0
 var bombrats_to_expect: int = 0
 var started: bool = false
@@ -43,7 +43,7 @@ func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer
 	sfx.stream = stream
 	sfx.bus = "Music"
 	sfx.volume_db = -10.0
-	add_child(sfx)
+	add_child(sfx, true)
 
 	sfx.play()
 
@@ -102,7 +102,7 @@ func _ready() -> void:
 		var p = player_scene.instantiate()
 		p.name = "Player"
 		p.type = "Defense"
-		call_deferred("add_child", p, true)
+		add_child(p, true)
 		spawn_wave()
 		Toast.add("Wave started!")
 		started = true
@@ -130,7 +130,7 @@ func _ready() -> void:
 			var angle = rng.randf_range(0.0, TAU)
 			var offset = Vector2(cos(angle), sin(angle)) * radius
 			p.global_position = offset  # Spawn relative to (0,0); adjust if needed
-			call_deferred("add_child", p, true)
+			add_child(p, true)
 			
 			var smoke = smoke_scene.instantiate()
 			smoke.global_position = p.global_position
@@ -223,7 +223,7 @@ func play_sfx(stream_name: String, volume: float = 0.0, pitch_scale: float = 1.0
 	sfx.volume_db = volume
 	sfx.pitch_scale = pitch_scale
 	sfx.bus = "SFX"
-	add_child(sfx)
+	add_child(sfx, true)
 
 	sfx.play()
 	sfx.finished.connect(func():
@@ -461,7 +461,7 @@ func spawn_boss_wave() -> void:
 		var data = spawner_layer.get_cell_tile_data(cell_loc)
 		if not data:
 			continue
-		if data.get_custom_data("spawner_type") == "corner":
+		if data.get_custom_data("spawner_type") == "main":
 			matching_cells.append(cell_loc)
 	
 	if matching_cells.is_empty():

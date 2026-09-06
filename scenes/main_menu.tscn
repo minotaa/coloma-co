@@ -5,7 +5,7 @@
 [ext_resource type="FontFile" uid="uid://vrfuynxo4c1o" path="res://assets/fonts/DepartureMono-Regular.otf" id="2_bqqt6"]
 [ext_resource type="TileSet" uid="uid://d08fetvoicslv" path="res://assets/tilemaps/main.tres" id="2_flqon"]
 [ext_resource type="FontFile" uid="uid://guy3qt670gxi" path="res://assets/fonts/DungeonFont.ttf" id="2_wu84c"]
-[ext_resource type="Script" path="res://scripts/leaf_particles.gd" id="3_5pajh"]
+[ext_resource type="Script" uid="uid://3rviigfayhl0" path="res://scripts/leaf_particles.gd" id="3_5pajh"]
 [ext_resource type="PackedScene" uid="uid://bkcev63ddja1l" path="res://scenes/multiplayer_player_entry.tscn" id="3_bqqt6"]
 [ext_resource type="Script" uid="uid://0u6di6k2ccp2" path="res://scripts/ground.gd" id="3_rcqid"]
 [ext_resource type="Texture2D" uid="uid://b6k0vdksu3gg1" path="res://assets/sprites/i dont like how i made a 1x1 texture for sand.png" id="4_3wgol"]
@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://bw3lecgjeqv5d" path="res://assets/sprites/box6.png" id="17_1dfpl"]
 [ext_resource type="Texture2D" uid="uid://bn3gmk6u2vpvu" path="res://assets/sprites/box2a.png" id="17_8egab"]
 [ext_resource type="PackedScene" uid="uid://dcaaf1u5gja6x" path="res://scenes/options.tscn" id="17_hstxw"]
+[ext_resource type="Texture2D" uid="uid://b5om2q43spwck" path="res://assets/sprites/leaderboards.png" id="18_1acrt"]
 [ext_resource type="Script" uid="uid://b28m5a3h03too" path="res://scripts/lineedit.gd" id="18_1dfpl"]
 [ext_resource type="Texture2D" uid="uid://dfic0j1riy3u2" path="res://assets/sprites/box9.png" id="18_qywvv"]
 [ext_resource type="PackedScene" uid="uid://cic403f37by1h" path="res://scenes/bestiary_entry.tscn" id="19_qywvv"]
@@ -180,6 +181,15 @@ texture_margin_bottom = 16.0
 font_size = 33
 
 [sub_resource type="LabelSettings" id="LabelSettings_1acrt"]
+font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_0h5mt"]
+font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_vr8o3"]
+font_size = 33
+
+[sub_resource type="LabelSettings" id="LabelSettings_1a85y"]
 font_size = 22
 
 [sub_resource type="LabelSettings" id="LabelSettings_flqon"]
@@ -396,11 +406,11 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.031000001
 anchor_top = 0.44700003
-anchor_right = 0.39400002
+anchor_right = 0.42200002
 anchor_bottom = 0.96700007
 offset_left = 0.3199997
 offset_top = 30.159973
-offset_right = -0.32003784
+offset_right = -36.160034
 offset_bottom = -0.24005127
 grow_vertical = 0
 alignment = 2
@@ -502,6 +512,31 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
 theme_override_styles/disabled = ExtResource("10_8egab")
 theme_override_styles/focus = ExtResource("10_8egab")
 text = "Quit"
+
+[node name="Leaderboards" type="Button" parent="UI/Main/Buttons" unique_id=233098372]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031000001
+anchor_top = 0.333
+anchor_right = 0.119
+anchor_bottom = 0.43600002
+offset_left = 0.3199997
+offset_top = 0.23999023
+offset_right = -0.32000732
+offset_bottom = 0.07998657
+focus_neighbor_top = NodePath("../Quit")
+focus_neighbor_bottom = NodePath("../Bag")
+focus_next = NodePath("../Bag")
+focus_previous = NodePath("../Quit")
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
+icon = ExtResource("18_1acrt")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Loadout" type="Control" parent="UI/Main" unique_id=1611448595]
 visible = false
@@ -957,6 +992,119 @@ horizontal_alignment = 1
 vertical_alignment = 2
 autowrap_mode = 2
 
+[node name="Label" type="Label" parent="UI/Main/Loadout/Panel/Bestiary" unique_id=1336654174]
+custom_maximum_size = Vector2(432, 560)
+layout_mode = 0
+offset_right = 432.0
+offset_bottom = 560.0
+text = "You have no bestiary entries, kill some enemies to acquire some entries!"
+label_settings = SubResource("LabelSettings_0h5mt")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Leaderboards" type="Control" parent="UI/Main" unique_id=2041080615]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Back" type="Button" parent="UI/Main/Leaderboards" unique_id=591288980]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031
+anchor_top = 0.864
+anchor_right = 0.531
+anchor_bottom = 0.96700007
+offset_left = 0.3199997
+offset_top = -0.080078125
+offset_right = 0.3199463
+offset_bottom = -0.2401123
+grow_vertical = 0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbmy8")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_7b55j")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1ajci")
+theme_override_styles/disabled = ExtResource("10_8egab")
+theme_override_styles/focus = ExtResource("10_8egab")
+text = "Back"
+
+[node name="Panel" type="Panel" parent="UI/Main/Leaderboards" unique_id=353571554]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.031000001
+anchor_top = 0.033
+anchor_right = 0.39400002
+anchor_bottom = 0.85600007
+offset_left = 0.3199997
+offset_top = 0.23999977
+offset_right = 183.67996
+offset_bottom = -0.32006836
+theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
+
+[node name="Main" type="Control" parent="UI/Main/Leaderboards/Panel" unique_id=2027277678]
+layout_mode = 1
+anchor_left = 0.034
+anchor_top = 0.027
+anchor_right = 0.98300004
+anchor_bottom = 0.97300005
+offset_left = 0.22399902
+offset_top = 0.015999794
+offset_right = -8.11203
+offset_bottom = -0.016052246
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Main/Leaderboards/Panel/Main" unique_id=1866394886]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.11400001
+anchor_right = 0.99200004
+anchor_bottom = 0.929
+offset_left = 1.7439995
+offset_top = 0.15999603
+offset_right = -0.019042969
+offset_bottom = -0.23999023
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Main/Leaderboards/Panel/Main/ScrollContainer" unique_id=1579808289]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="UI/Main/Leaderboards/Panel/Main" unique_id=557780900]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.33
+anchor_top = 0.014
+anchor_right = 0.67
+anchor_bottom = 0.089
+offset_left = -195.3113
+offset_top = 0.15999985
+offset_right = 195.31119
+offset_bottom = 0.15999985
+grow_horizontal = 2
+text = "Leaderboards"
+label_settings = SubResource("LabelSettings_vr8o3")
+horizontal_alignment = 1
+
+[node name="Rank" type="Label" parent="UI/Main/Leaderboards/Panel/Main" unique_id=429689839]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -195.31125
+offset_top = -28.0
+offset_right = 195.31125
+grow_horizontal = 2
+grow_vertical = 0
+text = "Leaderboards"
+label_settings = SubResource("LabelSettings_1a85y")
+horizontal_alignment = 1
+
 [node name="Play Buttons" type="Control" parent="UI/Main" unique_id=58305926]
 visible = false
 layout_mode = 1
@@ -1035,6 +1183,7 @@ theme_override_styles/focus = ExtResource("10_8egab")
 text = "Back"
 
 [node name="Singleplayer Mode Selector" type="Control" parent="UI/Main" unique_id=993238103]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2237,10 +2386,12 @@ position = Vector2(0, 544)
 [connection signal="pressed" from="UI/Main/Buttons/VBoxContainer/Bag" to="." method="_on_loadout_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/VBoxContainer/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="UI/Main/Buttons/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="UI/Main/Buttons/Leaderboards" to="." method="_on_leaderboards_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Panel/Main/ArmorButton" to="." method="_on_armor_button_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Panel/Main/WeaponButton" to="." method="_on_weapon_button_pressed"]
 [connection signal="pressed" from="UI/Main/Loadout/Panel/Main/Bestiary" to="." method="_enter_bestiary"]
+[connection signal="pressed" from="UI/Main/Leaderboards/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="UI/Main/Play Buttons/Singleplayer" to="." method="_on_singleplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Play Buttons/Multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="UI/Main/Play Buttons/Back" to="." method="_on_back_pressed"]

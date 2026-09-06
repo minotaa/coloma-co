@@ -22,7 +22,8 @@ enum MenuState {
 	LAN_BUTTONS,
 	ONLINE_JOIN,
 	JOIN,
-	PLAYERS
+	PLAYERS,
+	LEADERBOARDS
 }
 
 var current_state: MenuState = MenuState.TITLE_SCREEN
@@ -109,6 +110,7 @@ func _cache_state_nodes() -> void:
 	state_nodes[MenuState.ONLINE_JOIN] = $"UI/Main/Online Join"
 	state_nodes[MenuState.JOIN] = $UI/Main/Join
 	state_nodes[MenuState.PLAYERS] = $UI/Main/Players
+	state_nodes[MenuState.LEADERBOARDS] = $UI/Main/Leaderboards
 
 func _setup_audio() -> void:
 	play_music(preload("res://assets/sounds/MO_titlescreen.wav"), true)
@@ -168,6 +170,9 @@ func _enter_state(state: MenuState) -> void:
 		MenuState.TITLE_SCREEN:
 			_show_title_elements(true)
 			_enter_title_screen()
+		MenuState.LEADERBOARDS:
+			_show_title_elements(false)
+			_enter_leaderboards()
 		MenuState.PLAY_BUTTONS:
 			_enter_play_buttons()
 		MenuState.SINGLEPLAYER_MODE_SELECTOR:
@@ -222,6 +227,11 @@ func _enter_title_screen() -> void:
 	_update_button_focus_styles(false)
 	_show_title_elements(true)
 
+func _enter_leaderboards() -> void:
+	state_nodes[MenuState.LEADERBOARDS].visible = true
+	$UI/Main/Leaderboards/Back.grab_focus()
+	update_leaderboards()
+
 func _enter_play_buttons() -> void:
 	state_nodes[MenuState.PLAY_BUTTONS].visible = true
 	$"UI/Main/Play Buttons/Singleplayer".grab_focus()
@@ -257,19 +267,25 @@ func _enter_bestiary() -> void:
 	$UI/Main/Loadout/Panel/Bestiary/Panel.visible = false
 	$UI/Main/Loadout/Back.grab_focus()
 	for e in Man.kills.keys():
-		var enemy = await Man.get_enemy(e)
+		print(e)
+		print(Man.enemy_data[e])
+		var enemy = Man.enemy_data[e]
 		var entry = preload("res://scenes/bestiary_entry.tscn").instantiate()
-		entry.text = enemy.name + "   " + str(int(Man.kills[e])) + " kills"
+		entry.text = enemy.entity_name + "   " + str(int(Man.kills[e])) + " kills"
 		$UI/Main/Loadout/Panel/Bestiary/ScrollContainer/VBoxContainer.add_child(entry)
 		entry.connect("pressed", Callable(_select_bestiary_entry).bind(e))
+	if Man.kills.is_empty():
+		$UI/Main/Loadout/Panel/Bestiary/Label.show()
+	else:
+		$UI/Main/Loadout/Panel/Bestiary/Label.hide()
 	_configure_focus_neighbors_with_back($UI/Main/Loadout/Panel/Bestiary/ScrollContainer/VBoxContainer)
 	_connect_all_buttons()
 
 func _select_bestiary_entry(enemy_name) -> void:
 	if not $UI/Main/Loadout/Panel/Bestiary/Panel.visible:
 		$UI/Main/Loadout/Panel/Bestiary/Panel.visible = true
-	var enemy = await Man.get_enemy(enemy_name)
-	$UI/Main/Loadout/Panel/Bestiary/Panel/Title.text = enemy.name
+	var enemy = Man.enemy_data[enemy_name]
+	$UI/Main/Loadout/Panel/Bestiary/Panel/Title.text = enemy.entity_name
 	$UI/Main/Loadout/Panel/Bestiary/Panel/Description/Label.text = enemy.bestiary_description
 	if Man.kills[enemy_name] >= enemy.dev_commentary_requirement:
 		$UI/Main/Loadout/Panel/Bestiary/Panel/DevDescription/Label.text = enemy.developer_commentary
@@ -313,8 +329,6 @@ func _enter_loadout_armor_grid() -> void:
 	# Wait for buttons to be ready in scene tree
 	await get_tree().process_frame
 	_configure_focus_neighbors_with_back(grid)
-
-
 
 func _enter_loadout_weapon_grid() -> void:
 	state_nodes[MenuState.LOADOUT].visible = true
@@ -444,6 +458,9 @@ func _show_title_elements(show: bool) -> void:
 # ============================================================================
 # BUTTON HANDLERS (now use state transitions)
 # ============================================================================
+
+func _on_leaderboards_pressed() -> void:
+	transition_to(MenuState.LEADERBOARDS)
 
 func _on_play_pressed() -> void:
 	transition_to(MenuState.PLAY_BUTTONS)
@@ -609,6 +626,8 @@ func _on_credits_pressed() -> void:
 func _on_back_pressed() -> void:
 	# Handle back navigation based on current state
 	match current_state:
+		MenuState.LEADERBOARDS:
+			transition_to(MenuState.TITLE_SCREEN)
 		MenuState.LOADOUT_ARMOR_GRID, MenuState.LOADOUT_WEAPON_GRID, MenuState.LOADOUT_BESTIARY:
 			transition_to(MenuState.LOADOUT)
 		MenuState.LOADOUT:
@@ -659,7 +678,7 @@ func play_ui_sfx(stream: AudioStream, bus: String = "SFX") -> void:
 	sfx.stream = stream
 	sfx.bus = bus
 	sfx.volume_db = -10.0
-	add_child(sfx)
+	add_child(sfx, true)
 	sfx.play()
 	sfx.finished.connect(func(): sfx.queue_free())
 
@@ -668,7 +687,7 @@ func play_music(stream: AudioStream, looping: bool = false) -> AudioStreamPlayer
 	sfx.stream = stream
 	sfx.bus = "Music"
 	sfx.volume_db = -10.0
-	add_child(sfx)
+	add_child(sfx, true)
 	sfx.play()
 	
 	if looping:
@@ -696,7 +715,7 @@ func init_online_buttons() -> void:
 func _on_update_players(players: Array) -> void:
 	Man.set_rich_presence("#In_Lobby")
 	Man.set_rich_presence_value("players", str(NetworkManager.players.size()))
-	if Man.steam_enabled and players.size() >= 6:
+	if NetworkManager.steam_enabled and players.size() >= 6:
 		Man.set_achievement("PLAY_FULL_LOBBY")
 	
 	var container = $UI/Main/Players/ScrollContainer/VBoxContainer
@@ -735,6 +754,25 @@ func update_mode_selector() -> void:
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server():
 		NetworkManager.send_mode.rpc(Man.selected_mode, Man.selected_map)
 		NetworkManager.update_players.emit(NetworkManager.players)
+
+func update_leaderboards() -> void:
+	for child in $UI/Main/Leaderboards/Panel/Main/ScrollContainer/VBoxContainer.get_children():
+		child.queue_free()
+	var records = await HLeaderboards.get_leaderboard_records_async("rooms")
+	var your_entry: Control = null
+	for record in records:
+		var added_record = preload("res://scenes/multiplayer_player_entry.tscn").instantiate()
+		added_record.custom_minimum_size = Vector2(590.0, 64.0)
+		added_record.get_node("Label").text = "%s. %s" % [record.rank, record.user_display_name]
+		if record.user_id == HAuth.product_user_id:
+			added_record.get_node("Label").text += " [color=#b3b3b3](You)[/color]"
+			$UI/Main/Leaderboards/Panel/Main/Rank.text = "Your rank: #" + str(record.rank)
+			your_entry = added_record
+		added_record.get_node("Label").text += " - %d" % [record.score]
+		$UI/Main/Leaderboards/Panel/Main/ScrollContainer/VBoxContainer.add_child(added_record)
+	if your_entry:
+		await get_tree().process_frame
+		$UI/Main/Leaderboards/Panel/Main/ScrollContainer.ensure_control_visible(your_entry)
 
 func update_loadout() -> void:
 	$UI/Main/Loadout/Panel/Main/ArmorIcon.texture = Man.equipped_armor.texture
@@ -925,7 +963,6 @@ func _on_players_map_selector_left_pressed() -> void:
 
 func _on_players_map_selector_right_pressed() -> void:
 	_on_map_selector_right_pressed()
-
 
 # ============================================================================
 # MISC HANDLERS

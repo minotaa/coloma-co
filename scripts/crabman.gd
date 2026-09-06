@@ -1,32 +1,41 @@
 extends Entity
 
-const SPEED: float = 135.0
+enum State { BURROWED, UNBURROWING, DASHING, BURROWING }
 
-var stun_time: float = 0.0
+const BURROW_RANGE := 120.0
+const SURFACE_RANGE := 60.0        # must be this close (or closer) to trigger unburrowing
+const OUT_OF_RANGE_TIME := 1.2     # seconds beyond SURFACE_RANGE before re-burrowing
+
+const BASE_DASH_SPEED := 20.0
+const MAX_DASH_SPEED := 120.0
+const RAMP_TIME := 8.0             # seconds to reach max dash speed
+
+var state: State = State.BURROWED
 var current_target: Node2D = null
+var out_of_range_timer: float = 0.0
+var dash_ramp_time: float = 0.0
+var stun_time: float = 0.0
 
-# Crab likes low friction knockback
-
-@onready var nav_agent: NavigationAgent2D = agent  # use the agent provided by Entity
-# (we keep a local alias nav_agent for readability, but 'agent' is the same)
+@onready var nav_agent: NavigationAgent2D = agent
 
 func initialize_entity() -> void:
 	knockback_friction = 1.0
 	entity_name = "Crabthing"
-	bestiary_description = "Species of sea creature that crawls in shells. Targets a player and relentlessly pursues it, walks faster than the player. Gets staggered when hit too much."
+	bestiary_description = "Species of sea creature that crawls in shells. Stays burrowed until you get close, then bursts out and charges, gaining speed the longer it chases. Hitting it resets its momentum."
 	developer_commentary = "These were a monstrosity to draw, I did not like drawing these at all. I literally just drew the Crabthing over Clementine."
 	dev_commentary_requirement = 85
 	health = 1000.0
 	max_health = 1000.0
 	defense = 0.0
 	id = 5
-	speed = SPEED
+	speed = BASE_DASH_SPEED
 
-	# play initial animation if sprite exists
+	invulnerable = true
+
 	if sprite:
-		sprite.play("crabman-down")
+		sprite.visible = false
+		sprite.animation_finished.connect(_on_animation_finished)
 
-	# configure agent if present
 	if agent:
 		agent.path_max_distance = 2000
 		agent.target_desired_distance = 8
@@ -37,38 +46,29 @@ func get_gold_reward() -> int:
 func get_kill_type() -> String:
 	return "crabman"
 
-#
-# Override take_damage to preserve crab-specific knockback + stun math,
-# but reuse Entity's visual feedback & death handling.
-#
 @rpc("any_peer", "call_local")
 func take_damage(amount: float, from_position: Vector2, source_name: String, crit: bool = false) -> void:
-	# Only let authority actually apply damage logic (same as Entity)
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
-
 	if invulnerable:
 		return
 
-	# Apply defense reduction (same formula as Entity)
 	var defense_factor = 1.0 - (defense / (defense + 100.0))
 	var final_damage = amount * defense_factor
-
-	print(entity_name + " took ", final_damage, " damage")
-
-	# Apply damage
 	health -= final_damage
 
-	# Calculate knockback + stun (Crab-specific)
+	# Knockback + stun, same feel as before
 	var kb_dir = (global_position - from_position).normalized()
-	var kb_strength = 10.0
-	knockback_velocity = kb_dir * kb_strength
+	knockback_velocity = kb_dir * 10.0
 
 	var hp_ratio = clamp(health / max_health, 0.0, 1.0)
-	var base_stun = lerp(0.05, 0.6, 1.0 - hp_ratio) # more stun when lower hp
+	var base_stun = lerp(0.05, 0.6, 1.0 - hp_ratio)
 	stun_time = base_stun * clamp(final_damage / 20.0, 0.5, 5.0)
 
-	# Sync floating text and flash across peers (reuse Entity's RPCs)
+	# Losing the ramp on hit, only matters mid-dash
+	if state == State.DASHING:
+		dash_ramp_time = 0.0
+
 	if multiplayer.has_multiplayer_peer():
 		_show_damage_feedback.rpc(final_damage, global_position, crit)
 		_flash_material.rpc()
@@ -76,83 +76,104 @@ func take_damage(amount: float, from_position: Vector2, source_name: String, cri
 		_show_damage_feedback(final_damage, global_position, crit)
 		_flash_material()
 
-	# If died, call Entity's on_death flow
 	if health <= 0 and alive:
-		print(entity_name + " died")
 		alive = false
 		on_death(source_name)
 
-#
-# Movement / AI: runs inside Entity._physics_process via custom_physics_process
-#
 func custom_physics_process(delta: float, movement_multiplier: float) -> void:
-	# Update target (simple cached target like before)
 	update_target()
 
-	# If stunned, apply knockback-only movement (damped by Entity's knockback handling)
-	if stun_time > 0.0:
+	if stun_time > 0.0 and state == State.DASHING:
 		stun_time -= delta
-		# During stun we rely on Entity's knockback handling which already modifies `velocity`
-		# but we also want the crab to be pushed by knockback only:
 		velocity = knockback_velocity
-		# additionally damp the knockback here with the same friction
 		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 		return
 
-	# Normal navigation-driven movement
-	if current_target and current_target.alive:
-		agent.target_position = current_target.global_position
-		if not agent.is_navigation_finished():
-			var next_point = agent.get_next_path_position()
-			if next_point != Vector2.ZERO:
-				var direction = (next_point - global_position).normalized()
-				velocity = direction * SPEED * movement_multiplier
-			else:
-				velocity = Vector2.ZERO
-		else:
+	match state:
+		State.BURROWED:
+			_process_burrowed()
+		State.UNBURROWING, State.BURROWING:
 			velocity = Vector2.ZERO
-	else:
-		velocity = Vector2.ZERO
+		State.DASHING:
+			_process_dashing(delta, movement_multiplier)
 
-	# Sprite direction update (when not stunned)
-	if velocity != Vector2.ZERO and sprite:
-		update_sprite_direction(velocity)
-
-#
-# Keep the same target selection behavior
-#
 func update_target() -> void:
-	if not current_target or not current_target.alive:
+	if state == State.BURROWED:
 		current_target = get_nearest_player()
-		if current_target and agent:
-			agent.target_position = current_target.global_position
+	elif not current_target or not current_target.alive:
+		current_target = get_nearest_player()
 
-#
-# Reuse Entity's get_nearest_player() if available; otherwise fallback.
-# (Entity already provides get_nearest_player, so we don't redefine it)
-#
+func _process_burrowed() -> void:
+	velocity = Vector2.ZERO  # stays put underground until a player gets close
+	if not current_target:
+		return
+	if global_position.distance_to(current_target.global_position) <= SURFACE_RANGE:
+		_begin_unburrow()
 
-#
-# Override player contact damage to match original crab (8 damage)
-#
+func _begin_unburrow() -> void:
+	state = State.UNBURROWING
+	velocity = Vector2.ZERO
+	if sprite:
+		sprite.visible = true
+		sprite.play_backwards("crabman-burrow")
+
+func _on_animation_finished() -> void:
+	match state:
+		State.UNBURROWING:
+			_start_dashing()
+		State.BURROWING:
+			_finish_burrow()
+
+func _start_dashing() -> void:
+	state = State.DASHING
+	invulnerable = false
+	dash_ramp_time = 0.0
+	out_of_range_timer = 0.0
+
+func _process_dashing(delta: float, movement_multiplier: float) -> void:
+	if not current_target:
+		_begin_burrow()
+		return
+
+	var dist = global_position.distance_to(current_target.global_position)
+	if dist > BURROW_RANGE:
+		out_of_range_timer += delta
+		if out_of_range_timer >= OUT_OF_RANGE_TIME:
+			_begin_burrow()
+			return
+	else:
+		out_of_range_timer = 0.0
+
+	dash_ramp_time += delta
+	var ramp_pct = clamp(dash_ramp_time / RAMP_TIME, 0.0, 1.0)
+	var current_speed = lerp(BASE_DASH_SPEED, MAX_DASH_SPEED, ramp_pct)
+
+	var direction = (current_target.global_position - global_position).normalized()
+	velocity = direction * current_speed * movement_multiplier
+	update_sprite_direction(direction)
+
+func _begin_burrow() -> void:
+	state = State.BURROWING
+	invulnerable = true
+	velocity = Vector2.ZERO
+	if sprite:
+		sprite.play("crabman-burrow")
+
+func _finish_burrow() -> void:
+	state = State.BURROWED
+	if sprite:
+		sprite.visible = false
+
 func on_player_contact(player: Node) -> void:
+	if state != State.DASHING:
+		return
 	if player and player.has_method("take_damage"):
 		player.take_damage(8, name, global_position)
 
-#
-# Sprite animation helper (uses sprite from Entity)
-#
 func update_sprite_direction(dir: Vector2) -> void:
 	if not sprite:
 		return
-
 	if abs(dir.x) > abs(dir.y):
-		if dir.x > 0:
-			sprite.play("crabman-right")
-		else:
-			sprite.play("crabman-left")
+		sprite.play("crabman-right" if dir.x > 0 else "crabman-left")
 	else:
-		if dir.y > 0:
-			sprite.play("crabman-down")
-		else:
-			sprite.play("crabman-up")
+		sprite.play("crabman-down" if dir.y > 0 else "crabman-up")

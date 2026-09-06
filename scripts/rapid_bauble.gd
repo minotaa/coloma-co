@@ -1,5 +1,6 @@
 extends Entity
 
+const SPAWN_DELAY := 8.0
 const SHOOT_INTERVAL := 0.35
 const RETREAT_DISTANCE := 80.0
 const APPROACH_DISTANCE := 100
@@ -8,7 +9,7 @@ const RETREAT_SPEED := 18.0
 const FLOAT_AMPLITUDE := 1.0
 const FLOAT_SPEED := 2.0
 
-var shoot_timer := 0.0
+var shoot_timer := SPAWN_DELAY
 var move_mode := "idle"
 var float_timer := 0.0
 

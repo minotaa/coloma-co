@@ -22,7 +22,7 @@ config/version="10"
 run/main_scene="uid://bow6ppc3d127l"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Offshoot"
-config/features=PackedStringArray("4.6", "Mobile")
+config/features=PackedStringArray("4.7", "Mobile")
 run/max_fps=60
 boot_splash/bg_color=Color(0.0470588, 0.0470588, 0.0470588, 1)
 boot_splash/stretch_mode=0
@@ -214,6 +214,7 @@ use={
 2d_physics/layer_2="mobs"
 2d_physics/layer_3="ephemeral"
 2d_physics/layer_4="gem"
+2d_physics/layer_5="decor"
 
 [network]
 

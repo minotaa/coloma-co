@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bdrf5fox64nxq"]
+
+[ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_ax78q"]
+
+[resource]
+shader = ExtResource("1_ax78q")
+shader_parameter/shock_color = Color(1, 1, 1, 1)
+shader_parameter/amplitude = 20.0
+shader_parameter/frequency = 10.0
+shader_parameter/shock_time = 0.0

@@ -3,6 +3,7 @@
 [ext_resource type="Shader" uid="uid://boss86hf3evld" path="res://scripts/shock.gdshader" id="1_err82"]
 [ext_resource type="Script" uid="uid://cswc66gckpm5u" path="res://scripts/crabman.gd" id="2_w6kxq"]
 [ext_resource type="Texture2D" uid="uid://bu611or6tud54" path="res://assets/sprites/shadow.png" id="3_4cx8d"]
+[ext_resource type="Texture2D" uid="uid://0jjkc8lltn8m" path="res://assets/sprites/crabman-burrow.png" id="4_4cx8d"]
 [ext_resource type="Texture2D" uid="uid://bpwlervgquvmc" path="res://assets/sprites/crabman_down.png" id="4_4g15a"]
 [ext_resource type="Texture2D" uid="uid://2pyd0mratbfg" path="res://assets/sprites/crabman_left.png" id="5_g83du"]
 [ext_resource type="Texture2D" uid="uid://dq3jk4tpkjdyo" path="res://assets/sprites/crabman_right.png" id="6_m4864"]
@@ -15,6 +16,38 @@ shader_parameter/shock_color = Color(1, 0, 0, 1)
 shader_parameter/amplitude = 30.0
 shader_parameter/frequency = 10.0
 shader_parameter/shock_time = 0.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4g15a"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(0, 0, 16, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g83du"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(16, 0, 16, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m4864"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(32, 0, 16, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mr6k1"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(48, 0, 16, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hooon"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(64, 0, 16, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_stlaq"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(80, 0, 16, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ei0v"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(96, 0, 16, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fyh5n"]
+atlas = ExtResource("4_4cx8d")
+region = Rect2(112, 0, 16, 26)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t810m"]
 atlas = ExtResource("4_4g15a")
@@ -152,6 +185,35 @@ region = Rect2(96, 0, 16, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_4g15a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g83du")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m4864")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mr6k1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hooon")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_stlaq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ei0v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fyh5n")
+}],
+"loop": 0,
+"name": &"crabman-burrow",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_t810m")
 }, {
 "duration": 1.0,
@@ -175,7 +237,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_utsow")
 }],
-"loop": true,
+"loop": 1,
 "name": &"crabman-down",
 "speed": 12.0
 }, {
@@ -207,7 +269,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_h7bry")
 }],
-"loop": true,
+"loop": 1,
 "name": &"crabman-left",
 "speed": 12.0
 }, {
@@ -239,7 +301,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_80fag")
 }],
-"loop": true,
+"loop": 1,
 "name": &"crabman-right",
 "speed": 12.0
 }, {
@@ -265,7 +327,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7boig")
 }],
-"loop": true,
+"loop": 1,
 "name": &"crabman-up",
 "speed": 12.0
 }]
@@ -364,8 +426,9 @@ texture = ExtResource("3_4cx8d")
 position = Vector2(0, -8)
 scale = Vector2(1.1, 1.1)
 sprite_frames = SubResource("SpriteFrames_hooon")
-animation = &"crabman-up"
-frame_progress = 0.39067
+animation = &"crabman-burrow"
+frame = 7
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=926308454]
 position = Vector2(0, -5)
