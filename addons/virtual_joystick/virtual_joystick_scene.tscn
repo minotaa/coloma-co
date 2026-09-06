@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://dmr0fcamx7t56"]
+[gd_scene format=3 uid="uid://dmr0fcamx7t56"]
 
 [ext_resource type="Script" uid="uid://gdvy01mxqe2u" path="res://addons/virtual_joystick/virtual_joystick.gd" id="1_8x4dy"]
 [ext_resource type="Texture2D" uid="uid://c7t87jtww3uqe" path="res://assets/sprites/base.png" id="2_ettsy"]
 [ext_resource type="Texture2D" uid="uid://cqa7hrvionm53" path="res://assets/sprites/tip.png" id="3_0bity"]
 
-[node name="Virtual Joystick" type="Control"]
+[node name="Virtual Joystick" type="Control" unique_id=1282138408]
 modulate = Color(1, 1, 1, 0.49411765)
 layout_mode = 3
 anchors_preset = 2
@@ -22,7 +22,7 @@ action_right = "right"
 action_up = "up"
 action_down = "down"
 
-[node name="Base" type="TextureRect" parent="."]
+[node name="Base" type="TextureRect" parent="." unique_id=1432690860]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -31,8 +31,8 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -100.0
 offset_top = -100.0
-offset_right = 100.0
-offset_bottom = 100.0
+offset_right = 200.0
+offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(100, 100)
@@ -40,17 +40,17 @@ mouse_force_pass_scroll_events = false
 texture = ExtResource("2_ettsy")
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="Base"]
+[node name="Tip" type="TextureRect" parent="Base" unique_id=1157501269]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -50.0
-offset_right = 50.0
-offset_bottom = 50.0
+offset_left = -93.00001
+offset_top = -93.0
+offset_right = 67.0
+offset_bottom = 67.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(1.5, 1.5)

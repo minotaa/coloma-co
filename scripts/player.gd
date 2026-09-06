@@ -17,7 +17,7 @@ var type: String = ""
 var guaranteed_crit = false
 var current_log_path: String
 var focused_inventory_slot: int = 0 
-var original_zoom := Vector2(3.75, 3.75)
+var original_zoom := Vector2(4.5, 4.5)
 var leveling_bar_rest_position: Vector2
 var zoom_multiplier := 1.0
 var cached_wave: int = 0

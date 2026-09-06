@@ -79,7 +79,8 @@ custom_minimum_size = Vector2(512, 440)
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.679
+offset_bottom = 3.8471375
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_tbmy8")
@@ -91,19 +92,20 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -232.0
-offset_top = -196.0
-offset_right = 232.0
-offset_bottom = 204.0
+offset_left = -360.0
+offset_top = -206.02002
+offset_right = 360.0
+offset_bottom = 206.02002
 
 [node name="VBoxContainer" type="VBoxContainer" parent="General/ScrollContainer" unique_id=1115743123]
-custom_minimum_size = Vector2(420, 0)
+custom_minimum_size = Vector2(704, 0)
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_constants/separation = 8
 alignment = 1
 
 [node name="Fullscreen" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer" unique_id=198549745]
-custom_minimum_size = Vector2(416, 0)
+custom_minimum_size = Vector2(704, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -111,6 +113,7 @@ theme_override_constants/separation = 174
 
 [node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Fullscreen" unique_id=480137399]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Fullscreen"
 label_settings = SubResource("LabelSettings_flqon")
 
@@ -121,26 +124,26 @@ size_flags_vertical = 4
 theme_override_constants/outline_size = 24
 theme_override_constants/h_separation = 52
 theme_override_constants/align_to_largest_stylebox = 0
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 theme_override_styles/focus = SubResource("StyleBoxEmpty_o7i7e")
 theme_override_icons/checked = ExtResource("2_o7i7e")
 theme_override_icons/unchecked = ExtResource("3_uon5e")
 icon_alignment = 2
 
 [node name="Zoom" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer" unique_id=1983990964]
-custom_minimum_size = Vector2(416, 0)
+custom_minimum_size = Vector2(704, 0)
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 77
 
 [node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Zoom" unique_id=538533814]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Zoom"
 label_settings = SubResource("LabelSettings_flqon")
 
 [node name="HSlider" type="HSlider" parent="General/ScrollContainer/VBoxContainer/Zoom" unique_id=2132536641]
-custom_minimum_size = Vector2(256, 46.07)
+custom_minimum_size = Vector2(450, 46.07)
 layout_mode = 2
 theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")
@@ -153,7 +156,7 @@ tick_count = 7
 ticks_position = 3
 
 [node name="Flick Control" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer" unique_id=193773021]
-custom_minimum_size = Vector2(416, 0)
+custom_minimum_size = Vector2(704, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -161,6 +164,7 @@ theme_override_constants/separation = 111
 
 [node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Flick Control" unique_id=1953160389]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Flick control"
 label_settings = SubResource("LabelSettings_flqon")
 
@@ -176,7 +180,7 @@ theme_override_icons/unchecked = ExtResource("3_uon5e")
 icon_alignment = 2
 
 [node name="SFX" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer" unique_id=895783333]
-custom_minimum_size = Vector2(416, 0)
+custom_minimum_size = Vector2(704, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -184,11 +188,12 @@ theme_override_constants/separation = 97
 
 [node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/SFX" unique_id=804171604]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "SFX"
 label_settings = SubResource("LabelSettings_flqon")
 
 [node name="HSlider" type="HSlider" parent="General/ScrollContainer/VBoxContainer/SFX" unique_id=1085904740]
-custom_minimum_size = Vector2(256, 46.07)
+custom_minimum_size = Vector2(450, 46.07)
 layout_mode = 2
 theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")
@@ -197,7 +202,7 @@ value = 100.0
 ticks_on_borders = true
 
 [node name="Music" type="HBoxContainer" parent="General/ScrollContainer/VBoxContainer" unique_id=1810237348]
-custom_minimum_size = Vector2(416, 0)
+custom_minimum_size = Vector2(704, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -205,11 +210,12 @@ theme_override_constants/separation = 61
 
 [node name="Label" type="Label" parent="General/ScrollContainer/VBoxContainer/Music" unique_id=987407417]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Music"
 label_settings = SubResource("LabelSettings_flqon")
 
 [node name="HSlider" type="HSlider" parent="General/ScrollContainer/VBoxContainer/Music" unique_id=177121553]
-custom_minimum_size = Vector2(256, 46.07)
+custom_minimum_size = Vector2(450, 46.07)
 layout_mode = 2
 theme_override_styles/slider = SubResource("StyleBoxFlat_flqon")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_rcqid")

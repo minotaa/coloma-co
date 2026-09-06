@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dqdiffuwwg2jx"]
+[gd_scene format=3 uid="uid://dqdiffuwwg2jx"]
 
 [ext_resource type="Texture2D" uid="uid://ddquoti6b8ear" path="res://assets/sprites/box5.png" id="1_fpeyo"]
-[ext_resource type="Script" path="res://scripts/chat_message.gd" id="2_v31oi"]
+[ext_resource type="Script" uid="uid://k5ftchejxfo5" path="res://scripts/chat_message.gd" id="2_v31oi"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v31oi"]
 texture = ExtResource("1_fpeyo")
@@ -16,13 +16,13 @@ font_size = 22
 shadow_color = Color(0, 0, 0, 0.74902)
 shadow_offset = Vector2(2, 2)
 
-[node name="Chat Message" type="Label"]
-custom_minimum_size = Vector2(432, 60)
+[node name="Chat Message" type="Label" unique_id=790851]
+custom_minimum_size = Vector2(570, 60)
 anchors_preset = -1
 anchor_right = 0.337
-anchor_bottom = 0.083
-offset_right = 0.639984
-offset_bottom = 0.239998
+anchor_bottom = 0.056
+offset_right = 0.6399536
+offset_bottom = -0.48000336
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_v31oi")
@@ -31,7 +31,7 @@ label_settings = SubResource("LabelSettings_to6vn")
 autowrap_mode = 3
 script = ExtResource("2_v31oi")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=350282709]
 wait_time = 8.0
 one_shot = true
 autostart = true

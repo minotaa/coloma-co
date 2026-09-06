@@ -187,7 +187,7 @@ var enemy_data = {
 		"defense": 0.0,
 		"id": 3
 	},
-	"crabthing": {
+	"crabman": {
 		"entity_name": "Crabthing",
 		"dev_commentary_requirement": 85,
 		"bestiary_description": "Species of sea creature that crawls in shells. Targets a player and relentlessly pursues it, walks faster than the player. Gets staggered when hit too much.",

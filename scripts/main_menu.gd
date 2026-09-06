@@ -117,7 +117,7 @@ func _setup_audio() -> void:
 	
 func _setup_initial_values() -> void:
 	$UI/Main/Version.text = "v" + ProjectSettings.get_setting("application/config/version")
-	$Demoman/Camera2D.zoom = Vector2(6.0 * Man.zoom, 6.0 * Man.zoom)
+	$Demoman/Camera2D.zoom = Vector2(4.5 * Man.zoom, 4.5 * Man.zoom)
 	Man.set_rich_presence("#In_MainMenu")
 	
 	# Dev mode visibility

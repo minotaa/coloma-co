@@ -35,7 +35,7 @@ texture_margin_right = 16.0
 texture_margin_bottom = 16.0
 
 [node name="Button" type="Button" unique_id=876868244]
-custom_minimum_size = Vector2(428, 0)
+custom_minimum_size = Vector2(636.261, 0)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

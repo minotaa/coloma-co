@@ -1,7 +1,7 @@
 extends Node2D
 
 var rng = RandomNumberGenerator.new()
-var wave: int = 9
+var wave: int = 0
 var bombrats_left: int = 0
 var bombrats_to_expect: int = 0
 var started: bool = false
