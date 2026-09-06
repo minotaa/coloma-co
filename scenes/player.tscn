@@ -937,7 +937,7 @@ texture = ExtResource("2_3v2ag")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=628701149]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_u8hee")
-animation = &"sword_up"
+animation = &"walk_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=432179891]
 position = Vector2(0, -1.5)

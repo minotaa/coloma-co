@@ -242,7 +242,7 @@ func reset_game() -> void:
 	show_ui()
 
 func end_game() -> void:
-	$AnimatedSprite2D.play("death")
+	play_animation("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
 	alive = false
 	revival_time = -1
@@ -619,7 +619,7 @@ func percent(current: float, total: float) -> String:
 	return "0%"
 
 func die() -> void:
-	$AnimatedSprite2D.play("death")
+	play_animation("death")
 	$AnimatedSprite2D.material = preload("res://scenes/shock.tres")
 	alive = false
 	hide_ui()
@@ -1819,7 +1819,7 @@ func _physics_process(delta: float) -> void:
 		elif global_position.x > (30.15 * 16):
 			global_position.x = (-30.5 * 16)
 
-		if global_position.y < (-484.1):
+		if global_position.y < (-483.0):
 			global_position.y = 29.55 * 16
 		elif global_position.y > (477.0):
 			global_position.y = (-485.1)
@@ -1996,13 +1996,12 @@ func _physics_process(delta: float) -> void:
 		exhausted = true
 	if exhausted:
 		velocity *= 0.55
-	if (velocity.length() == 0 and sprint < 220) or (exhausted and sprint < 220):
-		if not exhausted:
-			sprint += 1
-		else:
-			sprint += 0.5
-	elif velocity.length() <= SPEED and sprint < 220:
-		sprint += 0.45
+	if Input.is_action_pressed("sprint") and velocity.length() > 0.1 and sprint > 0:
+		pass
+	elif not exhausted:
+		sprint = min(sprint + (1.0 if not velocity.length() > 0.1 else 0.45), 220.0)
+	else:
+		sprint = min(sprint + 0.5, 220.0)
 	
 	if type == "Defense":
 		var found_shop = false

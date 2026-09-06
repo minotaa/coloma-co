@@ -350,6 +350,8 @@ func final_explosion() -> void:
 	if spawn_parent == null:
 		return
 	
+	await get_tree().create_timer(2.5).timeout
+	
 	# Spawn multiple BIG explosions for dramatic effect
 	for i in range(5):
 		var offset = Vector2(randf_range(-30, 30), randf_range(-30, 30))

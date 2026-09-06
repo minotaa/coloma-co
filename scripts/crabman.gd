@@ -8,7 +8,7 @@ const OUT_OF_RANGE_TIME := 1.2     # seconds beyond SURFACE_RANGE before re-burr
 
 const BASE_DASH_SPEED := 20.0
 const MAX_DASH_SPEED := 120.0
-const RAMP_TIME := 8.0             # seconds to reach max dash speed
+const RAMP_TIME := 5.0             # seconds to reach max dash speed
 
 var state: State = State.BURROWED
 var current_target: Node2D = null
